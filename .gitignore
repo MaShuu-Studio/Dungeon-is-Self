@@ -1,0 +1,11 @@
+.vscode/
+Library/
+Logs/
+Temp/
+obj/
+Assets/Plugins/Android/
+Assets/Plugins/Android.meta
+Assets/VSCode/
+Assets/VSCode.meta
+Test_APK/
+Packages/
