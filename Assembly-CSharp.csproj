@@ -36,6 +36,7 @@
     <ImplicitlyExpandDesignTimeFacades>false</ImplicitlyExpandDesignTimeFacades>
   </PropertyGroup>
   <ItemGroup>
+     <Compile Include="Assets\Scripts\Charater\CrowdControl.cs" />
      <Compile Include="Assets\Scripts\Game Control\GameController.cs" />
      <Compile Include="Assets\Scripts\Game Control\UIController.cs" />
      <Compile Include="Assets\Scripts\Monster\Monster.cs" />

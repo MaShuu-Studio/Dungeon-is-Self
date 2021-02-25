@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class UIController : MonoBehaviour
 {
     public List<Text> button_texts;
+    public Text monster_text; 
     // Start is called before the first frame update
     void Start()
     {
@@ -25,6 +26,16 @@ public class UIController : MonoBehaviour
         {
             button_texts[i].text = monsters[i].name;
         }
+    }
+
+    public void ViewMonster(List<Monster> monsters)
+    {
+        string str = "";
+        foreach(Monster mon in monsters)
+        {
+            str += mon.name + " ";
+        }
+        monster_text.text = str;
     }
 
     #endregion

@@ -39,4 +39,10 @@ public class GameController : MonoBehaviour
     {
         dungeon_controller.AddMonster(0, monster_db.GetMonster(text.text));
     }
+
+    public void ViewDungeon()
+    {
+        List<Monster> monsters = dungeon_controller.GetMonsterList(0);
+        ui_controller.ViewMonster(monsters);
+    }
 }

@@ -47,7 +47,12 @@ public class DungeonController : MonoBehaviour
 
     public void AddMonster(int index, Monster monster)
     {
-        dungeons[index].AddMonster(monster);
+        if (monster != null) dungeons[index].AddMonster(monster);
+    }
+
+    public List<Monster> GetMonsterList(int index)
+    {
+        return dungeons[index].monsters;
     }
     
 }
