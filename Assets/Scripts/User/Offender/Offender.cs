@@ -6,9 +6,8 @@ public class Offender : MonoBehaviour
 {
     public SkillDB skilldb = new SkillDB();
     public enum Role {FIGHTER, MARKSMAN, MAGE}
-    public GameObject[] bench = new GameObject[3];
-    public GameObject[] roster = new GameObject[3];
-    public Role offender_role = Role.FIGHTER;
+    public List<Role> bench = new List<Role>();
+    public List<Role> roster = new List<Role>();
     // Start is called before the first frame update
     void Start()
     {
@@ -21,42 +20,15 @@ public class Offender : MonoBehaviour
         
     }
 
-    void Bench()
+    void setBench(Role role)
     {
-        
+        if(bench.Count >= 3) return;
+        else bench.Add(role);
     }
 
-    protected virtual void Roster()
+    protected virtual void setRoster(Role role)
     {
-        
+        if(roster.Count >= 3) return;
+        else roster.Add(role);
     }
-}
-
-public class Fighter : Offender
-{
-    private List<Skill> dice = new List<Skill>();
-    private List<string> skill = new List<string>();
-    
-    
-    Skill diceThrow()
-    {
-        int i = Random.Range(0, 6);
-        return dice[i];
-    }
-    
-    void setDice(string skill)
-    {
-        if(dice.Count >= 6) return;
-        else dice.Add(skilldb.GetSkill(skill));
-    }
-}
-
-public class Marksman : Offender
-{
-
-}
-
-public class Mage : Offender
-{
-
 }

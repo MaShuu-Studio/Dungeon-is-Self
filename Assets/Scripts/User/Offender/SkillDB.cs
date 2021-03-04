@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SkillDB : MonoBehaviour
+public class SkillDB
 {
     private List<Skill> skillDB;
     // Start is called before the first frame update
