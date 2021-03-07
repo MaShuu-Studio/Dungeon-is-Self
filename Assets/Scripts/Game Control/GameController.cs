@@ -5,16 +5,25 @@ using UnityEngine.UI;
 
 public class GameController : MonoBehaviour
 {
-    [SerializeField] private UIController ui_controller;
-    [SerializeField] private DungeonController dungeon_controller;
+    public enum GameProgress { Ready, GamePlay };
 
+    private DefenderController defender;
+    private OffenderController offender;
 
-    private MonsterDatabase monster_db;
+    private bool is_Play;
+    GameProgress currentProgress;
+    int turn;
 
+    void Awake()
+    {
+        DontDestroyOnLoad(gameObject);
+    }
+    
     // Start is called before the first frame update
     void Start()
     {
-        monster_db = GameObject.FindWithTag("MonsterDB").GetComponent<MonsterDatabase>();
+        is_Play = false;
+
     }
 
     // Update is called once per frame
@@ -23,26 +32,9 @@ public class GameController : MonoBehaviour
         
     }
 
-    public void SetMonsterCandidate(int num)
+    public void StartGame()
     {
-        List<Monster> monsters = new List<Monster>();
-
-        for(int i = 0; i < num; i++)
-        {
-            monsters.Add(monster_db.GetRandomMonster());
-        }
-
-        ui_controller.ShowMonsterList(monsters);
-    }
-
-    public void SetDungeon(Text text)
-    {
-        dungeon_controller.AddMonster(0, monster_db.GetMonster(text.text));
-    }
-
-    public void ViewDungeon()
-    {
-        List<Monster> monsters = dungeon_controller.GetMonsterList(0);
-        ui_controller.ViewMonster(monsters);
+        defender = GameObject.FindWithTag("Defender").GetComponent<DefenderController>();
+        offender = GameObject.FindWithTag("Offender").GetComponent<OffenderController>();
     }
 }
