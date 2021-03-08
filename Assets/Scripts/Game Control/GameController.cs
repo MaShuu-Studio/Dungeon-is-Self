@@ -5,25 +5,27 @@ using UnityEngine.UI;
 
 public class GameController : MonoBehaviour
 {
-    public enum GameProgress { Ready, GamePlay };
+    public enum GameProgress { Wait, Ready, GamePlay };
 
     private DefenderController defender;
     private OffenderController offender;
 
-    private bool is_Play;
-    GameProgress currentProgress;
-    int turn;
+    private bool isPlay;
+    private GameProgress currentProgress;
+    private int round;
+
+    private List<Monster> curRoundMonster;
+    //private List<Character> curRoundCharacter;
 
     void Awake()
     {
         DontDestroyOnLoad(gameObject);
     }
-    
+
     // Start is called before the first frame update
     void Start()
     {
-        is_Play = false;
-
+        isPlay = false;
     }
 
     // Update is called once per frame
@@ -36,5 +38,53 @@ public class GameController : MonoBehaviour
     {
         defender = GameObject.FindWithTag("Defender").GetComponent<DefenderController>();
         offender = GameObject.FindWithTag("Offender").GetComponent<OffenderController>();
+
+        currentProgress = GameProgress.Wait;
+        curRoundMonster = new List<Monster>();
+        //curRoundCharacter = new List<Character>();
+
+        isPlay = true;
+        round = 0;
     }
+
+    public void ReadyRound()
+    {
+        if (isPlay)
+        {
+            round++;
+            currentProgress = GameProgress.Ready;
+
+            curRoundMonster.Clear();
+            //curRoundCharacter.Clear();            
+
+            defender.SetMonsterCandidate(4);
+            defender.SetRound(round);
+        }
+    }
+
+    public void StartRound()
+    {
+
+    }
+
+#region GUI
+
+    private void OnGUI()
+    {
+        if (GUI.Button(new Rect(10, 10, 50, 50), "Start"))
+        {
+            StartGame();
+        }
+        
+        if (GUI.Button(new Rect(10, 80, 50, 50), "Ready"))
+        {
+            ReadyRound();
+        }
+        
+        if (GUI.Button(new Rect(80, 80, 50, 50), "Round"))
+        {
+            StartRound();
+        }
+    }
+#endregion
 }

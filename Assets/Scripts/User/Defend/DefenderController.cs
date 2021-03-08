@@ -5,42 +5,66 @@ using UnityEngine.UI;
 
 public class DefenderController : MonoBehaviour
 {
-    [SerializeField] private UIController ui_controller;
-    [SerializeField] private DungeonController dungeon_controller;
-    private MonsterDatabase monster_db;
+    [SerializeField] private DungeonController dungeonController;
+    private MonsterDatabase monsterDB;
+
+    private List<Monster> monsterCandidates;
+    private int round;
 
     // Start is called before the first frame update
     void Start()
     {
-        monster_db = GameObject.FindWithTag("MonsterDB").GetComponent<MonsterDatabase>();
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        monsterDB = GameObject.FindWithTag("MonsterDB").GetComponent<MonsterDatabase>();
+        monsterCandidates = new List<Monster>();
     }
     
     public void SetMonsterCandidate(int num)
     {
-        List<Monster> monsters = new List<Monster>();
+        monsterCandidates.Clear();
 
         for(int i = 0; i < num; i++)
         {
-            monsters.Add(monster_db.GetRandomMonster());
+            while(true)
+            {
+                Monster monster = monsterDB.GetRandomMonster();
+                if (monsterCandidates.Exists(mon => mon.name == monster.name) == false)
+                {
+                    monsterCandidates.Add(monster);
+                    break;
+                }
+            }
+            Debug.Log(monsterCandidates[i].name);
         }
-        
-        ui_controller.ShowMonsterList(monsters);
     }
-    
-    public void SetDungeon(Text text)
+
+    public void ShowCandidate()
     {
-        dungeon_controller.AddMonster(0, monster_db.GetMonster(text.text));
+        
     }
 
     public void ViewDungeon()
     {
-        List<Monster> monsters = dungeon_controller.GetMonsterList(0);
-        ui_controller.ViewMonster(monsters);
+        List<Monster> monsters = dungeonController.GetMonsterList(0);
     }
+
+    public void SetRound(int round)
+    {
+        this.round = round;
+    }
+
+#region GUI
+    private void OnGUI()
+    {
+        for (int i = 0; i < monsterCandidates.Count; i++)
+        {
+            if (GUI.Button(new Rect(10 + (i*70), 500, 50, 50), monsterCandidates[i].name))
+            {
+                dungeonController.AddMonster(round-1, monsterCandidates[i]);
+                monsterCandidates.RemoveAt(i);
+                break;
+            }
+        }
+    }
+
+#endregion
 }

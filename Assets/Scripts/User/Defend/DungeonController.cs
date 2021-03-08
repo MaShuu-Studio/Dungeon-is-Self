@@ -55,4 +55,19 @@ public class DungeonController : MonoBehaviour
         return dungeons[index].monsters;
     }
     
+    #region GUI
+    private void OnGUI()
+    {
+        for (int i = 0; i < dungeons[0].monsters.Count; i++)
+        {
+            if (GUI.Button(new Rect(10 + (i*70), 600, 50, 50), dungeons[0].monsters[i].name))
+            {
+                //dungeonController.AddMonster(round, monsterCandidates[i]);
+                //monsterCandidates.RemoveAt(i);
+                break;
+            }
+        }
+    }
+
+#endregion
 }
