@@ -59,8 +59,8 @@ public class DefenderController : MonoBehaviour
         {
             if (GUI.Button(new Rect(10 + (i*70), 500, 50, 50), monsterCandidates[i].name))
             {
-                dungeonController.AddMonster(round-1, monsterCandidates[i]);
-                monsterCandidates.RemoveAt(i);
+                if (dungeonController.AddMonster(round-1, monsterCandidates[i]))
+                    monsterCandidates.RemoveAt(i);
                 break;
             }
         }

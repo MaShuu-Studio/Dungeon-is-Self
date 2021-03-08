@@ -5,10 +5,12 @@ using UnityEngine;
 public class Dungeon
 {
     public List<Monster> monsters { get; private set; }
+    public int maxMonsterCount { get; private set; }
 
-    public Dungeon()
+    public Dungeon(int max)
     {
         monsters = new List<Monster>();
+        maxMonsterCount = max;
     }
 
     public void AddMonster(List<Monster> monsters)
@@ -26,6 +28,12 @@ public class Dungeon
         this.monsters.Add(monster);
     }
 
+    public bool MonsterIsFull()
+    {
+        if (monsters.Count == maxMonsterCount) return true;
+        return false;
+    }
+
 }
 public class DungeonController : MonoBehaviour
 {
@@ -36,7 +44,7 @@ public class DungeonController : MonoBehaviour
         dungeons = new Dungeon[3];
         for (int i = 0; i < dungeons.Length; i++)
         {
-            dungeons[i] = new Dungeon();
+            dungeons[i] = new Dungeon(3);
         }
     }
 
@@ -45,9 +53,14 @@ public class DungeonController : MonoBehaviour
         dungeons[index].AddMonster(monsters);
     }
 
-    public void AddMonster(int index, Monster monster)
+    public bool AddMonster(int index, Monster monster)
     {
-        if (monster != null) dungeons[index].AddMonster(monster);
+        if (monster != null && dungeons[index].MonsterIsFull() == false)
+        {
+            dungeons[index].AddMonster(monster);
+            return true;
+        }
+        return false;
     }
 
     public List<Monster> GetMonsterList(int index)
