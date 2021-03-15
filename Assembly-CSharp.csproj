@@ -59,6 +59,7 @@
      <Compile Include="Assets\Scripts\Game Control\GameController.cs" />
      <Compile Include="Assets\Scripts\Monster\Monster.cs" />
      <Compile Include="Assets\Scripts\Monster\MonsterDatabase.cs" />
+     <Compile Include="Assets\Scripts\UI\ToggleIcon.cs" />
      <Compile Include="Assets\Scripts\UI\UIController.cs" />
      <Compile Include="Assets\Scripts\UI\UIDescription.cs" />
      <Compile Include="Assets\Scripts\UI\UIIcon.cs" />
@@ -73,6 +74,7 @@
      <Compile Include="Assets\Scripts\User\Skill\MonsterSkill.cs" />
      <Compile Include="Assets\Scripts\User\Skill\Skill.cs" />
      <Compile Include="Assets\Scripts\User\Skill\SkillDB.cs" />
+     <Compile Include="Assets\Scripts\User\Skill\SkillTree.cs" />
  <Reference Include="UnityEngine">
  <HintPath>D:/Program Files/Unity/Editors/2019.4.18f1/Editor/Data/Managed/UnityEngine/UnityEngine.dll</HintPath>
  </Reference>
