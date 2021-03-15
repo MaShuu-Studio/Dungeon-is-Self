@@ -71,6 +71,7 @@
      <Compile Include="Assets\Scripts\User\Offender\OffenderController.cs" />
      <Compile Include="Assets\Scripts\User\Skill\CharacterSkill.cs" />
      <Compile Include="Assets\Scripts\User\Skill\MonsterSkill.cs" />
+     <Compile Include="Assets\Scripts\User\Skill\Skill.cs" />
      <Compile Include="Assets\Scripts\User\Skill\SkillDB.cs" />
  <Reference Include="UnityEngine">
  <HintPath>D:/Program Files/Unity/Editors/2019.4.18f1/Editor/Data/Managed/UnityEngine/UnityEngine.dll</HintPath>

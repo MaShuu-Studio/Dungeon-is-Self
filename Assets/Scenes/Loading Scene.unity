@@ -132,8 +132,8 @@ GameObject:
   - component: {fileID: 458606835}
   - component: {fileID: 458606834}
   m_Layer: 0
-  m_Name: Monster Skill DataBase
-  m_TagString: Untagged
+  m_Name: Skill DataBase
+  m_TagString: SkillDB
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -147,7 +147,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 458606833}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 35ee74e3a33ecfc40a23e16c55e46200, type: 3}
+  m_Script: {fileID: 11500000, guid: 6714a7039ddd4754388286bd7101d896, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!4 &458606835

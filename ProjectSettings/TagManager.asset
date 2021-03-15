@@ -7,6 +7,7 @@ TagManager:
   - MonsterDB
   - Defender
   - Offender
+  - SkillDB
   layers:
   - Default
   - TransparentFX

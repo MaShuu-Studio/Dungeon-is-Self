@@ -2,24 +2,21 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CharacterSkill
+public class CharacterSkill : Skill
 {
-    public string name {get; private set;}
-    public int readyTurn;
-    public int damage;
-    public string prior;
+    public int damage { get; protected set;}
 
-    public CharacterSkill(string name, int readyTurn, int damage, string prior)
+    public CharacterSkill(string name, int turn, int damage, string prior)
     {
         this.name = name;
-        this.readyTurn = readyTurn;
+        this.turn = turn;
         this.damage = damage;
         this.prior = prior;
     }
-    public CharacterSkill(string name, int readyTurn, int damage)
+    public CharacterSkill(string name, int turn, int damage)
     {
         this.name = name;
-        this.readyTurn = readyTurn;
+        this.turn = turn;
         this.damage = damage;
         this.prior = "";
     }
