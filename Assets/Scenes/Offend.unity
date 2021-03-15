@@ -8293,6 +8293,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bb4f82dbe8d504747a17ab6e9ba393e8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  views:
+  - {fileID: 1300733182}
+  - {fileID: 1923314292}
   characterToggles:
   - {fileID: 193223541}
   - {fileID: 2120214827}

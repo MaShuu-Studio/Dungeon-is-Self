@@ -11,7 +11,7 @@ public class GameController : MonoBehaviour
     private OffenderController offender;
 
     private bool isPlay;
-    private GameProgress currentProgress;
+    public GameProgress currentProgress { get; private set; }
     private int round;
 
     private List<Monster> curRoundMonster;
@@ -45,6 +45,8 @@ public class GameController : MonoBehaviour
 
         isPlay = true;
         round = 0;
+        
+        offender.SetView();
     }
 
     public void ReadyRound()
@@ -53,6 +55,7 @@ public class GameController : MonoBehaviour
         {
             round++;
             currentProgress = GameProgress.Ready;
+            offender.SetView();
 
             curRoundMonster.Clear();
             //curRoundCharacter.Clear();            
@@ -64,7 +67,8 @@ public class GameController : MonoBehaviour
 
     public void StartRound()
     {
-
+        currentProgress = GameProgress.GamePlay;
+        offender.SetView();
     }
 
 #region GUI

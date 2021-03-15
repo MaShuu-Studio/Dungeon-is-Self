@@ -7,12 +7,13 @@ public class OffenderController : MonoBehaviour
 {
     private GameController gameController;
     [Header("UI")]
+    [SerializeField] private List<GameObject> views;
     [SerializeField] private List<Toggle> characterToggles;
     [SerializeField] private List<GameObject> characterSkillTrees;
     [Space]
 
     private SkillDB skillDB;
-    
+
     public enum Role {FIGHTER, MARKSMAN, MAGE}
     public List<Role> bench = new List<Role>();
     public List<Role> roster = new List<Role>();
@@ -31,11 +32,25 @@ public class OffenderController : MonoBehaviour
         skillDB = GameObject.FindWithTag("SkillDB").GetComponent<SkillDB>();        
     }
 
-    // Update is called once per frame
     void Update()
     {
-        for (int i = 0; i < 6; i++) characterSkillTrees[i].SetActive(characterToggles[i].isOn);
+        if (gameController.currentProgress == GameController.GameProgress.Ready)
+            for (int i = 0; i < 6; i++) characterSkillTrees[i].SetActive(characterToggles[i].isOn);
         
+    }
+
+    public void SetView()
+    {
+        foreach(GameObject view in views)
+        {
+            view.SetActive(false);
+        }
+
+        switch (gameController.currentProgress)
+        {
+            case GameController.GameProgress.Ready: views[0].SetActive(true); break;
+            case GameController.GameProgress.GamePlay: views[1].SetActive(true); break;
+        }
     }
 
     public void SetBench(Role role)
