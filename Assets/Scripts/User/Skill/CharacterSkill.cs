@@ -9,14 +9,14 @@ public class CharacterSkill
     public int damage;
     public string prior;
 
-    public Skill(string name, int readyTurn, int damage, string prior)
+    public CharacterSkill(string name, int readyTurn, int damage, string prior)
     {
         this.name = name;
         this.readyTurn = readyTurn;
         this.damage = damage;
         this.prior = prior;
     }
-    public Skill(string name, int readyTurn, int damage)
+    public CharacterSkill(string name, int readyTurn, int damage)
     {
         this.name = name;
         this.readyTurn = readyTurn;

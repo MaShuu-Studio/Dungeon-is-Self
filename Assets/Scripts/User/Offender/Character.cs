@@ -5,7 +5,7 @@ using UnityEngine;
 public class Character : MonoBehaviour
 {
     public SkillDB skilldb = new SkillDB();
-    private List<Skill> dice = new List<Skill>();
+    private List<CharacterSkill> dice = new List<CharacterSkill>();
     private List<string> skill = new List<string>();
     // Start is called before the first frame update
     void Start()
@@ -19,7 +19,7 @@ public class Character : MonoBehaviour
         
     }
 
-    public Skill DiceThrow()
+    public CharacterSkill DiceThrow()
     {
         int i = Random.Range(0, 6);
         return dice[i];
@@ -28,6 +28,6 @@ public class Character : MonoBehaviour
     protected void SetDice(string skill)
     {
         if(dice.Count >= 6) return;
-        else dice.Add(skilldb.GetSkill(skill));
+        else dice.Add(skilldb.GetCharacterSkill(skill));
     }
 }

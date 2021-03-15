@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class OffenderController : MonoBehaviour
 {
-    public SkillDB skilldb = new SkillDB();
+    public SkillDB skillDB;
     public enum Role {FIGHTER, MARKSMAN, MAGE}
     public List<Role> bench = new List<Role>();
     public List<Role> roster = new List<Role>();
@@ -19,7 +19,7 @@ public class OffenderController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        skillDB = GameObject.FindWithTag("SkillDB").GetComponent<SkillDB>();
     }
 
     // Update is called once per frame
