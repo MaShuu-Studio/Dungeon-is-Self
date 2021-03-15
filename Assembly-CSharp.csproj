@@ -62,6 +62,8 @@
      <Compile Include="Assets\Scripts\Monster\MonsterDatabase.cs" />
      <Compile Include="Assets\Scripts\Monster\Skill\MonsterSkill.cs" />
      <Compile Include="Assets\Scripts\Monster\Skill\MonsterSkillDataBase.cs" />
+     <Compile Include="Assets\Scripts\UI\UIDescription.cs" />
+     <Compile Include="Assets\Scripts\UI\UIIcon.cs" />
      <Compile Include="Assets\Scripts\User\Defend\DefenderController.cs" />
      <Compile Include="Assets\Scripts\User\Defend\DungeonController.cs" />
      <Compile Include="Assets\Scripts\User\Offender\Offender.cs" />
