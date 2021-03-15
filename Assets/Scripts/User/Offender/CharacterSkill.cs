@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Skill
+public class CharacterSkill
 {
     public string name {get; private set;}
     public int readyTurn;
