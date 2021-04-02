@@ -20,6 +20,6 @@ public class CharacterSkill : Skill
         this.name = name;
         this.turn = turn;
         this.damage = damage;
-        this.prior = 0;
+        this.prior = null;
     }
 }

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Character : MonoBehaviour
 {
-    public SkillDB skilldb = new SkillDB();
+    [SerializeField] private SkillDB skilldb;
     private List<CharacterSkill> dice = new List<CharacterSkill>();
     private List<string> skill = new List<string>();
     // Start is called before the first frame update

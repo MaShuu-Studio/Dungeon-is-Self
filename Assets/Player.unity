@@ -265,11 +265,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 13da174b771799a4693a5b9b04f4ffeb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bench: 
-  roster: 
-  fighter: 0
-  marksman: 1
-  mage: 2
+  skilldb: {fileID: 1265042158}
 --- !u!1 &498636576
 GameObject:
   m_ObjectHideFlags: 0
@@ -299,9 +295,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f83fd53e2bd8943419d1caf97c49e687, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bench: 
-  roster: 
-  fighter: 0
+  skilldb: {fileID: 1265042158}
 --- !u!4 &498636578
 Transform:
   m_ObjectHideFlags: 0
@@ -359,9 +353,50 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7b77c148cfa676d46b5009af3e14c653, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bench: 
-  roster: 
-  marksman: 1
+  skilldb: {fileID: 0}
+--- !u!1 &1265042157
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1265042159}
+  - component: {fileID: 1265042158}
+  m_Layer: 0
+  m_Name: SkillDB
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1265042158
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1265042157}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6714a7039ddd4754388286bd7101d896, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &1265042159
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1265042157}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 31.98677, y: 31.720953, z: -13230.6875}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1738104925
 GameObject:
   m_ObjectHideFlags: 0
@@ -405,9 +440,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5c1a0d2db1600940aa545c4df7b9799, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bench: 
-  roster: 
-  mage: 2
+  skilldb: {fileID: 0}
 --- !u!1 &1991411921
 GameObject:
   m_ObjectHideFlags: 0
