@@ -1,88 +1,102 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 
-public class OffenderController : MonoBehaviour
+namespace Offender
 {
-    private GameController gameController;
-    [Header("UI")]
-    [SerializeField] private List<GameObject> views;
-    [SerializeField] private List<Toggle> characterToggles;
-    [SerializeField] private List<GameObject> characterSkillTrees;
-
-    public enum Role {FIGHTER, MARKSMAN, MAGE}
-    public List<Role> bench = new List<Role>();
-    public List<Role> roster = new List<Role>();
-
-    public Role fighter = Role.FIGHTER;
-    public Role marksman = Role.MARKSMAN;
-    public Role mage = Role.MAGE;
-
-    private Fighter f;
-    private Marksman m;
-    private Mage ma;
-    
-    void Awake()
+    public enum Role { FIGHTER, MARKSMAN, MAGE }
+    public class OffenderController : MonoBehaviour
     {
-        gameController = GameObject.FindWithTag("GameController").GetComponent<GameController>();
-    }
+        private List<Character> character = new List<Character>();
+        public List<Role> roster = new List<Role>();
+        public List<Role> bench = new List<Role>();
 
-    void Update()
-    {
-        if (gameController.currentProgress == GameController.GameProgress.Ready)
-            for (int i = 0; i < 6; i++) characterSkillTrees[i].SetActive(characterToggles[i].isOn);
+        public Role fighter = Role.FIGHTER;
+        public Role marksman = Role.MARKSMAN;
+        public Role mage = Role.MAGE;
+
+        // Start is called before the first frame update
+        void Start()
+        {
         
-    }
-
-    public void SetView()
-    {
-        foreach(GameObject view in views)
-        {
-            view.SetActive(false);
         }
 
-        switch (gameController.currentProgress)
+        // Update is called once per frame
+        void Update()
         {
-            case GameController.GameProgress.Ready: views[0].SetActive(true); break;
-            case GameController.GameProgress.GamePlay: views[1].SetActive(true); break;
+            
         }
-    }
-
-    public void SetBench(Role role)
-    {
-        if(bench.Count >= 3) return;
-        else bench.Add(role);
-    }
-
-    public void SetRoster(Role role)
-    {
-        if(roster.Count >= 3) return;
-        else roster.Add(role);
-    }
-
-    public void DiceThrow()
-    {
-        f.DiceThrow();
-        m.DiceThrow();
-        ma.DiceThrow();
-    }
-    
-    private void OnGUI()
-    {
-        if (GUI.Button(new Rect(10, 10, 50, 50), "Fighter"))
+        public void SetBench(Role role)
         {
-            SetBench(fighter);
+            if(bench.Count >= 3) return;
+            else {bench.Add(role); character.Add(new Character(role));}
         }
-        
-        if (GUI.Button(new Rect(10, 80, 50, 50), "Marksman"))
+        public void SetRoster(Role role)
         {
-            SetBench(marksman);
+            if(roster.Count >= 3) return;
+            else{ roster.Add(role); character.Add(new Character(role));}
         }
-        
-        if (GUI.Button(new Rect(80, 80, 50, 50), "Mage"))
+
+        public void SetDice(int n, int id)
         {
-            SetBench(mage);
+            //if (character[n].dice.Count >= 6) return;
+            //else 
+            character[n].dice.Add(SkillDatabase.GetCharacterSkill(id));
+        }
+
+        public void ResetDice(int n)
+        {
+            character[n].dice.RemoveRange(0, 6);
+        }
+
+        public CharacterSkill OneDiceThrow(int n)
+        {
+            int i = Random.Range(0, 6);
+            return character[n].dice[i];
+        }
+
+        public void AllDiceThrow(int a, int b, int c)
+        {
+            OneDiceThrow(a);
+            OneDiceThrow(b);
+            OneDiceThrow(c);
+        }
+
+        public void SetSkillUpdate()
+        {
+
+        }
+
+        private void OnGUI()
+        {
+            if (GUI.Button(new Rect(10, 10, 50, 50), "Fighter"))
+            {
+                SetBench(fighter);
+            }
+
+            if (GUI.Button(new Rect(10, 80, 50, 50), "Marksman"))
+            {
+                SetBench(marksman);
+            }
+
+            if (GUI.Button(new Rect(80, 80, 50, 50), "Mage"))
+            {
+                SetBench(mage);
+            }
+
+            /*if (GUI.Button(new Rect(150, 150, 50, 50), "SetDice0"))
+            {
+                SetDice(0, 100);
+                
+            }    
+            if(character.Count > 0)
+            {
+                if(character[0].dice.Count > 0) {
+                    GUI.Box(new Rect(210, 210, 100, 50), character[0].dice[0].name);
+                }
+            } */
+            //GUI.Box(new Rect(210, 210, 100, 50), "sex");
+
         }
     }
 }

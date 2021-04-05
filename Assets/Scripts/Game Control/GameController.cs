@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using Offender;
 
 public class GameController : MonoBehaviour
 {
@@ -62,7 +63,7 @@ public class GameController : MonoBehaviour
         isPlay = true;
         round = 0;
         
-        offender.SetView();
+        //offender.SetView();
     }
 
     public void ReadyRound()
@@ -71,7 +72,7 @@ public class GameController : MonoBehaviour
         {
             round++;
             currentProgress = GameProgress.Ready;
-            offender.SetView();
+            //offender.SetView();
 
             curRoundMonster.Clear();
             //curRoundCharacter.Clear();            
@@ -84,7 +85,7 @@ public class GameController : MonoBehaviour
     public void StartRound()
     {
         currentProgress = GameProgress.GamePlay;
-        offender.SetView();
+        //offender.SetView();
     }
 
 #region GUI

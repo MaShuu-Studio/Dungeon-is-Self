@@ -88,6 +88,10 @@ public class SkillDatabase : MonoBehaviour
     {
         return charSkillDB.Find(skill => skill.name == name);
     }
+    public static CharacterSkill GetCharacterSkill(int id)
+    {
+        return charSkillDB.Find(skill => skill.id == id);
+    }
     
     public static MonsterSkill GetMonsterSkill(string name)
     {
