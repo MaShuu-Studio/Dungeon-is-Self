@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class GameController : MonoBehaviour
@@ -11,14 +12,29 @@ public class GameController : MonoBehaviour
     private OffenderController offender;
 
     private bool isPlay;
-    private GameProgress currentProgress;
+    public GameProgress currentProgress { get; private set; }
     private int round;
 
     private List<Monster> curRoundMonster;
     //private List<Character> curRoundCharacter;
 
-    void Awake()
+    private static GameController instance;
+    public static GameController Instance
     {
+        get
+        {
+            var obj = FindObjectOfType<GameController>();
+            instance = obj;
+            return instance;
+        }
+    }
+    private void Awake()
+    {
+        if (Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
         DontDestroyOnLoad(gameObject);
     }
 
@@ -45,6 +61,8 @@ public class GameController : MonoBehaviour
 
         isPlay = true;
         round = 0;
+        
+        offender.SetView();
     }
 
     public void ReadyRound()
@@ -53,6 +71,7 @@ public class GameController : MonoBehaviour
         {
             round++;
             currentProgress = GameProgress.Ready;
+            offender.SetView();
 
             curRoundMonster.Clear();
             //curRoundCharacter.Clear();            
@@ -64,7 +83,8 @@ public class GameController : MonoBehaviour
 
     public void StartRound()
     {
-
+        currentProgress = GameProgress.GamePlay;
+        offender.SetView();
     }
 
 #region GUI
@@ -86,5 +106,5 @@ public class GameController : MonoBehaviour
             StartRound();
         }
     }
-#endregion
+    #endregion
 }

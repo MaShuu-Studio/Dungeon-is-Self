@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class Character : MonoBehaviour
 {
-    [SerializeField] private SkillDB skilldb;
     private List<CharacterSkill> dice = new List<CharacterSkill>();
     private List<string> skill = new List<string>();
     // Start is called before the first frame update
@@ -28,6 +27,6 @@ public class Character : MonoBehaviour
     protected void SetDice(string skill)
     {
         if(dice.Count >= 6) return;
-        else dice.Add(skilldb.GetCharacterSkill(skill));
+        else dice.Add(SkillDatabase.GetCharacterSkill(skill));
     }
 }

@@ -1,10 +1,16 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class OffenderController : MonoBehaviour
 {
-    public SkillDB skillDB;
+    private GameController gameController;
+    [Header("UI")]
+    [SerializeField] private List<GameObject> views;
+    [SerializeField] private List<Toggle> characterToggles;
+    [SerializeField] private List<GameObject> characterSkillTrees;
+
     public enum Role {FIGHTER, MARKSMAN, MAGE}
     public List<Role> bench = new List<Role>();
     public List<Role> roster = new List<Role>();
@@ -16,16 +22,31 @@ public class OffenderController : MonoBehaviour
     private Fighter f;
     private Marksman m;
     private Mage ma;
-    // Start is called before the first frame update
-    void Start()
+    
+    void Awake()
     {
-        skillDB = GameObject.FindWithTag("SkillDB").GetComponent<SkillDB>();
+        gameController = GameObject.FindWithTag("GameController").GetComponent<GameController>();
     }
 
-    // Update is called once per frame
     void Update()
     {
+        if (gameController.currentProgress == GameController.GameProgress.Ready)
+            for (int i = 0; i < 6; i++) characterSkillTrees[i].SetActive(characterToggles[i].isOn);
         
+    }
+
+    public void SetView()
+    {
+        foreach(GameObject view in views)
+        {
+            view.SetActive(false);
+        }
+
+        switch (gameController.currentProgress)
+        {
+            case GameController.GameProgress.Ready: views[0].SetActive(true); break;
+            case GameController.GameProgress.GamePlay: views[1].SetActive(true); break;
+        }
     }
 
     public void SetBench(Role role)
