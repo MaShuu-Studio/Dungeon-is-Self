@@ -4,10 +4,8 @@
 TagManager:
   serializedVersion: 2
   tags:
-  - MonsterDB
   - Defender
   - Offender
-  - SkillDB
   layers:
   - Default
   - TransparentFX

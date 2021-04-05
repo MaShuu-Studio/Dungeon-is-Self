@@ -14,7 +14,8 @@ public class DefenderController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        monsterDB = GameObject.FindWithTag("MonsterDB").GetComponent<MonsterDatabase>();
+        //monsterDB = MonsterDatabase.Instance;
+        //monsterDB = GameObject.FindWithTag("MonsterDB").GetComponent<MonsterDatabase>();
         monsterCandidates = new List<Monster>();
     }
     
@@ -26,7 +27,7 @@ public class DefenderController : MonoBehaviour
         {
             while(true)
             {
-                Monster monster = monsterDB.GetRandomMonster();
+                Monster monster = MonsterDatabase.GetRandomMonster();
                 if (monsterCandidates.Exists(mon => mon.name == monster.name) == false)
                 {
                     monsterCandidates.Add(monster);

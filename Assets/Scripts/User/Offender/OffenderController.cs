@@ -10,9 +10,6 @@ public class OffenderController : MonoBehaviour
     [SerializeField] private List<GameObject> views;
     [SerializeField] private List<Toggle> characterToggles;
     [SerializeField] private List<GameObject> characterSkillTrees;
-    [Space]
-
-    private SkillDB skillDB;
 
     public enum Role {FIGHTER, MARKSMAN, MAGE}
     public List<Role> bench = new List<Role>();
@@ -29,7 +26,6 @@ public class OffenderController : MonoBehaviour
     void Awake()
     {
         gameController = GameObject.FindWithTag("GameController").GetComponent<GameController>();
-        skillDB = GameObject.FindWithTag("SkillDB").GetComponent<SkillDB>();        
     }
 
     void Update()

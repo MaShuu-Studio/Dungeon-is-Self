@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class GameController : MonoBehaviour
@@ -17,8 +18,23 @@ public class GameController : MonoBehaviour
     private List<Monster> curRoundMonster;
     //private List<Character> curRoundCharacter;
 
-    void Awake()
+    private static GameController instance;
+    public static GameController Instance
     {
+        get
+        {
+            var obj = FindObjectOfType<GameController>();
+            instance = obj;
+            return instance;
+        }
+    }
+    private void Awake()
+    {
+        if (Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
         DontDestroyOnLoad(gameObject);
     }
 
@@ -90,5 +106,5 @@ public class GameController : MonoBehaviour
             StartRound();
         }
     }
-#endregion
+    #endregion
 }

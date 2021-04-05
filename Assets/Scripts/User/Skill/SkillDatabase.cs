@@ -2,21 +2,31 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SkillDB : MonoBehaviour
+public class SkillDatabase : MonoBehaviour
 {
-    private List<CharacterSkill> charSkillDB;
-    private List<MonsterSkill> monSkillDB;
+    private static List<CharacterSkill> charSkillDB;
+    private static List<MonsterSkill> monSkillDB;
     // Start is called before the first frame update
-    void Awake()
+    private static SkillDatabase instance;
+    public static SkillDatabase Instance
     {
+        get
+        {
+            var obj = FindObjectOfType<SkillDatabase>();
+            instance = obj;
+            return instance;
+        }
+    }
+    private void Awake()
+    {
+        if (Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
         DontDestroyOnLoad(gameObject);
         InitializeCharacterSkill();
         InitializeMonsterSkill();
-    }
-
-    void Start()
-    {
-        
     }
 
     private void InitializeCharacterSkill()
@@ -33,12 +43,12 @@ public class SkillDB : MonoBehaviour
         monSkillDB.Add(new MonsterSkill("SKILL1", 5));
     }
 
-    public CharacterSkill GetCharacterSkill(string name)
+    public static CharacterSkill GetCharacterSkill(string name)
     {
         return charSkillDB.Find(skill => skill.name == name);
     }
     
-    public MonsterSkill GetMonsterSkill(string name)
+    public static MonsterSkill GetMonsterSkill(string name)
     {
         return monSkillDB.Find(skill => skill.name == name);
     }
