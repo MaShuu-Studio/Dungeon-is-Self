@@ -34,6 +34,7 @@ public class NetworkManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        /*
         string host = Dns.GetHostName();
         IPHostEntry ipHost = Dns.GetHostEntry(host);
         IPAddress ipAddr = ipHost.AddressList[0];
@@ -42,11 +43,13 @@ public class NetworkManager : MonoBehaviour
         Connector connector = new Connector();
 
         connector.Connect(endPoint, () => { return session; }, 1);
+        */
     }
 
     // Update is called once per frame
     void Update()
     {
+        /*
         // 게임 쓰레드에서 Pop하여 작동하는 부분.
         List<IPacket> packets = PacketQueue.Instance.PopAll();
         foreach (IPacket packet in packets)
@@ -54,6 +57,7 @@ public class NetworkManager : MonoBehaviour
             PacketManager.Instance.HandlePacket(session, packet);
         }
         packets.Clear();
+        */
     }
 
     public void Send(ArraySegment<byte> segment)

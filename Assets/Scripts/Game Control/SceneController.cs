@@ -6,6 +6,7 @@ using UnityEngine.UI;
 
 public class SceneController : MonoBehaviour
 {
+    private string currentScene = "Loading Scene";
     private static SceneController instance;
     public static SceneController Instance
     {
@@ -24,15 +25,26 @@ public class SceneController : MonoBehaviour
             return;
         }
         DontDestroyOnLoad(gameObject);
+
+        StartCoroutine(ChangeScene("Loading Scene", LoadSceneMode.Single));
     }
 
-    public static void ChangeScene(string name)
+    public void ChangeScene(string name, string mode = "SINGLE")
     {
-        SceneManager.LoadScene(name, LoadSceneMode.Single);
+        LoadSceneMode loadMode = LoadSceneMode.Single;
+        if (mode != "SINGLE") loadMode = LoadSceneMode.Additive;
+
+        StartCoroutine(ChangeScene(name, loadMode));
     }
 
-    public static void AddScene(string name)
+    IEnumerator ChangeScene(string name, LoadSceneMode mode)
     {
-        SceneManager.LoadScene(name, LoadSceneMode.Additive);
+        AsyncOperation async = SceneManager.LoadSceneAsync(name, mode);
+
+        while (async != null && async.isDone == false)
+        {
+            yield return null;
+        }
+        currentScene = name;
     }
 }

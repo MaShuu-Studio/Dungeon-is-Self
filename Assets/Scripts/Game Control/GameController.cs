@@ -91,17 +91,30 @@ public class GameController : MonoBehaviour
 
     private void OnGUI()
     {
-        if (GUI.Button(new Rect(10, 10, 50, 50), "Start"))
+        if (GUI.Button(new Rect(10, 10, 50, 50), "TITLE"))
+        {
+            SceneController.Instance.ChangeScene("Title");
+        }
+        if (GUI.Button(new Rect(80, 10, 50, 50), "OFFEND"))
+        {
+            SceneController.Instance.ChangeScene("Offend");
+        }
+        if (GUI.Button(new Rect(150, 10, 50, 50), "DEFEND"))
+        {
+            SceneController.Instance.ChangeScene("DEFEND");
+        }
+
+        if (GUI.Button(new Rect(10, 80, 50, 50), "Ready"))
         {
             StartGame();
         }
-        
-        if (GUI.Button(new Rect(10, 80, 50, 50), "Ready"))
+
+        if (GUI.Button(new Rect(80, 80, 50, 50), "Ready"))
         {
             ReadyRound();
         }
         
-        if (GUI.Button(new Rect(80, 80, 50, 50), "Round"))
+        if (GUI.Button(new Rect(150, 80, 50, 50), "Round"))
         {
             StartRound();
         }
