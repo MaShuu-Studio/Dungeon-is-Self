@@ -1,6 +1,6 @@
 start ../../PacketGenerator/bin/PacketGenerator.exe ../../../../Assets/Scripts/Network/PDL.xml
 
-timeout 0.5
+timeout 1
 
 xcopy /Y GenPackets.cs "../../DummyClient/Packet"
 xcopy /Y GenPackets.cs "../../Server/Packet"

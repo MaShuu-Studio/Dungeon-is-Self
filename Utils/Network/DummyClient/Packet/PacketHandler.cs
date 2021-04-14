@@ -8,12 +8,32 @@ using System.Text;
 // 클라 -> 서버, 서버 -> 클라 혹은 A서버 -> B서버 등등
 class PacketHandler
 {
-    public static void S_ChatHandler(PacketSession session, IPacket packet)
+    public static void S_BroadcastEnterGameHandler(PacketSession session, IPacket packet)
     {
-        S_Chat chatPacket = packet as S_Chat;
         ServerSession serverSession = session as ServerSession;
 
         //if (chatPacket.playerId == 1)
-           //Console.WriteLine(chatPacket.chat);
+        //Console.WriteLine(chatPacket.chat);
+    }
+    public static void S_BroadcastLeaveGameHandler(PacketSession session, IPacket packet)
+    {
+        ServerSession serverSession = session as ServerSession;
+
+        //if (chatPacket.playerId == 1)
+        //Console.WriteLine(chatPacket.chat);
+    }
+    public static void S_PlayerListHandler(PacketSession session, IPacket packet)
+    {
+        ServerSession serverSession = session as ServerSession;
+
+        //if (chatPacket.playerId == 1)
+        //Console.WriteLine(chatPacket.chat);
+    }
+    public static void S_BroadcastMoveHandler(PacketSession session, IPacket packet)
+    {
+        ServerSession serverSession = session as ServerSession;
+
+        //if (chatPacket.playerId == 1)
+        //Console.WriteLine(chatPacket.chat);
     }
 }

@@ -65,6 +65,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Scripts\Charater\CrowdControl.cs" />
+    <Compile Include="Assets\Scripts\Dummy\MyPlayer.cs" />
+    <Compile Include="Assets\Scripts\Dummy\Player.cs" />
+    <Compile Include="Assets\Scripts\Dummy\PlayerManager.cs" />
     <Compile Include="Assets\Scripts\Game Control\GameController.cs" />
     <Compile Include="Assets\Scripts\Game Control\SceneController.cs" />
     <Compile Include="Assets\Scripts\Game Control\TestScript.cs" />

@@ -9,7 +9,28 @@ using System;
 public class NetworkManager : MonoBehaviour
 {
     const int PORT_NUMBER = 7777;
-    ServerSession session = new ServerSession();
+    static ServerSession session = new ServerSession();
+
+    private static NetworkManager instance;
+    public static NetworkManager Instance
+    {
+        get
+        {
+            var obj = FindObjectOfType<NetworkManager>();
+            instance = obj;
+            return instance;
+        }
+    }
+    private void Awake()
+    {
+        if (Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+        DontDestroyOnLoad(gameObject);
+    }
+
     // Start is called before the first frame update
     void Start()
     {
@@ -21,32 +42,22 @@ public class NetworkManager : MonoBehaviour
         Connector connector = new Connector();
 
         connector.Connect(endPoint, () => { return session; }, 1);
-
-        StartCoroutine(CoSendPacket());
     }
 
     // Update is called once per frame
     void Update()
     {
         // 게임 쓰레드에서 Pop하여 작동하는 부분.
-        IPacket packet = PacketQueue.Instance.Pop();
-        if (packet != null)
+        List<IPacket> packets = PacketQueue.Instance.PopAll();
+        foreach (IPacket packet in packets)
         {
             PacketManager.Instance.HandlePacket(session, packet);
         }
+        packets.Clear();
     }
-    IEnumerator CoSendPacket()
+
+    public void Send(ArraySegment<byte> segment)
     {
-        while (true)
-        {
-            yield return new WaitForSeconds(0.5f);
-
-            C_Chat chatPacket = new C_Chat();
-            chatPacket.chat = "Hello Unity !";
-
-            ArraySegment<byte> segment = chatPacket.Write();
-
-            session.Send(segment);
-        }
+        session.Send(segment);
     }
 }

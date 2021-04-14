@@ -29,11 +29,13 @@ namespace DummyClient
             {
                 foreach (ServerSession session in _sessions)
                 {
-                    C_Chat chatPacket = new C_Chat();
-                    chatPacket.chat = $"Hello Server !";
-                    ArraySegment<byte> segment = chatPacket.Write();
+                    Random rand = new Random();
+                    C_Move movePacket = new C_Move();
+                    movePacket.xPos = ((float)(rand.NextDouble() - 0.5f) * 10);
+                    movePacket.yPos = ((float)(rand.NextDouble() - 0.5f) * 10);
+                    movePacket.zPos = 0;
 
-                    session.Send(segment);
+                    session.Send(movePacket.Write());
                 }
             }
         }

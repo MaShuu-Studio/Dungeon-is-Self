@@ -16,17 +16,8 @@ namespace Server
             _jobQueue.Push(job);
         }
 
-        public void Broadcast(ClientSession session, string chat)
+        public void Broadcast(ArraySegment<byte> segment)
         {
-            S_Chat packet = new S_Chat();
-            packet.playerId = session.SessionId;
-            packet.chat = $"{packet.playerId}: {chat}";
-            ArraySegment<byte> segment = packet.Write();
-
-            // 프로젝트가 커짐에 따라 패킷이 몰리면서 문제가 생김.
-            // 이 후 Queue 등을 활용해 대기시켜놓는 방식 활용.
-            // Queue를 Lock을 걸어 사용함에 따라 각 action들은 lock을 할 필요가 없어짐.
-            // 따라서 List에 작업을 몰아놓은 뒤 일정 시간마다 Flush 진행.
             _pendingList.Add(segment);
         }
 
@@ -35,19 +26,66 @@ namespace Server
             foreach (ClientSession s in _sessions)
                 s.Send(_pendingList);
 
-            Console.WriteLine($"Flushed {_pendingList.Count} items");
+            if (_pendingList.Count != 0) Console.WriteLine($"Flushed {_pendingList.Count} items");
             _pendingList.Clear();
         }
 
         public void Enter(ClientSession session)
         {
+            // 플레이어 추가
             _sessions.Add(session);
             session.Room = this;
+
+            // 입장 플레이어에게 모든 플레이어목록 전달
+            S_PlayerList playerList = new S_PlayerList();
+            foreach(ClientSession s in _sessions)
+            {
+                playerList.players.Add(new S_PlayerList.Player()
+                {
+                    isSelf = (s == session),
+                    playerId = s.SessionId,
+                    xPos = s.Xpos,
+                    yPos = s.Ypos,
+                    zPos = s.Zpos
+                });
+            }
+
+            session.Send(playerList.Write());
+
+            // 모든 플레이어에게 입장을 브로드캐스트
+            S_BroadcastEnterGame broadcastEnter = new S_BroadcastEnterGame();
+            broadcastEnter.playerId = session.SessionId;
+            broadcastEnter.xPos = 0;
+            broadcastEnter.yPos = 0;
+            broadcastEnter.zPos = 0;
+            Broadcast(broadcastEnter.Write());
+
         }
 
         public void Leave(ClientSession session)
         {
+            // 플레이어 나감
             _sessions.Remove(session);
+            // 모든 플레이어에게 퇴장을 브로드캐스트
+            S_BroadcastLeaveGame broadcastLeave = new S_BroadcastLeaveGame();
+            broadcastLeave.playerId = session.SessionId;
+            Broadcast(broadcastLeave.Write());
+        }
+
+        public void Move(ClientSession session, C_Move movePacket)
+        {
+            // 좌표 이동
+            session.Xpos = movePacket.xPos;
+            session.Ypos = movePacket.yPos;
+            session.Zpos = movePacket.zPos;
+
+            // Broadcast
+            S_BroadcastMove broadcastMove = new S_BroadcastMove();
+            broadcastMove.playerId = session.SessionId;
+            broadcastMove.xPos = session.Xpos;
+            broadcastMove.yPos = session.Ypos;
+            broadcastMove.zPos = session.Zpos;
+            Broadcast(broadcastMove.Write());
         }
     }
 }

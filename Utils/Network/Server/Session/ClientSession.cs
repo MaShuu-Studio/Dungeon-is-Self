@@ -13,6 +13,9 @@ namespace Server
     {
         public int SessionId { get; set; }
         public GameRoom Room { get; set; }
+        public float Xpos { get; set; }
+        public float Ypos { get; set; }
+        public float Zpos { get; set; }
         public override void OnConnected(EndPoint endPoint)
         {
             Console.WriteLine($"[System] OnConnected : {endPoint}");

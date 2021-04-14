@@ -3,7 +3,7 @@ using ServerCore;
 using System;
 using System.Collections.Generic;
 
-class PacketManager
+public class PacketManager
 {
     static PacketManager instance = new PacketManager();
     public static PacketManager Instance { get { return instance; } }

@@ -18,7 +18,7 @@ public interface IPacket
 	ArraySegment<byte> Write();
 }
 
-class C_Chat : IPacket
+public class C_Chat : IPacket
 {
     public string chat;
     public ushort Protocol { get { return (ushort)PacketID.C_Chat; } }
@@ -56,7 +56,7 @@ class C_Chat : IPacket
         return SendBufferHelper.Close(count);
     }
 }
-class S_Chat : IPacket
+public class S_Chat : IPacket
 {
     public int playerId;
 	public string chat;
