@@ -70,6 +70,7 @@ public class OffenderController : MonoBehaviour
     
     private void OnGUI()
     {
+        /*
         if (GUI.Button(new Rect(10, 10, 50, 50), "Fighter"))
         {
             SetBench(fighter);
@@ -84,5 +85,6 @@ public class OffenderController : MonoBehaviour
         {
             SetBench(mage);
         }
+        */
     }
 }

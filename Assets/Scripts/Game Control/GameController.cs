@@ -91,6 +91,7 @@ public class GameController : MonoBehaviour
 
     private void OnGUI()
     {
+        /*
         if (GUI.Button(new Rect(10, 10, 50, 50), "TITLE"))
         {
             SceneController.Instance.ChangeScene("Title");
@@ -103,7 +104,7 @@ public class GameController : MonoBehaviour
         {
             SceneController.Instance.ChangeScene("DEFEND");
         }
-
+        */
         if (SceneController.Instance.CurrentScene == "OFFEND" || SceneController.Instance.CurrentScene == "DEFEND")
         {
             if (GUI.Button(new Rect(10, 80, 50, 50), "Ready"))
