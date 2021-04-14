@@ -96,6 +96,7 @@
     <Compile Include="Assets\Scripts\User\Skill\Skill.cs" />
     <Compile Include="Assets\Scripts\User\Skill\SkillDatabase.cs" />
     <Compile Include="Assets\Scripts\User\Skill\SkillTree.cs" />
+    <None Include="Assets\Scripts\Network\PDL.xml" />
     <Reference Include="UnityEngine">
       <HintPath>D:/Program Files/Unity/Editors/2019.4.18f1/Editor/Data/Managed/UnityEngine/UnityEngine.dll</HintPath>
     </Reference>
