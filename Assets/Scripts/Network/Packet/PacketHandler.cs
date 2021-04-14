@@ -14,7 +14,12 @@ class PacketHandler
         ServerSession serverSession = session as ServerSession;
 
         if (chatPacket.playerId == 1)
+        {
             Debug.Log(chatPacket.chat);
+
+            GameObject obj = GameObject.Find("GameObject");
+            Debug.Log($"Find {obj}");
+        }
         //if (chatPacket.playerId == 1)
            //Console.WriteLine(chatPacket.chat);
     }

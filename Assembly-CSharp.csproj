@@ -78,6 +78,7 @@
     <Compile Include="Assets\Scripts\Network\Packet\ClientPacketManager.cs" />
     <Compile Include="Assets\Scripts\Network\Packet\GenPackets.cs" />
     <Compile Include="Assets\Scripts\Network\Packet\PacketHandler.cs" />
+    <Compile Include="Assets\Scripts\Network\PacketQueue.cs" />
     <Compile Include="Assets\Scripts\Network\ServerSession.cs" />
     <Compile Include="Assets\Scripts\UI\ToggleIcon.cs" />
     <Compile Include="Assets\Scripts\UI\UIController.cs" />

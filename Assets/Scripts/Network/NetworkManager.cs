@@ -25,5 +25,11 @@ public class NetworkManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        // 게임 쓰레드에서 Pop하여 작동하는 부분.
+        IPacket packet = PacketQueue.Instance.Pop();
+        if (packet != null)
+        {
+            PacketManager.Instance.HandlePacket(session, packet);
+        }
     }
 }
