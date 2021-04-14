@@ -104,19 +104,22 @@ public class GameController : MonoBehaviour
             SceneController.Instance.ChangeScene("DEFEND");
         }
 
-        if (GUI.Button(new Rect(10, 80, 50, 50), "Ready"))
+        if (SceneController.Instance.CurrentScene == "OFFEND" || SceneController.Instance.CurrentScene == "DEFEND")
         {
-            StartGame();
-        }
+            if (GUI.Button(new Rect(10, 80, 50, 50), "Ready"))
+            {
+                StartGame();
+            }
 
-        if (GUI.Button(new Rect(80, 80, 50, 50), "Ready"))
-        {
-            ReadyRound();
-        }
-        
-        if (GUI.Button(new Rect(150, 80, 50, 50), "Round"))
-        {
-            StartRound();
+            if (GUI.Button(new Rect(80, 80, 50, 50), "Ready"))
+            {
+                ReadyRound();
+            }
+
+            if (GUI.Button(new Rect(150, 80, 50, 50), "Round"))
+            {
+                StartRound();
+            }
         }
     }
     #endregion

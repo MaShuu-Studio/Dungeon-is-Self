@@ -83,6 +83,8 @@
     <Compile Include="Assets\Scripts\Network\Packet\PacketHandler.cs" />
     <Compile Include="Assets\Scripts\Network\PacketQueue.cs" />
     <Compile Include="Assets\Scripts\Network\ServerSession.cs" />
+    <Compile Include="Assets\Scripts\UI\SceneMovementButton.cs" />
+    <Compile Include="Assets\Scripts\UI\ScriptButton.cs" />
     <Compile Include="Assets\Scripts\UI\ToggleIcon.cs" />
     <Compile Include="Assets\Scripts\UI\UIController.cs" />
     <Compile Include="Assets\Scripts\UI\UIDescription.cs" />

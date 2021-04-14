@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public class SceneController : MonoBehaviour
 {
-    private string currentScene = "Loading Scene";
+    public string CurrentScene { get; private set; } = "Loading Scene";
     private static SceneController instance;
     public static SceneController Instance
     {
@@ -26,7 +26,7 @@ public class SceneController : MonoBehaviour
         }
         DontDestroyOnLoad(gameObject);
 
-        StartCoroutine(ChangeScene("Loading Scene", LoadSceneMode.Single));
+        StartCoroutine(ChangeScene("Title", LoadSceneMode.Single));
     }
 
     public void ChangeScene(string name, string mode = "SINGLE")
@@ -45,6 +45,6 @@ public class SceneController : MonoBehaviour
         {
             yield return null;
         }
-        currentScene = name;
+        CurrentScene = name.ToUpper();
     }
 }
