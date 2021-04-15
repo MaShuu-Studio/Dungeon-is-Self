@@ -12,6 +12,9 @@ public class GamePlayUIController : MonoBehaviour
     [Header("READY GAME")]
     [SerializeField] private Transform candidatesTransform;
     [SerializeField] private Transform selectedListTransform;
+    [SerializeField] private RectTransform selectedArrow;
+
+    private int selectedNumber;
 
     [Header("OFFENDER")]
     [SerializeField] private GameObject offenderViewGameObject;
@@ -95,6 +98,11 @@ public class GamePlayUIController : MonoBehaviour
 
     private void ShowAllCandidates()
     {
+        foreach (Transform child in candidatesTransform)
+        {
+            Destroy(child.gameObject);
+        }
+
         Object facePrefab = Resources.Load("Prefab/Frame");
 
         List<string> candidates = new List<string>();
@@ -109,5 +117,11 @@ public class GamePlayUIController : MonoBehaviour
             UIIcon uiIcon = gameObject.GetComponent<UIIcon>();
             uiIcon.SetImage(type, name);
         }
+    }
+
+    public void SetSelectedCharacterNumber(int n, Vector3 pos)
+    {
+        selectedNumber = n;
+        selectedArrow.anchoredPosition = pos;
     }
 }
