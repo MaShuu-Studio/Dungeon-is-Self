@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using GameControl;
 
 public class OffenderController : MonoBehaviour
 {
@@ -30,7 +31,7 @@ public class OffenderController : MonoBehaviour
 
     void Update()
     {
-        if (gameController.currentProgress == GameController.GameProgress.Ready)
+        if (gameController.currentProgress == GameProgress.Ready)
             for (int i = 0; i < 6; i++) characterSkillTrees[i].SetActive(characterToggles[i].isOn);
         
     }
@@ -44,8 +45,8 @@ public class OffenderController : MonoBehaviour
 
         switch (gameController.currentProgress)
         {
-            case GameController.GameProgress.Ready: views[0].SetActive(true); break;
-            case GameController.GameProgress.GamePlay: views[1].SetActive(true); break;
+            case GameProgress.Ready: views[0].SetActive(true); break;
+            case GameProgress.GamePlay: views[1].SetActive(true); break;
         }
     }
 

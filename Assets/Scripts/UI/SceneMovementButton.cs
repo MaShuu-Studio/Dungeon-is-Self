@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using GameControl;
 
 public class SceneMovementButton : MonoBehaviour
 {
@@ -25,17 +26,15 @@ public class SceneMovementButton : MonoBehaviour
     // 실제 게임에서는 서버에서 매칭관련 정보를 넘겨주면서 게임이 시작되기 때문에 필요 X
     // 임시용 변수와 메서드들
     [SerializeField] private bool isPlay;
+    [SerializeField] private UserType userType = UserType.Offender;
 
     IEnumerator WaitSceneMove()
     {
-        while(SceneController.Instance.CurrentScene != "OFFEND" || SceneController.Instance.CurrentScene != "DEFEND")
+        while (SceneController.Instance.CurrentScene != "OFFEND" || SceneController.Instance.CurrentScene != "DEFEND")
         {
             yield return null;
         }
 
-        Debug.Log(SceneController.Instance.CurrentScene);
-        Debug.Log(GameObject.FindWithTag("Defender"));
-        Debug.Log(GameObject.FindWithTag("Offender"));
-        GameController.Instance.StartGame();
+        GameController.Instance.StartGame(userType);
     }
 }
