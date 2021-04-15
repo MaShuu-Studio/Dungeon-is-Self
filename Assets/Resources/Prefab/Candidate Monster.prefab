@@ -84,10 +84,10 @@ GameObject:
   m_Component:
   - component: {fileID: 8478486334228681138}
   - component: {fileID: 8478486334228681136}
-  - component: {fileID: 7281392665228488074}
+  - component: {fileID: 4752114769593459827}
   - component: {fileID: 8478486334228681137}
   m_Layer: 5
-  m_Name: Frame
+  m_Name: Candidate Monster
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -121,7 +121,7 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8478486334228681139}
   m_CullTransparentMesh: 0
---- !u!114 &7281392665228488074
+--- !u!114 &4752114769593459827
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -130,7 +130,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 8478486334228681139}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d6c345d8b4754b14783394b178c9b2d6, type: 3}
+  m_Script: {fileID: 11500000, guid: 77bfd62bf3e896d41a84b4c61c244049, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   description: {fileID: 0}

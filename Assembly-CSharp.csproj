@@ -81,6 +81,7 @@
     <Compile Include="Assets\Scripts\Network\Packet\PacketHandler.cs" />
     <Compile Include="Assets\Scripts\Network\PacketQueue.cs" />
     <Compile Include="Assets\Scripts\Network\ServerSession.cs" />
+    <Compile Include="Assets\Scripts\UI\CandidateCharIcon.cs" />
     <Compile Include="Assets\Scripts\UI\CharSelectIcon.cs" />
     <Compile Include="Assets\Scripts\UI\GamePlayUIController.cs" />
     <Compile Include="Assets\Scripts\UI\SceneMovementButton.cs" />

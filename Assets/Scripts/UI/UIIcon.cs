@@ -13,7 +13,7 @@ public class UIIcon : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     protected Image frameImage;
     protected RectTransform rect;
 
-    protected void Start()
+    protected virtual void Start()
     {
         frameImage = GetComponent<Image>();
         rect = GetComponent<RectTransform>();
@@ -30,7 +30,7 @@ public class UIIcon : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         SetColor(Color.white);
     }
 
-    public void SetImage(GameControl.UserType type, string name)
+    public virtual void SetImage(GameControl.UserType type, string name)
     {
         string path = (type == GameControl.UserType.Defender) ? MonsterDatabase.facePath : "";
 

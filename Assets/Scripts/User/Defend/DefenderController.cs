@@ -28,6 +28,7 @@ public class DefenderController : MonoBehaviour
     }
     #endregion
 
+    private string[] selectedMonsterCandidates = new string[6];
     private List<Monster> monsters = new List<Monster>();
 
     Dictionary<int, bool> Roster;
@@ -55,11 +56,6 @@ public class DefenderController : MonoBehaviour
 
     }
 
-    public void ShowCandidate()
-    {
-        
-    }
-
     public void ViewDungeon()
     {
 
@@ -68,5 +64,15 @@ public class DefenderController : MonoBehaviour
     public void DiceRoll()
     {
 
+    }
+
+    public void SetMonsterRoster(int num, string name)
+    {
+        selectedMonsterCandidates[num] = name;
+
+        for (int i = 0; i < 6; i++)
+        {
+            Debug.Log($"Monster {i}. {selectedMonsterCandidates[i]}");
+        }
     }
 }

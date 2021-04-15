@@ -1,13 +1,15 @@
-﻿using System.Collections;
+﻿using GameControl;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class CharSelectIcon : UIIcon, IPointerDownHandler, IPointerClickHandler
+public class CandidateCharIcon : UIIcon, IPointerDownHandler, IPointerClickHandler
 {
-    [SerializeField] private int number;
     private GamePlayUIController gamePlayUI;
+
+    private string monsterName;
 
     protected override void Start()
     {
@@ -22,6 +24,13 @@ public class CharSelectIcon : UIIcon, IPointerDownHandler, IPointerClickHandler
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        gamePlayUI.SetSelectedCharacterNumber(number, rect.anchoredPosition);
+        gamePlayUI.SelectCandidate(monsterName);
+        SetColor(Color.white);
+    }
+
+    public override void SetImage(UserType type, string name)
+    {
+        base.SetImage(type, name);
+        monsterName = name;
     }
 }

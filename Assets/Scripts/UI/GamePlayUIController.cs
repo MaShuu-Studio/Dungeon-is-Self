@@ -14,7 +14,8 @@ public class GamePlayUIController : MonoBehaviour
     [SerializeField] private Transform selectedListTransform;
     [SerializeField] private RectTransform selectedArrow;
 
-    private int selectedNumber;
+    [SerializeField] private CharSelectIcon[] selectIcons = new CharSelectIcon[6];
+    private int selectedNumber = 0;
 
     [Header("OFFENDER")]
     [SerializeField] private GameObject offenderViewGameObject;
@@ -61,7 +62,6 @@ public class GamePlayUIController : MonoBehaviour
 
         if (progress == GameProgress.ReadyRound)
             for (int i = 0; i < characterSkillTrees.Count; i++) characterSkillTrees[i].SetActive(characterToggles[i].isOn);
-    
     }
 
     public void SetView()
@@ -103,7 +103,7 @@ public class GamePlayUIController : MonoBehaviour
             Destroy(child.gameObject);
         }
 
-        Object facePrefab = Resources.Load("Prefab/Frame");
+        Object facePrefab = Resources.Load("Prefab/Candidate Monster");
 
         List<string> candidates = new List<string>();
         if (type == UserType.Defender) MonsterDatabase.Instance.GetAllMonsterCandidatesList(ref candidates);
@@ -117,6 +117,12 @@ public class GamePlayUIController : MonoBehaviour
             UIIcon uiIcon = gameObject.GetComponent<UIIcon>();
             uiIcon.SetImage(type, name);
         }
+    }
+
+    public void SelectCandidate(string name)
+    {
+        selectIcons[selectedNumber].SetImage(type, name);
+        DefenderController.Instance.SetMonsterRoster(selectedNumber, name);
     }
 
     public void SetSelectedCharacterNumber(int n, Vector3 pos)
