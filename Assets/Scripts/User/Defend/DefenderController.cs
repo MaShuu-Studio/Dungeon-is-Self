@@ -6,6 +6,28 @@ using GameControl;
 
 public class DefenderController : MonoBehaviour
 {
+    #region Instance
+    private static DefenderController instance;
+    public static DefenderController Instance
+    {
+        get
+        {
+            var obj = FindObjectOfType<DefenderController>();
+            instance = obj;
+            return instance;
+        }
+    }
+    private void Awake()
+    {
+        if (Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+        DontDestroyOnLoad(gameObject);
+    }
+    #endregion
+
     private List<Monster> monsters = new List<Monster>();
 
     Dictionary<int, bool> Roster;

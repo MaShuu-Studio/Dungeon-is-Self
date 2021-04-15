@@ -4,11 +4,6 @@
 TagManager:
   serializedVersion: 2
   tags:
-  - Defender
-  - Offender
-  - SkillDB
-  - MonsterDB
-  - SceneController
   - UI
   layers:
   - Default

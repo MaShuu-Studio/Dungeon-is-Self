@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using GameControl;
 
-public class UIController : MonoBehaviour
+public class GamePlayUIController : MonoBehaviour
 {
     UserType type;
     GameProgress progress;

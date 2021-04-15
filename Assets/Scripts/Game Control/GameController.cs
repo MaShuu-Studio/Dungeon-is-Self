@@ -11,20 +11,7 @@ namespace GameControl
 
     public class GameController : MonoBehaviour
     {
-
-        private DefenderController defender;
-        private OffenderController offender;
-        private UIController uIController;
-
-        private bool isPlay;
-        public UserType userType { get; private set; }
-
-        public GameProgress currentProgress { get; private set; }
-        private int round;
-
-        private List<Monster> curRoundMonster;
-        //private List<Character> curRoundCharacter;
-
+        #region Instance
         private static GameController instance;
         public static GameController Instance
         {
@@ -44,6 +31,18 @@ namespace GameControl
             }
             DontDestroyOnLoad(gameObject);
         }
+        #endregion
+
+        private GamePlayUIController gamePlayUI;
+
+        private bool isPlay;
+        public UserType userType { get; private set; }
+
+        public GameProgress currentProgress { get; private set; }
+        private int round;
+
+        private List<Monster> curRoundMonster;
+        //private List<Character> curRoundCharacter;
 
         // Start is called before the first frame update
         void Start()
@@ -64,9 +63,7 @@ namespace GameControl
 
         public void StartGame()
         {
-            defender = GameObject.FindWithTag("Defender").GetComponent<DefenderController>();
-            offender = GameObject.FindWithTag("Offender").GetComponent<OffenderController>();
-            uIController = GameObject.FindWithTag("UI").GetComponent<UIController>();
+            gamePlayUI = GameObject.FindWithTag("UI").GetComponent<GamePlayUIController>();
 
             currentProgress = GameProgress.ReadyGame;
             curRoundMonster = new List<Monster>();
@@ -75,8 +72,8 @@ namespace GameControl
             isPlay = true;
             round = 0;
 
-            uIController.SetUserType();
-            uIController.SetView();
+            gamePlayUI.SetUserType();
+            gamePlayUI.SetView();
         }
 
         public void ReadyRound()
@@ -85,7 +82,7 @@ namespace GameControl
             {
                 round++;
                 currentProgress = GameProgress.ReadyRound;
-               uIController.SetView();
+                gamePlayUI.SetView();
 
                 curRoundMonster.Clear();
                 //curRoundCharacter.Clear();         
@@ -95,7 +92,7 @@ namespace GameControl
         public void StartRound()
         {
             currentProgress = GameProgress.PlayRound;
-            uIController.SetView();
+            gamePlayUI.SetView();
         }
 
         #region GUI

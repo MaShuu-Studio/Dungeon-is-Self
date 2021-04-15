@@ -6,6 +6,27 @@ using GameControl;
 
 public class OffenderController : MonoBehaviour
 {
+    #region Instance
+    private static OffenderController instance;
+    public static OffenderController Instance
+    {
+        get
+        {
+            var obj = FindObjectOfType<OffenderController>();
+            instance = obj;
+            return instance;
+        }
+    }
+    private void Awake()
+    {
+        if (Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+        DontDestroyOnLoad(gameObject);
+    }
+    #endregion
     public enum Role {FIGHTER, MARKSMAN, MAGE}
     public List<Role> bench = new List<Role>();
     public List<Role> roster = new List<Role>();
