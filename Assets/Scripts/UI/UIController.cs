@@ -9,11 +9,16 @@ public class UIController : MonoBehaviour
     UserType type;
     GameProgress progress;
 
+    [Header("READY GAME")]
+    [SerializeField] private Transform candidatesTransform;
+    [SerializeField] private Transform selectedListTransform;
+
     [Header("OFFENDER")]
     [SerializeField] private GameObject offenderViewGameObject;
     [SerializeField] private List<GameObject> offenderViews;
     [SerializeField] private List<Toggle> characterToggles;
     [SerializeField] private List<GameObject> characterSkillTrees;
+
     [Header("DEFENDER")]
     [SerializeField] private GameObject defenderViewGameObject;
     [SerializeField] private List<GameObject> defenderViews;
@@ -71,6 +76,7 @@ public class UIController : MonoBehaviour
         switch (GameController.Instance.currentProgress)
         {
             case GameProgress.ReadyGame:
+                ShowAllCandidates();
                 if (type == UserType.Offender) offenderViews[0].SetActive(true);
                 else defenderViews[0].SetActive(true);
                 break;
@@ -84,6 +90,24 @@ public class UIController : MonoBehaviour
                 if (type == UserType.Offender) offenderViews[2].SetActive(true);
                 else defenderViews[2].SetActive(true);
                 break;
+        }
+    }
+
+    private void ShowAllCandidates()
+    {
+        Object facePrefab = Resources.Load("Prefab/Frame");
+
+        List<string> candidates = new List<string>();
+        if (type == UserType.Defender) MonsterDatabase.Instance.GetAllMonsterCandidatesList(ref candidates);
+
+        foreach (string name in candidates)
+        {
+            GameObject gameObject = Instantiate(facePrefab) as GameObject;
+            gameObject.transform.SetParent(candidatesTransform);
+            gameObject.transform.localScale = new Vector3(1,1,1);
+
+            UIIcon uiIcon = gameObject.GetComponent<UIIcon>();
+            uiIcon.SetImage(type, name);
         }
     }
 }

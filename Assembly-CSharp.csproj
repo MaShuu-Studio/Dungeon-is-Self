@@ -87,7 +87,6 @@
     <Compile Include="Assets\Scripts\UI\UIDescription.cs" />
     <Compile Include="Assets\Scripts\UI\UIIcon.cs" />
     <Compile Include="Assets\Scripts\User\Defend\DefenderController.cs" />
-    <Compile Include="Assets\Scripts\User\Defend\DungeonController.cs" />
     <Compile Include="Assets\Scripts\User\Defend\Monster.cs" />
     <Compile Include="Assets\Scripts\User\Defend\MonsterDatabase.cs" />
     <Compile Include="Assets\Scripts\User\Offender\Character.cs" />

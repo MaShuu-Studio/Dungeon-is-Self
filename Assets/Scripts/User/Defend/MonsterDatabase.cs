@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class MonsterDatabase : MonoBehaviour
 {
+    public static string facePath { get; private set; } = "Sprites/Monsters/Faces/";
     private List<Monster> monsterDB;
 
     private static MonsterDatabase instance;
@@ -36,16 +37,25 @@ public class MonsterDatabase : MonoBehaviour
     {
         monsterDB = new List<Monster>();
 
-        monsterDB.Add(new Monster("미노타우르스", 10, Monster.Weakness.NORMAL, SkillDatabase.Instance.GetMonsterSkill("SKILL1")));
-        monsterDB.Add(new Monster("바다괴물", 15, Monster.Weakness.NORMAL, SkillDatabase.Instance.GetMonsterSkill("SKILL1")));
-        monsterDB.Add(new Monster("하피", 12, Monster.Weakness.NORMAL, SkillDatabase.Instance.GetMonsterSkill("SKILL1")));
-        monsterDB.Add(new Monster("뱀", 12, Monster.Weakness.NORMAL, SkillDatabase.Instance.GetMonsterSkill("SKILL1")));
-        monsterDB.Add(new Monster("바이러스", 12, Monster.Weakness.NORMAL, SkillDatabase.Instance.GetMonsterSkill("SKILL1")));
-        monsterDB.Add(new Monster("요괴", 12, Monster.Weakness.NORMAL, SkillDatabase.Instance.GetMonsterSkill("SKILL1")));
+        monsterDB.Add(new Monster("Minotaurs", 10, Monster.Weakness.NORMAL, SkillDatabase.Instance.GetMonsterSkill("SKILL1")));
+        monsterDB.Add(new Monster("Kraken", 15, Monster.Weakness.NORMAL, SkillDatabase.Instance.GetMonsterSkill("SKILL1")));
+        monsterDB.Add(new Monster("Harpy", 12, Monster.Weakness.NORMAL, SkillDatabase.Instance.GetMonsterSkill("SKILL1")));
+        monsterDB.Add(new Monster("Snake", 12, Monster.Weakness.NORMAL, SkillDatabase.Instance.GetMonsterSkill("SKILL1")));
+        monsterDB.Add(new Monster("Virus", 12, Monster.Weakness.NORMAL, SkillDatabase.Instance.GetMonsterSkill("SKILL1")));
+        monsterDB.Add(new Monster("Dokkaebi", 12, Monster.Weakness.NORMAL, SkillDatabase.Instance.GetMonsterSkill("SKILL1")));
     }
 
     public Monster GetMonster(string name)
     {
         return monsterDB.Find(monster => monster.name == name);
+    }
+
+    public void GetAllMonsterCandidatesList(ref List<string> monsterNames)
+    {
+        monsterNames.Clear();
+        foreach (Monster monster in monsterDB)
+        {
+            monsterNames.Add(monster.name);
+        }
     }
 }

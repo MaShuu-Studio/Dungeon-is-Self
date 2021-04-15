@@ -10,12 +10,14 @@ public class Monster
     public Weakness weak { get; private set; }
     public int hp { get; private set; }
     public MonsterSkill skill { get; private set; }
+    public string prior { get; private set; }
 
-    public Monster(string name, int hp, Weakness weak, MonsterSkill skill)
+    public Monster(string name, int hp, Weakness weak, MonsterSkill skill, string prior = "")
     {
         this.name = name;
         this.hp = hp;
         this.weak = weak;
         this.skill = skill;
+        this.prior = prior;
     }
 }
