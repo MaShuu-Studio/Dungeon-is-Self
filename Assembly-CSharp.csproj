@@ -71,8 +71,6 @@
     <Compile Include="Assets\Scripts\Game Control\GameController.cs" />
     <Compile Include="Assets\Scripts\Game Control\SceneController.cs" />
     <Compile Include="Assets\Scripts\Game Control\TestScript.cs" />
-    <Compile Include="Assets\Scripts\Monster\Monster.cs" />
-    <Compile Include="Assets\Scripts\Monster\MonsterDatabase.cs" />
     <Compile Include="Assets\Scripts\Network\Core\Connector.cs" />
     <Compile Include="Assets\Scripts\Network\Core\RecvBuffer.cs" />
     <Compile Include="Assets\Scripts\Network\Core\SendBuffer.cs" />
@@ -90,6 +88,8 @@
     <Compile Include="Assets\Scripts\UI\UIIcon.cs" />
     <Compile Include="Assets\Scripts\User\Defend\DefenderController.cs" />
     <Compile Include="Assets\Scripts\User\Defend\DungeonController.cs" />
+    <Compile Include="Assets\Scripts\User\Defend\Monster.cs" />
+    <Compile Include="Assets\Scripts\User\Defend\MonsterDatabase.cs" />
     <Compile Include="Assets\Scripts\User\Offender\Character.cs" />
     <Compile Include="Assets\Scripts\User\Offender\Fighter.cs" />
     <Compile Include="Assets\Scripts\User\Offender\Mage.cs" />

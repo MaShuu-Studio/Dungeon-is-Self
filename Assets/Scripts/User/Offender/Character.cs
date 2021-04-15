@@ -27,6 +27,6 @@ public class Character : MonoBehaviour
     protected void SetDice(string skill)
     {
         if(dice.Count >= 6) return;
-        else dice.Add(SkillDatabase.GetCharacterSkill(skill));
+        else dice.Add(SkillDatabase.Instance.GetCharacterSkill(skill));
     }
 }

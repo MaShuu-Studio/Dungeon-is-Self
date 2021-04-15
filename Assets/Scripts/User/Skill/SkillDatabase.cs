@@ -43,12 +43,12 @@ public class SkillDatabase : MonoBehaviour
         monSkillDB.Add(new MonsterSkill("SKILL1", 5));
     }
 
-    public static CharacterSkill GetCharacterSkill(string name)
+    public CharacterSkill GetCharacterSkill(string name)
     {
         return charSkillDB.Find(skill => skill.name == name);
     }
     
-    public static MonsterSkill GetMonsterSkill(string name)
+    public MonsterSkill GetMonsterSkill(string name)
     {
         return monSkillDB.Find(skill => skill.name == name);
     }
