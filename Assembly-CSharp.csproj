@@ -83,8 +83,8 @@
     <Compile Include="Assets\Scripts\Network\ServerSession.cs" />
     <Compile Include="Assets\Scripts\UI\CandidateCharIcon.cs" />
     <Compile Include="Assets\Scripts\UI\CharSelectIcon.cs" />
+    <Compile Include="Assets\Scripts\UI\CustomButton.cs" />
     <Compile Include="Assets\Scripts\UI\GamePlayUIController.cs" />
-    <Compile Include="Assets\Scripts\UI\SceneMovementButton.cs" />
     <Compile Include="Assets\Scripts\UI\ToggleIcon.cs" />
     <Compile Include="Assets\Scripts\UI\UIDescription.cs" />
     <Compile Include="Assets\Scripts\UI\UIIcon.cs" />

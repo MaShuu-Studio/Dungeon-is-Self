@@ -122,12 +122,23 @@ public class GamePlayUIController : MonoBehaviour
     public void SelectCandidate(string name)
     {
         selectIcons[selectedNumber].SetImage(type, name);
-        DefenderController.Instance.SetMonsterRoster(selectedNumber, name);
+        if (type == UserType.Defender)
+        {
+            DefenderController.Instance.SetMonsterRoster(selectedNumber, name);
+        }
     }
 
     public void SetSelectedCharacterNumber(int n, Vector3 pos)
     {
         selectedNumber = n;
         selectedArrow.anchoredPosition = pos;
+    }
+
+    public void Alert()
+    {
+        if (GameController.Instance.currentProgress == GameProgress.ReadyGame)
+        {
+            Debug.Log("Please Complete Setting Candidate");
+        }
     }
 }

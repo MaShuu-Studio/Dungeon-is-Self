@@ -75,4 +75,13 @@ public class DefenderController : MonoBehaviour
             Debug.Log($"Monster {i}. {selectedMonsterCandidates[i]}");
         }
     }
+
+    public bool CheckCadndidate()
+    {
+        foreach (string s in selectedMonsterCandidates)
+        {
+            if (string.IsNullOrEmpty(s)) return false;
+        }
+        return true;
+    }
 }
