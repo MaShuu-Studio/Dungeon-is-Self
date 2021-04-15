@@ -28,7 +28,7 @@ public class DefenderController : MonoBehaviour
     }
     #endregion
 
-    private string[] selectedMonsterCandidates = new string[6];
+    public string[] selectedMonsterCandidates { get; private set; } = new string[6];
     private List<Monster> monsters = new List<Monster>();
 
     Dictionary<int, bool> Roster;

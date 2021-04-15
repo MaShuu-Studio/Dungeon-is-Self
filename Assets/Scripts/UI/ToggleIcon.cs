@@ -5,9 +5,16 @@ using UnityEngine.UI;
 
 public class ToggleIcon : Toggle
 {
-    void Update()
+    protected Image frame;
+
+    protected override void Start()
     {
-        if (isOn) targetGraphic.color = Color.white;
-        else targetGraphic.color = Color.gray;
+        base.Start();
+        frame = GetComponent<Image>();
+    }
+
+    protected virtual void SetColor(Color color)
+    {
+        frame.color = color;
     }
 }

@@ -73,7 +73,7 @@ namespace GameControl
             round = 0;
 
             gamePlayUI.SetUserType();
-            gamePlayUI.SetView();
+            gamePlayUI.ChangeView();
         }
 
         public void ReadyRound()
@@ -82,7 +82,6 @@ namespace GameControl
             {
                 round++;
                 currentProgress = GameProgress.ReadyRound;
-                gamePlayUI.SetView();
 
                 curRoundMonster.Clear();
                 //curRoundCharacter.Clear();         
@@ -92,7 +91,6 @@ namespace GameControl
         public void StartRound()
         {
             currentProgress = GameProgress.PlayRound;
-            gamePlayUI.SetView();
         }
 
         #region GUI

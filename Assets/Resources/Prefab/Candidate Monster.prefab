@@ -111,7 +111,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 170, y: 170}
+  m_SizeDelta: {x: 150, y: 150}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8478486334228681136
 CanvasRenderer:
@@ -136,6 +136,7 @@ MonoBehaviour:
   description: {fileID: 0}
   pos: {x: 0, y: 0, z: 0}
   faceImage: {fileID: 8478486333033838245}
+  isCandidate: 1
 --- !u!114 &8478486334228681137
 MonoBehaviour:
   m_ObjectHideFlags: 0

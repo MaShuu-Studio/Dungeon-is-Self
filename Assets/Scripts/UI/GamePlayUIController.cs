@@ -9,6 +9,10 @@ public class GamePlayUIController : MonoBehaviour
     UserType type;
     GameProgress progress;
 
+    [Header("COMMONS")]
+    [SerializeField] private List<GameObject> gameViews;
+    [SerializeField] private List<CharIcon> userCharacters;
+
     [Header("READY GAME")]
     [SerializeField] private Transform candidatesTransform;
     [SerializeField] private Transform selectedListTransform;
@@ -17,15 +21,9 @@ public class GamePlayUIController : MonoBehaviour
     [SerializeField] private CharSelectIcon[] selectIcons = new CharSelectIcon[6];
     private int selectedNumber = 0;
 
-    [Header("OFFENDER")]
-    [SerializeField] private GameObject offenderViewGameObject;
-    [SerializeField] private List<GameObject> offenderViews;
-    [SerializeField] private List<Toggle> characterToggles;
+    [Header("READY ROUND")]
+    [SerializeField] private List<CharacterToggle> characterToggles;
     [SerializeField] private List<GameObject> characterSkillTrees;
-
-    [Header("DEFENDER")]
-    [SerializeField] private GameObject defenderViewGameObject;
-    [SerializeField] private List<GameObject> defenderViews;
 
     void Update()
     {
@@ -33,22 +31,20 @@ public class GamePlayUIController : MonoBehaviour
         {
             ChangeView();
         }
+
+        for (int i = 0; i < characterToggles.Count; i++)
+        {
+            string name = DefenderController.Instance.selectedMonsterCandidates[i];
+            userCharacters[i].SetImage(type, name);
+        }
+
+        if (progress == GameProgress.ReadyRound)
+            for (int i = 0; i < characterSkillTrees.Count; i++) characterSkillTrees[i].SetActive(characterToggles[i].toggle.isOn);
     }
 
     public void SetUserType()
     {
         type = GameController.Instance.userType;
-        if (type == UserType.Offender)
-        {
-            offenderViewGameObject.SetActive(true);
-            defenderViewGameObject.SetActive(false);
-        }
-        else 
-        {
-            offenderViewGameObject.SetActive(false);
-            defenderViewGameObject.SetActive(true);
-        }
-
     }
     
     public void SetProgress()
@@ -59,19 +55,7 @@ public class GamePlayUIController : MonoBehaviour
     public void ChangeView()
     {
         SetProgress();
-
-        if (progress == GameProgress.ReadyRound)
-            for (int i = 0; i < characterSkillTrees.Count; i++) characterSkillTrees[i].SetActive(characterToggles[i].isOn);
-    }
-
-    public void SetView()
-    {
-        foreach (GameObject view in offenderViews)
-        {
-            view.SetActive(false);
-        }
-
-        foreach (GameObject view in defenderViews)
+        foreach (GameObject view in gameViews)
         {
             view.SetActive(false);
         }
@@ -79,19 +63,22 @@ public class GamePlayUIController : MonoBehaviour
         switch (GameController.Instance.currentProgress)
         {
             case GameProgress.ReadyGame:
+                gameViews[0].SetActive(true);
                 ShowAllCandidates();
-                if (type == UserType.Offender) offenderViews[0].SetActive(true);
-                else defenderViews[0].SetActive(true);
                 break;
 
             case GameProgress.ReadyRound:
-                if (type == UserType.Offender) offenderViews[1].SetActive(true);
-                else defenderViews[1].SetActive(true);
+                gameViews[1].SetActive(true);
+                characterToggles[0].toggle.isOn = true;
+                for (int i = 0; i < characterToggles.Count; i++)
+                {
+                    string name = DefenderController.Instance.selectedMonsterCandidates[i];
+                    characterToggles[i].SetFace(type, name);
+                }
                 break;
 
             case GameProgress.PlayRound:
-                if (type == UserType.Offender) offenderViews[2].SetActive(true);
-                else defenderViews[2].SetActive(true);
+                gameViews[2].SetActive(true);
                 break;
         }
     }

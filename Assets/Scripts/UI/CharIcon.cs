@@ -5,11 +5,12 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class CandidateCharIcon : UIIcon, IPointerDownHandler, IPointerClickHandler
+public class CharIcon : UIIcon, IPointerDownHandler, IPointerClickHandler
 {
+    [SerializeField] private bool isCandidate;
     private GamePlayUIController gamePlayUI;
+    private string characterName;
 
-    private string monsterName;
 
     protected override void Start()
     {
@@ -19,18 +20,24 @@ public class CandidateCharIcon : UIIcon, IPointerDownHandler, IPointerClickHandl
 
     public void OnPointerDown(PointerEventData eventData)
     {
-        SetColor(Color.gray);
+        if (isCandidate)
+        {
+            SetColor(Color.gray);
+        }
     }
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        gamePlayUI.SelectCandidate(monsterName);
-        SetColor(Color.white);
+        if (isCandidate)
+        {
+            gamePlayUI.SelectCandidate(characterName);
+            SetColor(Color.white);
+        }
     }
 
     public override void SetImage(UserType type, string name)
     {
         base.SetImage(type, name);
-        monsterName = name;
+        characterName = name;
     }
 }
