@@ -81,10 +81,7 @@ namespace GameControl
                 offender.SetView();
 
                 curRoundMonster.Clear();
-                //curRoundCharacter.Clear();            
-
-                defender.SetMonsterCandidate(4);
-                defender.SetRound(round);
+                //curRoundCharacter.Clear();         
             }
         }
 

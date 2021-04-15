@@ -2,40 +2,35 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using GameControl;
 
 public class DefenderController : MonoBehaviour
 {
-    [SerializeField] private DungeonController dungeonController;
-    private MonsterDatabase monsterDB;
+    private List<Monster> monsters = new List<Monster>();
 
-    private List<Monster> monsterCandidates;
-    private int round;
+    Dictionary<int, bool> Roster;
 
     // Start is called before the first frame update
     void Start()
     {
         //monsterDB = MonsterDatabase.Instance;
         //monsterDB = GameObject.FindWithTag("MonsterDB").GetComponent<MonsterDatabase>();
-        monsterCandidates = new List<Monster>();
+        monsters = new List<Monster>();
     }
-    
-    public void SetMonsterCandidate(int num)
-    {
-        monsterCandidates.Clear();
 
-        for(int i = 0; i < num; i++)
+    // 게임이 시작될 때 Defender에 대한 초기화 진행
+    public void Init(List<string> monsterNames)
+    {
+        // 어떠한 몬스터를 가져갈지 결정을 해둔 뒤기 때문에
+        // 바로 몬스터 리스트에 등록
+
+        monsters.Clear();
+
+        foreach (string name in monsterNames)
         {
-            while(true)
-            {
-                Monster monster = MonsterDatabase.GetRandomMonster();
-                if (monsterCandidates.Exists(mon => mon.name == monster.name) == false)
-                {
-                    monsterCandidates.Add(monster);
-                    break;
-                }
-            }
-            Debug.Log(monsterCandidates[i].name);
+            monsters.Add(MonsterDatabase.Instance.GetMonster(name));
         }
+
     }
 
     public void ShowCandidate()
@@ -45,27 +40,11 @@ public class DefenderController : MonoBehaviour
 
     public void ViewDungeon()
     {
-        List<Monster> monsters = dungeonController.GetMonsterList(0);
+
     }
 
-    public void SetRound(int round)
+    public void DiceRoll()
     {
-        this.round = round;
-    }
 
-#region GUI
-    private void OnGUI()
-    {
-        for (int i = 0; i < monsterCandidates.Count; i++)
-        {
-            if (GUI.Button(new Rect(10 + (i*70), 500, 50, 50), monsterCandidates[i].name))
-            {
-                if (dungeonController.AddMonster(round-1, monsterCandidates[i]))
-                    monsterCandidates.RemoveAt(i);
-                break;
-            }
-        }
     }
-
-#endregion
 }

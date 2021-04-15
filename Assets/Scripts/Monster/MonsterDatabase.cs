@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class MonsterDatabase : MonoBehaviour
 {
-    private static List<Monster> monsterDB;
+    private List<Monster> monsterDB;
 
     private static MonsterDatabase instance;
     public static MonsterDatabase Instance
@@ -36,26 +36,16 @@ public class MonsterDatabase : MonoBehaviour
     {
         monsterDB = new List<Monster>();
 
-        monsterDB.Add(new Monster("SLIME", 10, Monster.MonsterType.ATTACKER, SkillDatabase.GetMonsterSkill("SKILL1")));
-        monsterDB.Add(new Monster("SLIME2", 15, Monster.MonsterType.ATTACKER, SkillDatabase.GetMonsterSkill("SKILL1")));
-        monsterDB.Add(new Monster("SLIME3", 12, Monster.MonsterType.SPECIAL, SkillDatabase.GetMonsterSkill("SKILL1")));
-        monsterDB.Add(new Monster("SLIME4", 20, Monster.MonsterType.GUARD, SkillDatabase.GetMonsterSkill("SKILL1")));
-        monsterDB.Add(new Monster("SLIME5", 18, Monster.MonsterType.GUARD, SkillDatabase.GetMonsterSkill("SKILL1")));
-        monsterDB.Add(new Monster("SLIME6", 10, Monster.MonsterType.ATTACKER, SkillDatabase.GetMonsterSkill("SKILL1")));
-        monsterDB.Add(new Monster("SLIME7", 15, Monster.MonsterType.ATTACKER, SkillDatabase.GetMonsterSkill("SKILL1")));
-        monsterDB.Add(new Monster("SLIME8", 12, Monster.MonsterType.SPECIAL, SkillDatabase.GetMonsterSkill("SKILL1")));
-        monsterDB.Add(new Monster("SLIME9", 20, Monster.MonsterType.GUARD, SkillDatabase.GetMonsterSkill("SKILL1")));
-        monsterDB.Add(new Monster("SLIME10", 18, Monster.MonsterType.GUARD, SkillDatabase.GetMonsterSkill("SKILL1")));
+        monsterDB.Add(new Monster("미노타우르스", 10, Monster.Weakness.NORMAL, SkillDatabase.GetMonsterSkill("SKILL1")));
+        monsterDB.Add(new Monster("바다괴물", 15, Monster.Weakness.NORMAL, SkillDatabase.GetMonsterSkill("SKILL1")));
+        monsterDB.Add(new Monster("하피", 12, Monster.Weakness.NORMAL, SkillDatabase.GetMonsterSkill("SKILL1")));
+        monsterDB.Add(new Monster("뱀", 12, Monster.Weakness.NORMAL, SkillDatabase.GetMonsterSkill("SKILL1")));
+        monsterDB.Add(new Monster("바이러스", 12, Monster.Weakness.NORMAL, SkillDatabase.GetMonsterSkill("SKILL1")));
+        monsterDB.Add(new Monster("요괴", 12, Monster.Weakness.NORMAL, SkillDatabase.GetMonsterSkill("SKILL1")));
     }
 
-    public static Monster GetMonster(string name)
+    public Monster GetMonster(string name)
     {
         return monsterDB.Find(monster => monster.name == name);
-    }
-
-    public static Monster GetRandomMonster()
-    {
-        int index = Random.Range(0, monsterDB.Count);
-        return monsterDB[index];
     }
 }
