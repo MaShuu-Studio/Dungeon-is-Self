@@ -6,12 +6,6 @@ using GameControl;
 
 public class OffenderController : MonoBehaviour
 {
-    private GameController gameController;
-    [Header("UI")]
-    [SerializeField] private List<GameObject> views;
-    [SerializeField] private List<Toggle> characterToggles;
-    [SerializeField] private List<GameObject> characterSkillTrees;
-
     public enum Role {FIGHTER, MARKSMAN, MAGE}
     public List<Role> bench = new List<Role>();
     public List<Role> roster = new List<Role>();
@@ -24,32 +18,6 @@ public class OffenderController : MonoBehaviour
     private Marksman m;
     private Mage ma;
     
-    void Awake()
-    {
-        gameController = GameObject.FindWithTag("GameController").GetComponent<GameController>();
-    }
-
-    void Update()
-    {
-        if (gameController.currentProgress == GameProgress.Ready)
-            for (int i = 0; i < 6; i++) characterSkillTrees[i].SetActive(characterToggles[i].isOn);
-        
-    }
-
-    public void SetView()
-    {
-        foreach(GameObject view in views)
-        {
-            view.SetActive(false);
-        }
-
-        switch (gameController.currentProgress)
-        {
-            case GameProgress.Ready: views[0].SetActive(true); break;
-            case GameProgress.GamePlay: views[1].SetActive(true); break;
-        }
-    }
-
     public void SetBench(Role role)
     {
         if(bench.Count >= 3) return;

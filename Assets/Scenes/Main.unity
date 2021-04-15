@@ -266,8 +266,8 @@ Canvas:
   m_GameObject: {fileID: 92804495}
   m_Enabled: 1
   serializedVersion: 3
-  m_RenderMode: 0
-  m_Camera: {fileID: 0}
+  m_RenderMode: 1
+  m_Camera: {fileID: 472383469}
   m_PlaneDistance: 100
   m_PixelPerfect: 0
   m_ReceivesEvents: 1
@@ -1519,7 +1519,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 65a143a1d02594b4a8946b4ebe38600f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveScene: Defend
+  moveScene: Gameplay
   isPlay: 1
   userType: 1
 --- !u!1 &1380782596
@@ -2202,7 +2202,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 65a143a1d02594b4a8946b4ebe38600f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveScene: Offend
+  moveScene: Gameplay
   isPlay: 1
   userType: 0
 --- !u!1 &1873512227

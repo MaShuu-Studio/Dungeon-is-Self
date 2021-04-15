@@ -6,6 +6,10 @@ TagManager:
   tags:
   - Defender
   - Offender
+  - SkillDB
+  - MonsterDB
+  - SceneController
+  - UI
   layers:
   - Default
   - TransparentFX

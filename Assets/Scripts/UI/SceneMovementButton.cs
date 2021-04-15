@@ -13,28 +13,17 @@ public class SceneMovementButton : MonoBehaviour
     void Start()
     {
         GetComponent<Button>().onClick.AddListener(() => SceneController.Instance.ChangeScene(moveScene));
-        if (isPlay)
-            GetComponent<Button>().onClick.AddListener(() => GameStart());
+        GetComponent<Button>().onClick.AddListener(() => SetUserType());
     }
 
-    void GameStart()
-    {
-        StartCoroutine(WaitSceneMove());
-    }
 
 
     // 실제 게임에서는 서버에서 매칭관련 정보를 넘겨주면서 게임이 시작되기 때문에 필요 X
     // 임시용 변수와 메서드들
-    [SerializeField] private bool isPlay;
     [SerializeField] private UserType userType = UserType.Offender;
-
-    IEnumerator WaitSceneMove()
+    void SetUserType()
     {
-        while (SceneController.Instance.CurrentScene != "OFFEND" || SceneController.Instance.CurrentScene != "DEFEND")
-        {
-            yield return null;
-        }
-
-        GameController.Instance.StartGame(userType);
+        GameController.Instance.SetUserType(userType);
     }
+
 }

@@ -12,7 +12,7 @@ EditorBuildSettings:
     path: Assets/Scenes/Defend.unity
     guid: 0b83ebd568ecb8546885096de3eda2d1
   - enabled: 1
-    path: Assets/Scenes/Offend.unity
+    path: Assets/Scenes/GamePlay.unity
     guid: 7719780296c2ad94cb6eaa6e78121f97
   - enabled: 1
     path: Assets/Scenes/Title.unity

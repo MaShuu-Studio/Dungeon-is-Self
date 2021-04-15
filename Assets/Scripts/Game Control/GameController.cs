@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 namespace GameControl
 {
-    public enum GameProgress { Wait, Ready, GamePlay };
+    public enum GameProgress { ReadyGame, ReadyRound, PlayRound };
     public enum UserType { Offender, Defender };
 
     public class GameController : MonoBehaviour
@@ -14,9 +14,10 @@ namespace GameControl
 
         private DefenderController defender;
         private OffenderController offender;
+        private UIController uIController;
 
         private bool isPlay;
-        private UserType userType;
+        public UserType userType { get; private set; }
 
         public GameProgress currentProgress { get; private set; }
         private int round;
@@ -56,20 +57,26 @@ namespace GameControl
 
         }
 
-        public void StartGame(UserType type)
+        public void SetUserType(UserType type)
+        {
+            userType = type;
+        }
+
+        public void StartGame()
         {
             defender = GameObject.FindWithTag("Defender").GetComponent<DefenderController>();
             offender = GameObject.FindWithTag("Offender").GetComponent<OffenderController>();
+            uIController = GameObject.FindWithTag("UI").GetComponent<UIController>();
 
-            currentProgress = GameProgress.Wait;
+            currentProgress = GameProgress.ReadyGame;
             curRoundMonster = new List<Monster>();
             //curRoundCharacter = new List<Character>();
 
             isPlay = true;
             round = 0;
 
-            offender.SetView();
-            userType = type;
+            uIController.SetUserType();
+            uIController.SetView();
         }
 
         public void ReadyRound()
@@ -77,8 +84,8 @@ namespace GameControl
             if (isPlay)
             {
                 round++;
-                currentProgress = GameProgress.Ready;
-                offender.SetView();
+                currentProgress = GameProgress.ReadyRound;
+               uIController.SetView();
 
                 curRoundMonster.Clear();
                 //curRoundCharacter.Clear();         
@@ -87,8 +94,8 @@ namespace GameControl
 
         public void StartRound()
         {
-            currentProgress = GameProgress.GamePlay;
-            offender.SetView();
+            currentProgress = GameProgress.PlayRound;
+            uIController.SetView();
         }
 
         #region GUI
