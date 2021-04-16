@@ -1,10 +1,10 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using GameControl;
 
-public class OffenderController : MonoBehaviour
+namespace Offender
 {
     #region Instance
     private static OffenderController instance;
@@ -45,35 +45,54 @@ public class OffenderController : MonoBehaviour
         else bench.Add(role);
     }
 
-    public void SetRoster(Role role)
-    {
-        if(roster.Count >= 3) return;
-        else roster.Add(role);
-    }
+        public CharacterSkill OneDiceThrow(int n)
+        {
+            int i = Random.Range(0, 6);
+            return character[n].dice[i];
+        }
 
-    public void DiceThrow()
-    {
-        f.DiceThrow();
-        m.DiceThrow();
-        ma.DiceThrow();
-    }
-    
-    private void OnGUI()
-    {
-        /*
-        if (GUI.Button(new Rect(10, 10, 50, 50), "Fighter"))
+        public void AllDiceThrow(int a, int b, int c)
         {
-            SetBench(fighter);
+            OneDiceThrow(a);
+            OneDiceThrow(b);
+            OneDiceThrow(c);
         }
-        
-        if (GUI.Button(new Rect(10, 80, 50, 50), "Marksman"))
+
+        public void SetSkillUpdate()
         {
-            SetBench(marksman);
+
         }
-        
-        if (GUI.Button(new Rect(80, 80, 50, 50), "Mage"))
+
+        private void OnGUI()
         {
-            SetBench(mage);
+            if (GUI.Button(new Rect(10, 10, 50, 50), "Fighter"))
+            {
+                SetBench(fighter);
+            }
+
+            if (GUI.Button(new Rect(10, 80, 50, 50), "Marksman"))
+            {
+                SetBench(marksman);
+            }
+
+            if (GUI.Button(new Rect(80, 80, 50, 50), "Mage"))
+            {
+                SetBench(mage);
+            }
+
+            /*if (GUI.Button(new Rect(150, 150, 50, 50), "SetDice0"))
+            {
+                SetDice(0, 100);
+                
+            }    
+            if(character.Count > 0)
+            {
+                if(character[0].dice.Count > 0) {
+                    GUI.Box(new Rect(210, 210, 100, 50), character[0].dice[0].name);
+                }
+            } */
+            //GUI.Box(new Rect(210, 210, 100, 50), "sex");
+
         }
         */
     }
