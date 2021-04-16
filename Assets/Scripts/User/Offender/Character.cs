@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Offender
+namespace GameControl
 {
     public class Character
     {
