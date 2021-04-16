@@ -5,6 +5,8 @@ using UnityEngine;
 public class MonsterDatabase : MonoBehaviour
 {
     public static string facePath { get; private set; } = "Sprites/Monsters/Faces/";
+    public static string charPath { get; private set; } = "Sprites/Monsters/Chars/";
+    
     private List<Monster> monsterDB;
 
     private static MonsterDatabase instance;

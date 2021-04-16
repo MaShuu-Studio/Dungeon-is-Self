@@ -25,6 +25,14 @@ public class GamePlayUIController : MonoBehaviour
     [SerializeField] private List<CharacterToggle> characterToggles;
     [SerializeField] private List<GameObject> characterSkillTrees;
 
+    [Header("PLAY ROUND")]
+    [SerializeField] private GameObject defenderGameView;
+    [SerializeField] private CharacterObject defenderChars;
+    [SerializeField] private List<CharacterObject> defenderEnemys;
+    [SerializeField] private GameObject offenderGameView;
+    [SerializeField] private List<CharacterObject> offenderChars;
+    [SerializeField] private CharacterObject offenderEnemys;
+
     void Update()
     {
         if (progress != GameController.Instance.currentProgress)
