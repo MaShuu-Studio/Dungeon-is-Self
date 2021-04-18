@@ -26,12 +26,9 @@ public class GamePlayUIController : MonoBehaviour
     [SerializeField] private List<GameObject> characterSkillTrees;
 
     [Header("PLAY ROUND")]
-    [SerializeField] private GameObject defenderGameView;
-    [SerializeField] private CharacterObject defenderChars;
-    [SerializeField] private List<CharacterObject> defenderEnemys;
-    [SerializeField] private GameObject offenderGameView;
-    [SerializeField] private List<CharacterObject> offenderChars;
-    [SerializeField] private CharacterObject offenderEnemys;
+    [SerializeField] private SpriteRenderer map;
+    private List<CharacterObject> charObjects = new List<CharacterObject>();
+    private List<CharacterObject> enemyObjects = new List<CharacterObject>();
 
     void Update()
     {
@@ -50,6 +47,7 @@ public class GamePlayUIController : MonoBehaviour
             for (int i = 0; i < characterSkillTrees.Count; i++) characterSkillTrees[i].SetActive(characterToggles[i].toggle.isOn);
     }
 
+    #region Basic
     public void SetUserType()
     {
         type = GameController.Instance.userType;
@@ -87,10 +85,22 @@ public class GamePlayUIController : MonoBehaviour
 
             case GameProgress.PlayRound:
                 gameViews[2].SetActive(true);
+                ClearCharacters();
+                SetCharacters();
                 break;
         }
     }
+    
+    public void Alert()
+    {
+        if (GameController.Instance.currentProgress == GameProgress.ReadyGame)
+        {
+            Debug.Log("Please Complete Setting Candidate");
+        }
+    }
+    #endregion
 
+    #region Ready Game
     private void ShowAllCandidates()
     {
         foreach (Transform child in candidatesTransform)
@@ -129,11 +139,55 @@ public class GamePlayUIController : MonoBehaviour
         selectedArrow.anchoredPosition = pos;
     }
 
-    public void Alert()
+    #endregion
+
+    #region Play Round
+
+    private void SetCharacters()
     {
-        if (GameController.Instance.currentProgress == GameProgress.ReadyGame)
+        Object prefab;
+        GameObject obj;
+        string charPath = (type == UserType.Defender) ? "Prefab/Monsters/" : "Prefab/Classes/";
+        string enemyPath = (type == UserType.Defender) ? "Prefab/Classes/" : "Prefab/Monsters/";
+        if (type == UserType.Defender)
         {
-            Debug.Log("Please Complete Setting Candidate");
+            // 자신 캐릭터 소환
+            prefab = Resources.Load(charPath + "Dokkaebi");
+            obj = Instantiate(prefab) as GameObject;
+            obj.transform.position = new Vector3(-5, 0, 0);
+            obj.transform.SetParent(map.transform);
+            charObjects.Add(obj.GetComponent<CharacterObject>());
+
+            // 적 캐릭터 소환
+            for (int i = 0; i < 3; i++)
+            {
+                prefab = Resources.Load(enemyPath + "Knight");
+                obj = Instantiate(prefab) as GameObject;
+                obj.transform.position = new Vector3(2 + 2.5f * i, -1.5f, 0);
+                obj.transform.SetParent(map.transform);
+                enemyObjects.Add(obj.GetComponent<CharacterObject>());
+            }
         }
+        else
+        {
+
+        }
+
+        for (int i = 0; i < charObjects.Count; i++)
+            charObjects[i].SetFlip(false);
+        for (int i = 0; i < enemyObjects.Count; i++)
+            enemyObjects[i].SetFlip(true);
     }
+
+    private void ClearCharacters()
+    {
+        for (int i = 0; i < charObjects.Count; i++)
+            Destroy(charObjects[i]);
+        for (int i = 0; i < enemyObjects.Count; i++)
+            Destroy(enemyObjects[i]);
+
+        charObjects.Clear();
+        enemyObjects.Clear();
+    }
+    #endregion
 }

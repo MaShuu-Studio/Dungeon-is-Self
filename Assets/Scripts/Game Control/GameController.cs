@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 namespace GameControl
 {
-    public enum GameProgress { ReadyGame, ReadyRound, PlayRound };
+    public enum GameProgress { ReadyGame = 0, ReadyRound, PlayRound };
     public enum UserType { Offender, Defender };
 
     public class GameController : MonoBehaviour

@@ -9,7 +9,7 @@ public class CharacterToggle : MonoBehaviour
     public Toggle toggle { get; private set; }
     private Image frame;
 
-    private void Start()
+    private void Awake()
     {
         frame = GetComponent<Image>();
         toggle = GetComponent<Toggle>();
