@@ -50,7 +50,7 @@ public class SceneController : MonoBehaviour
 
         if (CurrentScene == "GAMEPLAY")
         {
-            GameController.Instance.StartGame();
+            GameController.Instance.ReadyGame();
         }
     }
 }

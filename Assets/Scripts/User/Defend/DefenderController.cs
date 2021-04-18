@@ -29,7 +29,7 @@ public class DefenderController : MonoBehaviour
     #endregion
 
     public string[] selectedMonsterCandidates { get; private set; } = new string[6];
-    private List<Monster> monsters = new List<Monster>();
+    public List<Monster> monsters { get; private set; } = new List<Monster>();
 
     Dictionary<int, bool> Roster;
 
@@ -42,18 +42,14 @@ public class DefenderController : MonoBehaviour
     }
 
     // 게임이 시작될 때 Defender에 대한 초기화 진행
-    public void Init(List<string> monsterNames)
+    public void Init()
     {
-        // 어떠한 몬스터를 가져갈지 결정을 해둔 뒤기 때문에
-        // 바로 몬스터 리스트에 등록
-
         monsters.Clear();
 
-        foreach (string name in monsterNames)
+        foreach (string name in selectedMonsterCandidates)
         {
             monsters.Add(MonsterDatabase.Instance.GetMonster(name));
         }
-
     }
 
     public void ViewDungeon()
@@ -65,8 +61,7 @@ public class DefenderController : MonoBehaviour
     {
 
     }
-
-    public void SetMonsterRoster(int num, string name)
+    public void SetMonsterCandidate(int num, string name)
     {
         selectedMonsterCandidates[num] = name;
 

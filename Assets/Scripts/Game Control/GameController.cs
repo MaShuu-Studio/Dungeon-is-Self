@@ -41,9 +41,6 @@ namespace GameControl
         public GameProgress currentProgress { get; private set; }
         private int round;
 
-        private List<Monster> curRoundMonster;
-        //private List<Character> curRoundCharacter;
-
         // Start is called before the first frame update
         void Start()
         {
@@ -61,13 +58,11 @@ namespace GameControl
             userType = type;
         }
 
-        public void StartGame()
+        public void ReadyGame()
         {
             gamePlayUI = GameObject.FindWithTag("UI").GetComponent<GamePlayUIController>();
 
             currentProgress = GameProgress.ReadyGame;
-            curRoundMonster = new List<Monster>();
-            //curRoundCharacter = new List<Character>();
 
             isPlay = true;
             round = 0;
@@ -76,15 +71,19 @@ namespace GameControl
             gamePlayUI.ChangeView();
         }
 
+        public void StartGame()
+        {
+            DefenderController.Instance.Init();
+
+            ReadyRound();
+        }
+
         public void ReadyRound()
         {
             if (isPlay)
             {
                 round++;
                 currentProgress = GameProgress.ReadyRound;
-
-                curRoundMonster.Clear();
-                //curRoundCharacter.Clear();         
             }
         }
 

@@ -5,7 +5,9 @@ using UnityEngine.UI;
 
 public class CharacterToggle : MonoBehaviour
 {
+    [SerializeField] private GamePlayUIController gamePlayUI;
     [SerializeField] private Image face;
+    [SerializeField] private int index;
     public Toggle toggle { get; private set; }
     private Image frame;
 
@@ -13,6 +15,7 @@ public class CharacterToggle : MonoBehaviour
     {
         frame = GetComponent<Image>();
         toggle = GetComponent<Toggle>();
+        toggle.onValueChanged.AddListener(SetSkillTree); 
     }
     void Update()
     {
@@ -31,5 +34,13 @@ public class CharacterToggle : MonoBehaviour
     {
         frame.color = color;
         if (face != null) face.color = color;
+    }
+
+    private void SetSkillTree(bool b)
+    {
+        if (b)
+        {
+            gamePlayUI.SetSkillTree(index);
+        }
     }
 }

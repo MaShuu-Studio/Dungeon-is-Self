@@ -15,6 +15,7 @@ public class UIDescription : MonoBehaviour
 
     public virtual void ShowDecription(bool isShow, Vector3 pos)
     {
+        transform.SetAsFirstSibling();
         gameObject.SetActive(isShow);
         if (isShow) rectTransform.anchoredPosition = pos;
     }

@@ -10,6 +10,7 @@ public class CharIcon : UIIcon, IPointerDownHandler, IPointerClickHandler
     [SerializeField] private bool isCandidate;
     private GamePlayUIController gamePlayUI;
     private string characterName;
+    private UserType type;
 
 
     protected override void Start()
@@ -39,5 +40,6 @@ public class CharIcon : UIIcon, IPointerDownHandler, IPointerClickHandler
     {
         base.SetImage(type, name);
         characterName = name;
+        this.type = type;
     }
 }

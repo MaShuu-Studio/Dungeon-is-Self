@@ -43,6 +43,20 @@ namespace GameControl
             if (bench.Count >= 3) return;
             else bench.Add(role);
         }
+        public void SetRoster(Role role)
+        {
+            if (roster.Count >= 3) return;
+            else { roster.Add(role); character.Add(new Character(role)); }
+        }
+        public void ResetDice(int n)
+        {
+            character[n].dice.RemoveRange(0, 6);
+        }
+
+        public void SetDice(int n, int id)
+        {
+            character[n].dice.Add(SkillDatabase.GetCharacterSkill(id));
+        }
 
         public CharacterSkill OneDiceThrow(int n)
         {
@@ -50,6 +64,7 @@ namespace GameControl
             return character[n].dice[i];
         }
 
+        // Roster ¡÷ªÁ¿ß
         public void AllDiceThrow(int a, int b, int c)
         {
             OneDiceThrow(a);

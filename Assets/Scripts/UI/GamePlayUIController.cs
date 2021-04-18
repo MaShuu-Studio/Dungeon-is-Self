@@ -17,18 +17,46 @@ public class GamePlayUIController : MonoBehaviour
     [SerializeField] private Transform candidatesTransform;
     [SerializeField] private Transform selectedListTransform;
     [SerializeField] private RectTransform selectedArrow;
-
     [SerializeField] private CharSelectIcon[] selectIcons = new CharSelectIcon[6];
+    [SerializeField] private GameObject candidatePrefab;
+
     private int selectedNumber = 0;
 
     [Header("READY ROUND")]
     [SerializeField] private List<CharacterToggle> characterToggles;
-    [SerializeField] private List<GameObject> characterSkillTrees;
+    [SerializeField] private GameObject defenderSkillTree;
+    [SerializeField] private List<RectTransform> defenderSkillTiers;
+    [SerializeField] private GameObject skillIconPrefab;
+    [SerializeField] private List<Transform> defenderDescView; // 나중에 없앨 부분 임시
+    [SerializeField] private SkillDescription description;
+
+    private List<GameObject> skillIcons = new List<GameObject>();
 
     [Header("PLAY ROUND")]
     [SerializeField] private SpriteRenderer map;
     private List<CharacterObject> charObjects = new List<CharacterObject>();
     private List<CharacterObject> enemyObjects = new List<CharacterObject>();
+
+    #region Instance
+    private static GamePlayUIController instance;
+    public static GamePlayUIController Instance
+    {
+        get
+        {
+            var obj = FindObjectOfType<GamePlayUIController>();
+            instance = obj;
+            return instance;
+        }
+    }
+    private void Awake()
+    {
+        if (Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+    }
+    #endregion
 
     void Update()
     {
@@ -42,9 +70,6 @@ public class GamePlayUIController : MonoBehaviour
             string name = DefenderController.Instance.selectedMonsterCandidates[i];
             userCharacters[i].SetImage(type, name);
         }
-
-        if (progress == GameProgress.ReadyRound)
-            for (int i = 0; i < characterSkillTrees.Count; i++) characterSkillTrees[i].SetActive(characterToggles[i].toggle.isOn);
     }
 
     #region Basic
@@ -52,7 +77,7 @@ public class GamePlayUIController : MonoBehaviour
     {
         type = GameController.Instance.userType;
     }
-    
+
     public void SetProgress()
     {
         progress = GameController.Instance.currentProgress;
@@ -90,7 +115,7 @@ public class GamePlayUIController : MonoBehaviour
                 break;
         }
     }
-    
+
     public void Alert()
     {
         if (GameController.Instance.currentProgress == GameProgress.ReadyGame)
@@ -108,16 +133,14 @@ public class GamePlayUIController : MonoBehaviour
             Destroy(child.gameObject);
         }
 
-        Object facePrefab = Resources.Load("Prefab/UI/Candidate Monster");
-
         List<string> candidates = new List<string>();
         if (type == UserType.Defender) MonsterDatabase.Instance.GetAllMonsterCandidatesList(ref candidates);
 
         foreach (string name in candidates)
         {
-            GameObject gameObject = Instantiate(facePrefab) as GameObject;
+            GameObject gameObject = Instantiate(candidatePrefab) as GameObject;
             gameObject.transform.SetParent(candidatesTransform);
-            gameObject.transform.localScale = new Vector3(1,1,1);
+            gameObject.transform.localScale = new Vector3(1, 1, 1);
 
             UIIcon uiIcon = gameObject.GetComponent<UIIcon>();
             uiIcon.SetImage(type, name);
@@ -129,7 +152,7 @@ public class GamePlayUIController : MonoBehaviour
         selectIcons[selectedNumber].SetImage(type, name);
         if (type == UserType.Defender)
         {
-            DefenderController.Instance.SetMonsterRoster(selectedNumber, name);
+            DefenderController.Instance.SetMonsterCandidate(selectedNumber, name);
         }
 
         bool existEmpty = false;
@@ -153,6 +176,69 @@ public class GamePlayUIController : MonoBehaviour
         selectedNumber = n;
         RectTransform rect = selectIcons[selectedNumber].GetComponent<RectTransform>();
         selectedArrow.anchoredPosition = rect.anchoredPosition;
+    }
+
+    #endregion
+
+    #region Ready Round
+
+    public void SetSkillTree(int index)
+    {
+        ClearSkillTree();
+        // 자동화 코드.
+        // 자동화가 아니라 프리팹을 활용해야할지는 고민이 좀 필요할 듯
+
+        if (type == UserType.Defender)
+        {
+            string monsterName = DefenderController.Instance.monsters[index].name;
+
+            List<MonsterSkill> skills = SkillDatabase.Instance.GetMonsterSkills(monsterName);
+
+            List<GameObject>[] skillTierList = new List<GameObject>[3];
+            for (int i = 0; i < 3; i++)
+                skillTierList[i] = new List<GameObject>();
+
+            for (int i = 0; i < skills.Count; i++)
+            {
+                int tier = skills[i].tier;
+                GameObject obj = Instantiate(skillIconPrefab);
+                obj.transform.SetParent(defenderSkillTiers[tier - 1]);
+                obj.transform.localScale = new Vector3(1, 1, 1);
+                SkillIcon skillIcon = obj.GetComponent<SkillIcon>();
+                skillIcon.SetSkill(skills[i]);
+
+                skillTierList[tier - 1].Add(obj);
+                skillIcons.Add(obj);
+            }
+
+            for (int i = 0; i < 3; i++)
+                for (int j = 0; j < skillTierList[i].Count; j++)
+                {
+                    RectTransform rect = skillTierList[i][j].GetComponent<RectTransform>();
+
+                    rect.anchoredPosition = new Vector3(0,
+                        -1 * (j * 100 +
+                        j * (defenderSkillTiers[i].rect.height - skillTierList[i].Count * 100) / (skillTierList[i].Count - 1)), 0);
+                }
+        }
+
+    }
+
+    private void ClearSkillTree()
+    {
+        for (int i = 0; i < skillIcons.Count; i++)
+        {
+            Destroy(skillIcons[i].gameObject);
+        }
+
+        skillIcons.Clear();
+    }
+
+    public void ShowDescription(Skill skill, Vector2 pos)
+    {
+        description.transform.SetParent(defenderDescView[skill.tier - 1]);
+        description.SetDescription(skill.name, "", "DESCRIPTION");
+        description.ShowDecription(true, pos);
     }
 
     #endregion

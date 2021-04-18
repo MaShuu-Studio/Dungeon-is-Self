@@ -7,7 +7,7 @@ using GameControl;
 
 public class CustomButton : MonoBehaviour
 {
-    public enum ButtonMethod { SceneMovement = 0, GameStart, GameReadyEnd, RoundReadyEnd };
+    public enum ButtonMethod { SceneMovement = 0, GameReady, GameStart, GameReadyEnd, RoundReadyEnd };
 
     [SerializeField] private string moveScene = "";
     [SerializeField] private UserType userType = UserType.Offender;
@@ -22,17 +22,20 @@ public class CustomButton : MonoBehaviour
         switch (method)
         {
             case ButtonMethod.SceneMovement:
-                button.onClick.AddListener(() => ChangeScene());
+                button.onClick.AddListener(ChangeScene);
+                break;
+            case ButtonMethod.GameReady:
+                button.onClick.AddListener(SetUserType);
+                button.onClick.AddListener(ChangeScene);
                 break;
             case ButtonMethod.GameStart:
-                button.onClick.AddListener(() => SetUserType());
-                button.onClick.AddListener(() => ChangeScene());
+                button.onClick.AddListener(GameStart);
                 break;
             case ButtonMethod.GameReadyEnd:
-                button.onClick.AddListener(() => GameReadyEnd());
+                button.onClick.AddListener(GameReadyEnd);
                 break;
             case ButtonMethod.RoundReadyEnd:
-                button.onClick.AddListener(() => RoundReadyEnd());
+                button.onClick.AddListener(RoundReadyEnd);
                 break;
         }
     }
@@ -46,6 +49,11 @@ public class CustomButton : MonoBehaviour
         // 실제 게임에서는 서버에서 매칭 관련 정보를 넘겨주기 때문에 필요 X할듯
         GameController.Instance.SetUserType(userType);
     }
+    void GameStart()
+    {
+        GameController.Instance.StartGame();
+    }
+
     void GameReadyEnd()
     {        
         if (GameController.Instance.userType == UserType.Defender)
@@ -62,6 +70,7 @@ public class CustomButton : MonoBehaviour
             }
 
         }
+
         // 후보 세팅이 끝났다고 패킷 전송
         GameController.Instance.ReadyRound();
     }

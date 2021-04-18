@@ -14,31 +14,17 @@ public class SkillIcon : UIIcon
         base.Start();
         pos.x = rect.anchoredPosition.x - 15;
         pos.y = rect.anchoredPosition.y + 15;
-        skillDescription = description as SkillDescription;
-        SetSkill(UserType.Defender, "SKILL1");
     }
     public override void OnPointerEnter(PointerEventData pointerEventData)
     {
-        base.OnPointerEnter(pointerEventData);
-        skillDescription.SetDescription(skill.name, "", "DESCRIPTION");
+        //base.OnPointerEnter(pointerEventData);
+        //skillDescription.SetDescription(skill.name, "", "DESCRIPTION");
+        GamePlayUIController.Instance.ShowDescription(skill, pos);
     }
 
-    public override void OnPointerExit(PointerEventData pointerEventData)
+    public void SetSkill(Skill skill)
     {
-    }
-
-    public void SetSkill(UserType type, string skillName)
-    {
-        switch (type)
-        {
-            case UserType.Defender:
-                skill = SkillDatabase.Instance.GetMonsterSkill(skillName);
-                break;
-            case UserType.Offender:
-                skill = SkillDatabase.Instance.GetCharacterSkill(skillName);
-                break;
-        }
-
+        this.skill = skill; // 복사방법 조정
         iconImage.sprite = Resources.Load<Sprite>("Sprites/Skills/" + skill.name);
     }
 }
