@@ -22,6 +22,6 @@ public class CharSelectIcon : UIIcon, IPointerDownHandler, IPointerClickHandler
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        gamePlayUI.SetSelectedCharacterNumber(number, rect.anchoredPosition);
+        gamePlayUI.SetSelectedCharacterNumber(number);
     }
 }

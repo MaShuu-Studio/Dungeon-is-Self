@@ -131,12 +131,28 @@ public class GamePlayUIController : MonoBehaviour
         {
             DefenderController.Instance.SetMonsterRoster(selectedNumber, name);
         }
+
+        bool existEmpty = false;
+        for (int i = selectedNumber + 1; i < DefenderController.Instance.selectedMonsterCandidates.Length; i++)
+        {
+            if (string.IsNullOrEmpty(DefenderController.Instance.selectedMonsterCandidates[i]))
+            {
+                existEmpty = true;
+                SetSelectedCharacterNumber(i);
+                break;
+            }
+        }
+
+        if (existEmpty == false) SetSelectedCharacterNumber(selectedNumber + 1);
     }
 
-    public void SetSelectedCharacterNumber(int n, Vector3 pos)
+    public void SetSelectedCharacterNumber(int n)
     {
+        if (n >= selectIcons.Length) return;
+
         selectedNumber = n;
-        selectedArrow.anchoredPosition = pos;
+        RectTransform rect = selectIcons[selectedNumber].GetComponent<RectTransform>();
+        selectedArrow.anchoredPosition = rect.anchoredPosition;
     }
 
     #endregion
