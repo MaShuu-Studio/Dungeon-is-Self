@@ -5,17 +5,17 @@ using UnityEngine.UI;
 
 public class UIDescription : MonoBehaviour
 {
-    private RectTransform rectTransform;
-    
-    void Awake()
+    protected RectTransform rectTransform;
+
+    protected virtual void Awake()
     {
         rectTransform = GetComponent<RectTransform>();    
         gameObject.SetActive(false);    
     }
 
-    public void ShowDecription(bool isShow, Vector3 pos)
+    public virtual void ShowDecription(bool isShow, Vector3 pos)
     {
         gameObject.SetActive(isShow);
-        rectTransform.anchoredPosition = pos;
+        if (isShow) rectTransform.anchoredPosition = pos;
     }
 }

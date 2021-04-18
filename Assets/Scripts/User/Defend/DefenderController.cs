@@ -72,7 +72,7 @@ public class DefenderController : MonoBehaviour
 
         for (int i = 0; i < 6; i++)
         {
-            Debug.Log($"Monster {i}. {selectedMonsterCandidates[i]}");
+            //Debug.Log($"Monster {i}. {selectedMonsterCandidates[i]}");
         }
     }
 

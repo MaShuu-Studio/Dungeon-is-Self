@@ -108,7 +108,7 @@ public class GamePlayUIController : MonoBehaviour
             Destroy(child.gameObject);
         }
 
-        Object facePrefab = Resources.Load("Prefab/Candidate Monster");
+        Object facePrefab = Resources.Load("Prefab/UI/Candidate Monster");
 
         List<string> candidates = new List<string>();
         if (type == UserType.Defender) MonsterDatabase.Instance.GetAllMonsterCandidatesList(ref candidates);
