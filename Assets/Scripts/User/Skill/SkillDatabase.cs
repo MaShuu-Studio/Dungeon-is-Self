@@ -81,7 +81,15 @@ public class SkillDatabase : MonoBehaviour
     {
         monSkillDB = new List<MonsterSkill>();
 
-        monSkillDB.Add(new MonsterSkill("SKILL1", 5));
+        monSkillDB.Add(new MonsterSkill(22101, "SKILL1-1", 5));
+        monSkillDB.Add(new MonsterSkill(22102, "SKILL1-2", 5));
+        monSkillDB.Add(new MonsterSkill(22103, "SKILL1-3", 5));
+        monSkillDB.Add(new MonsterSkill(22201, "SKILL2-1", 5));
+        monSkillDB.Add(new MonsterSkill(22202, "SKILL2-2", 5));
+        monSkillDB.Add(new MonsterSkill(22203, "SKILL2-3", 5));
+        monSkillDB.Add(new MonsterSkill(22301, "SKILL3-1", 5));
+        monSkillDB.Add(new MonsterSkill(22302, "SKILL3-2", 5));
+        monSkillDB.Add(new MonsterSkill(22302, "SKILL3-3", 5));
     }
 
     public CharacterSkill GetCharacterSkill(string name)
@@ -96,5 +104,20 @@ public class SkillDatabase : MonoBehaviour
     public MonsterSkill GetMonsterSkill(string name)
     {
         return monSkillDB.Find(skill => skill.name == name);
+    }
+
+    public List<MonsterSkill> GetMonsterSkills(string name)
+    {
+        Monster monster = MonsterDatabase.Instance.GetMonster(name);
+
+        if (monster == null) return null;
+
+        List<MonsterSkill> monsterSkills = new List<MonsterSkill>();
+        foreach (string skillName in monster.skills)
+        {
+            monsterSkills.Add(GetMonsterSkill(skillName));
+        }
+
+        return monsterSkills;
     }
 }

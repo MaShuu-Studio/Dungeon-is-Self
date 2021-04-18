@@ -5,6 +5,7 @@ using UnityEngine;
 public class CharacterSkill : Skill
 {
     public int damage { get; protected set;}
+    public List<int> prior { get; protected set; }
 
     public CharacterSkill(int id, string name, int turn, int damage, List<int> prior)
     {
