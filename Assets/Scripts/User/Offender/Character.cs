@@ -8,7 +8,6 @@ namespace GameControl
     {
         public List<CharacterSkill> dice = new List<CharacterSkill>();
         private Role _role;
-        [SerializeField] private SkillDatabase _skilldb;
         private int skillpoint;
         public List<CharacterSkill> myskill = new List<CharacterSkill>();
         //private List<string> skill = new List<string>();

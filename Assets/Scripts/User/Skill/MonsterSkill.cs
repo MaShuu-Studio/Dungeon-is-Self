@@ -9,7 +9,7 @@ public class MonsterSkill : Skill
     public SkillType type { get; private set; }
     public int cost { get; private set; }
 
-    public MonsterSkill(int id, string name, int turn)
+    public MonsterSkill(int id, string name, int turn, int cost)
     {
         // ID 구조 2abcc
         // 2는 몬스터스킬임을 표기
@@ -27,5 +27,6 @@ public class MonsterSkill : Skill
         this.tier = tier;
         this.name = name;
         this.turn = turn;
+        this.cost = cost;
     }
 }

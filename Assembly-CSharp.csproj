@@ -85,6 +85,7 @@
     <Compile Include="Assets\Scripts\UI\CharSelectIcon.cs" />
     <Compile Include="Assets\Scripts\UI\CharacterToggle.cs" />
     <Compile Include="Assets\Scripts\UI\CustomButton.cs" />
+    <Compile Include="Assets\Scripts\UI\DiceIcon.cs" />
     <Compile Include="Assets\Scripts\UI\GamePlayUIController.cs" />
     <Compile Include="Assets\Scripts\UI\SkillDescription.cs" />
     <Compile Include="Assets\Scripts\UI\SkillIcon.cs" />

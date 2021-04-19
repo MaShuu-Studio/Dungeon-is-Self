@@ -20,17 +20,23 @@ public class GamePlayUIController : MonoBehaviour
     [SerializeField] private CharSelectIcon[] selectIcons = new CharSelectIcon[6];
     [SerializeField] private GameObject candidatePrefab;
 
-    private int selectedNumber = 0;
+    private int selectedCandidateNumber = 0;
 
     [Header("READY ROUND")]
     [SerializeField] private List<CharacterToggle> characterToggles;
+
     [SerializeField] private GameObject defenderSkillTree;
     [SerializeField] private List<RectTransform> defenderSkillTiers;
     [SerializeField] private GameObject skillIconPrefab;
     [SerializeField] private List<Transform> defenderDescView; // 나중에 없앨 부분 임시
     [SerializeField] private SkillDescription description;
-
     private List<GameObject> skillIcons = new List<GameObject>();
+
+    [SerializeField] private List<DiceIcon> dices;
+    [SerializeField] private RectTransform selectedDice;
+
+    private int selectedDiceNumber;
+
 
     [Header("PLAY ROUND")]
     [SerializeField] private SpriteRenderer map;
@@ -106,6 +112,7 @@ public class GamePlayUIController : MonoBehaviour
                     string name = DefenderController.Instance.selectedMonsterCandidates[i];
                     characterToggles[i].SetFace(type, name);
                 }
+                SelectDice(0);
                 break;
 
             case GameProgress.PlayRound:
@@ -149,14 +156,14 @@ public class GamePlayUIController : MonoBehaviour
 
     public void SelectCandidate(string name)
     {
-        selectIcons[selectedNumber].SetImage(type, name);
+        selectIcons[selectedCandidateNumber].SetImage(type, name);
         if (type == UserType.Defender)
         {
-            DefenderController.Instance.SetMonsterCandidate(selectedNumber, name);
+            DefenderController.Instance.SetMonsterCandidate(selectedCandidateNumber, name);
         }
 
         bool existEmpty = false;
-        for (int i = selectedNumber + 1; i < DefenderController.Instance.selectedMonsterCandidates.Length; i++)
+        for (int i = selectedCandidateNumber + 1; i < DefenderController.Instance.selectedMonsterCandidates.Length; i++)
         {
             if (string.IsNullOrEmpty(DefenderController.Instance.selectedMonsterCandidates[i]))
             {
@@ -166,15 +173,15 @@ public class GamePlayUIController : MonoBehaviour
             }
         }
 
-        if (existEmpty == false) SetSelectedCharacterNumber(selectedNumber + 1);
+        if (existEmpty == false) SetSelectedCharacterNumber(selectedCandidateNumber + 1);
     }
 
     public void SetSelectedCharacterNumber(int n)
     {
         if (n >= selectIcons.Length) return;
 
-        selectedNumber = n;
-        RectTransform rect = selectIcons[selectedNumber].GetComponent<RectTransform>();
+        selectedCandidateNumber = n;
+        RectTransform rect = selectIcons[selectedCandidateNumber].GetComponent<RectTransform>();
         selectedArrow.anchoredPosition = rect.anchoredPosition;
     }
 
@@ -217,8 +224,8 @@ public class GamePlayUIController : MonoBehaviour
                     RectTransform rect = skillTierList[i][j].GetComponent<RectTransform>();
 
                     rect.anchoredPosition = new Vector3(0,
-                        -1 * (j * 100 +
-                        j * (defenderSkillTiers[i].rect.height - skillTierList[i].Count * 100) / (skillTierList[i].Count - 1)), 0);
+                        -1 * (j * 130 +
+                        j * (defenderSkillTiers[i].rect.height - skillTierList[i].Count * 130) / (skillTierList[i].Count - 1)), 0);
                 }
         }
 
@@ -236,9 +243,18 @@ public class GamePlayUIController : MonoBehaviour
 
     public void ShowDescription(Skill skill, Vector2 pos)
     {
+        if (skill == null) return; 
         description.transform.SetParent(defenderDescView[skill.tier - 1]);
         description.SetDescription(skill.name, "", "DESCRIPTION");
         description.ShowDecription(true, pos);
+    }
+
+    public void SelectDice(int index)
+    {
+        RectTransform rect = dices[index].GetComponent<RectTransform>();
+        Vector3 pos = new Vector3(rect.anchoredPosition.x - 6.25f, rect.anchoredPosition.y + 6.25f, 0);
+        selectedDiceNumber = index;
+        selectedDice.anchoredPosition = pos;
     }
 
     #endregion
