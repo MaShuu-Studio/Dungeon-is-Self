@@ -4,16 +4,18 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
-public class SkillDescription : UIDescription, IPointerExitHandler
+public class SkillDescription : UIDescription
 {
     [SerializeField] private Image skillImage;
     [SerializeField] private Text nameText;
     [SerializeField] private Text typeText;
     [SerializeField] private Text descriptionText;
 
-    public void OnPointerExit(PointerEventData eventData)
+    protected override void Awake()
     {
-        gameObject.SetActive(false);
+        base.Awake();
+        gameObject.SetActive(true);
+
     }
     public void SetDescription(string name, string type, string description)
     {
@@ -21,5 +23,10 @@ public class SkillDescription : UIDescription, IPointerExitHandler
         nameText.text = name;
         typeText.text = type;
         descriptionText.text = description;
+    }
+    public override void ShowDecription(bool isShow, Vector3 pos)
+    {
+        transform.SetAsFirstSibling();
+        gameObject.SetActive(isShow);
     }
 }

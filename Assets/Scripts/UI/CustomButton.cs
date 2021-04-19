@@ -52,7 +52,7 @@ public class CustomButton : MonoBehaviour
         switch (progress)
         {
             case GameProgress.ReadyGame:
-                GameController.Instance.StartGame();
+                GameReadyEnd();
                 break;
 
             case GameProgress.ReadyRound:
@@ -90,7 +90,7 @@ public class CustomButton : MonoBehaviour
         }
 
         // 후보 세팅이 끝났다고 패킷 전송
-        //GameController.Instance.ReadyRound();
+        GameController.Instance.StartGame();
     }
     void RoundReadyEnd()
     {

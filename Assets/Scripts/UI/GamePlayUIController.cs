@@ -34,6 +34,9 @@ public class GamePlayUIController : MonoBehaviour
 
     [SerializeField] private List<DiceIcon> dices;
     [SerializeField] private RectTransform selectedDice;
+    [SerializeField] private List<SkillIcon> attackSkills;
+    [SerializeField] private Slider costSlider;
+    [SerializeField] private Text costText;
 
     private int selectedDiceNumber;
     private int selectedMonsterNumber;
@@ -230,8 +233,8 @@ public class GamePlayUIController : MonoBehaviour
                     RectTransform rect = skillTierList[i][j].GetComponent<RectTransform>();
 
                     rect.anchoredPosition = new Vector3(0,
-                        -1 * (j * 130 +
-                        j * (defenderSkillTiers[i].rect.height - skillTierList[i].Count * 130) / (skillTierList[i].Count - 1)), 0);
+                        -1 * (j * 100 +
+                        j * (defenderSkillTiers[i].rect.height - skillTierList[i].Count * 100) / (skillTierList[i].Count - 1)), 0);
                 }
         }
 
@@ -269,6 +272,10 @@ public class GamePlayUIController : MonoBehaviour
         {
             MonsterSkill skill = DefenderController.Instance.GetSelectedDice(selectedDiceNumber);
             dices[selectedDiceNumber].SetSkill(skill);
+
+            int totalCost = DefenderController.MAX_COST - DefenderController.Instance.GetDiceCost();
+            costSlider.value = (totalCost >= 0) ? totalCost : 0;
+            costText.text = totalCost.ToString();
         }
     }
 

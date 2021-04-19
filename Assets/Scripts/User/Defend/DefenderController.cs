@@ -34,6 +34,7 @@ public class DefenderController : MonoBehaviour
     private List<MonsterSkill[]> dices = new List<MonsterSkill[]>();
     private List<MonsterSkill> attackSkills = new List<MonsterSkill>();
     private int monsterIndex;
+    public const int MAX_COST = 10;
 
     // Start is called before the first frame update
     void Start()
@@ -118,6 +119,17 @@ public class DefenderController : MonoBehaviour
         List<int> unit = new List<int>();
         unit.Add(monsterIndex);
         GameController.Instance.SelectUnit(UserType.Defender, unit);
+    }
+
+    public int GetDiceCost()
+    {
+        int cost = 0;
+        foreach (MonsterSkill skill in dices[monsterIndex])
+        {
+            cost += skill.cost;
+        }
+
+        return cost;
     }
 
     #endregion

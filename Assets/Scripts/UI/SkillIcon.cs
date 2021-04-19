@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using GameControl;
+using UnityEngine.UI;
 
 public class SkillIcon : UIIcon
 {
     SkillDescription skillDescription;
+    [SerializeField] private Text costText;
     private Skill skill;
 
     protected override void Start()
@@ -22,9 +23,18 @@ public class SkillIcon : UIIcon
         GamePlayUIController.Instance.ShowDescription(skill, pos);
     }
 
-    public void SetSkill(Skill skill)
+    public void SetSkill(MonsterSkill skill)
     {
         this.skill = skill; // 복사방법 조정
         iconImage.sprite = Resources.Load<Sprite>("Sprites/Skills/" + skill.name);
+        if (costText != null)
+            costText.text = (skill.cost >= 0) ? skill.cost.ToString() : "";
+    }
+    public void SetSkill(CharacterSkill skill)
+    {
+        this.skill = skill; // 복사방법 조정
+        iconImage.sprite = Resources.Load<Sprite>("Sprites/Skills/" + skill.name);
+        if (costText != null)
+            costText.text = "";
     }
 }
