@@ -81,15 +81,23 @@ public class SkillDatabase : MonoBehaviour
     {
         monSkillDB = new List<MonsterSkill>();
 
-        monSkillDB.Add(new MonsterSkill(22101, "SKILL1-1", 5, 0));
-        monSkillDB.Add(new MonsterSkill(22102, "SKILL1-2", 5, 0));
-        monSkillDB.Add(new MonsterSkill(22103, "SKILL1-3", 5, 1));
-        monSkillDB.Add(new MonsterSkill(22201, "SKILL2-1", 5, 2));
-        monSkillDB.Add(new MonsterSkill(22202, "SKILL2-2", 5, 2));
-        monSkillDB.Add(new MonsterSkill(22203, "SKILL2-3", 5, 3));
-        monSkillDB.Add(new MonsterSkill(22301, "SKILL3-1", 5, 5));
-        monSkillDB.Add(new MonsterSkill(22302, "SKILL3-2", 5, 6));
-        monSkillDB.Add(new MonsterSkill(22302, "SKILL3-3", 5, 7));
+        #region AttackSkill
+        monSkillDB.Add(new MonsterSkill(21101, "SKILL1-1", 5, 0));
+        monSkillDB.Add(new MonsterSkill(21102, "SKILL1-2", 5, 0));
+        monSkillDB.Add(new MonsterSkill(21103, "SKILL1-3", 5, 0));
+        #endregion
+
+        #region Dice
+        monSkillDB.Add(new MonsterSkill(22101, "DICE1-1", 5, 0));
+        monSkillDB.Add(new MonsterSkill(22102, "DICE1-2", 5, 0));
+        monSkillDB.Add(new MonsterSkill(22103, "DICE1-3", 5, 1));
+        monSkillDB.Add(new MonsterSkill(22201, "DICE2-1", 5, 2));
+        monSkillDB.Add(new MonsterSkill(22202, "DICE2-2", 5, 2));
+        monSkillDB.Add(new MonsterSkill(22203, "DICE2-3", 5, 3));
+        monSkillDB.Add(new MonsterSkill(22301, "DICE3-1", 5, 5));
+        monSkillDB.Add(new MonsterSkill(22302, "DICE3-2", 5, 6));
+        monSkillDB.Add(new MonsterSkill(22302, "DICE3-3", 5, 7));
+        #endregion
     }
 
     public CharacterSkill GetCharacterSkill(string name)
@@ -106,14 +114,14 @@ public class SkillDatabase : MonoBehaviour
         return monSkillDB.Find(skill => skill.name == name);
     }
 
-    public List<MonsterSkill> GetMonsterSkills(string name)
+    public List<MonsterSkill> GetMonsterDices(string name)
     {
         Monster monster = MonsterDatabase.Instance.GetMonster(name);
 
         if (monster == null) return null;
 
         List<MonsterSkill> monsterSkills = new List<MonsterSkill>();
-        foreach (string skillName in monster.skills)
+        foreach (string skillName in monster.diceSkills)
         {
             monsterSkills.Add(GetMonsterSkill(skillName));
         }

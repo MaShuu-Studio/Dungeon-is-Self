@@ -41,14 +41,20 @@ public class MonsterDatabase : MonoBehaviour
 
         #region Tier 1
         monsterDB.Add(new Monster(
-            1, "Minotaurs", 10, Monster.Weakness.NORMAL, 
+            1, "Minotaurs", 10, Monster.Weakness.NORMAL,
             new List<string>()
             {
                 "SKILL1-1",
                 "SKILL1-2",
-                "SKILL2-1",
-                "SKILL2-2",
-                "SKILL3-2",
+                "SKILL1-3",
+            }, 
+            new List<string>()
+            {
+                "DICE1-1",
+                "DICE1-2",
+                "DICE2-1",
+                "DICE2-2",
+                "DICE3-2",
             }));
 
         monsterDB.Add(new Monster(
@@ -58,41 +64,98 @@ public class MonsterDatabase : MonoBehaviour
                 "SKILL1-1",
                 "SKILL1-2",
                 "SKILL1-3",
-                "SKILL2-1",
-                "SKILL2-2",
-                "SKILL2-3",
-                "SKILL3-1",
-                "SKILL3-2",
-                "SKILL3-3",
+            },
+            new List<string>()
+            {
+                "DICE1-1",
+                "DICE1-2",
+                "DICE1-3",
+                "DICE2-1",
+                "DICE2-2",
+                "DICE2-3",
+                "DICE3-1",
+                "DICE3-2",
+                "DICE3-3",
             }));
 
         monsterDB.Add(new Monster(
             1, "Harpy", 12, Monster.Weakness.NORMAL,
             new List<string>()
             {
+                "SKILL1-1",
                 "SKILL1-2",
                 "SKILL1-3",
-                "SKILL2-2",
-                "SKILL2-3",
-                "SKILL3-3",
+            },
+            new List<string>()
+            {
+                "DICE1-2",
+                "DICE1-3",
+                "DICE2-2",
+                "DICE2-3",
+                "DICE3-3",
             }));
 
         monsterDB.Add(new Monster(
             1, "Snake", 12, Monster.Weakness.NORMAL,
             new List<string>()
             {
+                "SKILL1-1",
+                "SKILL1-2",
+                "SKILL1-3",
+            },
+            new List<string>()
+            {
+                "DICE1-1",
+                "DICE1-2",
+                "DICE1-3",
+                "DICE2-1",
+                "DICE2-2",
+                "DICE2-3",
+                "DICE3-1",
+                "DICE3-2",
+                "DICE3-3",
             }));
 
         monsterDB.Add(new Monster(
             1, "Virus", 12, Monster.Weakness.NORMAL,
             new List<string>()
             {
+                "SKILL1-1",
+                "SKILL1-2",
+                "SKILL1-3",
+            },
+            new List<string>()
+            {
+                "DICE1-1",
+                "DICE1-2",
+                "DICE1-3",
+                "DICE2-1",
+                "DICE2-2",
+                "DICE2-3",
+                "DICE3-1",
+                "DICE3-2",
+                "DICE3-3",
             }));
 
         monsterDB.Add(new Monster(
             1, "Dokkaebi", 12, Monster.Weakness.NORMAL,
             new List<string>()
             {
+                "SKILL1-1",
+                "SKILL1-2",
+                "SKILL1-3",
+            },
+            new List<string>()
+            {
+                "DICE1-1",
+                "DICE1-2",
+                "DICE1-3",
+                "DICE2-1",
+                "DICE2-2",
+                "DICE2-3",
+                "DICE3-1",
+                "DICE3-2",
+                "DICE3-3",
             }));
         #endregion
     }

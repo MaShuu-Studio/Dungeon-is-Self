@@ -31,7 +31,9 @@ public class DefenderController : MonoBehaviour
     public string[] selectedMonsterCandidates { get; private set; } = new string[6];
     public List<Monster> monsters { get; private set; } = new List<Monster>();
 
-    Dictionary<int, bool> Roster;
+    private List<MonsterSkill[]> dices = new List<MonsterSkill[]>();
+    private List<MonsterSkill> attackSkills = new List<MonsterSkill>();
+    private int monsterIndex;
 
     // Start is called before the first frame update
     void Start()
@@ -50,6 +52,22 @@ public class DefenderController : MonoBehaviour
         {
             monsters.Add(MonsterDatabase.Instance.GetMonster(name));
         }
+
+        monsterIndex = 0;
+
+        dices.Clear();
+        attackSkills.Clear();
+
+        for (int i = 0; i < monsters.Count; i++)
+        {
+            MonsterSkill[] dice = new MonsterSkill[6];
+            MonsterSkill attackSkill;
+            monsters[i].SetBasicDice(ref dice);
+            attackSkill = monsters[i].GetBasicSkill();
+
+            dices.Add(dice);
+            attackSkills.Add(attackSkill);
+        }
     }
 
     public void ViewDungeon()
@@ -61,14 +79,10 @@ public class DefenderController : MonoBehaviour
     {
 
     }
+    #region Ready Game
     public void SetMonsterCandidate(int num, string name)
     {
         selectedMonsterCandidates[num] = name;
-
-        for (int i = 0; i < 6; i++)
-        {
-            //Debug.Log($"Monster {i}. {selectedMonsterCandidates[i]}");
-        }
     }
 
     public bool CheckCadndidate()
@@ -79,4 +93,18 @@ public class DefenderController : MonoBehaviour
         }
         return true;
     }
+    #endregion
+
+    #region Ready Round
+    public void SelectMonster(int index)
+    {
+        monsterIndex = index;
+    }
+
+    public MonsterSkill GetSelectedDice(int index)
+    {
+        return dices[monsterIndex][index];
+    }
+
+    #endregion
 }

@@ -36,6 +36,7 @@ public class GamePlayUIController : MonoBehaviour
     [SerializeField] private RectTransform selectedDice;
 
     private int selectedDiceNumber;
+    private int selectedMonsterNumber;
 
 
     [Header("PLAY ROUND")]
@@ -106,13 +107,15 @@ public class GamePlayUIController : MonoBehaviour
 
             case GameProgress.ReadyRound:
                 gameViews[1].SetActive(true);
-                characterToggles[0].toggle.isOn = true;
+                selectedMonsterNumber = 0;
+                characterToggles[selectedMonsterNumber].toggle.isOn = true;
+                DefenderController.Instance.SelectMonster(selectedMonsterNumber);
                 for (int i = 0; i < characterToggles.Count; i++)
                 {
                     string name = DefenderController.Instance.selectedMonsterCandidates[i];
                     characterToggles[i].SetFace(type, name);
                 }
-                SelectDice(0);
+                SetAllDice();
                 break;
 
             case GameProgress.PlayRound:
@@ -191,7 +194,10 @@ public class GamePlayUIController : MonoBehaviour
 
     public void SetSkillTree(int index)
     {
+        selectedMonsterNumber = index;
+        DefenderController.Instance.SelectMonster(selectedMonsterNumber);
         ClearSkillTree();
+        SetAllDice();
         // 자동화 코드.
         // 자동화가 아니라 프리팹을 활용해야할지는 고민이 좀 필요할 듯
 
@@ -199,7 +205,7 @@ public class GamePlayUIController : MonoBehaviour
         {
             string monsterName = DefenderController.Instance.monsters[index].name;
 
-            List<MonsterSkill> skills = SkillDatabase.Instance.GetMonsterSkills(monsterName);
+            List<MonsterSkill> skills = SkillDatabase.Instance.GetMonsterDices(monsterName);
 
             List<GameObject>[] skillTierList = new List<GameObject>[3];
             for (int i = 0; i < 3; i++)
@@ -247,6 +253,23 @@ public class GamePlayUIController : MonoBehaviour
         description.transform.SetParent(defenderDescView[skill.tier - 1]);
         description.SetDescription(skill.name, "", "DESCRIPTION");
         description.ShowDecription(true, pos);
+    }
+
+    public void SetAllDice()
+    {
+        for (selectedDiceNumber = 0; selectedDiceNumber < 6; selectedDiceNumber++)
+        {
+            SetDiceOnce();
+        }
+        SelectDice(0);
+    }
+    public void SetDiceOnce()
+    {
+        if (type == UserType.Defender)
+        {
+            MonsterSkill skill = DefenderController.Instance.GetSelectedDice(selectedDiceNumber);
+            dices[selectedDiceNumber].SetSkill(skill);
+        }
     }
 
     public void SelectDice(int index)
