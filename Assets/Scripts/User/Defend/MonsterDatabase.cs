@@ -52,6 +52,7 @@ public class MonsterDatabase : MonoBehaviour
             {
                 "DICE1-1",
                 "DICE1-2",
+                "DICE1-4",
                 "DICE2-1",
                 "DICE2-2",
                 "DICE3-2",
@@ -70,6 +71,7 @@ public class MonsterDatabase : MonoBehaviour
                 "DICE1-1",
                 "DICE1-2",
                 "DICE1-3",
+                "DICE1-4",
                 "DICE2-1",
                 "DICE2-2",
                 "DICE2-3",
@@ -90,6 +92,7 @@ public class MonsterDatabase : MonoBehaviour
             {
                 "DICE1-2",
                 "DICE1-3",
+                "DICE1-4",
                 "DICE2-2",
                 "DICE2-3",
                 "DICE3-3",

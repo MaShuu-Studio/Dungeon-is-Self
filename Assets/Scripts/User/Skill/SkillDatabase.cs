@@ -91,6 +91,7 @@ public class SkillDatabase : MonoBehaviour
         monSkillDB.Add(new MonsterSkill(22101, "DICE1-1", 5, 0));
         monSkillDB.Add(new MonsterSkill(22102, "DICE1-2", 5, 0));
         monSkillDB.Add(new MonsterSkill(22103, "DICE1-3", 5, 1));
+        monSkillDB.Add(new MonsterSkill(22103, "DICE1-4", 5, 1));
         monSkillDB.Add(new MonsterSkill(22201, "DICE2-1", 5, 2));
         monSkillDB.Add(new MonsterSkill(22202, "DICE2-2", 5, 2));
         monSkillDB.Add(new MonsterSkill(22203, "DICE2-3", 5, 3));

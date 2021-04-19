@@ -75,10 +75,17 @@ public class DefenderController : MonoBehaviour
 
     }
 
-    public void DiceRoll()
+    public MonsterSkill[] DiceRoll(int index)
     {
+        MonsterSkill[] skills = new MonsterSkill[2];
+        int diceIndex1 = Random.Range(0, 6);
+        int diceIndex2 = Random.Range(0, 6);
+        skills[0] = dices[index][diceIndex1];
+        skills[1] = dices[index][diceIndex2];
 
+        return skills;
     }
+
     #region Ready Game
     public void SetMonsterCandidate(int num, string name)
     {
@@ -104,6 +111,13 @@ public class DefenderController : MonoBehaviour
     public MonsterSkill GetSelectedDice(int index)
     {
         return dices[monsterIndex][index];
+    }
+
+    public void SetRoster()
+    {
+        List<int> unit = new List<int>();
+        unit.Add(monsterIndex);
+        GameController.Instance.SelectUnit(UserType.Defender, unit);
     }
 
     #endregion

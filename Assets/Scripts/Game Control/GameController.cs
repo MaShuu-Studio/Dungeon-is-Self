@@ -7,7 +7,7 @@ using UnityEngine.UI;
 namespace GameControl
 {
     public enum GameProgress { ReadyGame = 0, ReadyRound, PlayRound };
-    public enum UserType { Offender, Defender };
+    public enum UserType { Offender = 0, Defender };
 
     public class GameController : MonoBehaviour
     {
@@ -36,10 +36,17 @@ namespace GameControl
         private GamePlayUIController gamePlayUI;
 
         private bool isPlay;
-        public UserType userType { get; private set; }
-
         public GameProgress currentProgress { get; private set; }
+        public UserType userType { get; private set; }
         private int round;
+        private int turn;
+        private bool[] readyState = new bool[2];
+        public bool progressRound { get; private set; }
+
+        private int defenderUnit;
+        private List<int> offenderUnit;
+
+        
 
         // Start is called before the first frame update
         void Start()
@@ -50,7 +57,14 @@ namespace GameControl
         // Update is called once per frame
         void Update()
         {
-
+            if (currentProgress == GameProgress.PlayRound && progressRound == false)
+            {
+                if (readyState[0] && readyState[1])
+                {
+                    StartCoroutine(ProgressTurn());
+                    progressRound = true;
+                }
+            }
         }
 
         public void SetUserType(UserType type)
@@ -87,9 +101,45 @@ namespace GameControl
             }
         }
 
+        public void SelectUnit(UserType type, List<int> units) // 서버 입장에서는 type 필요
+        {
+            if (type == UserType.Defender) defenderUnit = units[0];
+            else offenderUnit = new List<int>(units);
+
+        }
+
         public void StartRound()
         {
             currentProgress = GameProgress.PlayRound;
+            turn = 0;
+            progressRound = false;
+            NextTurn();
+        }
+
+        public void ReadyTurn(UserType type, bool ready) // 서버 입장에서는 type 필요
+        {
+            readyState[(short)type] = ready;
+        }
+
+        IEnumerator ProgressTurn()
+        {
+            MonsterSkill[] monSkills = DefenderController.Instance.DiceRoll(defenderUnit);
+            bool b = (monSkills[0].id == monSkills[1].id);
+            Debug.Log($"1: {monSkills[0].name} , 2: {monSkills[1].name} : {b}");
+            //OffenderController.Instance.AllDiceThrow();
+            //while (true) // 공격모션 등 모든게 다 지나갈때까지 대기
+            {
+                yield return null;
+            }
+            progressRound = false;
+            NextTurn();
+        }
+
+        public void NextTurn()
+        {
+            turn++;
+            readyState[0] = true;
+            readyState[1] = false;
         }
 
         #region GUI
