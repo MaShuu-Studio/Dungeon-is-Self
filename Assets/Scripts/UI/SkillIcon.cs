@@ -4,9 +4,8 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class SkillIcon : UIIcon
+public class SkillIcon : UIIcon, IPointerClickHandler
 {
-    SkillDescription skillDescription;
     [SerializeField] private Text costText;
     private Skill skill;
 
@@ -20,7 +19,12 @@ public class SkillIcon : UIIcon
     {
         //base.OnPointerEnter(pointerEventData);
         //skillDescription.SetDescription(skill.name, "", "DESCRIPTION");
-        GamePlayUIController.Instance.ShowDescription(skill, pos);
+        GamePlayUIController.Instance.ShowDescription(skill);
+    }
+
+    public virtual void OnPointerClick(PointerEventData pointerEventData)
+    {
+        GamePlayUIController.Instance.SetDiceOnce(skill as MonsterSkill);
     }
 
     public void SetSkill(MonsterSkill skill)

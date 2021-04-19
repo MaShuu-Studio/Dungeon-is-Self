@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public class CharSelectIcon : UIIcon, IPointerDownHandler, IPointerClickHandler
 {
-    [SerializeField] private int number;
+    [SerializeField] private int index;
     private GamePlayUIController gamePlayUI;
 
     protected override void Start()
@@ -22,6 +22,6 @@ public class CharSelectIcon : UIIcon, IPointerDownHandler, IPointerClickHandler
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        gamePlayUI.SetSelectedCharacterNumber(number);
+        gamePlayUI.SetSelectedCharacterIndex(index);
     }
 }

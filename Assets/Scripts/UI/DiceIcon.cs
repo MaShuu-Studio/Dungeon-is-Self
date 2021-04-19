@@ -7,7 +7,7 @@ using UnityEngine.EventSystems;
 public class DiceIcon : SkillIcon, IPointerClickHandler
 {
     [SerializeField] private int index;
-    public void OnPointerClick(PointerEventData eventData)
+    public override void OnPointerClick(PointerEventData eventData)
     {
         GamePlayUIController.Instance.SelectDice(index);
     }

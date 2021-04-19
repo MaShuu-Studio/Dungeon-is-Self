@@ -20,7 +20,7 @@ public class GamePlayUIController : MonoBehaviour
     [SerializeField] private CharSelectIcon[] selectIcons = new CharSelectIcon[6];
     [SerializeField] private GameObject candidatePrefab;
 
-    private int selectedCandidateNumber = 0;
+    private int selectedCandidateIndex = 0;
 
     [Header("READY ROUND")]
     [SerializeField] private List<CharacterToggle> characterToggles;
@@ -28,7 +28,6 @@ public class GamePlayUIController : MonoBehaviour
     [SerializeField] private GameObject defenderSkillTree;
     [SerializeField] private List<RectTransform> defenderSkillTiers;
     [SerializeField] private GameObject skillIconPrefab;
-    [SerializeField] private List<Transform> defenderDescView; // 나중에 없앨 부분 임시
     [SerializeField] private SkillDescription description;
     private List<GameObject> skillIcons = new List<GameObject>();
 
@@ -38,8 +37,8 @@ public class GamePlayUIController : MonoBehaviour
     [SerializeField] private Slider costSlider;
     [SerializeField] private Text costText;
 
-    private int selectedDiceNumber;
-    private int selectedMonsterNumber;
+    private int selectedDiceIndex;
+    private int selectedMonsterIndex;
 
 
     [Header("PLAY ROUND")]
@@ -110,9 +109,9 @@ public class GamePlayUIController : MonoBehaviour
 
             case GameProgress.ReadyRound:
                 gameViews[1].SetActive(true);
-                selectedMonsterNumber = 0;
-                characterToggles[selectedMonsterNumber].toggle.isOn = true;
-                DefenderController.Instance.SelectMonster(selectedMonsterNumber);
+                selectedMonsterIndex = 0;
+                characterToggles[selectedMonsterIndex].toggle.isOn = true;
+                DefenderController.Instance.SelectMonster(selectedMonsterIndex);
                 for (int i = 0; i < characterToggles.Count; i++)
                 {
                     string name = DefenderController.Instance.selectedMonsterCandidates[i];
@@ -162,32 +161,32 @@ public class GamePlayUIController : MonoBehaviour
 
     public void SelectCandidate(string name)
     {
-        selectIcons[selectedCandidateNumber].SetImage(type, name);
+        selectIcons[selectedCandidateIndex].SetImage(type, name);
         if (type == UserType.Defender)
         {
-            DefenderController.Instance.SetMonsterCandidate(selectedCandidateNumber, name);
+            DefenderController.Instance.SetMonsterCandidate(selectedCandidateIndex, name);
         }
 
         bool existEmpty = false;
-        for (int i = selectedCandidateNumber + 1; i < DefenderController.Instance.selectedMonsterCandidates.Length; i++)
+        for (int i = selectedCandidateIndex + 1; i < DefenderController.Instance.selectedMonsterCandidates.Length; i++)
         {
             if (string.IsNullOrEmpty(DefenderController.Instance.selectedMonsterCandidates[i]))
             {
                 existEmpty = true;
-                SetSelectedCharacterNumber(i);
+                SetSelectedCharacterIndex(i);
                 break;
             }
         }
 
-        if (existEmpty == false) SetSelectedCharacterNumber(selectedCandidateNumber + 1);
+        if (existEmpty == false) SetSelectedCharacterIndex(selectedCandidateIndex + 1);
     }
 
-    public void SetSelectedCharacterNumber(int n)
+    public void SetSelectedCharacterIndex(int n)
     {
         if (n >= selectIcons.Length) return;
 
-        selectedCandidateNumber = n;
-        RectTransform rect = selectIcons[selectedCandidateNumber].GetComponent<RectTransform>();
+        selectedCandidateIndex = n;
+        RectTransform rect = selectIcons[selectedCandidateIndex].GetComponent<RectTransform>();
         selectedArrow.anchoredPosition = rect.anchoredPosition;
     }
 
@@ -197,8 +196,8 @@ public class GamePlayUIController : MonoBehaviour
 
     public void SetSkillTree(int index)
     {
-        selectedMonsterNumber = index;
-        DefenderController.Instance.SelectMonster(selectedMonsterNumber);
+        selectedMonsterIndex = index;
+        DefenderController.Instance.SelectMonster(selectedMonsterIndex);
         ClearSkillTree();
         SetAllDice();
         // 자동화 코드.
@@ -232,9 +231,9 @@ public class GamePlayUIController : MonoBehaviour
                 {
                     RectTransform rect = skillTierList[i][j].GetComponent<RectTransform>();
 
-                    rect.anchoredPosition = new Vector3(0,
-                        -1 * (j * 100 +
-                        j * (defenderSkillTiers[i].rect.height - skillTierList[i].Count * 100) / (skillTierList[i].Count - 1)), 0);
+                    float y = 0;
+                    if (skillTierList[i].Count > 1) y = - 1 * (j * 100 + j * (defenderSkillTiers[i].rect.height - skillTierList[i].Count * 100) / (skillTierList[i].Count - 1));
+                    rect.anchoredPosition = new Vector3(0,y, 0);
                 }
         }
 
@@ -250,17 +249,15 @@ public class GamePlayUIController : MonoBehaviour
         skillIcons.Clear();
     }
 
-    public void ShowDescription(Skill skill, Vector2 pos)
+    public void ShowDescription(Skill skill)
     {
         if (skill == null) return; 
-        description.transform.SetParent(defenderDescView[skill.tier - 1]);
         description.SetDescription(skill.name, "", "DESCRIPTION");
-        description.ShowDecription(true, pos);
     }
 
     public void SetAllDice()
     {
-        for (selectedDiceNumber = 0; selectedDiceNumber < 6; selectedDiceNumber++)
+        for (int i = 0; i < 6; i++)
         {
             SetDiceOnce();
         }
@@ -270,8 +267,26 @@ public class GamePlayUIController : MonoBehaviour
     {
         if (type == UserType.Defender)
         {
-            MonsterSkill skill = DefenderController.Instance.GetSelectedDice(selectedDiceNumber);
-            dices[selectedDiceNumber].SetSkill(skill);
+            MonsterSkill skill = DefenderController.Instance.GetSelectedDice(selectedDiceIndex);
+            dices[selectedDiceIndex++].SetSkill(skill);
+
+            if (selectedDiceIndex >= dices.Count) selectedDiceIndex -= 1;
+            SelectDice(selectedDiceIndex);
+
+            int totalCost = DefenderController.MAX_COST - DefenderController.Instance.GetDiceCost();
+            costSlider.value = (totalCost >= 0) ? totalCost : 0;
+            costText.text = totalCost.ToString();
+        }
+    }
+    public void SetDiceOnce(MonsterSkill skill)
+    {
+        if (type == UserType.Defender)
+        {
+            DefenderController.Instance.SetDice(selectedDiceIndex, skill);
+            dices[selectedDiceIndex++].SetSkill(skill);
+
+            if (selectedDiceIndex >= dices.Count) selectedDiceIndex -= 1;
+            SelectDice(selectedDiceIndex);
 
             int totalCost = DefenderController.MAX_COST - DefenderController.Instance.GetDiceCost();
             costSlider.value = (totalCost >= 0) ? totalCost : 0;
@@ -283,7 +298,7 @@ public class GamePlayUIController : MonoBehaviour
     {
         RectTransform rect = dices[index].GetComponent<RectTransform>();
         Vector3 pos = new Vector3(rect.anchoredPosition.x - 6.25f, rect.anchoredPosition.y + 6.25f, 0);
-        selectedDiceNumber = index;
+        selectedDiceIndex = index;
         selectedDice.anchoredPosition = pos;
     }
 

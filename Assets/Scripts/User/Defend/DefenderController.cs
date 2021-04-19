@@ -109,6 +109,11 @@ public class DefenderController : MonoBehaviour
         monsterIndex = index;
     }
 
+    public void SetDice(int index, MonsterSkill skill)
+    {
+        dices[monsterIndex][index] = skill;
+    }
+
     public MonsterSkill GetSelectedDice(int index)
     {
         return dices[monsterIndex][index];

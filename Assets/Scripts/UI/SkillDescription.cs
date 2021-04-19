@@ -13,9 +13,8 @@ public class SkillDescription : UIDescription
 
     protected override void Awake()
     {
-        base.Awake();
+        rectTransform = GetComponent<RectTransform>();
         gameObject.SetActive(true);
-
     }
     public void SetDescription(string name, string type, string description)
     {
@@ -23,10 +22,5 @@ public class SkillDescription : UIDescription
         nameText.text = name;
         typeText.text = type;
         descriptionText.text = description;
-    }
-    public override void ShowDecription(bool isShow, Vector3 pos)
-    {
-        transform.SetAsFirstSibling();
-        gameObject.SetActive(isShow);
     }
 }
