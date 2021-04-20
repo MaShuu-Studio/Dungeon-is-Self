@@ -38,8 +38,8 @@ namespace GameControl
         private bool isPlay;
         public GameProgress currentProgress { get; private set; }
         public UserType userType { get; private set; }
-        private int round;
-        private int turn;
+        public int round { get; private set; }
+        public int turn { get; private set; }
         private bool[] readyState = new bool[2];
         public bool progressRound { get; private set; }
 

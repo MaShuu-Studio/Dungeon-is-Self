@@ -129,4 +129,22 @@ public class SkillDatabase : MonoBehaviour
 
         return monsterSkills;
     }
+    public List<MonsterSkill> GetMonsterAttackSkills(string name, int round)
+    {
+        Monster monster = MonsterDatabase.Instance.GetMonster(name);
+
+        if (monster == null) return null;
+
+        List<MonsterSkill> monsterSkills = new List<MonsterSkill>();
+        foreach (string skillName in monster.attackSkills)
+        {
+            MonsterSkill skill = GetMonsterSkill(skillName);
+            if (skill.tier == round)
+                monsterSkills.Add(skill);
+
+            if (monsterSkills.Count >= 3) break;
+        }
+
+        return monsterSkills;
+    }
 }

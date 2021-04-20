@@ -120,7 +120,7 @@ public class MonsterDatabase : MonoBehaviour
             }));
 
         monsterDB.Add(new Monster(
-            1, "Virus", 12, Monster.Weakness.NORMAL,
+            1, "Ninetail", 12, Monster.Weakness.NORMAL,
             new List<string>()
             {
                 "SKILL1-1",

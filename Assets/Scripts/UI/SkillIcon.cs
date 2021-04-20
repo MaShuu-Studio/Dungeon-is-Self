@@ -7,7 +7,7 @@ using UnityEngine.UI;
 public class SkillIcon : UIIcon, IPointerClickHandler
 {
     [SerializeField] private Text costText;
-    private Skill skill;
+    protected Skill skill;
 
     protected override void Start()
     {
@@ -32,7 +32,7 @@ public class SkillIcon : UIIcon, IPointerClickHandler
         this.skill = skill; // 복사방법 조정
         iconImage.sprite = Resources.Load<Sprite>("Sprites/Skills/" + skill.name);
         if (costText != null)
-            costText.text = (skill.cost >= 0) ? skill.cost.ToString() : "";
+            costText.text = (skill.type == MonsterSkill.SkillType.DICE) ? skill.cost.ToString() : "";
     }
     public void SetSkill(CharacterSkill skill)
     {

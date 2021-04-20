@@ -27,13 +27,14 @@ public class GamePlayUIController : MonoBehaviour
 
     [SerializeField] private GameObject defenderSkillTree;
     [SerializeField] private List<RectTransform> defenderSkillTiers;
-    [SerializeField] private GameObject skillIconPrefab;
+    [SerializeField] private GameObject diceSkillIconPrefab;
     [SerializeField] private SkillDescription description;
-    private List<GameObject> skillIcons = new List<GameObject>();
+    private List<GameObject> diceSkillIcons = new List<GameObject>();
 
     [SerializeField] private List<DiceIcon> dices;
     [SerializeField] private RectTransform selectedDice;
-    [SerializeField] private List<SkillIcon> attackSkills;
+    [SerializeField] private List<SkillIcon> defenderAttackSkills;
+    [SerializeField] private RectTransform selectedAttackSkill;
     [SerializeField] private Slider costSlider;
     [SerializeField] private Text costText;
 
@@ -207,51 +208,60 @@ public class GamePlayUIController : MonoBehaviour
         {
             string monsterName = DefenderController.Instance.monsters[index].name;
 
-            List<MonsterSkill> skills = SkillDatabase.Instance.GetMonsterDices(monsterName);
+            List<MonsterSkill> dices = SkillDatabase.Instance.GetMonsterDices(monsterName);
 
-            List<GameObject>[] skillTierList = new List<GameObject>[3];
+            List<GameObject>[] diceTierList = new List<GameObject>[3];
             for (int i = 0; i < 3; i++)
-                skillTierList[i] = new List<GameObject>();
+                diceTierList[i] = new List<GameObject>();
 
-            for (int i = 0; i < skills.Count; i++)
+            for (int i = 0; i < dices.Count; i++)
             {
-                int tier = skills[i].tier;
-                GameObject obj = Instantiate(skillIconPrefab);
+                int tier = dices[i].tier;
+                GameObject obj = Instantiate(diceSkillIconPrefab);
                 obj.transform.SetParent(defenderSkillTiers[tier - 1]);
                 obj.transform.localScale = new Vector3(1, 1, 1);
-                SkillIcon skillIcon = obj.GetComponent<SkillIcon>();
-                skillIcon.SetSkill(skills[i]);
+                SkillIcon diceIcon = obj.GetComponent<SkillIcon>();
+                diceIcon.SetSkill(dices[i]);
 
-                skillTierList[tier - 1].Add(obj);
-                skillIcons.Add(obj);
+                diceTierList[tier - 1].Add(obj);
+                diceSkillIcons.Add(obj);
             }
 
             for (int i = 0; i < 3; i++)
-                for (int j = 0; j < skillTierList[i].Count; j++)
+                for (int j = 0; j < diceTierList[i].Count; j++)
                 {
-                    RectTransform rect = skillTierList[i][j].GetComponent<RectTransform>();
+                    RectTransform rect = diceTierList[i][j].GetComponent<RectTransform>();
 
                     float y = 0;
-                    if (skillTierList[i].Count > 1) y = - 1 * (j * 100 + j * (defenderSkillTiers[i].rect.height - skillTierList[i].Count * 100) / (skillTierList[i].Count - 1));
-                    rect.anchoredPosition = new Vector3(0,y, 0);
+                    if (diceTierList[i].Count > 1) y = -1 * (j * 100 + j * (defenderSkillTiers[i].rect.height - diceTierList[i].Count * 100) / (diceTierList[i].Count - 1));
+                    rect.anchoredPosition = new Vector3(0, y, 0);
                 }
+
+            List<MonsterSkill> attackSkills = SkillDatabase.Instance.GetMonsterAttackSkills(monsterName, GameController.Instance.round);
+            MonsterSkill charAttackSkill = DefenderController.Instance.GetAttackSkill();
+            for (int i = 0; i < defenderAttackSkills.Count; i++)
+            {
+                defenderAttackSkills[i].SetSkill(attackSkills[i]);
+                if (charAttackSkill.id == attackSkills[i].id) SelectAttackSkill(i);
+            }
+
         }
 
     }
 
     private void ClearSkillTree()
     {
-        for (int i = 0; i < skillIcons.Count; i++)
+        for (int i = 0; i < diceSkillIcons.Count; i++)
         {
-            Destroy(skillIcons[i].gameObject);
+            Destroy(diceSkillIcons[i].gameObject);
         }
 
-        skillIcons.Clear();
+        diceSkillIcons.Clear();
     }
 
     public void ShowDescription(Skill skill)
     {
-        if (skill == null) return; 
+        if (skill == null) return;
         description.SetDescription(skill.name, "", "DESCRIPTION");
     }
 
@@ -300,6 +310,19 @@ public class GamePlayUIController : MonoBehaviour
         Vector3 pos = new Vector3(rect.anchoredPosition.x - 6.25f, rect.anchoredPosition.y + 6.25f, 0);
         selectedDiceIndex = index;
         selectedDice.anchoredPosition = pos;
+    }
+
+    public void SetAttackSkill(int index, MonsterSkill skill)
+    {
+        DefenderController.Instance.SetAttackSkill(skill);
+        SelectAttackSkill(index);
+    }
+
+    public void SelectAttackSkill(int index)
+    {
+        RectTransform rect = defenderAttackSkills[index].GetComponent<RectTransform>();
+        Vector3 pos = new Vector3(0, rect.anchoredPosition.y + 6.25f, 0);
+        selectedAttackSkill.anchoredPosition = pos;
     }
 
     #endregion
