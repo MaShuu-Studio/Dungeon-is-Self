@@ -14,10 +14,14 @@ public class SkillDescription : UIDescription
     protected override void Awake()
     {
         rectTransform = GetComponent<RectTransform>();
-        gameObject.SetActive(true);
+        skillImage.color = Color.black;
+        nameText.text = "";
+        typeText.text = "";
+        descriptionText.text = "";
     }
     public void SetDescription(string name, string type, string description)
     {
+        skillImage.color = Color.white;
         skillImage.sprite = Resources.Load<Sprite>("Sprites/Skills/" + name);
         nameText.text = name;
         typeText.text = type;

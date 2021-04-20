@@ -156,5 +156,10 @@ namespace GameControl
 
             return skills;
         }
+
+        public string GetMonsterRoster()
+        {
+            return monsters[monsterIndex].name;
+        }
     }
 }

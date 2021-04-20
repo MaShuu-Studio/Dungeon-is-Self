@@ -348,12 +348,14 @@ public class GamePlayUIController : MonoBehaviour
         GameObject obj;
         string charPath = (type == UserType.Defender) ? "Prefab/Monsters/" : "Prefab/Classes/";
         string enemyPath = (type == UserType.Defender) ? "Prefab/Classes/" : "Prefab/Monsters/";
+
+        string monsterName = DefenderController.Instance.GetMonsterRoster();
         if (type == UserType.Defender)
         {
             // 자신 캐릭터 소환
-            prefab = Resources.Load(charPath + "Dokkaebi");
+            prefab = Resources.Load(charPath + monsterName);
             obj = Instantiate(prefab) as GameObject;
-            obj.transform.position = new Vector3(-5, 0, 0);
+            obj.transform.position = new Vector3(obj.transform.position.x, obj.transform.position.y, 0);
             obj.transform.SetParent(map.transform);
             charObjects.Add(obj.GetComponent<CharacterObject>());
 
@@ -362,7 +364,7 @@ public class GamePlayUIController : MonoBehaviour
             {
                 prefab = Resources.Load(enemyPath + "Knight");
                 obj = Instantiate(prefab) as GameObject;
-                obj.transform.position = new Vector3(2 + 2.5f * i, -1.5f, 0);
+                obj.transform.position = new Vector3(obj.transform.position.x + 2f * i, obj.transform.position.y, 0);
                 obj.transform.SetParent(map.transform);
                 enemyObjects.Add(obj.GetComponent<CharacterObject>());
             }
