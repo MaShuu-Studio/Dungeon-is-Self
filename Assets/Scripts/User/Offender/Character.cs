@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace GameControl
+namespace Data
 {
+    public enum Role { FIGHTER, MARKSMAN, MAGE }
     public class Character
     {
         public List<CharacterSkill> dice = new List<CharacterSkill>();

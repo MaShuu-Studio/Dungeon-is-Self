@@ -2,156 +2,159 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using GameControl;
+using Data;
 
-public class DefenderController : MonoBehaviour
+namespace GameControl
 {
-    #region Instance
-    private static DefenderController instance;
-    public static DefenderController Instance
+    public class DefenderController : MonoBehaviour
     {
-        get
+        #region Instance
+        private static DefenderController instance;
+        public static DefenderController Instance
         {
-            var obj = FindObjectOfType<DefenderController>();
-            instance = obj;
-            return instance;
+            get
+            {
+                var obj = FindObjectOfType<DefenderController>();
+                instance = obj;
+                return instance;
+            }
         }
-    }
-    private void Awake()
-    {
-        if (Instance != this)
+        private void Awake()
         {
-            Destroy(gameObject);
-            return;
+            if (Instance != this)
+            {
+                Destroy(gameObject);
+                return;
+            }
+            DontDestroyOnLoad(gameObject);
         }
-        DontDestroyOnLoad(gameObject);
-    }
-    #endregion
+        #endregion
 
-    public string[] selectedMonsterCandidates { get; private set; } = new string[6];
-    public List<Monster> monsters { get; private set; } = new List<Monster>();
+        public string[] selectedMonsterCandidates { get; private set; } = new string[6];
+        public List<Monster> monsters { get; private set; } = new List<Monster>();
 
-    private List<MonsterSkill[]> dices = new List<MonsterSkill[]>();
-    private List<MonsterSkill> attackSkills = new List<MonsterSkill>();
-    private int monsterIndex;
-    public const int MAX_COST = 10;
+        private List<MonsterSkill[]> dices = new List<MonsterSkill[]>();
+        private List<MonsterSkill> attackSkills = new List<MonsterSkill>();
+        private int monsterIndex;
+        public const int MAX_COST = 10;
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        //monsterDB = MonsterDatabase.Instance;
-        //monsterDB = GameObject.FindWithTag("MonsterDB").GetComponent<MonsterDatabase>();
-        monsters = new List<Monster>();
-    }
-
-    // 게임이 시작될 때 Defender에 대한 초기화 진행
-    public void Init()
-    {
-        monsters.Clear();
-
-        foreach (string name in selectedMonsterCandidates)
+        // Start is called before the first frame update
+        void Start()
         {
-            monsters.Add(MonsterDatabase.Instance.GetMonster(name));
+            //monsterDB = MonsterDatabase.Instance;
+            //monsterDB = GameObject.FindWithTag("MonsterDB").GetComponent<MonsterDatabase>();
+            monsters = new List<Monster>();
         }
 
-        monsterIndex = 0;
-
-        dices.Clear();
-        attackSkills.Clear();
-
-        for (int i = 0; i < monsters.Count; i++)
+        // 게임이 시작될 때 Defender에 대한 초기화 진행
+        public void Init()
         {
-            MonsterSkill[] dice = new MonsterSkill[6];
-            MonsterSkill attackSkill;
-            monsters[i].SetBasicDice(ref dice);
-            attackSkill = monsters[i].GetBasicSkill();
+            monsters.Clear();
 
-            dices.Add(dice);
-            attackSkills.Add(attackSkill);
-        }
-    }
+            foreach (string name in selectedMonsterCandidates)
+            {
+                monsters.Add(MonsterDatabase.Instance.GetMonster(name));
+            }
 
-    #region Ready Game
-    public void SetMonsterCandidate(int num, string name)
-    {
-        selectedMonsterCandidates[num] = name;
-    }
+            monsterIndex = 0;
 
-    public bool CheckCadndidate()
-    {
-        foreach (string s in selectedMonsterCandidates)
-        {
-            if (string.IsNullOrEmpty(s)) return false;
-        }
-        return true;
-    }
-    #endregion
+            dices.Clear();
+            attackSkills.Clear();
 
-    #region Ready Round
-    public void SelectMonster(int index)
-    {
-        monsterIndex = index;
-    }
+            for (int i = 0; i < monsters.Count; i++)
+            {
+                MonsterSkill[] dice = new MonsterSkill[6];
+                MonsterSkill attackSkill;
+                monsters[i].SetBasicDice(ref dice);
+                attackSkill = monsters[i].GetBasicSkill();
 
-    public bool SetDice(int index, MonsterSkill skill)
-    {
-        int count = 0;
-        for (int i = 0; i < dices[monsterIndex].Length; i++)
-        {
-            if (dices[monsterIndex][i].id == skill.id) count++;
-        }
-        if (count > 1) return false;
-
-        int totalCost = MAX_COST - GetDiceCost();
-        totalCost = totalCost + dices[monsterIndex][index].cost - skill.cost;
-
-        if (totalCost < 0) return false;
-
-        dices[monsterIndex][index] = skill;
-        return true;
-    }
-
-    public int GetDiceCost()
-    {
-        int cost = 0;
-        foreach (MonsterSkill skill in dices[monsterIndex])
-        {
-            cost += skill.cost;
+                dices.Add(dice);
+                attackSkills.Add(attackSkill);
+            }
         }
 
-        return cost;
-    }
+        #region Ready Game
+        public void SetMonsterCandidate(int num, string name)
+        {
+            selectedMonsterCandidates[num] = name;
+        }
 
-    public void SetAttackSkill(MonsterSkill skill)
-    {
-        attackSkills[monsterIndex] = skill;
-    }
-    
-    public MonsterSkill GetAttackSkill()
-    {
-        return attackSkills[monsterIndex];
-    }
+        public bool CheckCadndidate()
+        {
+            foreach (string s in selectedMonsterCandidates)
+            {
+                if (string.IsNullOrEmpty(s)) return false;
+            }
+            return true;
+        }
+        #endregion
 
-    public void SetRoster()
-    {
-        List<int> unit = new List<int>();
-        unit.Add(monsterIndex);
-        GameController.Instance.SelectUnit(UserType.Defender, unit);
-    }
-    #endregion
-    public MonsterSkill GetSelectedDice(int index)
-    {
-        return dices[monsterIndex][index];
-    }
+        #region Ready Round
+        public void SelectMonster(int index)
+        {
+            monsterIndex = index;
+        }
 
-    public MonsterSkill[] DiceRoll(int index)
-    {
-        MonsterSkill[] skills = new MonsterSkill[2];
-        int diceIndex1 = Random.Range(0, 6);
-        int diceIndex2 = Random.Range(0, 6);
-        skills[0] = dices[index][diceIndex1];
-        skills[1] = dices[index][diceIndex2];
+        public bool SetDice(int index, MonsterSkill skill)
+        {
+            int count = 0;
+            for (int i = 0; i < dices[monsterIndex].Length; i++)
+            {
+                if (dices[monsterIndex][i].id == skill.id) count++;
+            }
+            if (count > 1) return false;
 
-        return skills;
+            int totalCost = MAX_COST - GetDiceCost();
+            totalCost = totalCost + dices[monsterIndex][index].cost - skill.cost;
+
+            if (totalCost < 0) return false;
+
+            dices[monsterIndex][index] = skill;
+            return true;
+        }
+
+        public int GetDiceCost()
+        {
+            int cost = 0;
+            foreach (MonsterSkill skill in dices[monsterIndex])
+            {
+                cost += skill.cost;
+            }
+
+            return cost;
+        }
+
+        public void SetAttackSkill(MonsterSkill skill)
+        {
+            attackSkills[monsterIndex] = skill;
+        }
+
+        public MonsterSkill GetAttackSkill()
+        {
+            return attackSkills[monsterIndex];
+        }
+
+        public void SetRoster()
+        {
+            List<int> unit = new List<int>();
+            unit.Add(monsterIndex);
+            GameController.Instance.SelectUnit(UserType.Defender, unit);
+        }
+        #endregion
+        public MonsterSkill GetSelectedDice(int index)
+        {
+            return dices[monsterIndex][index];
+        }
+
+        public MonsterSkill[] DiceRoll(int index)
+        {
+            MonsterSkill[] skills = new MonsterSkill[2];
+            int diceIndex1 = Random.Range(0, 6);
+            int diceIndex2 = Random.Range(0, 6);
+            skills[0] = dices[index][diceIndex1];
+            skills[1] = dices[index][diceIndex2];
+
+            return skills;
+        }
     }
 }

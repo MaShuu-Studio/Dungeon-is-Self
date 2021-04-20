@@ -2,10 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using Data;
 
 namespace GameControl
 {
-    public enum Role { FIGHTER, MARKSMAN, MAGE }
     public class OffenderController : MonoBehaviour
     {
         #region Instance

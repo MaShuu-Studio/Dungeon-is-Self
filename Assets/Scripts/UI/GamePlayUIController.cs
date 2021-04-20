@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using GameControl;
+using Data;
 
 public class GamePlayUIController : MonoBehaviour
 {
