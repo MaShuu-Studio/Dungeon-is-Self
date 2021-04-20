@@ -93,9 +93,22 @@ public class DefenderController : MonoBehaviour
         monsterIndex = index;
     }
 
-    public void SetDice(int index, MonsterSkill skill)
+    public bool SetDice(int index, MonsterSkill skill)
     {
+        int count = 0;
+        for (int i = 0; i < dices[monsterIndex].Length; i++)
+        {
+            if (dices[monsterIndex][i].id == skill.id) count++;
+        }
+        if (count > 1) return false;
+
+        int totalCost = MAX_COST - GetDiceCost();
+        totalCost = totalCost + dices[monsterIndex][index].cost - skill.cost;
+
+        if (totalCost < 0) return false;
+
         dices[monsterIndex][index] = skill;
+        return true;
     }
 
     public int GetDiceCost()

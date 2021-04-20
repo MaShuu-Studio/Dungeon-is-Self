@@ -46,8 +46,6 @@ namespace GameControl
         private int defenderUnit;
         private List<int> offenderUnit;
 
-        
-
         // Start is called before the first frame update
         void Start()
         {

@@ -135,6 +135,11 @@ public class GamePlayUIController : MonoBehaviour
         {
             Debug.Log("Please Complete Setting Candidate");
         }
+        else if (GameController.Instance.currentProgress == GameProgress.ReadyRound)
+        {
+            Debug.Log("주사위는 같은 스킬을 두 가지보다 많이 넣을 수 없습니다.");
+            Debug.Log("코스트보다 많이 넣을 수 없습니다.");
+        }
     }
     #endregion
 
@@ -292,7 +297,13 @@ public class GamePlayUIController : MonoBehaviour
     {
         if (type == UserType.Defender)
         {
-            DefenderController.Instance.SetDice(selectedDiceIndex, skill);
+            bool b = DefenderController.Instance.SetDice(selectedDiceIndex, skill);
+            if (b == false)
+            {
+                Alert();
+                return;
+            }
+
             dices[selectedDiceIndex++].SetSkill(skill);
 
             if (selectedDiceIndex >= dices.Count) selectedDiceIndex -= 1;
