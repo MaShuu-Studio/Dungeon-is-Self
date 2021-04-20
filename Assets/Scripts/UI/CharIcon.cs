@@ -19,21 +19,26 @@ public class CharIcon : UIIcon, IPointerDownHandler, IPointerClickHandler
         gamePlayUI = GameObject.FindWithTag("UI").GetComponent<GamePlayUIController>();
     }
 
-    public void OnPointerDown(PointerEventData eventData)
+    public override void OnPointerDown(PointerEventData eventData)
     {
         if (isCandidate)
         {
-            SetColor(Color.gray);
+            base.OnPointerDown(eventData);
         }
     }
 
-    public void OnPointerClick(PointerEventData eventData)
+    public override void OnPointerClick(PointerEventData eventData)
     {
         if (isCandidate)
         {
+            base.OnPointerClick(eventData);
             gamePlayUI.SelectCandidate(characterName);
-            SetColor(Color.white);
         }
+    }
+    public override void OnPointerExit(PointerEventData pointerEventData)
+    {
+        base.OnPointerExit(pointerEventData);
+        SetColor(Color.white);
     }
 
     public override void SetImage(UserType type, string name)

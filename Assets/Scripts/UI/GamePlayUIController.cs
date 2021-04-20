@@ -226,7 +226,8 @@ public class GamePlayUIController : MonoBehaviour
                 obj.transform.SetParent(defenderSkillTiers[tier - 1]);
                 obj.transform.localScale = new Vector3(1, 1, 1);
                 SkillIcon diceIcon = obj.GetComponent<SkillIcon>();
-                diceIcon.SetSkill(dices[i]);
+                diceIcon.SetSkill(dices[i], (GameController.Instance.round >= tier));
+
 
                 diceTierList[tier - 1].Add(obj);
                 diceSkillIcons.Add(obj);

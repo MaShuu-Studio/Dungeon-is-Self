@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class CharSelectIcon : UIIcon, IPointerDownHandler, IPointerClickHandler
+public class CharSelectIcon : UIIcon
 {
     [SerializeField] private int index;
     private GamePlayUIController gamePlayUI;
@@ -15,13 +15,9 @@ public class CharSelectIcon : UIIcon, IPointerDownHandler, IPointerClickHandler
         gamePlayUI = GameObject.FindWithTag("UI").GetComponent<GamePlayUIController>();
     }
 
-    public void OnPointerDown(PointerEventData eventData)
+    public override void OnPointerClick(PointerEventData eventData)
     {
-        SetColor(Color.gray);
-    }
-
-    public void OnPointerClick(PointerEventData eventData)
-    {
+        base.OnPointerClick(eventData);
         gamePlayUI.SetSelectedCharacterIndex(index);
     }
 }
