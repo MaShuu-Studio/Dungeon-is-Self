@@ -13,6 +13,7 @@ public class GamePlayUIController : MonoBehaviour
     [Header("COMMONS")]
     [SerializeField] private List<GameObject> gameViews;
     [SerializeField] private List<CharIcon> userCharacters;
+    [SerializeField] private CustomButton readyButton;
 
     [Header("READY GAME")]
     [SerializeField] private Transform candidatesTransform;
@@ -44,9 +45,11 @@ public class GamePlayUIController : MonoBehaviour
 
 
     [Header("PLAY ROUND")]
-    [SerializeField] private SpriteRenderer map;
+    [SerializeField] private Transform mapParent;
+    [SerializeField] private Transform characterParent;
     private List<CharacterObject> charObjects = new List<CharacterObject>();
     private List<CharacterObject> enemyObjects = new List<CharacterObject>();
+    private GameObject mapObject;
 
     #region Instance
     private static GamePlayUIController instance;
@@ -76,10 +79,19 @@ public class GamePlayUIController : MonoBehaviour
             ChangeView();
         }
 
-        for (int i = 0; i < characterToggles.Count; i++)
+        if (progress == GameProgress.ReadyRound)
         {
-            string name = DefenderController.Instance.selectedMonsterCandidates[i];
-            userCharacters[i].SetImage(type, name);
+            for (int i = 0; i < characterToggles.Count; i++)
+            {
+                string name = DefenderController.Instance.selectedMonsterCandidates[i];
+                userCharacters[i].SetImage(type, name);
+            }
+        }
+
+        if (progress == GameProgress.PlayRound)
+        {
+            if (GameController.Instance.progressRound) readyButton.SetButtonInteract(false);
+            else readyButton.SetButtonInteract(true);
         }
     }
 
@@ -352,12 +364,16 @@ public class GamePlayUIController : MonoBehaviour
         string monsterName = DefenderController.Instance.GetMonsterRoster();
         if (type == UserType.Defender)
         {
-            // 자신 캐릭터 소환
-            prefab = Resources.Load(charPath + monsterName);
-            obj = Instantiate(prefab) as GameObject;
-            obj.transform.position = new Vector3(obj.transform.position.x, obj.transform.position.y, 0);
-            obj.transform.SetParent(map.transform);
-            charObjects.Add(obj.GetComponent<CharacterObject>());
+            {
+                // 자신 캐릭터 소환
+                prefab = Resources.Load(charPath + monsterName);
+                obj = Instantiate(prefab) as GameObject;
+                obj.transform.position = new Vector3(obj.transform.position.x, obj.transform.position.y, 0);
+                obj.transform.SetParent(characterParent);
+                CharacterObject character = obj.GetComponent<CharacterObject>();
+                character.SetCharacterIndex(GameController.Instance.defenderUnit);
+                charObjects.Add(character);
+            }
 
             // 적 캐릭터 소환
             for (int i = 0; i < 3; i++)
@@ -365,9 +381,15 @@ public class GamePlayUIController : MonoBehaviour
                 prefab = Resources.Load(enemyPath + "Knight");
                 obj = Instantiate(prefab) as GameObject;
                 obj.transform.position = new Vector3(obj.transform.position.x + 2f * i, obj.transform.position.y, 0);
-                obj.transform.SetParent(map.transform);
-                enemyObjects.Add(obj.GetComponent<CharacterObject>());
+                obj.transform.SetParent(characterParent);
+                CharacterObject character = obj.GetComponent<CharacterObject>();
+                character.SetCharacterIndex(GameController.Instance.offenderUnits[i]);
+                enemyObjects.Add(character);
             }
+
+            prefab = Resources.Load("Prefab/Maps/" + "Forest");
+            mapObject = Instantiate(prefab) as GameObject;
+            mapObject.transform.SetParent(mapParent);
         }
         else
         {
@@ -389,6 +411,27 @@ public class GamePlayUIController : MonoBehaviour
 
         charObjects.Clear();
         enemyObjects.Clear();
+    }
+
+    public void PlayAnimation(int index, string anim)
+    {
+        foreach (CharacterObject c in charObjects)
+        {
+            if (c.CheckIndex(index))
+            {
+                c.SetAnimation(anim);
+                return;
+            }
+        }
+
+        foreach (CharacterObject c in enemyObjects)
+        {
+            if (c.CheckIndex(index))
+            {
+                c.SetAnimation(anim);
+                return;
+            }
+        }
     }
     #endregion
 }

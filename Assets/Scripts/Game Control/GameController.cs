@@ -4,6 +4,8 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Data;
+using System;
+using System.Linq;
 
 namespace GameControl
 {
@@ -44,8 +46,9 @@ namespace GameControl
         private bool[] readyState = new bool[2];
         public bool progressRound { get; private set; }
 
-        private int defenderUnit;
-        private List<int> offenderUnit;
+        public int defenderUnit { get; private set; }
+        public int[] offenderUnits { get; private set; } = new int[3];
+        private Dictionary<int, bool> animationEnd = new Dictionary<int, bool>();
 
         // Start is called before the first frame update
         void Start()
@@ -60,8 +63,8 @@ namespace GameControl
             {
                 if (readyState[0] && readyState[1])
                 {
-                    StartCoroutine(ProgressTurn());
                     progressRound = true;
+                    StartCoroutine(ProgressTurn());
                 }
             }
         }
@@ -96,15 +99,25 @@ namespace GameControl
             if (isPlay)
             {
                 round++;
+                animationEnd.Clear();
                 currentProgress = GameProgress.ReadyRound;
             }
         }
 
-        public void SelectUnit(UserType type, List<int> units) // 서버 입장에서는 type 필요
+        public void SelectUnit(UserType type, int[] units) // 서버 입장에서는 type 필요
         {
-            if (type == UserType.Defender) defenderUnit = units[0];
-            else offenderUnit = new List<int>(units);
-
+            Debug.Log($"Set Index {units[0]}");
+            if (type == UserType.Defender)
+            {
+                defenderUnit = units[0] + 20;
+            }
+            else
+            {
+                for (int i = 0; i < 3; i++)
+                {
+                    offenderUnits[i] = units[i] + 10;
+                }
+            }
         }
 
         public void StartRound()
@@ -112,6 +125,11 @@ namespace GameControl
             currentProgress = GameProgress.PlayRound;
             turn = 0;
             progressRound = false;
+            animationEnd.Clear();
+            animationEnd.Add(defenderUnit, true);
+            //foreach (int key in offenderUnits)
+            //    animationEnd.Add(key, true);
+
             NextTurn();
         }
 
@@ -122,16 +140,38 @@ namespace GameControl
 
         IEnumerator ProgressTurn()
         {
-            MonsterSkill[] monSkills = DefenderController.Instance.DiceRoll(defenderUnit);
-            bool b = (monSkills[0].id == monSkills[1].id);
-            Debug.Log($"1: {monSkills[0].name} , 2: {monSkills[1].name} : {b}");
+            MonsterSkill[] monSkills = DefenderController.Instance.DiceRoll(defenderUnit % 10);
+            bool defenderOk = (monSkills[0].id == monSkills[1].id);
+            Debug.Log($"1: {monSkills[0].name} , 2: {monSkills[1].name} : {defenderOk}");
             //OffenderController.Instance.AllDiceThrow();
-            //while (true) // 공격모션 등 모든게 다 지나갈때까지 대기
+            // 순차적으로 공격을 누가 먼저 해서 진행될지 정할 필요 있음.
+            if (defenderOk)
             {
-                yield return null;
+                GamePlayUIController.Instance.PlayAnimation(defenderUnit, "Attack");
+                animationEnd[defenderUnit] = false;
             }
+            bool isLoop = true;
+            while (isLoop) // 공격모션 등 모든게 다 지나갈때까지 대기
+            {
+                isLoop = false;
+                yield return null;
+                foreach (int key in animationEnd.Keys)
+                {
+                    Debug.Log($"{key} : {animationEnd[key]}");
+                    if (animationEnd[key] == false) isLoop = true;
+                }
+            }
+
+            Debug.Log("Animation End");
+
             progressRound = false;
             NextTurn();
+        }
+
+        public void AnimationEnd(int index)
+        {
+            animationEnd[index] = true;
+            Debug.Log($"Animation End {index}");
         }
 
         public void NextTurn()
@@ -140,44 +180,5 @@ namespace GameControl
             readyState[0] = true;
             readyState[1] = false;
         }
-
-        #region GUI
-
-        private void OnGUI()
-        {
-            /*
-            if (GUI.Button(new Rect(10, 10, 50, 50), "TITLE"))
-            {
-                SceneController.Instance.ChangeScene("Title");
-            }
-            if (GUI.Button(new Rect(80, 10, 50, 50), "OFFEND"))
-            {
-                SceneController.Instance.ChangeScene("Offend");
-            }
-            if (GUI.Button(new Rect(150, 10, 50, 50), "DEFEND"))
-            {
-                SceneController.Instance.ChangeScene("DEFEND");
-            }
-            */
-            if (SceneController.Instance.CurrentScene == "OFFEND" || SceneController.Instance.CurrentScene == "DEFEND")
-            {
-                /*
-                if (GUI.Button(new Rect(10, 80, 50, 50), "Ready"))
-                {
-                    StartGame();
-                }*/
-
-                if (GUI.Button(new Rect(80, 80, 50, 50), "Ready"))
-                {
-                    ReadyRound();
-                }
-
-                if (GUI.Button(new Rect(150, 80, 50, 50), "Round"))
-                {
-                    StartRound();
-                }
-            }
-        }
-        #endregion
     }
 }

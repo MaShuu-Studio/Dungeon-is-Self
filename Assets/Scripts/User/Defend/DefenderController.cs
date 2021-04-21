@@ -136,8 +136,8 @@ namespace GameControl
 
         public void SetRoster()
         {
-            List<int> unit = new List<int>();
-            unit.Add(monsterIndex);
+            int[] unit = new int[1];
+            unit[0] = monsterIndex;
             GameController.Instance.SelectUnit(UserType.Defender, unit);
         }
         #endregion

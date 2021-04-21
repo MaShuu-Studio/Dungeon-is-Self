@@ -13,13 +13,15 @@ public class CustomButton : MonoBehaviour
     [SerializeField] private UserType userType = UserType.Offender;
     [SerializeField] private ButtonMethod method;
     private Button button;
+    private Image image;
     private bool isOn = false;
     private IEnumerator coroutine = null;
-    
+
     // Start is called before the first frame update
     void Start()
     {
         button = GetComponent<Button>();
+        image = GetComponent<Image>();
         if (button == null) return;
 
         switch (method)
@@ -37,8 +39,11 @@ public class CustomButton : MonoBehaviour
         }
     }
 
-    void Update()
+    public void SetButtonInteract(bool b)
     {
+        button.interactable = b;
+        if (b) image.color = Color.white;
+        else image.color = Color.gray;
     }
 
     void ChangeScene()
@@ -73,7 +78,7 @@ public class CustomButton : MonoBehaviour
     }
 
     void GameReadyEnd()
-    {        
+    {
         if (GameController.Instance.userType == UserType.Defender)
         {
             GamePlayUIController gamePlayUI = GameObject.FindWithTag("UI").GetComponent<GamePlayUIController>();
@@ -94,10 +99,11 @@ public class CustomButton : MonoBehaviour
     }
     void RoundReadyEnd()
     {
+        DefenderController.Instance.SetRoster();
         // 로스터 세팅이 끝났다고 패킷 전송
         GameController.Instance.StartRound();
     }
-    
+
     void TurnReadyEnd()
     {
         if (coroutine != null) StopCoroutine(coroutine);
@@ -105,7 +111,6 @@ public class CustomButton : MonoBehaviour
         if (GameController.Instance.progressRound == false)
         {
             isOn = !isOn;
-            DefenderController.Instance.SetRoster();
             GameController.Instance.ReadyTurn(GameController.Instance.userType, isOn);
             coroutine = TurnProgress();
             StartCoroutine(coroutine);
