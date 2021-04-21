@@ -156,10 +156,7 @@ namespace GameControl
                 isLoop = false;
                 yield return null;
                 foreach (int key in animationEnd.Keys)
-                {
-                    Debug.Log($"{key} : {animationEnd[key]}");
                     if (animationEnd[key] == false) isLoop = true;
-                }
             }
 
             Debug.Log("Animation End");
@@ -171,7 +168,7 @@ namespace GameControl
         public void AnimationEnd(int index)
         {
             animationEnd[index] = true;
-            Debug.Log($"Animation End {index}");
+
         }
 
         public void NextTurn()

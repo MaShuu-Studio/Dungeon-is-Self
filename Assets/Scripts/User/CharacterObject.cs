@@ -22,10 +22,8 @@ public class CharacterObject : MonoBehaviour
         if (isAnimation)
         {
             AnimatorStateInfo stateInfo = _animator.GetCurrentAnimatorStateInfo(0);
-            Debug.Log($"{stateInfo.IsName("ATTACK")} : {stateInfo.normalizedTime}");
             if (stateInfo.IsName("ATTACK") && stateInfo.normalizedTime >= 1.0f)
             {
-                Debug.Log("Animation End");
                 AnimationEnd();
                 isAnimation = false;
             }
@@ -61,5 +59,6 @@ public class CharacterObject : MonoBehaviour
     public void AnimationEnd()
     {
         GameController.Instance.AnimationEnd(index);
+        _animator.SetTrigger("Idle");
     }
 }
