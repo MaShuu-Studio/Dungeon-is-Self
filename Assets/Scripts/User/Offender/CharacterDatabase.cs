@@ -5,8 +5,8 @@ using GameControl;
 
 public class CharacterDatabase : MonoBehaviour
 {
-    //public static string facePath {get; private set;} = "Sprites/"
-    private List<Character> characterDB;
+    public static string facePath {get; private set;} = "Sprites/Characters/Faces/";
+    private List<Character> characterDB = new List<Character>();
     private static CharacterDatabase instance;
     public static CharacterDatabase Instance
     {
@@ -46,12 +46,12 @@ public class CharacterDatabase : MonoBehaviour
         return characterDB.Find(character => character._role == role);
     }
 
-    public void GetAllCharacterCandidatesList(ref List<Role> characterRoles)
+    public void GetAllCharacterCandidatesList(ref List<string> characterRoles)
     {
         characterRoles.Clear();
         foreach (Character character in characterDB)
         {
-            characterRoles.Add(character._role);
+            characterRoles.Add(character._role.ToString());
         }
     }
 }
