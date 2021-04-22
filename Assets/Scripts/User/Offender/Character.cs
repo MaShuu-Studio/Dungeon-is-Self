@@ -8,7 +8,7 @@ namespace Data
     public class Character
     {
         public List<CharacterSkill> dice = new List<CharacterSkill>();
-        private Role _role;
+        public Role _role { get; private set; }
         private int skillpoint;
         public List<CharacterSkill> myskill = new List<CharacterSkill>();
         //private List<string> skill = new List<string>();

@@ -55,7 +55,7 @@ namespace GameControl
 
         public void SetDice(int n, int id)
         {
-            character[n].dice.Add(SkillDatabase.GetCharacterSkill(id));
+            character[n].dice.Add(SkillDatabase.Instance.GetCharacterSkill(id));
         }
 
         public CharacterSkill OneDiceThrow(int n)
