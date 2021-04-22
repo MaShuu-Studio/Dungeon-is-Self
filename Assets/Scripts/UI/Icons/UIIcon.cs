@@ -46,7 +46,7 @@ public class UIIcon : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, 
 
     public virtual void SetImage(GameControl.UserType type, string name)
     {
-        string path = (type == GameControl.UserType.Defender) ? MonsterDatabase.facePath : "";
+        string path = (type == GameControl.UserType.Defender) ? MonsterDatabase.facePath : CharacterDatabase.facePath;
 
         Sprite sprite = Resources.Load<Sprite>(path + name);
 

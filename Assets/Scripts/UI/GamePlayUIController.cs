@@ -166,6 +166,7 @@ public class GamePlayUIController : MonoBehaviour
 
         List<string> candidates = new List<string>();
         if (type == UserType.Defender) MonsterDatabase.Instance.GetAllMonsterCandidatesList(ref candidates);
+        else CharacterDatabase.Instance.GetAllCharacterCandidatesList(ref candidates);
 
         foreach (string name in candidates)
         {
