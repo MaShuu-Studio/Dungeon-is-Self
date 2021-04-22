@@ -89,7 +89,8 @@ namespace GameControl
 
         public void StartGame()
         {
-            DefenderController.Instance.Init();
+            if (userType == UserType.Defender) DefenderController.Instance.Init();
+            else OffenderController.Instance.Init();
 
             ReadyRound();
         }

@@ -83,7 +83,7 @@ public class GamePlayUIController : MonoBehaviour
         {
             for (int i = 0; i < characterToggles.Count; i++)
             {
-                string name = DefenderController.Instance.selectedMonsterCandidates[i];
+                string name = (type == UserType.Defender) ? DefenderController.Instance.selectedMonsterCandidates[i] : OffenderController.Instance.selectedCharacterCandidates[i];
                 userCharacters[i].SetImage(type, name);
             }
         }
@@ -181,16 +181,24 @@ public class GamePlayUIController : MonoBehaviour
 
     public void SelectCandidate(string name)
     {
+        int size = 0;
         selectIcons[selectedCandidateIndex].SetImage(type, name);
         if (type == UserType.Defender)
         {
             DefenderController.Instance.SetMonsterCandidate(selectedCandidateIndex, name);
+            size = DefenderController.Instance.selectedMonsterCandidates.Length;
+        }
+        else
+        {
+            OffenderController.Instance.SetCharacterCandidate(selectedCandidateIndex, name);
+            size = OffenderController.Instance.selectedCharacterCandidates.Length;
         }
 
         bool existEmpty = false;
-        for (int i = selectedCandidateIndex + 1; i < DefenderController.Instance.selectedMonsterCandidates.Length; i++)
+        for (int i = selectedCandidateIndex + 1; i < size; i++)
         {
-            if (string.IsNullOrEmpty(DefenderController.Instance.selectedMonsterCandidates[i]))
+            if ((type == UserType.Defender && string.IsNullOrEmpty(DefenderController.Instance.selectedMonsterCandidates[i]))
+             || (type == UserType.Offender && string.IsNullOrEmpty(OffenderController.Instance.selectedCharacterCandidates[i])))
             {
                 existEmpty = true;
                 SetSelectedCharacterIndex(i);
