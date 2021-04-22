@@ -79,9 +79,9 @@ public class CustomButton : MonoBehaviour
 
     void GameReadyEnd()
     {
+        GamePlayUIController gamePlayUI = GameObject.FindWithTag("UI").GetComponent<GamePlayUIController>();
         if (GameController.Instance.userType == UserType.Defender)
         {
-            GamePlayUIController gamePlayUI = GameObject.FindWithTag("UI").GetComponent<GamePlayUIController>();
             if (DefenderController.Instance.CheckCadndidate())
             {
 
@@ -91,7 +91,18 @@ public class CustomButton : MonoBehaviour
                 gamePlayUI.Alert();
                 return;
             }
+        }
+        else
+        {
+            if (OffenderController.Instance.CheckCadndidate())
+            {
 
+            }
+            else
+            {
+                gamePlayUI.Alert();
+                return;
+            }
         }
 
         // 후보 세팅이 끝났다고 패킷 전송

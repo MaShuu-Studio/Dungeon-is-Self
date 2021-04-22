@@ -4,11 +4,10 @@ using UnityEngine;
 
 namespace Data
 {
-    public enum Role { FIGHTER, MARKSMAN, MAGE }
     public class Character
     {
         public List<CharacterSkill> dice = new List<CharacterSkill>();
-        public Role _role { get; private set; }
+        public string _role {get; private set;}
         private int skillpoint;
         public List<CharacterSkill> myskill = new List<CharacterSkill>();
         //private List<string> skill = new List<string>();
@@ -26,11 +25,11 @@ namespace Data
             return skillpoint;
         }
 
-        public Character(Role role)
+        public Character(string role)
         {
             _role = role;
-            if(_role == Role.FIGHTER) {for(int i = 100; i < 112; i++) {myskill.Add(SkillDatabase.Instance.GetCharacterSkill(i));}}
-            else if(_role == Role.MARKSMAN) {for(int i = 200; i < 210; i++) {myskill.Add(SkillDatabase.Instance.GetCharacterSkill(i));}}
+            if(_role == "FIGHTER") {for(int i = 100; i < 112; i++) {myskill.Add(SkillDatabase.Instance.GetCharacterSkill(i));}}
+            else if(_role == "MARKSMAN") {for(int i = 200; i < 210; i++) {myskill.Add(SkillDatabase.Instance.GetCharacterSkill(i));}}
             else {for(int i = 300; i < 312; i++) {myskill.Add(SkillDatabase.Instance.GetCharacterSkill(i));}}
         }
         /*public string GetDiceInfo()
