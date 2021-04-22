@@ -9,7 +9,6 @@ namespace GameControl
     public class OffenderController : MonoBehaviour
     {
         #region Instance
-
         
         private static OffenderController instance;
         public static OffenderController Instance
@@ -31,8 +30,11 @@ namespace GameControl
             DontDestroyOnLoad(gameObject);
         }
         #endregion
+        
+        
         public string[] selectedCharacterCandidates {get; private set;} = new string[6];
-        private List<Character> character = new List<Character>();
+        public List<Character> character {get; private set;} = new List<Character>();
+        private List<CharacterSkill[]> dices = new List<CharacterSkill[]>();
         private List<CharacterSkill> attackSkills = new List<CharacterSkill>();
         private int characterIndex;
         public List<string> bench = new List<string>();
@@ -49,17 +51,18 @@ namespace GameControl
 
             characterIndex = 0;
 
+            dices.Clear();
             attackSkills.Clear();
 
             for(int i = 0; i < character.Count; i++)
             {
                 CharacterSkill[] dice = new CharacterSkill[6];
-                CharacterSkill attackSkill;
+                //CharacterSkill attackSkill;
                 //character[i].SetBasicDice(ref dice);
                 //attackSkill = character[i].GetBasicSkill();
 
-                //dices.Add(dice);
-                //attackSkill.Add(attackSkill);
+                dices.Add(dice);
+                //attackSkills.Add(attackSkill);
                 
             }
         }
@@ -86,23 +89,63 @@ namespace GameControl
             characterIndex = index;
         }
 
-        public void SetDice(int n, int id)
+        public bool SetDice(int index, CharacterSkill skill)
         {
             int count = 0;
-            character[n].dice.Add(SkillDatabase.Instance.GetCharacterSkill(id));
+            for (int i = 0; i < dices[characterIndex].Length; i++)
+            {
+                if (dices[characterIndex][i].id == skill.id) count++;
+            }
+            if (count > 1) return false;
+
+            dices[characterIndex][index] = skill;
+            return true;
+        }
+
+        public void SetAttackSkill(CharacterSkill skill)
+        {
+            attackSkills[characterIndex] = skill;
+        }
+
+        public CharacterSkill GetCharacterSkill(CharacterSkill skill)
+        {
+            return attackSkills[characterIndex];
+        }
+        
+        public void SetRoster()
+        {
+            int[] unit = new int[1];
+            unit[0] = characterIndex;
+            GameController.Instance.SelectUnit(UserType.Offender, unit);
         }
         #endregion
-        
-        public void SetBench(string name)
+
+        public CharacterSkill GetSelectedDice(int index)
+        {
+            return dices[characterIndex][index];
+        }
+
+        public CharacterSkill[] DiceRoll(int index)
+        {
+            CharacterSkill[] skills = new CharacterSkill[2];
+            int diceIndex1 = Random.Range(0, 6);
+            int diceIndex2 = Random.Range(0, 6);
+            skills[0] = dices[index][diceIndex1];
+            skills[1] = dices[index][diceIndex2];
+
+            return skills;
+        }
+
+        public string GetCharacterRoster()
+        {
+            return character[characterIndex]._role;
+        }
+        /*public void SetBench(string name)
         {
             if (bench.Count >= 3) return;
             else bench.Add(name);
         }
-        public void SetRoster(string name)
-        {
-            if (roster.Count >= 3) return;
-            else { roster.Add(name); character.Add(new Character(name)); }
-        }
+        
         public void ResetDice(int n)
         {
             character[n].dice.RemoveRange(0, 6);
@@ -127,6 +170,6 @@ namespace GameControl
         public void SetSkillUpdate()
         {
 
-        }
+        }*/
     }
 }

@@ -231,11 +231,11 @@ public class GamePlayUIController : MonoBehaviour
         // 자동화 코드.
         // 자동화가 아니라 프리팹을 활용해야할지는 고민이 좀 필요할 듯
 
+        string name;
         if (type == UserType.Defender)
         {
-            string monsterName = DefenderController.Instance.monsters[index].name;
-
-            List<MonsterSkill> dices = SkillDatabase.Instance.GetMonsterDices(monsterName);
+            name = DefenderController.Instance.monsters[index].name;
+            List<MonsterSkill> dices = SkillDatabase.Instance.GetMonsterDices(name);
 
             List<GameObject>[] diceTierList = new List<GameObject>[3];
             for (int i = 0; i < 3; i++)
@@ -265,7 +265,7 @@ public class GamePlayUIController : MonoBehaviour
                     rect.anchoredPosition = new Vector3(0, y, 0);
                 }
 
-            List<MonsterSkill> attackSkills = SkillDatabase.Instance.GetMonsterAttackSkills(monsterName, GameController.Instance.round);
+            List<MonsterSkill> attackSkills = SkillDatabase.Instance.GetMonsterAttackSkills(name, GameController.Instance.round);
             MonsterSkill charAttackSkill = DefenderController.Instance.GetAttackSkill();
             for (int i = 0; i < defenderAttackSkills.Count; i++)
             {
@@ -274,7 +274,39 @@ public class GamePlayUIController : MonoBehaviour
             }
 
         }
+        else
+        {
+            name = OffenderController.Instance.character[index]._role;
+            List<CharacterSkill> dices = SkillDatabase.Instance.GetCharacterDices(name);
 
+            List<GameObject>[] diceTierList = new List<GameObject>[3];
+            for (int i = 0; i < 3; i++)
+                diceTierList[i] = new List<GameObject>();
+
+            for (int i = 0; i < dices.Count; i++)
+            {
+                int tier = dices[i].tier;
+                GameObject obj = Instantiate(diceSkillIconPrefab);
+                obj.transform.SetParent(defenderSkillTiers[tier - 1]);
+                obj.transform.localScale = new Vector3(1, 1, 1);
+                SkillIcon diceIcon = obj.GetComponent<SkillIcon>();
+                diceIcon.SetSkill(dices[i], (GameController.Instance.round >= tier));
+
+
+                diceTierList[tier - 1].Add(obj);
+                diceSkillIcons.Add(obj);
+            }
+
+            for (int i = 0; i < 3; i++)
+                for (int j = 0; j < diceTierList[i].Count; j++)
+                {
+                    RectTransform rect = diceTierList[i][j].GetComponent<RectTransform>();
+
+                    float y = 0;
+                    if (diceTierList[i].Count > 1) y = -1 * (j * 100 + j * (defenderSkillTiers[i].rect.height - diceTierList[i].Count * 100) / (diceTierList[i].Count - 1));
+                    rect.anchoredPosition = new Vector3(0, y, 0);
+                }
+        }    
     }
 
     private void ClearSkillTree()

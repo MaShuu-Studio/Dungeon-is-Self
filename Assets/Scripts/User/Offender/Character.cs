@@ -6,7 +6,6 @@ namespace Data
 {
     public class Character
     {
-        public List<CharacterSkill> dice = new List<CharacterSkill>();
         public string _role {get; private set;}
         private int skillpoint;
         public List<CharacterSkill> myskill = new List<CharacterSkill>();
