@@ -347,19 +347,27 @@ public class GamePlayUIController : MonoBehaviour
             costSlider.value = (totalCost >= 0) ? totalCost : 0;
             costText.text = totalCost.ToString();
         }
+        else
+        {
+            CharacterSkill skill = OffenderController.Instance.GetSelectedDice(selectedDiceIndex);
+            dices[selectedDiceIndex++].SetSkill(skill);
+
+            if (selectedDiceIndex >= dices.Count) selectedDiceIndex -= 1;
+            SelectDice(selectedDiceIndex);
+        }
     }
-    public void SetDiceOnce(MonsterSkill skill)
+    public void SetDiceOnce(Skill skill)
     {
         if (type == UserType.Defender)
         {
-            bool b = DefenderController.Instance.SetDice(selectedDiceIndex, skill);
+            bool b = DefenderController.Instance.SetDice(selectedDiceIndex, skill as MonsterSkill);
             if (b == false)
             {
                 Alert();
                 return;
             }
 
-            dices[selectedDiceIndex++].SetSkill(skill);
+            dices[selectedDiceIndex++].SetSkill(skill as MonsterSkill);
 
             if (selectedDiceIndex >= dices.Count) selectedDiceIndex -= 1;
             SelectDice(selectedDiceIndex);
@@ -367,6 +375,20 @@ public class GamePlayUIController : MonoBehaviour
             int totalCost = DefenderController.MAX_COST - DefenderController.Instance.GetDiceCost();
             costSlider.value = (totalCost >= 0) ? totalCost : 0;
             costText.text = totalCost.ToString();
+        }
+        else
+        {
+            bool b = OffenderController.Instance.SetDice(selectedDiceIndex, skill as CharacterSkill);
+            if (b == false)
+            {
+                Alert();
+                return;
+            }
+
+            dices[selectedDiceIndex++].SetSkill(skill as CharacterSkill);
+
+            if (selectedDiceIndex >= dices.Count) selectedDiceIndex -= 1;
+            SelectDice(selectedDiceIndex);
         }
     }
 

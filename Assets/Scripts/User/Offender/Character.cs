@@ -8,16 +8,7 @@ namespace Data
     {
         public string _role {get; private set;}
         private int skillpoint;
-        public List<CharacterSkill> myskill = new List<CharacterSkill>();
-        //private List<string> skill = new List<string>();
-        // Start is called before the first frame update
-        public void SetSkillUpdate()
-        {
-            if(skillpoint > 0)
-            {
-
-            }
-        }
+        public List<CharacterSkill> mySkills {get; private set;} = new List<CharacterSkill>();
 
         public int GetSkillPoint()
         {
@@ -27,14 +18,28 @@ namespace Data
         public Character(string role)
         {
             _role = role;
-            if(_role == "FIGHTER") {for(int i = 100; i < 112; i++) {myskill.Add(SkillDatabase.Instance.GetCharacterSkill(i));}}
-            else if(_role == "MARKSMAN") {for(int i = 200; i < 210; i++) {myskill.Add(SkillDatabase.Instance.GetCharacterSkill(i));}}
-            else {for(int i = 300; i < 312; i++) {myskill.Add(SkillDatabase.Instance.GetCharacterSkill(i));}}
+            if(_role == "FIGHTER") {for(int i = 100; i < 112; i++) {mySkills.Add(SkillDatabase.Instance.GetCharacterSkill(i));}}
+            else if(_role == "MARKSMAN") {for(int i = 200; i < 210; i++) {mySkills.Add(SkillDatabase.Instance.GetCharacterSkill(i));}}
+            else {for(int i = 300; i < 312; i++) {mySkills.Add(SkillDatabase.Instance.GetCharacterSkill(i));}}
         }
-        /*public string GetDiceInfo()
+
+        public void SetBasicDice(ref CharacterSkill[] dice)
         {
-            //return dice[0].name;
-        }*/
+            List<CharacterSkill> tier1dices = new List<CharacterSkill>();
+
+            foreach (CharacterSkill skill in mySkills)
+            {
+                if (skill != null && skill.tier == 1)
+                {
+                    tier1dices.Add(skill);
+                }
+            }
+
+            for(int i = 0; i < dice.Length; i++)
+            {
+                dice[i] = tier1dices[i % (tier1dices.Count)];
+            }
+        }
     }
     
 }

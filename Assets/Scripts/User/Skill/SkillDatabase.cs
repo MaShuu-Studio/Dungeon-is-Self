@@ -124,7 +124,7 @@ namespace Data
             if(character == null) return null;
 
             List<CharacterSkill> characterSkills = new List<CharacterSkill>();
-            foreach (CharacterSkill skill in character.myskill)
+            foreach (CharacterSkill skill in character.mySkills)
             {
                 characterSkills.Add(skill);
             }

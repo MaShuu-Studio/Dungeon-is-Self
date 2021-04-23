@@ -57,13 +57,9 @@ namespace GameControl
             for(int i = 0; i < character.Count; i++)
             {
                 CharacterSkill[] dice = new CharacterSkill[6];
-                //CharacterSkill attackSkill;
-                //character[i].SetBasicDice(ref dice);
-                //attackSkill = character[i].GetBasicSkill();
-
-                dices.Add(dice);
-                //attackSkills.Add(attackSkill);
+                character[i].SetBasicDice(ref dice);
                 
+                dices.Add(dice);              
             }
         }
 

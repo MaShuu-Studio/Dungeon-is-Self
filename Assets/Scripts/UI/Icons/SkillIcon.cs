@@ -28,7 +28,7 @@ public class SkillIcon : UIIcon, IPointerClickHandler
     {
         if (isOn)
         {
-            GamePlayUIController.Instance.SetDiceOnce(skill as MonsterSkill);
+            GamePlayUIController.Instance.SetDiceOnce(skill);
             base.OnPointerClick(pointerEventData);
         }
     }
