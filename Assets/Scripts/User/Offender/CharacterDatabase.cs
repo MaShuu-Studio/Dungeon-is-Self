@@ -7,7 +7,7 @@ namespace Data
 {
     public class CharacterDatabase : MonoBehaviour
     {
-        public static string facePath { get; private set; } = "Sprites/Characters/Faces/";
+        public static string facePath { get; private set; } = "Sprites/Classes/Faces/";
         private List<Character> characterDB = new List<Character>();
         private static CharacterDatabase instance;
         public static CharacterDatabase Instance

@@ -126,9 +126,10 @@ public class GamePlayUIController : MonoBehaviour
                 selectedMonsterIndex = 0;
                 characterToggles[selectedMonsterIndex].toggle.isOn = true;
                 DefenderController.Instance.SelectMonster(selectedMonsterIndex);
+                //OffenderController.Instance.SelectCharacter(selectedMonsterIndex);
                 for (int i = 0; i < characterToggles.Count; i++)
                 {
-                    string name = DefenderController.Instance.selectedMonsterCandidates[i];
+                    string name = (type == UserType.Defender) ? DefenderController.Instance.selectedMonsterCandidates[i] : OffenderController.Instance.selectedCharacterCandidates[i];
                     characterToggles[i].SetFace(type, name);
                 }
                 SetAllDice();

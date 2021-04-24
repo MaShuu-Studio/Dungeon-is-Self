@@ -26,8 +26,9 @@ public class CharacterToggle : MonoBehaviour
 
     public void SetFace(GameControl.UserType type, string name)
     {
-        string path = (type == GameControl.UserType.Defender) ? MonsterDatabase.facePath : "";
+        string path = (type == GameControl.UserType.Defender) ? MonsterDatabase.facePath : CharacterDatabase.facePath;
 
+        Debug.Log(name);
         Sprite sprite = Resources.Load<Sprite>(path + name);
         face.sprite = sprite;
     }
