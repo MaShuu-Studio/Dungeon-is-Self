@@ -36,8 +36,6 @@ namespace GameControl
         }
         #endregion
 
-        private GamePlayUIController gamePlayUI;
-
         private bool isPlay;
         public GameProgress currentProgress { get; private set; }
         public UserType userType { get; private set; }
@@ -76,15 +74,13 @@ namespace GameControl
 
         public void ReadyGame()
         {
-            gamePlayUI = GameObject.FindWithTag("UI").GetComponent<GamePlayUIController>();
-
             currentProgress = GameProgress.ReadyGame;
 
             isPlay = true;
             round = 0;
 
-            gamePlayUI.SetUserType();
-            gamePlayUI.ChangeView();
+            GamePlayUIController.Instance.SetUserType();
+            GamePlayUIController.Instance.ChangeView();
         }
 
         public void StartGame()
@@ -173,6 +169,7 @@ namespace GameControl
         public void NextTurn()
         {
             turn++;
+            GamePlayUIController.Instance.SetTurn(turn);
             readyState[0] = true;
             readyState[1] = false;
         }

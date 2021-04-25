@@ -61,11 +61,14 @@ public class GamePlayUIController : MonoBehaviour
 
 
     [Header("PLAY ROUND")]
+    [SerializeField] private GameObject playRoundView;
     [SerializeField] private Transform mapParent;
     [SerializeField] private Transform characterParent;
     private List<CharacterObject> charObjects = new List<CharacterObject>();
     private List<CharacterObject> enemyObjects = new List<CharacterObject>();
     private GameObject mapObject;
+
+    [SerializeField] private Text turnText;
     #endregion
 
     #region Instance
@@ -180,6 +183,7 @@ public class GamePlayUIController : MonoBehaviour
 
             case GameProgress.PlayRound:
                 gameViews[2].SetActive(true);
+                playRoundView.SetActive(true);
                 ClearCharacters();
                 SetCharacters();
                 break;
@@ -545,6 +549,7 @@ public class GamePlayUIController : MonoBehaviour
             prefab = Resources.Load("Prefab/Maps/" + "Forest");
             mapObject = Instantiate(prefab) as GameObject;
             mapObject.transform.SetParent(mapParent);
+            mapObject.transform.SetAsLastSibling();
         }
         else
         {
@@ -615,6 +620,11 @@ public class GamePlayUIController : MonoBehaviour
                 return;
             }
         }
+    }
+
+    public void SetTurn(int turn)
+    {
+        turnText.text = "TURN " + turn.ToString();
     }
     #endregion
 }
