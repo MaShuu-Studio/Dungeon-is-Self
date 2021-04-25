@@ -97,7 +97,7 @@ namespace GameControl
         #region Ready Round
         public void AddSkillPoint(int point)
         {
-            for(int i = 0; i< skillPoints.Count; i++)
+            for (int i = 0; i < skillPoints.Count; i++)
             {
                 skillPoints[i] += point;
             }
@@ -133,11 +133,17 @@ namespace GameControl
             characterIndex = index;
         }
 
-        public string SelectRoster(int index)
+        public void SelectRoster(int index)
         {
+            int i = 0;
             // 로스터 중복 체크
+            for (; i < roster.Length; i++)
+            {
+                if (roster[i] == characterIndex) break;
+            }
+
+            if (i < roster.Length) roster[i] = roster[index];
             roster[index] = characterIndex;
-            return characters[roster[index]]._role;
         }
 
         public int GetMaxTier()

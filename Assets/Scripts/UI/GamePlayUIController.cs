@@ -484,12 +484,19 @@ public class GamePlayUIController : MonoBehaviour
 
     public void SetOffenderRoster(int index)
     {
-        string name = OffenderController.Instance.SelectRoster(index);
+        OffenderController.Instance.SelectRoster(index);
+        SetRosterIcons();
+    }
 
-        if (string.IsNullOrEmpty(name) == false)
+    private void SetRosterIcons()
+    {
+        for (int i = 0; i < offenderRosters.Count; i++)
         {
-            offenderRosters[index].SetImage(UserType.Offender, name);
-            offenderRosters[index].SetNumber(OffenderController.Instance.roster[index]);
+            int index = OffenderController.Instance.roster[i];
+            string name = OffenderController.Instance.characters[index]._role;
+
+            offenderRosters[i].SetImage(UserType.Offender, name);
+            offenderRosters[i].SetNumber(index);
         }
     }
 
