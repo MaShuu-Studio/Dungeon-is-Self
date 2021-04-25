@@ -117,7 +117,6 @@ namespace GameControl
         {
             Character c = characters[characterIndex];
             int index = c.mySkills.FindIndex(s => s.id == skill.id);
-            Debug.Log(index);
 
             if (index != -1)
             {
@@ -134,10 +133,11 @@ namespace GameControl
             characterIndex = index;
         }
 
-        public void SelectRoster(int index)
+        public string SelectRoster(int index)
         {
             // 로스터 중복 체크
             roster[index] = characterIndex;
+            return characters[roster[index]]._role;
         }
 
         public int GetMaxTier()

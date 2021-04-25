@@ -7,8 +7,9 @@ using Data;
 
 public class GamePlayUIController : MonoBehaviour
 {
-    UserType type;
-    GameProgress progress;
+    #region Value
+    private UserType type;
+    private GameProgress progress;
 
     [Header("COMMONS")]
     [SerializeField] private List<GameObject> gameViews;
@@ -32,18 +33,26 @@ public class GamePlayUIController : MonoBehaviour
     [SerializeField] private RectTransform offenderSkillTree;
     [SerializeField] private Text offenderSkillPointText;
 
+    [Space]
     [SerializeField] private GameObject diceSkillIconPrefab;
-
-    [SerializeField] private SkillDescription description;
     private List<SkillIcon> diceSkillIcons = new List<SkillIcon>();
 
     [SerializeField] private List<DiceIcon> dices;
     [SerializeField] private RectTransform selectedDice;
+
+    [SerializeField] private SkillDescription description;
+
+    [Space]
+    [SerializeField] private GameObject defenderSpecialView;
     [SerializeField] private List<SkillIcon> defenderAttackSkills;
     [SerializeField] private RectTransform selectedAttackSkill;
-
     [SerializeField] private Slider costSlider;
     [SerializeField] private Text costText;
+
+    [Space]
+    [SerializeField] private GameObject offenderSpecialView;
+    [SerializeField] private List<RosterIcon> offenderRosters;
+
 
     private int selectedDiceIndex;
     private int selectedCharacterIndex;
@@ -55,6 +64,7 @@ public class GamePlayUIController : MonoBehaviour
     private List<CharacterObject> charObjects = new List<CharacterObject>();
     private List<CharacterObject> enemyObjects = new List<CharacterObject>();
     private GameObject mapObject;
+    #endregion
 
     #region Instance
     private static GamePlayUIController instance;
@@ -137,6 +147,8 @@ public class GamePlayUIController : MonoBehaviour
                 {
                     defenderSkillTree.SetActive(true);
                     offenderSkillTree.gameObject.SetActive(false);
+                    defenderSpecialView.SetActive(true);
+                    offenderSpecialView.SetActive(false);
                     // 유닛 선택시 Defender에서 몬스터가 죽었는지 체크해야함.
                     // 기존에 선택했던 유닛부터 다시 세팅할 수 있게 해줘야 함.
                     characterToggles[0].toggle.isOn = true;
@@ -145,9 +157,18 @@ public class GamePlayUIController : MonoBehaviour
                 {
                     defenderSkillTree.SetActive(false);
                     offenderSkillTree.gameObject.SetActive(true);
+                    defenderSpecialView.SetActive(false);
+                    offenderSpecialView.SetActive(true);
                     // 유닛 선택시 Offender에서 유닛이 죽었는지 체크해야 함.
                     // 기존에 선택했던 유닛부터 다시 세팅할 수 있게 해줘야 함.
                     characterToggles[0].toggle.isOn = true;
+
+                    for (int i = 0; i < 3; i++)
+                    {
+                        OffenderController.Instance.SelectCharacter(i);
+                        SetOffenderRoster(i);
+                    }
+                    OffenderController.Instance.SelectCharacter(0);
                 }
 
                 for (int i = 0; i < characterToggles.Count; i++)
@@ -253,7 +274,7 @@ public class GamePlayUIController : MonoBehaviour
 
         // 자동화 코드.
         // 자동화가 아니라 프리팹을 활용해야할지는 고민이 좀 필요할 듯
-        // 나중에 합칠 생각
+        // 공격자와 방어자를 나중에 합칠 생각
 
         selectedCharacterIndex = index;
         string name;
@@ -459,6 +480,17 @@ public class GamePlayUIController : MonoBehaviour
         RectTransform rect = defenderAttackSkills[index].GetComponent<RectTransform>();
         Vector3 pos = new Vector3(0, rect.anchoredPosition.y + 6.25f, 0);
         selectedAttackSkill.anchoredPosition = pos;
+    }
+
+    public void SetOffenderRoster(int index)
+    {
+        string name = OffenderController.Instance.SelectRoster(index);
+
+        if (string.IsNullOrEmpty(name) == false)
+        {
+            offenderRosters[index].SetImage(UserType.Offender, name);
+            offenderRosters[index].SetNumber(OffenderController.Instance.roster[index]);
+        }
     }
 
     #endregion
