@@ -16,7 +16,8 @@ public class GamePlayUIController : MonoBehaviour
     [SerializeField] private CustomButton readyButton;
 
     [Space]
-    [SerializeField] private List<CharIcon> userCharacters;
+    [SerializeField] private List<CharIcon> userRosters;
+    [SerializeField] private List<RectTransform> rosterSelected;
 
     [Header("READY GAME")]
     [SerializeField] private Transform candidatesTransform;
@@ -102,7 +103,7 @@ public class GamePlayUIController : MonoBehaviour
         for (int i = 0; i < characterToggles.Count; i++)
         {
             string name = (type == UserType.Defender) ? DefenderController.Instance.selectedMonsterCandidates[i] : OffenderController.Instance.selectedCharacterCandidates[i];
-            userCharacters[i].SetImage(type, name);
+            userRosters[i].SetImage(type, name);
         }
 
         if (progress != GameController.Instance.currentProgress)
@@ -131,19 +132,18 @@ public class GamePlayUIController : MonoBehaviour
     public void ChangeView()
     {
         SetProgress();
-        foreach (GameObject view in gameViews)
-        {
-            view.SetActive(false);
-        }
+        foreach (GameObject view in gameViews) view.SetActive(false);
 
         switch (GameController.Instance.currentProgress)
         {
             case GameProgress.ReadyGame:
+                BlindSelectedRoster();
                 gameViews[0].SetActive(true);
                 ShowAllCandidates();
                 break;
 
             case GameProgress.ReadyRound:
+                BlindSelectedRoster();
                 gameViews[1].SetActive(true);
                 if (type == UserType.Defender)
                 {
@@ -625,6 +625,26 @@ public class GamePlayUIController : MonoBehaviour
     public void SetTurn(int turn)
     {
         turnText.text = "TURN " + turn.ToString();
+    }
+
+    private void BlindSelectedRoster()
+    {
+        foreach (RectTransform rect in rosterSelected) rect.gameObject.SetActive(false);
+    }
+    public void ShowSelectedRoster(int[] indexes)
+    {
+        for (int i = 0; i < indexes.Length; i++)
+        {
+            rosterSelected[i].transform.SetParent(userRosters[indexes[i] % 10].transform);
+            rosterSelected[i].anchoredPosition = new Vector2(0, 0);
+            rosterSelected[i].gameObject.SetActive(true);
+        }
+    }
+    public void ShowSelectedRoster(int index)
+    {
+        rosterSelected[0].transform.SetParent(userRosters[index % 10].transform);
+        rosterSelected[0].anchoredPosition = new Vector2(0, 0);
+        rosterSelected[0].gameObject.SetActive(true);
     }
     #endregion
 }

@@ -103,7 +103,6 @@ namespace GameControl
 
         public void SelectUnit(UserType type, int[] units) // 서버 입장에서는 type 필요
         {
-            Debug.Log($"Set Index {units[0]}");
             if (type == UserType.Defender)
             {
                 defenderUnit = units[0] + 20;
@@ -115,6 +114,8 @@ namespace GameControl
                     offenderUnits[i] = units[i] + 10;
                 }
             }
+
+            GamePlayUIController.Instance.ShowSelectedRoster(units);
         }
 
         public void StartRound()
@@ -126,6 +127,9 @@ namespace GameControl
             animationEnd.Add(defenderUnit, true);
             //foreach (int key in offenderUnits)
             //    animationEnd.Add(key, true);
+
+            if (userType == UserType.Defender) GamePlayUIController.Instance.ShowSelectedRoster(defenderUnit);
+            if (userType == UserType.Offender) GamePlayUIController.Instance.ShowSelectedRoster(offenderUnits);
 
             NextTurn();
         }

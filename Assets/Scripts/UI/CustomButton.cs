@@ -67,7 +67,6 @@ public class CustomButton : MonoBehaviour
             case GameProgress.PlayRound:
                 TurnReadyEnd();
                 break;
-
         }
     }
 
