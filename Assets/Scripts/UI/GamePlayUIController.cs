@@ -35,7 +35,7 @@ public class GamePlayUIController : MonoBehaviour
     [SerializeField] private GameObject diceSkillIconPrefab;
 
     [SerializeField] private SkillDescription description;
-    private List<GameObject> diceSkillIcons = new List<GameObject>();
+    private List<SkillIcon> diceSkillIcons = new List<SkillIcon>();
 
     [SerializeField] private List<DiceIcon> dices;
     [SerializeField] private RectTransform selectedDice;
@@ -279,7 +279,7 @@ public class GamePlayUIController : MonoBehaviour
 
 
                 diceTierList[tier - 1].Add(obj);
-                diceSkillIcons.Add(obj);
+                diceSkillIcons.Add(diceIcon);
             }
 
             for (int i = 0; i < 3; i++)
@@ -323,7 +323,7 @@ public class GamePlayUIController : MonoBehaviour
                 diceIcon.SetSkill(dices[i], OffenderController.Instance.IsSkillGotten(i));
 
                 diceTierList[tier - 1].Add(obj);
-                diceSkillIcons.Add(obj);
+                diceSkillIcons.Add(diceIcon);
             }
 
             for (int i = 0; i < maxTier; i++)
@@ -389,8 +389,23 @@ public class GamePlayUIController : MonoBehaviour
             SelectDice(selectedDiceIndex);
         }
     }
-    public void SetDiceOnce(Skill skill)
+    public void SetDiceOnce(Skill skill, bool isOn = true)
     {
+        if (isOn == false && type == UserType.Offender)
+        {
+            int index = OffenderController.Instance.LearnSkill(skill);
+            if (index != -1)
+            {
+                diceSkillIcons[index].SetOnOff(true);
+                offenderSkillPointText.text = "SKILL POINT: " + OffenderController.Instance.GetSkillPoint().ToString();
+            }
+            else
+            {
+                Debug.Log("스킬포인트가 모자랍니다.");
+            }
+            return;
+        }
+
         if (type == UserType.Defender)
         {
             bool b = DefenderController.Instance.SetDice(selectedDiceIndex, skill as MonsterSkill);

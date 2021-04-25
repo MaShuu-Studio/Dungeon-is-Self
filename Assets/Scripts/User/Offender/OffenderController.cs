@@ -113,6 +113,22 @@ namespace GameControl
             return gottenSkills[characterIndex][index];
         }
 
+        public int LearnSkill(Skill skill)
+        {
+            Character c = characters[characterIndex];
+            int index = c.mySkills.FindIndex(s => s.id == skill.id);
+            Debug.Log(index);
+
+            if (index != -1)
+            {
+                if (skillPoints[characterIndex] <= 0) return -1;
+                skillPoints[characterIndex] -= 1;
+                gottenSkills[characterIndex][index] = true;
+            }
+
+            return index;
+        }
+
         public void SelectCharacter(int index)
         {
             characterIndex = index;
