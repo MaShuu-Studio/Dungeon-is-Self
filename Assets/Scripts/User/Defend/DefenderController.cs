@@ -150,9 +150,9 @@ namespace GameControl
             return skills;
         }
 
-        public string GetMonsterRoster()
+        public Monster GetMonsterRoster()
         {
-            return monsters[monsterIndex].name;
+            return monsters[monsterIndex];
         }
     }
 }

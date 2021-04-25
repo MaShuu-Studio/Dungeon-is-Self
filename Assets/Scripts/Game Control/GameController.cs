@@ -160,8 +160,6 @@ namespace GameControl
                     if (animationEnd[key] == false) isLoop = true;
             }
 
-            Debug.Log("Animation End");
-
             progressRound = false;
             NextTurn();
         }

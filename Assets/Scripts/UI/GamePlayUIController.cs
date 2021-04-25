@@ -513,14 +513,20 @@ public class GamePlayUIController : MonoBehaviour
         if (type == UserType.Defender)
         {
             // 자신 캐릭터 소환
-            string monsterName = DefenderController.Instance.GetMonsterRoster();
             {
-                prefab = Resources.Load(charPath + monsterName);
+                Monster monster = DefenderController.Instance.GetMonsterRoster();
+                MonsterSkill skill = DefenderController.Instance.GetAttackSkill();
+
+                prefab = Resources.Load(charPath + monster.name);
                 obj = Instantiate(prefab) as GameObject;
                 obj.transform.SetParent(characterParent);
                 obj.transform.position = new Vector3(obj.transform.position.x, obj.transform.position.y, 0);
+
                 CharacterObject character = obj.GetComponent<CharacterObject>();
+                character.SetSkill(skill);
+                character.UpdateCharacterInfo(monster.hp, skill.turn);
                 character.SetCharacterIndex(GameController.Instance.defenderUnit);
+
                 charObjects.Add(character);
             }
 
