@@ -451,11 +451,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bb4f82dbe8d504747a17ab6e9ba393e8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bench: 
-  roster: 
-  fighter: 0
-  marksman: 1
-  mage: 2
 --- !u!4 &2021655611
 Transform:
   m_ObjectHideFlags: 0

@@ -511,15 +511,15 @@ public class GamePlayUIController : MonoBehaviour
         string charPath = (type == UserType.Defender) ? "Prefab/Monsters/" : "Prefab/Classes/";
         string enemyPath = (type == UserType.Defender) ? "Prefab/Classes/" : "Prefab/Monsters/";
 
-        string monsterName = DefenderController.Instance.GetMonsterRoster();
         if (type == UserType.Defender)
         {
+            // 자신 캐릭터 소환
+            string monsterName = DefenderController.Instance.GetMonsterRoster();
             {
-                // 자신 캐릭터 소환
                 prefab = Resources.Load(charPath + monsterName);
                 obj = Instantiate(prefab) as GameObject;
-                obj.transform.position = new Vector3(obj.transform.position.x, obj.transform.position.y, 0);
                 obj.transform.SetParent(characterParent);
+                obj.transform.position = new Vector3(obj.transform.position.x, obj.transform.position.y, 0);
                 CharacterObject character = obj.GetComponent<CharacterObject>();
                 character.SetCharacterIndex(GameController.Instance.defenderUnit);
                 charObjects.Add(character);
@@ -528,10 +528,10 @@ public class GamePlayUIController : MonoBehaviour
             // 적 캐릭터 소환
             for (int i = 0; i < 3; i++)
             {
-                prefab = Resources.Load(enemyPath + "Knight");
+                prefab = Resources.Load(enemyPath + "Fighter");
                 obj = Instantiate(prefab) as GameObject;
-                obj.transform.position = new Vector3(obj.transform.position.x + 2f * i, obj.transform.position.y, 0);
                 obj.transform.SetParent(characterParent);
+                obj.transform.position = new Vector3(obj.transform.position.x + 2f * i, obj.transform.position.y, 0);
                 CharacterObject character = obj.GetComponent<CharacterObject>();
                 character.SetCharacterIndex(GameController.Instance.offenderUnits[i]);
                 enemyObjects.Add(character);
@@ -543,7 +543,35 @@ public class GamePlayUIController : MonoBehaviour
         }
         else
         {
+            List<string> characterNames = OffenderController.Instance.GetCharacterRoster();
 
+            // 자신 캐릭터 소환
+            for (int i = 0; i < characterNames.Count; i++)
+            {
+                prefab = Resources.Load(charPath + characterNames[i]);
+                obj = Instantiate(prefab) as GameObject;
+                obj.transform.SetParent(characterParent);
+                obj.transform.position = new Vector3((obj.transform.position.x + 2f * i) * -1, obj.transform.position.y, 0);
+                CharacterObject character = obj.GetComponent<CharacterObject>();
+                character.SetCharacterIndex(GameController.Instance.offenderUnits[i]);
+                charObjects.Add(character);
+            }
+
+            // 적 캐릭터 소환
+            {
+                prefab = Resources.Load(enemyPath + "Ninetail");
+                obj = Instantiate(prefab) as GameObject;
+                obj.transform.SetParent(characterParent);
+                obj.transform.position = new Vector3(obj.transform.position.x * -1, obj.transform.position.y, 0);
+                CharacterObject character = obj.GetComponent<CharacterObject>();
+                character.SetCharacterIndex(GameController.Instance.defenderUnit);
+                enemyObjects.Add(character);
+            }
+
+
+            prefab = Resources.Load("Prefab/Maps/" + "Forest");
+            mapObject = Instantiate(prefab) as GameObject;
+            mapObject.transform.SetParent(mapParent);
         }
 
         for (int i = 0; i < charObjects.Count; i++)
