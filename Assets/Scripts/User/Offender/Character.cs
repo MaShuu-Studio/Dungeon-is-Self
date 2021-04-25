@@ -7,7 +7,6 @@ namespace Data
     public class Character
     {
         public string _role { get; private set; }
-        private int skillpoint;
         public List<CharacterSkill> mySkills { get; private set; } = new List<CharacterSkill>();
         public Character(string role)
         {
@@ -33,10 +32,6 @@ namespace Data
             {
                 dice[i] = tier1dices[i % (tier1dices.Count)];
             }
-        }
-        public int GetSkillPoint()
-        {
-            return skillpoint;
         }
 
         public int GetMaxTier()

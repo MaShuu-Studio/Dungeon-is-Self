@@ -33,18 +33,31 @@ namespace GameControl
 
 
         public string[] selectedCharacterCandidates { get; private set; } = new string[6];
-        public List<Character> character { get; private set; } = new List<Character>();
+        public List<Character> characters { get; private set; } = new List<Character>();
+        private List<List<bool>> gottenSkills = new List<List<bool>>();
+        public List<int> skillPoints { get; private set; } = new List<int>();
         private List<CharacterSkill[]> dices = new List<CharacterSkill[]>();
         private int characterIndex;
         public int[] roster { get; private set; } = new int[3];
 
         public void Init()
         {
-            character.Clear();
+            characters.Clear();
+            skillPoints.Clear();
 
             foreach (string name in selectedCharacterCandidates)
             {
-                character.Add(CharacterDatabase.Instance.GetCharacter(name));
+                Character c = CharacterDatabase.Instance.GetCharacter(name);
+                characters.Add(c);
+
+                List<bool> list = new List<bool>();
+                for (int i = 0; i < c.mySkills.Count; i++)
+                {
+                    if (c.mySkills[i].tier == 1) list.Add(true);
+                    else list.Add(false);
+                }
+                gottenSkills.Add(list);
+                skillPoints.Add(2);
             }
 
             for (int i = 0; i < 3; i++)
@@ -56,10 +69,10 @@ namespace GameControl
 
             dices.Clear();
 
-            for (int i = 0; i < character.Count; i++)
+            for (int i = 0; i < characters.Count; i++)
             {
                 CharacterSkill[] dice = new CharacterSkill[6];
-                character[i].SetBasicDice(ref dice);
+                characters[i].SetBasicDice(ref dice);
 
                 dices.Add(dice);
             }
@@ -82,6 +95,24 @@ namespace GameControl
         #endregion
 
         #region Ready Round
+        public void AddSkillPoint(int point)
+        {
+            for(int i = 0; i< skillPoints.Count; i++)
+            {
+                skillPoints[i] += point;
+            }
+        }
+
+        public int GetSkillPoint()
+        {
+            return skillPoints[characterIndex];
+        }
+
+        public bool IsSkillGotten(int index)
+        {
+            return gottenSkills[characterIndex][index];
+        }
+
         public void SelectCharacter(int index)
         {
             characterIndex = index;
@@ -95,7 +126,7 @@ namespace GameControl
 
         public int GetMaxTier()
         {
-            return character[characterIndex].GetMaxTier();
+            return characters[characterIndex].GetMaxTier();
         }
 
         public bool SetDice(int index, CharacterSkill skill)
@@ -138,12 +169,12 @@ namespace GameControl
 
         public List<string> GetCharacterRoster()
         {
-            List<string> characters = new List<string>();
+            List<string> tmp = new List<string>();
             foreach (int i in roster)
             {
-                characters.Add(character[i]._role);
+                tmp.Add(characters[i]._role);
             }
-            return characters;
+            return tmp;
         }
         /*public void SetBench(string name)
         {

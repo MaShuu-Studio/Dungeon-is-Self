@@ -30,6 +30,7 @@ public class GamePlayUIController : MonoBehaviour
     [SerializeField] private GameObject defenderSkillTree;
     [SerializeField] private List<RectTransform> defenderSkillTiers;
     [SerializeField] private RectTransform offenderSkillTree;
+    [SerializeField] private Text offenderSkillPointText;
 
     [SerializeField] private GameObject diceSkillIconPrefab;
 
@@ -252,6 +253,7 @@ public class GamePlayUIController : MonoBehaviour
 
         // 자동화 코드.
         // 자동화가 아니라 프리팹을 활용해야할지는 고민이 좀 필요할 듯
+        // 나중에 합칠 생각
 
         selectedCharacterIndex = index;
         string name;
@@ -303,7 +305,7 @@ public class GamePlayUIController : MonoBehaviour
         {
             OffenderController.Instance.SelectCharacter(selectedCharacterIndex);
 
-            name = OffenderController.Instance.character[index]._role;
+            name = OffenderController.Instance.characters[index]._role;
             List<CharacterSkill> dices = SkillDatabase.Instance.GetCharacterDices(name);
 
             int maxTier = OffenderController.Instance.GetMaxTier();
@@ -318,7 +320,7 @@ public class GamePlayUIController : MonoBehaviour
                 obj.transform.SetParent(offenderSkillTree);
                 obj.transform.localScale = new Vector3(1, 1, 1);
                 SkillIcon diceIcon = obj.GetComponent<SkillIcon>();
-                diceIcon.SetSkill(dices[i], (GameController.Instance.round >= tier));
+                diceIcon.SetSkill(dices[i], OffenderController.Instance.IsSkillGotten(i));
 
                 diceTierList[tier - 1].Add(obj);
                 diceSkillIcons.Add(obj);
@@ -335,6 +337,8 @@ public class GamePlayUIController : MonoBehaviour
                     if (diceTierList[i].Count > 1) y = -1 * (j * 100 + j * (offenderSkillTree.rect.height - diceTierList[i].Count * 100) / (diceTierList[i].Count - 1));
                     rect.anchoredPosition = new Vector3(x, y, 0);
                 }
+
+            offenderSkillPointText.text = "SKILL POINT: " + OffenderController.Instance.GetSkillPoint().ToString();
         }
     }
 
