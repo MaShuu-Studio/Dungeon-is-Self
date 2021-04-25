@@ -13,8 +13,10 @@ public class GamePlayUIController : MonoBehaviour
 
     [Header("COMMONS")]
     [SerializeField] private List<GameObject> gameViews;
-    [SerializeField] private List<CharIcon> userCharacters;
     [SerializeField] private CustomButton readyButton;
+
+    [Space]
+    [SerializeField] private List<CharIcon> userCharacters;
 
     [Header("READY GAME")]
     [SerializeField] private Transform candidatesTransform;
@@ -94,18 +96,15 @@ public class GamePlayUIController : MonoBehaviour
 
     void Update()
     {
+        for (int i = 0; i < characterToggles.Count; i++)
+        {
+            string name = (type == UserType.Defender) ? DefenderController.Instance.selectedMonsterCandidates[i] : OffenderController.Instance.selectedCharacterCandidates[i];
+            userCharacters[i].SetImage(type, name);
+        }
+
         if (progress != GameController.Instance.currentProgress)
         {
             ChangeView();
-        }
-
-        if (progress == GameProgress.ReadyRound)
-        {
-            for (int i = 0; i < characterToggles.Count; i++)
-            {
-                string name = (type == UserType.Defender) ? DefenderController.Instance.selectedMonsterCandidates[i] : OffenderController.Instance.selectedCharacterCandidates[i];
-                userCharacters[i].SetImage(type, name);
-            }
         }
 
         if (progress == GameProgress.PlayRound)
