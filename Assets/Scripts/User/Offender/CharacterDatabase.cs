@@ -51,7 +51,7 @@ namespace Data
         public void GetAllCharacterCandidatesList(ref List<string> characterRoles)
         {
             characterRoles.Clear();
-            foreach (Character character in  characterDB)
+            foreach (Character character in characterDB)
             {
                 characterRoles.Add(character._role);
             }

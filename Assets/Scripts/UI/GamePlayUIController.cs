@@ -29,7 +29,10 @@ public class GamePlayUIController : MonoBehaviour
 
     [SerializeField] private GameObject defenderSkillTree;
     [SerializeField] private List<RectTransform> defenderSkillTiers;
+    [SerializeField] private RectTransform offenderSkillTree;
+
     [SerializeField] private GameObject diceSkillIconPrefab;
+
     [SerializeField] private SkillDescription description;
     private List<GameObject> diceSkillIcons = new List<GameObject>();
 
@@ -37,11 +40,12 @@ public class GamePlayUIController : MonoBehaviour
     [SerializeField] private RectTransform selectedDice;
     [SerializeField] private List<SkillIcon> defenderAttackSkills;
     [SerializeField] private RectTransform selectedAttackSkill;
+
     [SerializeField] private Slider costSlider;
     [SerializeField] private Text costText;
 
     private int selectedDiceIndex;
-    private int selectedMonsterIndex;
+    private int selectedCharacterIndex;
 
 
     [Header("PLAY ROUND")]
@@ -68,6 +72,11 @@ public class GamePlayUIController : MonoBehaviour
         {
             Destroy(gameObject);
             return;
+        }
+
+        foreach (GameObject view in gameViews)
+        {
+            view.SetActive(false);
         }
     }
     #endregion
@@ -123,10 +132,23 @@ public class GamePlayUIController : MonoBehaviour
 
             case GameProgress.ReadyRound:
                 gameViews[1].SetActive(true);
-                selectedMonsterIndex = 0;
-                characterToggles[selectedMonsterIndex].toggle.isOn = true;
-                DefenderController.Instance.SelectMonster(selectedMonsterIndex);
-                //OffenderController.Instance.SelectCharacter(selectedMonsterIndex);
+                if (type == UserType.Defender)
+                {
+                    defenderSkillTree.SetActive(true);
+                    offenderSkillTree.gameObject.SetActive(false);
+                    // 유닛 선택시 Defender에서 몬스터가 죽었는지 체크해야함.
+                    // 기존에 선택했던 유닛부터 다시 세팅할 수 있게 해줘야 함.
+                    characterToggles[0].toggle.isOn = true;
+                }
+                else
+                {
+                    defenderSkillTree.SetActive(false);
+                    offenderSkillTree.gameObject.SetActive(true);
+                    // 유닛 선택시 Offender에서 유닛이 죽었는지 체크해야 함.
+                    // 기존에 선택했던 유닛부터 다시 세팅할 수 있게 해줘야 함.
+                    characterToggles[0].toggle.isOn = true;
+                }
+
                 for (int i = 0; i < characterToggles.Count; i++)
                 {
                     string name = (type == UserType.Defender) ? DefenderController.Instance.selectedMonsterCandidates[i] : OffenderController.Instance.selectedCharacterCandidates[i];
@@ -225,16 +247,18 @@ public class GamePlayUIController : MonoBehaviour
 
     public void SetSkillTree(int index)
     {
-        selectedMonsterIndex = index;
-        DefenderController.Instance.SelectMonster(selectedMonsterIndex);
         ClearSkillTree();
         SetAllDice();
+
         // 자동화 코드.
         // 자동화가 아니라 프리팹을 활용해야할지는 고민이 좀 필요할 듯
 
+        selectedCharacterIndex = index;
         string name;
         if (type == UserType.Defender)
         {
+            DefenderController.Instance.SelectMonster(selectedCharacterIndex);
+
             name = DefenderController.Instance.monsters[index].name;
             List<MonsterSkill> dices = SkillDatabase.Instance.GetMonsterDices(name);
 
@@ -277,37 +301,41 @@ public class GamePlayUIController : MonoBehaviour
         }
         else
         {
+            OffenderController.Instance.SelectCharacter(selectedCharacterIndex);
+
             name = OffenderController.Instance.character[index]._role;
             List<CharacterSkill> dices = SkillDatabase.Instance.GetCharacterDices(name);
 
-            List<GameObject>[] diceTierList = new List<GameObject>[3];
-            for (int i = 0; i < 3; i++)
+            int maxTier = OffenderController.Instance.GetMaxTier();
+            List<GameObject>[] diceTierList = new List<GameObject>[maxTier];
+            for (int i = 0; i < maxTier; i++)
                 diceTierList[i] = new List<GameObject>();
 
             for (int i = 0; i < dices.Count; i++)
             {
                 int tier = dices[i].tier;
                 GameObject obj = Instantiate(diceSkillIconPrefab);
-                obj.transform.SetParent(defenderSkillTiers[tier - 1]);
+                obj.transform.SetParent(offenderSkillTree);
                 obj.transform.localScale = new Vector3(1, 1, 1);
                 SkillIcon diceIcon = obj.GetComponent<SkillIcon>();
                 diceIcon.SetSkill(dices[i], (GameController.Instance.round >= tier));
-
 
                 diceTierList[tier - 1].Add(obj);
                 diceSkillIcons.Add(obj);
             }
 
-            for (int i = 0; i < 3; i++)
+            for (int i = 0; i < maxTier; i++)
                 for (int j = 0; j < diceTierList[i].Count; j++)
                 {
                     RectTransform rect = diceTierList[i][j].GetComponent<RectTransform>();
 
+                    float x = 0;
+                    x = i * (100 + ((offenderSkillTree.rect.width - 100 * maxTier) / (maxTier - 1)));
                     float y = 0;
-                    if (diceTierList[i].Count > 1) y = -1 * (j * 100 + j * (defenderSkillTiers[i].rect.height - diceTierList[i].Count * 100) / (diceTierList[i].Count - 1));
-                    rect.anchoredPosition = new Vector3(0, y, 0);
+                    if (diceTierList[i].Count > 1) y = -1 * (j * 100 + j * (offenderSkillTree.rect.height - diceTierList[i].Count * 100) / (diceTierList[i].Count - 1));
+                    rect.anchoredPosition = new Vector3(x, y, 0);
                 }
-        }    
+        }
     }
 
     private void ClearSkillTree()
