@@ -14,6 +14,7 @@ public class GamePlayUIController : MonoBehaviour
     [Header("COMMONS")]
     [SerializeField] private List<GameObject> gameViews;
     [SerializeField] private CustomButton readyButton;
+    [SerializeField] private AlertObject alert;
 
     [Space]
     [SerializeField] private List<CharIcon> userRosters;
@@ -194,12 +195,12 @@ public class GamePlayUIController : MonoBehaviour
     {
         if (GameController.Instance.currentProgress == GameProgress.ReadyGame)
         {
-            Debug.Log("Please Complete Setting Candidate");
+            alert.ShowAlert("Please Complete Setting Candidate");
         }
         else if (GameController.Instance.currentProgress == GameProgress.ReadyRound)
         {
-            Debug.Log("주사위는 같은 스킬을 두 가지보다 많이 넣을 수 없습니다.");
-            Debug.Log("코스트보다 많이 넣을 수 없습니다.");
+            alert.ShowAlert("주사위는 같은 스킬을 두 가지보다 많이 넣을 수 없습니다.");
+            //Debug.Log("코스트보다 많이 넣을 수 없습니다.");
         }
     }
     #endregion

@@ -81,6 +81,7 @@
     <Compile Include="Assets\Scripts\Network\Packet\PacketHandler.cs" />
     <Compile Include="Assets\Scripts\Network\PacketQueue.cs" />
     <Compile Include="Assets\Scripts\Network\ServerSession.cs" />
+    <Compile Include="Assets\Scripts\UI\AlertObject.cs" />
     <Compile Include="Assets\Scripts\UI\CharacterToggle.cs" />
     <Compile Include="Assets\Scripts\UI\CustomButton.cs" />
     <Compile Include="Assets\Scripts\UI\Descriptions\SkillDescription.cs" />
