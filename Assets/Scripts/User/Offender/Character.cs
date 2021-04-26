@@ -18,9 +18,9 @@ namespace Data
         public Character(string role)
         {
             _role = role;
-            if(_role == "FIGHTER") {for(int i = 100; i < 112; i++) {mySkills.Add(SkillDatabase.Instance.GetCharacterSkill(i));}}
-            else if(_role == "MARKSMAN") {for(int i = 200; i < 210; i++) {mySkills.Add(SkillDatabase.Instance.GetCharacterSkill(i));}}
-            else {for(int i = 300; i < 312; i++) {mySkills.Add(SkillDatabase.Instance.GetCharacterSkill(i));}}
+            if(_role == "FIGHTER") {for(int i = 10100; i < 10112; i++) {mySkills.Add(SkillDatabase.Instance.GetCharacterSkill(i));}}
+            else if(_role == "MARKSMAN") {for(int i = 10200; i < 10210; i++) {mySkills.Add(SkillDatabase.Instance.GetCharacterSkill(i));}}
+            else {for(int i = 10300; i < 10312; i++) {mySkills.Add(SkillDatabase.Instance.GetCharacterSkill(i));}}
         }
 
         public void SetBasicDice(ref CharacterSkill[] dice)

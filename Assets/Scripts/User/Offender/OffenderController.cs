@@ -87,12 +87,15 @@ namespace GameControl
 
         public bool SetDice(int index, CharacterSkill skill)
         {
-            int count = 0;
+            int overlabCount = 0;
+            int basicSkill = 0;
             for (int i = 0; i < dices[characterIndex].Length; i++)
             {
-                if (dices[characterIndex][i].id == skill.id) count++;
+                if (dices[characterIndex][i].id == skill.id) overlabCount++;
+                if (dices[characterIndex][i].id % 100 == 0) basicSkill++;
+                if (((dices[characterIndex].Length > 3 && basicSkill <= 0) || (dices[characterIndex].Length > 4 && basicSkill <= 1)) && skill.id % 100 != 0) return false;
             }
-            if (count > 1) return false;
+            if (overlabCount > 2) return false;
 
             dices[characterIndex][index] = skill;
             return true;
