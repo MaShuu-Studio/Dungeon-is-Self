@@ -530,10 +530,13 @@ public class GamePlayUIController : MonoBehaviour
 
         if (type == UserType.Defender)
         {
+            List<string> characterNames = OffenderController.Instance.GetCharacterRoster();
             // 자신 캐릭터 소환
             {
                 Monster monster = DefenderController.Instance.GetMonsterRoster();
                 MonsterSkill skill = DefenderController.Instance.GetAttackSkill();
+
+                
 
                 prefab = Resources.Load(charPath + monster.name);
                 obj = Instantiate(prefab) as GameObject;
@@ -551,7 +554,7 @@ public class GamePlayUIController : MonoBehaviour
             // 적 캐릭터 소환
             for (int i = 0; i < 3; i++)
             {
-                prefab = Resources.Load(enemyPath + "Fighter");
+                prefab = Resources.Load(enemyPath + characterNames[i]);
                 obj = Instantiate(prefab) as GameObject;
                 obj.transform.SetParent(characterParent);
                 obj.transform.position = new Vector3(obj.transform.position.x + 2f * i, obj.transform.position.y, 0);
@@ -569,6 +572,9 @@ public class GamePlayUIController : MonoBehaviour
         {
             List<string> characterNames = OffenderController.Instance.GetCharacterRoster();
 
+            Monster monster = DefenderController.Instance.GetMonsterRoster();
+            MonsterSkill skill = DefenderController.Instance.GetAttackSkill();
+
             // 자신 캐릭터 소환
             for (int i = 0; i < characterNames.Count; i++)
             {
@@ -583,12 +589,14 @@ public class GamePlayUIController : MonoBehaviour
 
             // 적 캐릭터 소환
             {
-                prefab = Resources.Load(enemyPath + "Ninetail");
+                prefab = Resources.Load(enemyPath + monster.name);
                 obj = Instantiate(prefab) as GameObject;
                 obj.transform.SetParent(characterParent);
                 obj.transform.position = new Vector3(obj.transform.position.x * -1, obj.transform.position.y, 0);
                 CharacterObject character = obj.GetComponent<CharacterObject>();
                 character.SetCharacterIndex(GameController.Instance.defenderUnit);
+                character.SetSkill(skill);
+                character.UpdateCharacterInfo(monster.hp, skill.turn);
                 enemyObjects.Add(character);
             }
 
