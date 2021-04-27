@@ -159,6 +159,7 @@ public class GamePlayUIController : MonoBehaviour
                     // 유닛 선택시 Defender에서 몬스터가 죽었는지 체크해야함.
                     // 기존에 선택했던 유닛부터 다시 세팅할 수 있게 해줘야 함.
                     characterToggles[0].toggle.isOn = true;
+                    SetSkillTree(0);
                 }
                 else
                 {
@@ -317,7 +318,6 @@ public class GamePlayUIController : MonoBehaviour
                 obj.transform.localScale = new Vector3(1, 1, 1);
                 SkillIcon diceIcon = obj.GetComponent<SkillIcon>();
                 diceIcon.SetSkill(dices[i], (GameController.Instance.round >= tier));
-
 
                 diceTierList[tier - 1].Add(obj);
                 diceSkillIcons.Add(diceIcon);
@@ -539,8 +539,6 @@ public class GamePlayUIController : MonoBehaviour
                 Monster monster = DefenderController.Instance.GetMonsterRoster();
                 MonsterSkill skill = DefenderController.Instance.GetAttackSkill();
 
-
-
                 prefab = Resources.Load(charPath + monster.name);
                 obj = Instantiate(prefab) as GameObject;
                 obj.transform.SetParent(characterParent);
@@ -564,6 +562,7 @@ public class GamePlayUIController : MonoBehaviour
                 character.SetCharacterIndex(GameController.Instance.offenderUnits[i]);
                 enemyObjects.Add(character);
             }
+            UpdateCharacters();
 
             prefab = Resources.Load("Prefab/Maps/" + "Forest");
             mapObject = Instantiate(prefab) as GameObject;
@@ -675,7 +674,8 @@ public class GamePlayUIController : MonoBehaviour
     }
     public void ShowSelectedRoster(int[] indexes)
     {
-        for (int i = 0; i < indexes.Length; i++)
+        int i = 0;
+        for (; i < indexes.Length; i++)
         {
             rosterSelected[i].transform.SetParent(userRosters[indexes[i] % 10].transform);
             rosterSelected[i].anchoredPosition = new Vector2(0, 0);
@@ -687,6 +687,11 @@ public class GamePlayUIController : MonoBehaviour
         rosterSelected[0].transform.SetParent(userRosters[index % 10].transform);
         rosterSelected[0].anchoredPosition = new Vector2(0, 0);
         rosterSelected[0].gameObject.SetActive(true);
+
+        for (int i = 1; i < rosterSelected.Count; i++)
+        {
+            rosterSelected[i].gameObject.SetActive(false);
+        }
     }
     #endregion
 }

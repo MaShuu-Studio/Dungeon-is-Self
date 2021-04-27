@@ -66,6 +66,7 @@ namespace GameControl
         public void SetUserType(UserType type)
         {
             userType = type;
+            Debug.Log(type.ToString());
         }
 
         public void ReadyGame()
