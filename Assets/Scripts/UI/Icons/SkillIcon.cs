@@ -10,12 +10,14 @@ public class SkillIcon : UIIcon, IPointerClickHandler
     [SerializeField] private Text costText;
     protected Skill skill;
     protected bool isOn = true;
+    protected bool isSkill = true;
 
     protected override void Start()
     {
         base.Start();
         pos.x = rect.anchoredPosition.x - 15;
         pos.y = rect.anchoredPosition.y + 15;
+        isSkill = true;
     }
 
     public override void OnPointerEnter(PointerEventData pointerEventData)
@@ -27,7 +29,7 @@ public class SkillIcon : UIIcon, IPointerClickHandler
 
     public override void OnPointerClick(PointerEventData pointerEventData)
     {
-        GamePlayUIController.Instance.SetDiceOnce(skill, isOn);
+        if (isSkill) GamePlayUIController.Instance.SetDiceOnce(skill, isOn);
         if (isOn) base.OnPointerClick(pointerEventData);
     }
 
