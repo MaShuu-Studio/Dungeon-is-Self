@@ -627,6 +627,7 @@ public class GamePlayUIController : MonoBehaviour
 
     public void UpdateCharacters()
     {
+        Debug.Log("Update Character Info");
         int monHp = 0, monTurn = 0;
         DefenderController.Instance.GetMonsterInfo(ref monHp, ref monTurn);
         if (type == UserType.Defender)

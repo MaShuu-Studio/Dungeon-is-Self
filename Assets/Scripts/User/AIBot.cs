@@ -61,9 +61,9 @@ namespace GameControl
             }
             else
             {
-                int[] unit = new int[1];
-                unit[0] = UnityEngine.Random.Range(0, 6);
-                GameController.Instance.SelectUnit(UserType.Defender, unit);
+                int unit = UnityEngine.Random.Range(0, 6);
+                DefenderController.Instance.SelectMonster(unit);
+                DefenderController.Instance.SetRoster();
             }
         }
     }
