@@ -1,11 +1,8 @@
-﻿using System.Collections;
+﻿using Data;
+using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.SceneManagement;
-using UnityEngine.UI;
-using Data;
-using System;
 using System.Linq;
+using UnityEngine;
 
 namespace GameControl
 {
@@ -174,16 +171,16 @@ namespace GameControl
         private void ProgressTurn()
         {
             List<MonsterSkill> monSkills = DefenderController.Instance.DiceRoll(defenderUnit % 10);
-            List<CharacterSkill> charSkills = OffenderController.Instance.DiceRoll(offenderUnits);
+            Dictionary<int, CharacterSkill> charSkills = OffenderController.Instance.DiceRoll(offenderUnits);
 
             StartCoroutine(Battle(monSkills, charSkills));
         }
 
-        IEnumerator Battle(List<MonsterSkill> monSkills, List<CharacterSkill> charSkills)
+        IEnumerator Battle(List<MonsterSkill> monSkills, Dictionary<int, CharacterSkill> charSkills)
         {
             bool defenderOk = (monSkills[0].id == monSkills[1].id);
             Debug.Log($"1: {monSkills[0].name} , 2: {monSkills[1].name} : {defenderOk}");
-            Debug.Log($"1: {charSkills[0].name}, 2: {charSkills[1].name}, 3: {charSkills[2].name}");
+            Debug.Log($"1: {charSkills[offenderUnits[0]].name}, 2: {charSkills[offenderUnits[1]].name}, 3: {charSkills[offenderUnits[2]].name}");
 
             // 순차적으로 공격을 누가 먼저 해서 진행될지 정할 필요 있음.
             if (defenderOk) animationEnd[defenderUnit] = false;
@@ -198,10 +195,24 @@ namespace GameControl
             for (int i = 0; i < animationEnd.Count; i++)
                 if (animationEnd[keys[i]] == false)
                 {
-                    if ((keys[i] / 10) == 2 && defenderOk == false) continue;
+                    bool isMonster = ((keys[i] / 10) == 2);
+                    if (isMonster && defenderOk == false) continue;
                     GamePlayUIController.Instance.PlayAnimation(keys[i], "Attack");
 
                     while (animationEnd[keys[i]] == false) yield return null;
+
+                    // 전투 정보 전송
+                    {
+                        if (isMonster == false)
+                        {
+                            int restHp = DefenderController.Instance.MonsterDamaged(defenderUnit % 10, charSkills[keys[i]]);
+                        }
+                        else
+                        {
+                            int index = Random.Range(0, offenderUnits.Length);
+                        }
+                        GamePlayUIController.Instance.UpdateCharacters();
+                    }
                 }
 
             progressRound = false;
@@ -216,6 +227,17 @@ namespace GameControl
         public void NextTurn()
         {
             GamePlayUIController.Instance.SetTurn(++turn);
+
+            bool isAttack = DefenderController.Instance.AttackSkillNextTurn();
+            GamePlayUIController.Instance.UpdateCharacters();
+            if (isAttack)
+            {
+                // 공격부분
+                Debug.Log("Attack");
+                DefenderController.Instance.ResetAttackSkill();
+                GamePlayUIController.Instance.UpdateCharacters();
+            }
+
             readyState[0] = false;
             readyState[1] = false;
             if (userType == UserType.Defender) ReadyTurn(UserType.Offender, true);

@@ -180,14 +180,14 @@ namespace GameControl
             return dices[characterIndex][index];
         }
 
-        public List<CharacterSkill> DiceRoll(int[] roster)
+        public Dictionary<int, CharacterSkill> DiceRoll(int[] roster)
         {
-            List<CharacterSkill> skills = new List<CharacterSkill>();
+            Dictionary<int, CharacterSkill> skills = new Dictionary<int, CharacterSkill>();
 
             for (int i = 0; i < roster.Length; i++)
             {
                 int diceIndex = Random.Range(0, 6);
-                skills.Add(dices[roster[i] % 10][diceIndex]);
+                skills.Add(roster[i], dices[roster[i] % 10][diceIndex]);
             }
 
             return skills;

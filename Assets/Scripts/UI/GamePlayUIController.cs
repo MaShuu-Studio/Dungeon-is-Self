@@ -196,7 +196,7 @@ public class GamePlayUIController : MonoBehaviour
         string str = "";
         switch (errorIndex)
         {
-            case 10: 
+            case 10:
                 str = "캐릭터 세팅을 끝내주세요.";
                 break;
             case 21:
@@ -536,7 +536,7 @@ public class GamePlayUIController : MonoBehaviour
                 Monster monster = DefenderController.Instance.GetMonsterRoster();
                 MonsterSkill skill = DefenderController.Instance.GetAttackSkill();
 
-                
+
 
                 prefab = Resources.Load(charPath + monster.name);
                 obj = Instantiate(prefab) as GameObject;
@@ -545,7 +545,6 @@ public class GamePlayUIController : MonoBehaviour
 
                 CharacterObject character = obj.GetComponent<CharacterObject>();
                 character.SetSkill(skill);
-                character.UpdateCharacterInfo(monster.hp, skill.turn);
                 character.SetCharacterIndex(GameController.Instance.defenderUnit);
 
                 charObjects.Add(character);
@@ -596,10 +595,9 @@ public class GamePlayUIController : MonoBehaviour
                 CharacterObject character = obj.GetComponent<CharacterObject>();
                 character.SetCharacterIndex(GameController.Instance.defenderUnit);
                 character.SetSkill(skill);
-                character.UpdateCharacterInfo(monster.hp, skill.turn);
                 enemyObjects.Add(character);
             }
-
+            UpdateCharacters();
 
             prefab = Resources.Load("Prefab/Maps/" + "Forest");
             mapObject = Instantiate(prefab) as GameObject;
@@ -621,6 +619,23 @@ public class GamePlayUIController : MonoBehaviour
 
         charObjects.Clear();
         enemyObjects.Clear();
+    }
+
+    public void UpdateCharacters()
+    {
+        int monHp = 0, monTurn = 0;
+        DefenderController.Instance.GetMonsterInfo(ref monHp, ref monTurn);
+        if (type == UserType.Defender)
+        {
+            for (int i = 0; i < charObjects.Count; i++)
+                charObjects[i].UpdateCharacterInfo(monHp, monTurn);
+        }
+
+        else
+        {
+            for (int i = 0; i < enemyObjects.Count; i++)
+                enemyObjects[i].UpdateCharacterInfo(monHp, monTurn);
+        }
     }
 
     public void PlayAnimation(int index, string anim)

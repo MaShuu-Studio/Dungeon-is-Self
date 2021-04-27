@@ -35,6 +35,7 @@ namespace GameControl
 
         private List<MonsterSkill[]> dices = new List<MonsterSkill[]>();
         private List<MonsterSkill> attackSkills = new List<MonsterSkill>();
+        private int attackSkillTurn;
         private int monsterIndex;
         public const int MAX_COST = 10;
 
@@ -130,6 +131,7 @@ namespace GameControl
         {
             int[] unit = new int[1];
             unit[0] = monsterIndex;
+            ResetAttackSkill();
             GameController.Instance.SelectUnit(UserType.Defender, unit);
         }
         #endregion
@@ -155,6 +157,35 @@ namespace GameControl
         public Monster GetMonsterRoster()
         {
             return monsters[monsterIndex];
+        }
+
+        public int MonsterDamaged(int index, CharacterSkill skill)
+        {
+            monsters[index].Damaged(skill);
+
+            return monsters[index].hp;
+        }
+
+        public void GetMonsterInfo(ref int hp, ref int turn)
+        {
+            hp = monsters[monsterIndex].hp;
+            turn = attackSkillTurn;
+        }
+
+        public bool AttackSkillNextTurn()
+        {
+            attackSkillTurn--;
+            if (attackSkillTurn <= 0)
+            {
+                attackSkillTurn = 0;
+                return true;
+            }
+            return false;
+        }
+
+        public void ResetAttackSkill()
+        {
+            attackSkillTurn = attackSkills[monsterIndex].turn;
         }
     }
 }
