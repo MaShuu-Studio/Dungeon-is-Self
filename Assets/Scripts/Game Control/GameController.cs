@@ -36,8 +36,6 @@ namespace GameControl
         }
         #endregion
 
-        private GamePlayUIController gamePlayUI;
-
         private bool isPlay;
         public GameProgress currentProgress { get; private set; }
         public UserType userType { get; private set; }
@@ -76,15 +74,13 @@ namespace GameControl
 
         public void ReadyGame()
         {
-            gamePlayUI = GameObject.FindWithTag("UI").GetComponent<GamePlayUIController>();
-
             currentProgress = GameProgress.ReadyGame;
 
             isPlay = true;
             round = 0;
 
-            gamePlayUI.SetUserType();
-            gamePlayUI.ChangeView();
+            GamePlayUIController.Instance.SetUserType();
+            GamePlayUIController.Instance.ChangeView();
         }
 
         public void StartGame()
@@ -107,7 +103,6 @@ namespace GameControl
 
         public void SelectUnit(UserType type, int[] units) // 서버 입장에서는 type 필요
         {
-            Debug.Log($"Set Index {units[0]}");
             if (type == UserType.Defender)
             {
                 defenderUnit = units[0] + 20;
@@ -119,6 +114,8 @@ namespace GameControl
                     offenderUnits[i] = units[i] + 10;
                 }
             }
+
+            GamePlayUIController.Instance.ShowSelectedRoster(units);
         }
 
         public void StartRound()
@@ -130,6 +127,9 @@ namespace GameControl
             animationEnd.Add(defenderUnit, true);
             //foreach (int key in offenderUnits)
             //    animationEnd.Add(key, true);
+
+            if (userType == UserType.Defender) GamePlayUIController.Instance.ShowSelectedRoster(defenderUnit);
+            if (userType == UserType.Offender) GamePlayUIController.Instance.ShowSelectedRoster(offenderUnits);
 
             NextTurn();
         }
@@ -160,8 +160,6 @@ namespace GameControl
                     if (animationEnd[key] == false) isLoop = true;
             }
 
-            Debug.Log("Animation End");
-
             progressRound = false;
             NextTurn();
         }
@@ -175,6 +173,7 @@ namespace GameControl
         public void NextTurn()
         {
             turn++;
+            GamePlayUIController.Instance.SetTurn(turn);
             readyState[0] = true;
             readyState[1] = false;
         }

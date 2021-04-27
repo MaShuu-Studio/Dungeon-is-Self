@@ -38,14 +38,6 @@ namespace GameControl
         private int monsterIndex;
         public const int MAX_COST = 10;
 
-        // Start is called before the first frame update
-        void Start()
-        {
-            //monsterDB = MonsterDatabase.Instance;
-            //monsterDB = GameObject.FindWithTag("MonsterDB").GetComponent<MonsterDatabase>();
-            monsters = new List<Monster>();
-        }
-
         // 게임이 시작될 때 Defender에 대한 초기화 진행
         public void Init()
         {
@@ -143,6 +135,7 @@ namespace GameControl
         #endregion
         public MonsterSkill GetSelectedDice(int index)
         {
+            if (dices.Count <= monsterIndex) return null;
             return dices[monsterIndex][index];
         }
 
@@ -157,9 +150,9 @@ namespace GameControl
             return skills;
         }
 
-        public string GetMonsterRoster()
+        public Monster GetMonsterRoster()
         {
-            return monsters[monsterIndex].name;
+            return monsters[monsterIndex];
         }
     }
 }

@@ -6,15 +6,8 @@ namespace Data
 {
     public class Character
     {
-        public string _role {get; private set;}
-        private int skillpoint;
-        public List<CharacterSkill> mySkills {get; private set;} = new List<CharacterSkill>();
-
-        public int GetSkillPoint()
-        {
-            return skillpoint;
-        }
-
+        public string _role { get; private set; }
+        public List<CharacterSkill> mySkills { get; private set; } = new List<CharacterSkill>();
         public Character(string role)
         {
             _role = role;
@@ -35,11 +28,23 @@ namespace Data
                 }
             }
 
-            for(int i = 0; i < dice.Length; i++)
+            for (int i = 0; i < dice.Length; i++)
             {
                 dice[i] = tier1dices[i % (tier1dices.Count)];
             }
         }
+
+        public int GetMaxTier()
+        {
+            int max = 0;
+            foreach (CharacterSkill skill in mySkills)
+            {
+                if (max < skill.tier) max = skill.tier;
+            }
+
+            return max;
+        }
+
     }
-    
+
 }

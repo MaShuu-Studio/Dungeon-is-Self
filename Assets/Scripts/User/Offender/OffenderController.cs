@@ -9,7 +9,7 @@ namespace GameControl
     public class OffenderController : MonoBehaviour
     {
         #region Instance
-        
+
         private static OffenderController instance;
         public static OffenderController Instance
         {
@@ -30,36 +30,51 @@ namespace GameControl
             DontDestroyOnLoad(gameObject);
         }
         #endregion
-        
-        
-        public string[] selectedCharacterCandidates {get; private set;} = new string[6];
-        public List<Character> character {get; private set;} = new List<Character>();
+
+
+        public string[] selectedCharacterCandidates { get; private set; } = new string[6];
+        public List<Character> characters { get; private set; } = new List<Character>();
+        private List<List<bool>> gottenSkills = new List<List<bool>>();
+        public List<int> skillPoints { get; private set; } = new List<int>();
         private List<CharacterSkill[]> dices = new List<CharacterSkill[]>();
-        private List<CharacterSkill> attackSkills = new List<CharacterSkill>();
         private int characterIndex;
-        public List<string> bench = new List<string>();
-        public List<string> roster = new List<string>();
-        
+        public int[] roster { get; private set; } = new int[3];
+
         public void Init()
         {
-            character.Clear();
+            characters.Clear();
+            skillPoints.Clear();
 
-            foreach(string name in selectedCharacterCandidates)
+            foreach (string name in selectedCharacterCandidates)
             {
-                character.Add(CharacterDatabase.Instance.GetCharacter(name));
+                Character c = CharacterDatabase.Instance.GetCharacter(name);
+                characters.Add(c);
+
+                List<bool> list = new List<bool>();
+                for (int i = 0; i < c.mySkills.Count; i++)
+                {
+                    if (c.mySkills[i].tier == 1) list.Add(true);
+                    else list.Add(false);
+                }
+                gottenSkills.Add(list);
+                skillPoints.Add(2);
+            }
+
+            for (int i = 0; i < 3; i++)
+            {
+                roster[i] = i;
             }
 
             characterIndex = 0;
 
             dices.Clear();
-            attackSkills.Clear();
 
-            for(int i = 0; i < character.Count; i++)
+            for (int i = 0; i < characters.Count; i++)
             {
                 CharacterSkill[] dice = new CharacterSkill[6];
-                character[i].SetBasicDice(ref dice);
-                
-                dices.Add(dice);              
+                characters[i].SetBasicDice(ref dice);
+
+                dices.Add(dice);
             }
         }
 
@@ -78,11 +93,62 @@ namespace GameControl
             return true;
         }
         #endregion
-        
+
         #region Ready Round
+        public void AddSkillPoint(int point)
+        {
+            for (int i = 0; i < skillPoints.Count; i++)
+            {
+                skillPoints[i] += point;
+            }
+        }
+
+        public int GetSkillPoint()
+        {
+            return skillPoints[characterIndex];
+        }
+
+        public bool IsSkillGotten(int index)
+        {
+            return gottenSkills[characterIndex][index];
+        }
+
+        public int LearnSkill(Skill skill)
+        {
+            Character c = characters[characterIndex];
+            int index = c.mySkills.FindIndex(s => s.id == skill.id);
+
+            if (index != -1)
+            {
+                if (skillPoints[characterIndex] <= 0) return -1;
+                skillPoints[characterIndex] -= 1;
+                gottenSkills[characterIndex][index] = true;
+            }
+
+            return index;
+        }
+
         public void SelectCharacter(int index)
         {
             characterIndex = index;
+        }
+
+        public void SelectRoster(int index)
+        {
+            int i = 0;
+            // 로스터 중복 체크
+            for (; i < roster.Length; i++)
+            {
+                if (roster[i] == characterIndex) break;
+            }
+
+            if (i < roster.Length) roster[i] = roster[index];
+            roster[index] = characterIndex;
+        }
+
+        public int GetMaxTier()
+        {
+            return characters[characterIndex].GetMaxTier();
         }
 
         public bool SetDice(int index, CharacterSkill skill)
@@ -101,43 +167,39 @@ namespace GameControl
             return true;
         }
 
-        public void SetAttackSkill(CharacterSkill skill)
-        {
-            attackSkills[characterIndex] = skill;
-        }
-
-        public CharacterSkill GetCharacterSkill(CharacterSkill skill)
-        {
-            return attackSkills[characterIndex];
-        }
-        
         public void SetRoster()
         {
-            int[] unit = new int[1];
-            unit[0] = characterIndex;
-            GameController.Instance.SelectUnit(UserType.Offender, unit);
+            GameController.Instance.SelectUnit(UserType.Offender, roster);
         }
         #endregion
 
         public CharacterSkill GetSelectedDice(int index)
         {
+            if (dices.Count <= characterIndex) return null;
             return dices[characterIndex][index];
         }
 
-        public CharacterSkill[] DiceRoll(int index)
+        public List<CharacterSkill> DiceRoll(int[] roster)
         {
-            CharacterSkill[] skills = new CharacterSkill[2];
-            int diceIndex1 = Random.Range(0, 6);
-            int diceIndex2 = Random.Range(0, 6);
-            skills[0] = dices[index][diceIndex1];
-            skills[1] = dices[index][diceIndex2];
+            List<CharacterSkill> skills = new List<CharacterSkill>();
+
+            for (int i = 0; i < roster.Length; i++)
+            {
+                int diceIndex = Random.Range(0, 6);
+                skills.Add(dices[roster[i]][diceIndex]);
+            }
 
             return skills;
         }
 
-        public string GetCharacterRoster()
+        public List<string> GetCharacterRoster()
         {
-            return character[characterIndex]._role;
+            List<string> tmp = new List<string>();
+            foreach (int i in roster)
+            {
+                tmp.Add(characters[i]._role);
+            }
+            return tmp;
         }
         /*public void SetBench(string name)
         {

@@ -17,6 +17,7 @@ public class SkillIcon : UIIcon, IPointerClickHandler
         pos.x = rect.anchoredPosition.x - 15;
         pos.y = rect.anchoredPosition.y + 15;
     }
+
     public override void OnPointerEnter(PointerEventData pointerEventData)
     {
         //base.OnPointerEnter(pointerEventData);
@@ -26,11 +27,8 @@ public class SkillIcon : UIIcon, IPointerClickHandler
 
     public override void OnPointerClick(PointerEventData pointerEventData)
     {
-        if (isOn)
-        {
-            GamePlayUIController.Instance.SetDiceOnce(skill);
-            base.OnPointerClick(pointerEventData);
-        }
+        GamePlayUIController.Instance.SetDiceOnce(skill, isOn);
+        if (isOn) base.OnPointerClick(pointerEventData);
     }
 
     public override void OnPointerExit(PointerEventData pointerEventData)
@@ -45,9 +43,7 @@ public class SkillIcon : UIIcon, IPointerClickHandler
         if (costText != null)
             costText.text = (skill.type == MonsterSkill.SkillType.DICE) ? skill.cost.ToString() : "";
 
-        this.isOn = isOn;
-        if (isOn) SetColor(Color.white);
-        else SetColor(Color.gray);
+        SetOnOff(isOn);
     }
     public void SetSkill(CharacterSkill skill, bool isOn = true)
     {
@@ -56,6 +52,11 @@ public class SkillIcon : UIIcon, IPointerClickHandler
         if (costText != null)
             costText.text = "";
 
+        SetOnOff(isOn);
+    }
+
+    public void SetOnOff(bool isOn)
+    {
         this.isOn = isOn;
         if (isOn) SetColor(Color.white);
         else SetColor(Color.gray);

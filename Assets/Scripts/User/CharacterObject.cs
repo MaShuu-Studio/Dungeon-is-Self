@@ -1,10 +1,18 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using GameControl;
+using Data;
 
 public class CharacterObject : MonoBehaviour
 {
+    [SerializeField] private Canvas canvas;
+    [SerializeField] private Image skillImage;
+    [SerializeField] private Text hpText;
+    [SerializeField] private Text turnText;
+    [SerializeField] private Transform CCList;
+
     private SpriteRenderer _sprite;
     private Animator _animator;
     private int index;
@@ -15,6 +23,7 @@ public class CharacterObject : MonoBehaviour
     {
         _animator = GetComponent<Animator>();
         _sprite = GetComponent<SpriteRenderer>();
+        canvas.worldCamera = GameObject.FindWithTag("MainCamera").GetComponent<Camera>();
     }
 
     void Update()
@@ -28,6 +37,21 @@ public class CharacterObject : MonoBehaviour
                 isAnimation = false;
             }
         }
+    }
+
+    public void SetSkill(Skill skill)
+    {
+        skillImage.sprite = Resources.Load<Sprite>("Sprites/Skills/" + skill.name);
+    }
+    public void UpdateCharacterInfo(int hp, int turn)
+    {
+        if (hpText.text != null) hpText.text = hp.ToString();
+        if (turnText.text != null) turnText.text = turn.ToString();
+    }
+
+    public void AddCrowdControl()
+    {
+
     }
 
     public void SetCharacterIndex(int n)
