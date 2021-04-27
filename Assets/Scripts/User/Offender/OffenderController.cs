@@ -159,8 +159,9 @@ namespace GameControl
             {
                 if (dices[characterIndex][i].id == skill.id) overlabCount++;
                 if (dices[characterIndex][i].id % 100 == 0) basicSkill++;
-                if (((dices[characterIndex].Length > 3 && basicSkill <= 0) || (dices[characterIndex].Length > 4 && basicSkill <= 1)) && skill.id % 100 != 0) return false;
+                
             }
+            if ((basicSkill <= 1 && skill.id % 100 != 0) || (basicSkill == 2 && dices[characterIndex][index].id % 100 == 0 && skill.id % 100 != 0)) return false;
             if (overlabCount > 2) return false;
 
             dices[characterIndex][index] = skill;
