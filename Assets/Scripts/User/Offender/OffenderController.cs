@@ -187,7 +187,7 @@ namespace GameControl
             for (int i = 0; i < roster.Length; i++)
             {
                 int diceIndex = Random.Range(0, 6);
-                skills.Add(dices[roster[i]][diceIndex]);
+                skills.Add(dices[roster[i] % 10][diceIndex]);
             }
 
             return skills;

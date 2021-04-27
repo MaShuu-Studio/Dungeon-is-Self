@@ -139,13 +139,15 @@ namespace GameControl
             return dices[monsterIndex][index];
         }
 
-        public MonsterSkill[] DiceRoll(int index)
+        public List<MonsterSkill> DiceRoll(int index)
         {
-            MonsterSkill[] skills = new MonsterSkill[2];
-            int diceIndex1 = Random.Range(0, 6);
-            int diceIndex2 = Random.Range(0, 6);
-            skills[0] = dices[index][diceIndex1];
-            skills[1] = dices[index][diceIndex2];
+            List<MonsterSkill> skills = new List<MonsterSkill>();
+
+            for (int i = 0; i < 2; i ++)
+            {
+                int diceIndex = Random.Range(0, 6);
+                skills.Add(dices[index][diceIndex]);
+            }
 
             return skills;
         }
