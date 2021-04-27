@@ -206,11 +206,15 @@ public class GamePlayUIController : MonoBehaviour
                 str = "몬스터의 주사위를 코스트보다 많이 넣을 수 없습니다.";
                 break;
             case 26:
-                str = "공격자의 주사위는 기본공격 최소 2개, 같은 스킬은 최대 3개까지 넣을 수 있습니다.";
+                str = "공격자의 주사위는 기본공격이 최소 2개는 있어야 합니다.";
                 break;
+            case 27:
+                str = "공격자의 주사위는 같은 스킬을 최대 3개까지 넣을 수 있습니다.";
+                break;
+
         }
 
-        if (string.IsNullOrEmpty(str)) alert.ShowAlert(str);
+        if (!string.IsNullOrEmpty(str)) alert.ShowAlert(str);
     }
     #endregion
 
