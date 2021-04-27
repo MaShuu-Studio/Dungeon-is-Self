@@ -30,6 +30,7 @@ public class GamePlayUIController : MonoBehaviour
     private int selectedCandidateIndex = 0;
 
     [Header("READY ROUND")]
+    [SerializeField] private Text roundText;
     [SerializeField] private List<CharacterToggle> characterToggles;
 
     [SerializeField] private GameObject defenderSkillTree;
@@ -132,7 +133,9 @@ public class GamePlayUIController : MonoBehaviour
 
     public void ChangeView()
     {
+        readyButton.SetButtonInteract(true);
         SetProgress();
+        ClearCharacters();
         foreach (GameObject view in gameViews) view.SetActive(false);
 
         switch (GameController.Instance.currentProgress)
@@ -144,6 +147,7 @@ public class GamePlayUIController : MonoBehaviour
                 break;
 
             case GameProgress.ReadyRound:
+                roundText.text = "ROUND " + GameController.Instance.round.ToString();
                 BlindSelectedRoster();
                 gameViews[1].SetActive(true);
                 if (type == UserType.Defender)
@@ -185,7 +189,6 @@ public class GamePlayUIController : MonoBehaviour
             case GameProgress.PlayRound:
                 gameViews[2].SetActive(true);
                 playRoundView.SetActive(true);
-                ClearCharacters();
                 SetCharacters();
                 break;
         }
@@ -613,12 +616,13 @@ public class GamePlayUIController : MonoBehaviour
     private void ClearCharacters()
     {
         for (int i = 0; i < charObjects.Count; i++)
-            Destroy(charObjects[i]);
+            Destroy(charObjects[i].gameObject);
         for (int i = 0; i < enemyObjects.Count; i++)
-            Destroy(enemyObjects[i]);
+            Destroy(enemyObjects[i].gameObject);
 
         charObjects.Clear();
         enemyObjects.Clear();
+        Destroy(mapObject);
     }
 
     public void UpdateCharacters()

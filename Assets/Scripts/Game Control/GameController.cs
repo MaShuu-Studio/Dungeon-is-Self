@@ -75,8 +75,12 @@ namespace GameControl
             isPlay = true;
             round = 0;
 
+            DefenderController.Instance.ResetCandidates();
+            OffenderController.Instance.ResetCandidates();
+
             GamePlayUIController.Instance.SetUserType();
             GamePlayUIController.Instance.ChangeView();
+
         }
 
         public void StartGame()
@@ -206,6 +210,7 @@ namespace GameControl
                         if (isMonster == false)
                         {
                             int restHp = DefenderController.Instance.MonsterDamaged(defenderUnit % 10, charSkills[keys[i]]);
+                            if (restHp <= 0) MonsterDefeated();
                         }
                         else
                         {
@@ -242,6 +247,28 @@ namespace GameControl
             readyState[1] = false;
             if (userType == UserType.Defender) ReadyTurn(UserType.Offender, true);
             else if (userType == UserType.Offender) ReadyTurn(UserType.Defender, true);
+        }
+
+        public void MonsterDefeated()
+        {
+            // 전투가 넘어가기전에 애니메이션 등
+            Debug.Log("Monster Defeated");
+
+            List<int> keys = animationEnd.Keys.ToList<int>();
+            for (int i = 0; i < animationEnd.Count; i++)
+            {
+                animationEnd[keys[i]] = true;
+            }
+
+            readyState[0] = false;
+            readyState[1] = false;
+
+            progressRound = false;
+
+            StopAllCoroutines();
+
+            if (round >= 3) SceneController.Instance.ChangeScene("Main"); // 씬 이동 임시
+            else ReadyRound();
         }
     }
 }

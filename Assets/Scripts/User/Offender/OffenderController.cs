@@ -92,6 +92,14 @@ namespace GameControl
             }
             return true;
         }
+
+        public void ResetCandidates()
+        {
+            for (int i = 0; i < selectedCharacterCandidates.Length; i++)
+            {
+                selectedCharacterCandidates[i] = "";
+            }
+        }
         #endregion
 
         #region Ready Round

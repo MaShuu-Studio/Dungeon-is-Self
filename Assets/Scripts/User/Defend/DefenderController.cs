@@ -80,6 +80,14 @@ namespace GameControl
             }
             return true;
         }
+
+        public void ResetCandidates()
+        {
+            for (int i = 0; i < selectedMonsterCandidates.Length; i++)
+            {
+                selectedMonsterCandidates[i] = "";
+            }
+        }
         #endregion
 
         #region Ready Round

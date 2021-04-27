@@ -109,9 +109,9 @@ public class CustomButton : MonoBehaviour
     }
     void RoundReadyEnd()
     {
-            DefenderController.Instance.SetRoster();
-            OffenderController.Instance.SetRoster();
-            
+        DefenderController.Instance.SetRoster();
+        OffenderController.Instance.SetRoster();
+
         // 로스터 세팅이 끝났다고 패킷 전송
         GameController.Instance.StartRound();
     }
