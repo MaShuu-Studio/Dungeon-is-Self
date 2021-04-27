@@ -87,22 +87,22 @@ namespace GameControl
             monsterIndex = index;
         }
 
-        public bool SetDice(int index, MonsterSkill skill)
+        public int SetDice(int index, MonsterSkill skill)
         {
             int count = 0;
             for (int i = 0; i < dices[monsterIndex].Length; i++)
             {
                 if (dices[monsterIndex][i].id == skill.id) count++;
             }
-            if (count > 1) return false;
+            if (count > 1) return 1;
 
             int totalCost = MAX_COST - GetDiceCost();
             totalCost = totalCost + dices[monsterIndex][index].cost - skill.cost;
 
-            if (totalCost < 0) return false;
+            if (totalCost < 0) return 2;
 
             dices[monsterIndex][index] = skill;
-            return true;
+            return 0;
         }
 
         public int GetDiceCost()

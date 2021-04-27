@@ -87,7 +87,7 @@ public class CustomButton : MonoBehaviour
             }
             else
             {
-                gamePlayUI.Alert();
+                gamePlayUI.Alert(10);
                 return;
             }
         }
@@ -99,7 +99,7 @@ public class CustomButton : MonoBehaviour
             }
             else
             {
-                gamePlayUI.Alert();
+                gamePlayUI.Alert(10);
                 return;
             }
         }
