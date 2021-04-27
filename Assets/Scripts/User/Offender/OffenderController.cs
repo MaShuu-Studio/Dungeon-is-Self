@@ -31,7 +31,6 @@ namespace GameControl
         }
         #endregion
 
-
         public string[] selectedCharacterCandidates { get; private set; } = new string[6];
         public List<Character> characters { get; private set; } = new List<Character>();
         private List<List<bool>> gottenSkills = new List<List<bool>>();

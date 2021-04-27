@@ -30,7 +30,20 @@ namespace Data
             this.prior = prior;
             this.tier = tier;
         }
+        public Monster(Monster monster)
+        {
+            this.name = monster.name;
+            this.hp = monster.hp;
+            this.weak = monster.weak;
 
+            attackSkills = new List<string>(monster.attackSkills);
+            diceSkills = new List<string>(monster.diceSkills);
+            // 각 몬스터의 특징을 가진 개별 스킬 이름 목록
+            // TUPLE LIST로 받아도 괜찮을듯
+
+            this.prior = monster.prior;
+            this.tier = monster.tier;
+        }
 
         public void SetBasicDice(ref MonsterSkill[] dice)
         {

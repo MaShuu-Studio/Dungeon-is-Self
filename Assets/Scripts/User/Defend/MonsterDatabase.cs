@@ -167,7 +167,8 @@ namespace Data
 
         public Monster GetMonster(string name)
         {
-            return monsterDB.Find(monster => monster.name == name);
+            Monster copiedMonster = new Monster(monsterDB.Find(monster => monster.name == name));
+            return copiedMonster;
         }
 
         public void GetAllMonsterCandidatesList(ref List<string> monsterNames)

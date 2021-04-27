@@ -156,7 +156,7 @@ namespace Data
             foreach (string skillName in monster.attackSkills)
             {
                 MonsterSkill skill = GetMonsterSkill(skillName);
-                if (skill.tier == round)
+                if (skill.tier <= round)
                     monsterSkills.Add(skill);
 
                 if (monsterSkills.Count >= 3) break;

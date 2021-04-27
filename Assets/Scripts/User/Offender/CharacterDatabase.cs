@@ -45,7 +45,8 @@ namespace Data
 
         public Character GetCharacter(string name)
         {
-            return characterDB.Find(character => character._role == name);
+            Character copiedCharacter = new Character(characterDB.Find(character => character._role == name));
+            return copiedCharacter;
         }
 
         public void GetAllCharacterCandidatesList(ref List<string> characterRoles)
