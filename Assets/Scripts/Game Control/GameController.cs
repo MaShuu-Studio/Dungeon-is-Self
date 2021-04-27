@@ -87,31 +87,11 @@ namespace GameControl
             // Defender, Offender의 Init (selected Candidates에서 목록 뽑아옴)
             // Init 전에 Candidate 생성
             
+            AIBot.Instance.StartGame();
+
             /*if (userType == UserType.Defender) DefenderController.Instance.Init();
             else OffenderController.Instance.Init();*/
 
-            if (userType == UserType.Defender) 
-            {
-                List<string> offenderBot = new List<string>();
-                CharacterDatabase.Instance.GetAllCharacterCandidatesList(ref offenderBot);
-                Debug.Log(offenderBot);
-                
-                for(int i = 0; i < 6; i++)
-                {
-                    int a = UnityEngine.Random.Range(0, offenderBot.Count);
-                    OffenderController.Instance.SetCharacterCandidate(i, offenderBot[a]);
-                }
-            }
-            else
-            {
-                List<string> defenderBot = new List<string>();
-                MonsterDatabase.Instance.GetAllMonsterCandidatesList(ref defenderBot);
-                for(int i = 0; i < 6; i++)
-                {
-                    int a = UnityEngine.Random.Range(0, defenderBot.Count);
-                    DefenderController.Instance.SetMonsterCandidate(i, defenderBot[a]);
-                }
-            }
             DefenderController.Instance.Init();
             OffenderController.Instance.Init();
 
@@ -149,6 +129,7 @@ namespace GameControl
         {
                 // 로스터 세팅
                 // 주사위 세팅
+            AIBot.Instance.SetRoster();
 
             currentProgress = GameProgress.PlayRound;
             turn = 0;
