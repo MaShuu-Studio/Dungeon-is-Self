@@ -1,11 +1,8 @@
-﻿using System.Collections;
+﻿using Data;
+using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.SceneManagement;
-using UnityEngine.UI;
-using Data;
-using System;
 using System.Linq;
+using UnityEngine;
 
 namespace GameControl
 {
@@ -61,7 +58,7 @@ namespace GameControl
                 if (readyState[0] && readyState[1])
                 {
                     progressRound = true;
-                    StartCoroutine(ProgressTurn());
+                    ProgressTurn();
                 }
             }
         }
@@ -78,8 +75,12 @@ namespace GameControl
             isPlay = true;
             round = 0;
 
+            DefenderController.Instance.ResetCandidates();
+            OffenderController.Instance.ResetCandidates();
+
             GamePlayUIController.Instance.SetUserType();
             GamePlayUIController.Instance.ChangeView();
+
         }
 
         public void StartGame()
@@ -135,12 +136,14 @@ namespace GameControl
             turn = 0;
             progressRound = false;
             animationEnd.Clear();
+
+            // 선공 확인해서 순서 조정
             animationEnd.Add(defenderUnit, true);
-            //foreach (int key in offenderUnits)
-            //    animationEnd.Add(key, true);
+            foreach (int key in offenderUnits)
+                animationEnd.Add(key, true);
 
             if (userType == UserType.Defender) GamePlayUIController.Instance.ShowSelectedRoster(defenderUnit);
-            if (userType == UserType.Offender) GamePlayUIController.Instance.ShowSelectedRoster(offenderUnits);
+            else if (userType == UserType.Offender) GamePlayUIController.Instance.ShowSelectedRoster(offenderUnits);
 
             NextTurn();
         }
@@ -150,26 +153,53 @@ namespace GameControl
             readyState[(short)type] = ready;
         }
 
-        IEnumerator ProgressTurn()
+        private void ProgressTurn()
         {
-            MonsterSkill[] monSkills = DefenderController.Instance.DiceRoll(defenderUnit % 10);
+            List<MonsterSkill> monSkills = DefenderController.Instance.DiceRoll(defenderUnit % 10);
+            Dictionary<int, CharacterSkill> charSkills = OffenderController.Instance.DiceRoll(offenderUnits);
+
+            StartCoroutine(Battle(monSkills, charSkills));
+        }
+
+        IEnumerator Battle(List<MonsterSkill> monSkills, Dictionary<int, CharacterSkill> charSkills)
+        {
             bool defenderOk = (monSkills[0].id == monSkills[1].id);
             Debug.Log($"1: {monSkills[0].name} , 2: {monSkills[1].name} : {defenderOk}");
-            //OffenderController.Instance.AllDiceThrow();
+            Debug.Log($"1: {charSkills[offenderUnits[0]].name}, 2: {charSkills[offenderUnits[1]].name}, 3: {charSkills[offenderUnits[2]].name}");
+
             // 순차적으로 공격을 누가 먼저 해서 진행될지 정할 필요 있음.
-            if (defenderOk)
+            if (defenderOk) animationEnd[defenderUnit] = false;
+            for (int i = 1; i < animationEnd.Count; i++)
             {
-                GamePlayUIController.Instance.PlayAnimation(defenderUnit, "Attack");
-                animationEnd[defenderUnit] = false;
+                // 전투불능 상태 체크해서 Animation End 이용
+                animationEnd[offenderUnits[i - 1]] = false;
             }
-            bool isLoop = true;
-            while (isLoop) // 공격모션 등 모든게 다 지나갈때까지 대기
-            {
-                isLoop = false;
-                yield return null;
-                foreach (int key in animationEnd.Keys)
-                    if (animationEnd[key] == false) isLoop = true;
-            }
+
+            // 전투 시 전투불능 확인해서 그 때 그 때 바꿔줘야함
+            List<int> keys = animationEnd.Keys.ToList<int>();
+            for (int i = 0; i < animationEnd.Count; i++)
+                if (animationEnd[keys[i]] == false)
+                {
+                    bool isMonster = ((keys[i] / 10) == 2);
+                    if (isMonster && defenderOk == false) continue;
+                    GamePlayUIController.Instance.PlayAnimation(keys[i], "Attack");
+
+                    while (animationEnd[keys[i]] == false) yield return null;
+
+                    // 전투 정보 전송
+                    {
+                        if (isMonster == false)
+                        {
+                            int restHp = DefenderController.Instance.MonsterDamaged(defenderUnit % 10, charSkills[keys[i]]);
+                            if (restHp <= 0) MonsterDefeated();
+                        }
+                        else
+                        {
+                            int index = Random.Range(0, offenderUnits.Length);
+                        }
+                        GamePlayUIController.Instance.UpdateCharacters();
+                    }
+                }
 
             progressRound = false;
             NextTurn();
@@ -178,15 +208,48 @@ namespace GameControl
         public void AnimationEnd(int index)
         {
             animationEnd[index] = true;
-
         }
 
         public void NextTurn()
         {
-            turn++;
-            GamePlayUIController.Instance.SetTurn(turn);
-            readyState[0] = true;
+            GamePlayUIController.Instance.SetTurn(++turn);
+
+            bool isAttack = DefenderController.Instance.AttackSkillNextTurn();
+            GamePlayUIController.Instance.UpdateCharacters();
+            if (isAttack)
+            {
+                // 공격부분
+                Debug.Log("Attack");
+                DefenderController.Instance.ResetAttackSkill();
+                GamePlayUIController.Instance.UpdateCharacters();
+            }
+
+            readyState[0] = false;
             readyState[1] = false;
+            if (userType == UserType.Defender) ReadyTurn(UserType.Offender, true);
+            else if (userType == UserType.Offender) ReadyTurn(UserType.Defender, true);
+        }
+
+        public void MonsterDefeated()
+        {
+            // 전투가 넘어가기전에 애니메이션 등
+            Debug.Log("Monster Defeated");
+
+            List<int> keys = animationEnd.Keys.ToList<int>();
+            for (int i = 0; i < animationEnd.Count; i++)
+            {
+                animationEnd[keys[i]] = true;
+            }
+
+            readyState[0] = false;
+            readyState[1] = false;
+
+            progressRound = false;
+
+            StopAllCoroutines();
+
+            if (round >= 3) SceneController.Instance.ChangeScene("Main"); // 씬 이동 임시
+            else ReadyRound();
         }
     }
 }

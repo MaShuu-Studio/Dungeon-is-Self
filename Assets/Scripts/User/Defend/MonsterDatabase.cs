@@ -43,7 +43,7 @@ namespace Data
 
             #region Tier 1
             monsterDB.Add(new Monster(
-                1, "Minotaurs", 10, Element.NORMAL,
+                1, "Minotaurs", 40, Element.NORMAL,
                 new List<string>()
                 {
                 "SKILL1-1",
@@ -61,7 +61,7 @@ namespace Data
                 }));
 
             monsterDB.Add(new Monster(
-                1, "Kraken", 15, Element.NORMAL,
+                1, "Kraken", 35, Element.NORMAL,
                 new List<string>()
                 {
                 "SKILL1-1",
@@ -83,7 +83,7 @@ namespace Data
                 }));
 
             monsterDB.Add(new Monster(
-                1, "Harpy", 12, Element.NORMAL,
+                1, "Harpy", 25, Element.NORMAL,
                 new List<string>()
                 {
                 "SKILL1-1",
@@ -101,7 +101,7 @@ namespace Data
                 }));
 
             monsterDB.Add(new Monster(
-                1, "Snake", 12, Element.NORMAL,
+                1, "Snake", 30, Element.NORMAL,
                 new List<string>()
                 {
                 "SKILL1-1",
@@ -122,7 +122,7 @@ namespace Data
                 }));
 
             monsterDB.Add(new Monster(
-                1, "Ninetail", 12, Element.NORMAL,
+                1, "Ninetail", 25, Element.NORMAL,
                 new List<string>()
                 {
                 "SKILL1-1",
@@ -143,7 +143,7 @@ namespace Data
                 }));
 
             monsterDB.Add(new Monster(
-                1, "Dokkaebi", 12, Element.NORMAL,
+                1, "Dokkaebi", 35, Element.NORMAL,
                 new List<string>()
                 {
                 "SKILL1-1",

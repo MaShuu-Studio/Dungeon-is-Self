@@ -30,6 +30,7 @@ public class GamePlayUIController : MonoBehaviour
     private int selectedCandidateIndex = 0;
 
     [Header("READY ROUND")]
+    [SerializeField] private Text roundText;
     [SerializeField] private List<CharacterToggle> characterToggles;
 
     [SerializeField] private GameObject defenderSkillTree;
@@ -132,7 +133,9 @@ public class GamePlayUIController : MonoBehaviour
 
     public void ChangeView()
     {
+        readyButton.SetButtonInteract(true);
         SetProgress();
+        ClearCharacters();
         foreach (GameObject view in gameViews) view.SetActive(false);
 
         switch (GameController.Instance.currentProgress)
@@ -144,6 +147,7 @@ public class GamePlayUIController : MonoBehaviour
                 break;
 
             case GameProgress.ReadyRound:
+                roundText.text = "ROUND " + GameController.Instance.round.ToString();
                 BlindSelectedRoster();
                 gameViews[1].SetActive(true);
                 if (type == UserType.Defender)
@@ -185,7 +189,6 @@ public class GamePlayUIController : MonoBehaviour
             case GameProgress.PlayRound:
                 gameViews[2].SetActive(true);
                 playRoundView.SetActive(true);
-                ClearCharacters();
                 SetCharacters();
                 break;
         }
@@ -196,7 +199,7 @@ public class GamePlayUIController : MonoBehaviour
         string str = "";
         switch (errorIndex)
         {
-            case 10: 
+            case 10:
                 str = "캐릭터 세팅을 끝내주세요.";
                 break;
             case 21:
@@ -536,7 +539,7 @@ public class GamePlayUIController : MonoBehaviour
                 Monster monster = DefenderController.Instance.GetMonsterRoster();
                 MonsterSkill skill = DefenderController.Instance.GetAttackSkill();
 
-                
+
 
                 prefab = Resources.Load(charPath + monster.name);
                 obj = Instantiate(prefab) as GameObject;
@@ -545,7 +548,6 @@ public class GamePlayUIController : MonoBehaviour
 
                 CharacterObject character = obj.GetComponent<CharacterObject>();
                 character.SetSkill(skill);
-                character.UpdateCharacterInfo(monster.hp, skill.turn);
                 character.SetCharacterIndex(GameController.Instance.defenderUnit);
 
                 charObjects.Add(character);
@@ -596,10 +598,9 @@ public class GamePlayUIController : MonoBehaviour
                 CharacterObject character = obj.GetComponent<CharacterObject>();
                 character.SetCharacterIndex(GameController.Instance.defenderUnit);
                 character.SetSkill(skill);
-                character.UpdateCharacterInfo(monster.hp, skill.turn);
                 enemyObjects.Add(character);
             }
-
+            UpdateCharacters();
 
             prefab = Resources.Load("Prefab/Maps/" + "Forest");
             mapObject = Instantiate(prefab) as GameObject;
@@ -615,12 +616,30 @@ public class GamePlayUIController : MonoBehaviour
     private void ClearCharacters()
     {
         for (int i = 0; i < charObjects.Count; i++)
-            Destroy(charObjects[i]);
+            Destroy(charObjects[i].gameObject);
         for (int i = 0; i < enemyObjects.Count; i++)
-            Destroy(enemyObjects[i]);
+            Destroy(enemyObjects[i].gameObject);
 
         charObjects.Clear();
         enemyObjects.Clear();
+        Destroy(mapObject);
+    }
+
+    public void UpdateCharacters()
+    {
+        int monHp = 0, monTurn = 0;
+        DefenderController.Instance.GetMonsterInfo(ref monHp, ref monTurn);
+        if (type == UserType.Defender)
+        {
+            for (int i = 0; i < charObjects.Count; i++)
+                charObjects[i].UpdateCharacterInfo(monHp, monTurn);
+        }
+
+        else
+        {
+            for (int i = 0; i < enemyObjects.Count; i++)
+                enemyObjects[i].UpdateCharacterInfo(monHp, monTurn);
+        }
     }
 
     public void PlayAnimation(int index, string anim)

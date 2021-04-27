@@ -36,45 +36,45 @@ namespace Data
             charSkillDB = new List<CharacterSkill>();
             #region Fighter Skill
             //fighter skill
-            charSkillDB.Add(new CharacterSkill(10100, "FAttack", 0, 13));
+            charSkillDB.Add(new CharacterSkill(10100, "FAttack", 0, 3));
             charSkillDB.Add(new CharacterSkill(10101, "SteelShield", 1, 0));
-            charSkillDB.Add(new CharacterSkill(10102, "Stab", 1, 70));
+            charSkillDB.Add(new CharacterSkill(10102, "Stab", 1, 7));
             charSkillDB.Add(new CharacterSkill(10103, "Mockery", 1, 0));
-            charSkillDB.Add(new CharacterSkill(10104, "ShieldAttack", 1, 50, (new List<int> { 10101 }), 2));
+            charSkillDB.Add(new CharacterSkill(10104, "ShieldAttack", 1, 5, (new List<int> { 10101 }), 2));
             charSkillDB.Add(new CharacterSkill(10105, "Harpoon", 1, 100, (new List<int> { 10102 }), 2));
-            charSkillDB.Add(new CharacterSkill(10106, "CounterAttack", 2, 40, (new List<int> { 10101, 10102 }), 2));
+            charSkillDB.Add(new CharacterSkill(10106, "CounterAttack", 2, 4, (new List<int> { 10101, 10102 }), 2));
             charSkillDB.Add(new CharacterSkill(10107, "BrutalCrying", 0, 0, (new List<int> { 10103 }), 2));
             charSkillDB.Add(new CharacterSkill(10108, "Brave", 2, 0, (new List<int> { 10104 }), 3));
             charSkillDB.Add(new CharacterSkill(10109, "Roar", 1, 0, (new List<int> { 10107 }), 3));
-            charSkillDB.Add(new CharacterSkill(10110, "Deadlock", 3, 40, (new List<int> { 10104, 10106 }), 3));
+            charSkillDB.Add(new CharacterSkill(10110, "Deadlock", 3, 4, (new List<int> { 10104, 10106 }), 3));
             charSkillDB.Add(new CharacterSkill(10111, "SuperArmor", 3, 0, (new List<int> { 10108 }), 3));
             #endregion
             #region Marksman Skill
             //marksman skill
-            charSkillDB.Add(new CharacterSkill(10200, "MarkAttack", 0, 10));
-            charSkillDB.Add(new CharacterSkill(10201, "NetArrow", 0, 40));
-            charSkillDB.Add(new CharacterSkill(10202, "DoubleShot", 1, 90));
-            charSkillDB.Add(new CharacterSkill(10203, "SawedArrow", 1, 60));
-            charSkillDB.Add(new CharacterSkill(10204, "PowerShot", 1, 100, (new List<int> { 10201, 10202 }), 2));
-            charSkillDB.Add(new CharacterSkill(10205, "PoisonArrow", 1, 70, (new List<int> { 10203 }), 2));
-            charSkillDB.Add(new CharacterSkill(10206, "RainArrow", 2, 120, (new List<int> { 10203, 10204 }), 2));
-            charSkillDB.Add(new CharacterSkill(10207, "BowMaster", 2, 150, (new List<int> { 10204 }), 2));
+            charSkillDB.Add(new CharacterSkill(10200, "MarkAttack", 0, 3));
+            charSkillDB.Add(new CharacterSkill(10201, "NetArrow", 0, 4));
+            charSkillDB.Add(new CharacterSkill(10202, "DoubleShot", 1, 9));
+            charSkillDB.Add(new CharacterSkill(10203, "SawedArrow", 1, 6));
+            charSkillDB.Add(new CharacterSkill(10204, "PowerShot", 1, 10, (new List<int> { 10201, 10202 }), 2));
+            charSkillDB.Add(new CharacterSkill(10205, "PoisonArrow", 1, 7, (new List<int> { 10203 }), 2));
+            charSkillDB.Add(new CharacterSkill(10206, "RainArrow", 2, 12, (new List<int> { 10203, 10204 }), 2));
+            charSkillDB.Add(new CharacterSkill(10207, "BowMaster", 2, 15, (new List<int> { 10204 }), 2));
             charSkillDB.Add(new CharacterSkill(10208, "Scarecrow", 1, 0, (new List<int> { 10205 }), 3));
-            charSkillDB.Add(new CharacterSkill(10209, "ParalyticArrow", 2, 100, (new List<int> { 10204, 10205 }), 3));
+            charSkillDB.Add(new CharacterSkill(10209, "ParalyticArrow", 2, 10, (new List<int> { 10204, 10205 }), 3));
             #endregion
             #region Mage Skill
             //mage skill
-            charSkillDB.Add(new CharacterSkill(10300, "MageAttack", 0, 7));
-            charSkillDB.Add(new CharacterSkill(10301, "ElectricShock", 2, 140));
-            charSkillDB.Add(new CharacterSkill(10302, "MagneticPrison", 1, 80));
-            charSkillDB.Add(new CharacterSkill(10303, "Lightening", 1, 100));
+            charSkillDB.Add(new CharacterSkill(10300, "MageAttack", 0, 2));
+            charSkillDB.Add(new CharacterSkill(10301, "ElectricShock", 2, 14));
+            charSkillDB.Add(new CharacterSkill(10302, "MagneticPrison", 1, 8));
+            charSkillDB.Add(new CharacterSkill(10303, "Lightening", 1, 10));
             charSkillDB.Add(new CharacterSkill(10304, "Purify", 2, 0));
-            charSkillDB.Add(new CharacterSkill(10305, "LighteningClouds", 2, 180, (new List<int> { 10301, 10303 }), 2));
-            charSkillDB.Add(new CharacterSkill(10306, "FrozenPrison", 1, 100, (new List<int> { 10302, 10303 }), 2));
-            charSkillDB.Add(new CharacterSkill(10307, "Blaze", 1, 140, (new List<int> { 10301, 10303 }), 2));
-            charSkillDB.Add(new CharacterSkill(10308, "Imprison", 1, 20, (new List<int> { 10304 }), 2));
-            charSkillDB.Add(new CharacterSkill(10309, "ThunderDragon", 3, 250, (new List<int> { 10305, 10307 }), 3));
-            charSkillDB.Add(new CharacterSkill(10310, "FrozenGraves", 2, 180, (new List<int> { 10306 }), 3));
+            charSkillDB.Add(new CharacterSkill(10305, "LighteningClouds", 2, 18, (new List<int> { 10301, 10303 }), 2));
+            charSkillDB.Add(new CharacterSkill(10306, "FrozenPrison", 1, 10, (new List<int> { 10302, 10303 }), 2));
+            charSkillDB.Add(new CharacterSkill(10307, "Blaze", 1, 14, (new List<int> { 10301, 10303 }), 2));
+            charSkillDB.Add(new CharacterSkill(10308, "Imprison", 1, 2, (new List<int> { 10304 }), 2));
+            charSkillDB.Add(new CharacterSkill(10309, "ThunderDragon", 3, 25, (new List<int> { 10305, 10307 }), 3));
+            charSkillDB.Add(new CharacterSkill(10310, "FrozenGraves", 2, 18, (new List<int> { 10306 }), 3));
             charSkillDB.Add(new CharacterSkill(10311, "FrostDecoy", 2, 0, (new List<int> { 10306 }), 3));
             #endregion
         }

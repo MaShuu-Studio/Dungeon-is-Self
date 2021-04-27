@@ -35,6 +35,7 @@ namespace GameControl
 
         private List<MonsterSkill[]> dices = new List<MonsterSkill[]>();
         private List<MonsterSkill> attackSkills = new List<MonsterSkill>();
+        private int attackSkillTurn;
         private int monsterIndex;
         public const int MAX_COST = 10;
 
@@ -78,6 +79,14 @@ namespace GameControl
                 if (string.IsNullOrEmpty(s)) return false;
             }
             return true;
+        }
+
+        public void ResetCandidates()
+        {
+            for (int i = 0; i < selectedMonsterCandidates.Length; i++)
+            {
+                selectedMonsterCandidates[i] = "";
+            }
         }
         #endregion
 
@@ -130,6 +139,7 @@ namespace GameControl
         {
             int[] unit = new int[1];
             unit[0] = monsterIndex;
+            ResetAttackSkill();
             GameController.Instance.SelectUnit(UserType.Defender, unit);
         }
         #endregion
@@ -139,13 +149,15 @@ namespace GameControl
             return dices[monsterIndex][index];
         }
 
-        public MonsterSkill[] DiceRoll(int index)
+        public List<MonsterSkill> DiceRoll(int index)
         {
-            MonsterSkill[] skills = new MonsterSkill[2];
-            int diceIndex1 = Random.Range(0, 6);
-            int diceIndex2 = Random.Range(0, 6);
-            skills[0] = dices[index][diceIndex1];
-            skills[1] = dices[index][diceIndex2];
+            List<MonsterSkill> skills = new List<MonsterSkill>();
+
+            for (int i = 0; i < 2; i ++)
+            {
+                int diceIndex = Random.Range(0, 6);
+                skills.Add(dices[index][diceIndex]);
+            }
 
             return skills;
         }
@@ -153,6 +165,35 @@ namespace GameControl
         public Monster GetMonsterRoster()
         {
             return monsters[monsterIndex];
+        }
+
+        public int MonsterDamaged(int index, CharacterSkill skill)
+        {
+            monsters[index].Damaged(skill);
+
+            return monsters[index].hp;
+        }
+
+        public void GetMonsterInfo(ref int hp, ref int turn)
+        {
+            hp = monsters[monsterIndex].hp;
+            turn = attackSkillTurn;
+        }
+
+        public bool AttackSkillNextTurn()
+        {
+            attackSkillTurn--;
+            if (attackSkillTurn <= 0)
+            {
+                attackSkillTurn = 0;
+                return true;
+            }
+            return false;
+        }
+
+        public void ResetAttackSkill()
+        {
+            attackSkillTurn = attackSkills[monsterIndex].turn;
         }
     }
 }

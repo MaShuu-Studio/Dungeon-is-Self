@@ -8,7 +8,6 @@ namespace Data
     public enum Element { NORMAL }
     public class Monster
     {
-
         public string name { get; private set; }
         public int hp { get; private set; }
         public Element weak { get; private set; }
@@ -56,6 +55,11 @@ namespace Data
         {
             MonsterSkill skill = SkillDatabase.Instance.GetMonsterSkill(attackSkills[0]);
             return skill;
+        }
+
+        public void Damaged(CharacterSkill skill)
+        {
+            hp -= skill.damage;
         }
     }
 }
