@@ -36,11 +36,13 @@ namespace GameControl
         private List<List<bool>> gottenSkills = new List<List<bool>>();
         public List<int> skillPoints { get; private set; } = new List<int>();
         private List<CharacterSkill[]> dices = new List<CharacterSkill[]>();
-        private int characterIndex;
+        private int characterIndex = 0;
         public int[] roster { get; private set; } = new int[3];
 
         public void Init()
         {
+            characterIndex = 0;
+
             characters.Clear();
             skillPoints.Clear();
 
@@ -63,8 +65,6 @@ namespace GameControl
             {
                 roster[i] = i;
             }
-
-            characterIndex = 0;
 
             dices.Clear();
 

@@ -159,7 +159,6 @@ public class GamePlayUIController : MonoBehaviour
                     // 유닛 선택시 Defender에서 몬스터가 죽었는지 체크해야함.
                     // 기존에 선택했던 유닛부터 다시 세팅할 수 있게 해줘야 함.
                     characterToggles[0].toggle.isOn = true;
-                    SetSkillTree(0);
                 }
                 else
                 {
@@ -626,7 +625,6 @@ public class GamePlayUIController : MonoBehaviour
 
     public void UpdateCharacters()
     {
-        Debug.Log("Update Character Info");
         int monHp = 0, monTurn = 0;
         DefenderController.Instance.GetMonsterInfo(ref monHp, ref monTurn);
         if (type == UserType.Defender)
