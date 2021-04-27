@@ -191,17 +191,26 @@ public class GamePlayUIController : MonoBehaviour
         }
     }
 
-    public void Alert()
+    public void Alert(int errorIndex)
     {
-        if (GameController.Instance.currentProgress == GameProgress.ReadyGame)
+        string str = "";
+        switch (errorIndex)
         {
-            alert.ShowAlert("Please Complete Setting Candidate");
+            case 10: 
+                str = "캐릭터 세팅을 끝내주세요.";
+                break;
+            case 21:
+                str = "몬스터의 주사위는 같은 스킬을 두 가지보다 많이 넣을 수 없습니다.";
+                break;
+            case 22:
+                str = "몬스터의 주사위를 코스트보다 많이 넣을 수 없습니다.";
+                break;
+            case 26:
+                str = "공격자의 주사위는 기본공격 최소 2개, 같은 스킬은 최대 3개까지 넣을 수 있습니다.";
+                break;
         }
-        else if (GameController.Instance.currentProgress == GameProgress.ReadyRound)
-        {
-            alert.ShowAlert("주사위는 같은 스킬을 두 가지보다 많이 넣을 수 없습니다.");
-            //Debug.Log("코스트보다 많이 넣을 수 없습니다.");
-        }
+
+        if (string.IsNullOrEmpty(str)) alert.ShowAlert(str);
     }
     #endregion
 
@@ -433,10 +442,10 @@ public class GamePlayUIController : MonoBehaviour
 
         if (type == UserType.Defender)
         {
-            bool b = DefenderController.Instance.SetDice(selectedDiceIndex, skill as MonsterSkill);
-            if (b == false)
+            int check = DefenderController.Instance.SetDice(selectedDiceIndex, skill as MonsterSkill);
+            if (check != 0)
             {
-                Alert();
+                Alert(check + 20);
                 return;
             }
 
@@ -451,10 +460,10 @@ public class GamePlayUIController : MonoBehaviour
         }
         else
         {
-            bool b = OffenderController.Instance.SetDice(selectedDiceIndex, skill as CharacterSkill);
-            if (b == false)
+            int check = OffenderController.Instance.SetDice(selectedDiceIndex, skill as CharacterSkill);
+            if (check != 0)
             {
-                Alert();
+                Alert(check + 25);
                 return;
             }
 

@@ -151,17 +151,17 @@ namespace GameControl
             return characters[characterIndex].GetMaxTier();
         }
 
-        public bool SetDice(int index, CharacterSkill skill)
+        public int SetDice(int index, CharacterSkill skill)
         {
             int count = 0;
             for (int i = 0; i < dices[characterIndex].Length; i++)
             {
                 if (dices[characterIndex][i].id == skill.id) count++;
             }
-            if (count > 1) return false;
+            if (count > 1) return 1;
 
             dices[characterIndex][index] = skill;
-            return true;
+            return 0;
         }
 
         public void SetRoster()
