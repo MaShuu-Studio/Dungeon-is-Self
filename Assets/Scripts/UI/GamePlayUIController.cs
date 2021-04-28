@@ -217,6 +217,9 @@ public class GamePlayUIController : MonoBehaviour
             case 28:
                 str = "선행 스킬을 먼저 학습해야 합니다.";
                 break;
+            case 29:
+                str = "스킬 포인트가 모자랍니다.";
+                break;
 
         }
 
@@ -436,7 +439,7 @@ public class GamePlayUIController : MonoBehaviour
     {
         if (isOn == false && type == UserType.Offender)
         {
-            int index = OffenderController.Instance.LearnSkill(skill);
+            int index = OffenderController.Instance.LearnSkill(skill as CharacterSkill);
             if (index > -1)
             {
                 diceSkillIcons[index].SetOnOff(true);
@@ -448,7 +451,7 @@ public class GamePlayUIController : MonoBehaviour
             }
             else
             {
-                Debug.Log("스킬포인트가 모자랍니다.");
+                Alert(29);
             }
             return;
         }

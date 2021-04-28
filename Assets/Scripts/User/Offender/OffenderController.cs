@@ -120,7 +120,7 @@ namespace GameControl
             return gottenSkills[characterIndex][index];
         }
 
-        public int LearnSkill(Skill skill)
+        public int LearnSkill(CharacterSkill skill)
         {
             Character c = characters[characterIndex];
             int index = c.mySkills.FindIndex(s => s.id == skill.id);
@@ -128,8 +128,7 @@ namespace GameControl
             if (index != -1)
             {
                 if (skillPoints[characterIndex] <= 0) return -1;
-                //List<int> prior = SkillDatabase.Instance.GetCharacterSkill(skill.id).prior;
-                foreach (int i in SkillDatabase.Instance.GetCharacterSkill(skill.id).prior)
+                foreach (int i in skill.prior)
                 {
                     if (!IsSkillGotten(i % 100)) 
                     {
@@ -216,6 +215,29 @@ namespace GameControl
                 tmp.Add(characters[i]._role);
             }
             return tmp;
+        }
+
+        public List<int> GetUpgradableSkill()
+        {
+            List<int> upgradableSkills = new List<int>();
+            bool check = false;
+            for (int i = 0; i < characters[characterIndex].mySkills.Count; i++)
+            {
+                if (!IsSkillGotten(i))
+                {
+                    foreach (int j in characters[characterIndex].mySkills[i].prior)
+                    {
+                        if (IsSkillGotten(j % 100)) check = true;
+                        else { check = false; break; }
+                    }
+                    if (check == true) 
+                    {
+                        upgradableSkills.Add(i);
+                    }
+                } 
+            }
+
+            return upgradableSkills;
         }
         /*public void SetBench(string name)
         {

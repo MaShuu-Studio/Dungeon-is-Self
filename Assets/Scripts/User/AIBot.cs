@@ -7,7 +7,7 @@ namespace GameControl
     public class AIBot : MonoBehaviour
     {
         #region Instance
-    
+
         private static AIBot instance;
         public static AIBot Instance
         {
@@ -30,12 +30,12 @@ namespace GameControl
         #endregion
         public void StartGame()
         {
-            if (GameController.Instance.userType == UserType.Defender) 
+            if (GameController.Instance.userType == UserType.Defender)
             {
                 List<string> offenderBot = new List<string>();
                 CharacterDatabase.Instance.GetAllCharacterCandidatesList(ref offenderBot);
-                
-                for(int i = 0; i < 6; i++)
+
+                for (int i = 0; i < 6; i++)
                 {
                     int a = UnityEngine.Random.Range(0, offenderBot.Count);
                     OffenderController.Instance.SetCharacterCandidate(i, offenderBot[a]);
@@ -45,7 +45,7 @@ namespace GameControl
             {
                 List<string> defenderBot = new List<string>();
                 MonsterDatabase.Instance.GetAllMonsterCandidatesList(ref defenderBot);
-                for(int i = 0; i < 6; i++)
+                for (int i = 0; i < 6; i++)
                 {
                     int a = UnityEngine.Random.Range(0, defenderBot.Count);
                     DefenderController.Instance.SetMonsterCandidate(i, defenderBot[a]);
@@ -67,17 +67,21 @@ namespace GameControl
             }
         }
 
-        /*public int LearnSkill()
+        public void LearnSkill()
         {
-            if (GameController.Instance.userType == UserType.Defender)
+            for (int i = 0; i < 6; i++)
             {
-                for (int i = 0; i < 6; i++)
+                OffenderController.Instance.SelectCharacter(i);
+                Character c = OffenderController.Instance.characters[i];
+                List<int> upgradableSkill = new List<int>();
+
+                while (OffenderController.Instance.skillPoints[i] > 0)
                 {
-                    Character c = OffenderController.Instance.characters[i];
-                    int index = c.mySkills.
+                    upgradableSkill = OffenderController.Instance.GetUpgradableSkill();
+                    int index = UnityEngine.Random.Range(0, upgradableSkill.Count);
+                    OffenderController.Instance.LearnSkill(c.mySkills[upgradableSkill[index]]);
                 }
-                
             }
-        }*/
+        }
     }
 }
