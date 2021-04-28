@@ -44,7 +44,7 @@ namespace GameControl
         public void Init()
         {
             monsterIndex = 0;
-            
+
             monsters.Clear();
             isDead.Clear();
 
@@ -173,7 +173,7 @@ namespace GameControl
         {
             List<MonsterSkill> skills = new List<MonsterSkill>();
 
-            for (int i = 0; i < 2; i ++)
+            for (int i = 0; i < 2; i++)
             {
                 int diceIndex = Random.Range(0, 6);
                 skills.Add(dices[index][diceIndex]);

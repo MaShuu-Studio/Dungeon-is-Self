@@ -42,7 +42,7 @@ namespace GameControl
 
         public int defenderUnit { get; private set; }
         public int[] offenderUnits { get; private set; } = new int[3];
-        private bool[] offenderUnitIsDead = new bool[3];
+        private Dictionary<int, bool> offenderUnitIsDead = new Dictionary<int, bool>();
         private Dictionary<int, bool> animationEnd = new Dictionary<int, bool>();
 
         private readonly int[] skillPointPerRound = new int[3] { 1, 2, 2 };
@@ -144,14 +144,15 @@ namespace GameControl
             isRoundEnd = false;
             progressRound = false;
             animationEnd.Clear();
+            offenderUnitIsDead.Clear();
 
             // 선공 확인해서 순서 조정
             animationEnd.Add(defenderUnit, true);
             foreach (int key in offenderUnits)
+            {
                 animationEnd.Add(key, true);
-
-            for (int i = 0; i < offenderUnitIsDead.Length; i++)
-                offenderUnitIsDead[i] = false;
+                offenderUnitIsDead.Add(key, false);
+            }
 
             if (userType == UserType.Defender)
             {
@@ -190,8 +191,13 @@ namespace GameControl
             if (defenderOk) animationEnd[defenderUnit] = false;
             for (int i = 1; i < animationEnd.Count; i++)
             {
+                int offenderUnit = offenderUnits[i - 1];
                 // 전투불능 상태 체크해서 Animation End 이용
-                animationEnd[offenderUnits[i - 1]] = false;
+                if (offenderUnitIsDead[offenderUnit])
+                {
+                    animationEnd[offenderUnit] = true;
+                }
+                else animationEnd[offenderUnit] = false;
             }
 
             // 전투 시 전투불능 확인해서 그 때 그 때 바꿔줘야함
@@ -200,11 +206,15 @@ namespace GameControl
                 if (animationEnd[keys[i]] == false)
                 {
                     bool isMonster = ((keys[i] / 10) == 2);
-                    if (isMonster && defenderOk == false) continue;
+                    if (isMonster && defenderOk == false)
+                    {
+                        animationEnd[keys[i]] = true;
+                        continue;
+                    }
+
                     GamePlayUIController.Instance.PlayAnimation(keys[i], "Attack");
 
                     while (animationEnd[keys[i]] == false) yield return null;
-
                     // 전투 정보 전송
                     {
                         if (isMonster == false)
@@ -218,6 +228,7 @@ namespace GameControl
                         }
                         else
                         {
+                            // 주사위 결과 발생
                             int index = Random.Range(0, offenderUnits.Length);
                         }
                         GamePlayUIController.Instance.UpdateCharacters();
@@ -239,14 +250,15 @@ namespace GameControl
 
             GamePlayUIController.Instance.SetTurn(++turn);
 
-            bool isAttack = DefenderController.Instance.AttackSkillNextTurn();
+            bool isAttack = false;
+            if (turn != 1) isAttack = DefenderController.Instance.AttackSkillNextTurn();
             GamePlayUIController.Instance.UpdateCharacters();
             if (isAttack)
             {
                 // 공격부분
                 MonsterSkill skill = DefenderController.Instance.GetAttackSkill();
-                
-                switch(skill.type)
+
+                switch (skill.type)
                 {
                     case MonsterSkill.SkillType.AttackAll:
                         OffenderDefeated();
@@ -254,19 +266,20 @@ namespace GameControl
 
                     case MonsterSkill.SkillType.AttackOne:
                         List<int> aliveIndexes = new List<int>();
-                        for (int i = 0; i < offenderUnitIsDead.Length; i++)
+                        foreach (int key in offenderUnits)
                         {
-                            if (offenderUnitIsDead[i] == false) aliveIndexes.Add(i);
+                            if (offenderUnitIsDead[key] == false) aliveIndexes.Add(key);
                         }
 
-                        if (aliveIndexes.Count == 0)
+                        if (aliveIndexes.Count == 1)
                         {
+                            DefenderController.Instance.ResetAttackSkill();
                             OffenderDefeated();
                             return;
                         }
 
                         int deadUnit = Random.Range(0, aliveIndexes.Count);
-                        offenderUnitIsDead[deadUnit] = true;
+                        offenderUnitIsDead[aliveIndexes[deadUnit]] = true;
                         break;
                 }
 
@@ -327,7 +340,7 @@ namespace GameControl
 
             StopAllCoroutines();
 
-            foreach(int index in offenderUnits)
+            foreach (int index in offenderUnits)
                 OffenderController.Instance.Dead(index);
 
             if (OffenderController.Instance.GetAliveCharacterList().Count == 0)

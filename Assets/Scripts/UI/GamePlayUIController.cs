@@ -137,7 +137,7 @@ public class GamePlayUIController : MonoBehaviour
         {
             string name = (type == UserType.Defender) ? DefenderController.Instance.selectedMonsterCandidates[i] : OffenderController.Instance.selectedCharacterCandidates[i];
             string enemyName = (type == UserType.Defender) ? OffenderController.Instance.selectedCharacterCandidates[i] : DefenderController.Instance.selectedMonsterCandidates[i];
-            
+
             userRosters[i].SetImage(type, name);
             enemyRosters[i].SetImage(enemyType, enemyName);
 
@@ -515,7 +515,8 @@ public class GamePlayUIController : MonoBehaviour
 
     public void UpdateSkillPoint()
     {
-        offenderSkillPointText.text = "SKILL POINT: " + OffenderController.Instance.GetSkillPoint().ToString();
+        if (type == UserType.Offender) offenderSkillPointText.text = "SKILL POINT: " + OffenderController.Instance.GetSkillPoint().ToString();
+        else offenderSkillPointText.text = "";
     }
     public void SelectDice(int index)
     {

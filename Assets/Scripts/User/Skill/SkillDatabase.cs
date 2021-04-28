@@ -98,7 +98,7 @@ namespace Data
 
             #region Attack One
             monSkillDB.Add(new MonsterSkill(22101, "SKILL1-1", 5, 0));
-            monSkillDB.Add(new MonsterSkill(23101, "SKILL1-2", 5, 0));
+            monSkillDB.Add(new MonsterSkill(23101, "SKILL1-2", 2, 0));
             monSkillDB.Add(new MonsterSkill(23102, "SKILL1-3", 5, 0));
             #endregion
 

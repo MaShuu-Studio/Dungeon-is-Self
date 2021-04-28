@@ -43,7 +43,7 @@ namespace Data
 
             #region Tier 1
             monsterDB.Add(new Monster(
-                1, "Minotaurs", 40, Element.NORMAL,
+                1, "Minotaurs", 400, Element.NORMAL,
                 new List<string>()
                 {
                 "SKILL1-1",
