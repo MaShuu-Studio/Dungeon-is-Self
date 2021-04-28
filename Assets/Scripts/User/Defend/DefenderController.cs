@@ -36,12 +36,14 @@ namespace GameControl
         private List<MonsterSkill[]> dices = new List<MonsterSkill[]>();
         private List<MonsterSkill> attackSkills = new List<MonsterSkill>();
         private int attackSkillTurn;
-        private int monsterIndex;
+        private int monsterIndex = 0;
         public const int MAX_COST = 10;
 
         // 게임이 시작될 때 Defender에 대한 초기화 진행
         public void Init()
         {
+            monsterIndex = 0;
+            
             monsters.Clear();
 
             foreach (string name in selectedMonsterCandidates)
@@ -49,7 +51,6 @@ namespace GameControl
                 monsters.Add(MonsterDatabase.Instance.GetMonster(name));
             }
 
-            monsterIndex = 0;
 
             dices.Clear();
             attackSkills.Clear();
