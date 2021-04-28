@@ -120,6 +120,7 @@ namespace GameControl
             for (int i = 0; i < dices[monsterIndex].Length; i++)
             {
                 if (dices[monsterIndex][i].id == skill.id) count++;
+                if (dices[monsterIndex][index].id == skill.id) count--;
             }
             if (count > 1) return 1;
 
@@ -227,5 +228,22 @@ namespace GameControl
         }
 
         #endregion
+
+        public List<MonsterSkill> GetUsableSkill(int round)
+        {
+            List<MonsterSkill> usableSkill = new List<MonsterSkill>();
+            usableSkill = SkillDatabase.Instance.GetMonsterDices(monsters[monsterIndex].name);
+            
+            for (int i = 0; i < usableSkill.Count; i++)
+            {
+                if (usableSkill[i].tier > round)
+                {
+                    usableSkill.RemoveAt(i);
+                    i--;
+                }
+            }
+
+            return usableSkill;
+        }
     }
 }

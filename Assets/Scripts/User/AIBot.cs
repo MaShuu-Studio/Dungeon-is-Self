@@ -100,5 +100,26 @@ namespace GameControl
                 }
             }
         }
+
+        public void SetDice()
+        {
+            for (int i = 0; i < 6; i++)
+            {
+                DefenderController.Instance.SelectMonster(i);
+                Monster m = DefenderController.Instance.monsters[i];
+
+                for (int j = 0; j < 6; j++)
+                {
+                    List<MonsterSkill> usableSkill = new List<MonsterSkill>();
+                    usableSkill = DefenderController.Instance.GetUsableSkill(GameController.Instance.round);
+                    
+                    while (true)
+                    {
+                        int n = UnityEngine.Random.Range(0, usableSkill.Count);
+                        if (DefenderController.Instance.SetDice(j, usableSkill[n]) == 0) break;
+                    }
+                }
+            }
+        }
     }
 }
