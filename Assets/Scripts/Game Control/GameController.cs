@@ -44,6 +44,7 @@ namespace GameControl
         public int[] offenderUnits { get; private set; } = new int[3];
         private Dictionary<int, bool> offenderUnitIsDead = new Dictionary<int, bool>();
         private Dictionary<int, bool> animationEnd = new Dictionary<int, bool>();
+        private bool isDiceRolled = false;
 
         private readonly int[] skillPointPerRound = new int[3] { 1, 2, 2 };
         private bool isRoundEnd = false;
@@ -181,11 +182,27 @@ namespace GameControl
             List<MonsterSkill> monSkills = DefenderController.Instance.DiceRoll(defenderUnit % 10);
             Dictionary<int, CharacterSkill> charSkills = OffenderController.Instance.DiceRoll(offenderUnits);
 
+            GamePlayUIController.Instance.DiceRoll();
+            int i = 0;
+            for (; i < monSkills.Count; i++) GamePlayUIController.Instance.SetDiceSkill(i, monSkills[i].id);
+            foreach (CharacterSkill skill in charSkills.Values)
+            {
+                GamePlayUIController.Instance.SetDiceSkill(i, skill.id);
+                i++;
+            }
+            isDiceRolled = true;
             StartCoroutine(Battle(monSkills, charSkills));
+        }
+
+        public void DiceRolled()
+        {
+            isDiceRolled = false;
         }
 
         IEnumerator Battle(List<MonsterSkill> monSkills, Dictionary<int, CharacterSkill> charSkills)
         {
+            while (isDiceRolled) yield return null;
+
             bool defenderOk = (monSkills[0].id == monSkills[1].id);
             Debug.Log($"1: {monSkills[0].name} , 2: {monSkills[1].name} : {defenderOk}");
             Debug.Log($"1: {charSkills[offenderUnits[0]].name}, 2: {charSkills[offenderUnits[1]].name}, 3: {charSkills[offenderUnits[2]].name}");

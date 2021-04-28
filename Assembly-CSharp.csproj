@@ -81,7 +81,60 @@
      <Compile Include="Assets\Scripts\User\Skill\SkillDatabase.cs" />
      <None Include="Assets\Scripts\Network\PDL.xml" />
     <Reference Include="UnityEngine">
-        <HintPath>D:/Yujun/study/41/Dudream/2019.4.18f1/Editor/Data/Managed/UnityEngine/UnityEngine.dll</HintPath>
+      <HintPath>C:\Program Files\Unity\Hub\Editor\2019.4.18f1\Editor\Data\Managed/UnityEngine/UnityEngine.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEditor">
+      <HintPath>C:\Program Files\Unity\Hub\Editor\2019.4.18f1\Editor\Data\Managed/UnityEditor.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Assets\Scripts\Charater\CrowdControl.cs" />
+    <Compile Include="Assets\Scripts\Dummy\MyPlayer.cs" />
+    <Compile Include="Assets\Scripts\Dummy\Player.cs" />
+    <Compile Include="Assets\Scripts\Dummy\PlayerManager.cs" />
+    <Compile Include="Assets\Scripts\Game Control\GameController.cs" />
+    <Compile Include="Assets\Scripts\Game Control\SceneController.cs" />
+    <Compile Include="Assets\Scripts\Game Control\TestScript.cs" />
+    <Compile Include="Assets\Scripts\Network\Core\Connector.cs" />
+    <Compile Include="Assets\Scripts\Network\Core\RecvBuffer.cs" />
+    <Compile Include="Assets\Scripts\Network\Core\SendBuffer.cs" />
+    <Compile Include="Assets\Scripts\Network\Core\Session.cs" />
+    <Compile Include="Assets\Scripts\Network\NetworkManager.cs" />
+    <Compile Include="Assets\Scripts\Network\Packet\ClientPacketManager.cs" />
+    <Compile Include="Assets\Scripts\Network\Packet\GenPackets.cs" />
+    <Compile Include="Assets\Scripts\Network\Packet\PacketHandler.cs" />
+    <Compile Include="Assets\Scripts\Network\PacketQueue.cs" />
+    <Compile Include="Assets\Scripts\Network\ServerSession.cs" />
+    <Compile Include="Assets\Scripts\UI\AlertObject.cs" />
+    <Compile Include="Assets\Scripts\UI\CharacterToggle.cs" />
+    <Compile Include="Assets\Scripts\UI\CustomButton.cs" />
+    <Compile Include="Assets\Scripts\UI\Descriptions\SkillDescription.cs" />
+    <Compile Include="Assets\Scripts\UI\Descriptions\UIDescription.cs" />
+    <Compile Include="Assets\Scripts\UI\Dice.cs" />
+    <Compile Include="Assets\Scripts\UI\GamePlayUIController.cs" />
+    <Compile Include="Assets\Scripts\UI\Icons\AttackSkillIcon.cs" />
+    <Compile Include="Assets\Scripts\UI\Icons\CharIcon.cs" />
+    <Compile Include="Assets\Scripts\UI\Icons\CharSelectIcon.cs" />
+    <Compile Include="Assets\Scripts\UI\Icons\DiceIcon.cs" />
+    <Compile Include="Assets\Scripts\UI\Icons\RosterIcon.cs" />
+    <Compile Include="Assets\Scripts\UI\Icons\SkillIcon.cs" />
+    <Compile Include="Assets\Scripts\UI\Icons\UIIcon.cs" />
+    <Compile Include="Assets\Scripts\UI\ToggleIcon.cs" />
+    <Compile Include="Assets\Scripts\User\AIBot.cs" />
+    <Compile Include="Assets\Scripts\User\CharacterObject.cs" />
+    <Compile Include="Assets\Scripts\User\Defend\DefenderController.cs" />
+    <Compile Include="Assets\Scripts\User\Defend\Monster.cs" />
+    <Compile Include="Assets\Scripts\User\Defend\MonsterDatabase.cs" />
+    <Compile Include="Assets\Scripts\User\Offender\Character.cs" />
+    <Compile Include="Assets\Scripts\User\Offender\CharacterDatabase.cs" />
+    <Compile Include="Assets\Scripts\User\Offender\OffenderController.cs" />
+    <Compile Include="Assets\Scripts\User\Skill\CharacterSkill.cs" />
+    <Compile Include="Assets\Scripts\User\Skill\MonsterSkill.cs" />
+    <Compile Include="Assets\Scripts\User\Skill\Skill.cs" />
+    <Compile Include="Assets\Scripts\User\Skill\SkillDatabase.cs" />
+    <None Include="Assets\Scripts\Network\PDL.xml" />
+    <Reference Include="UnityEngine">
+      <HintPath>C:/Program Files/Unity/Hub/Editor/2019.4.18f1/Editor/Data/Managed/UnityEngine/UnityEngine.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.AIModule">
         <HintPath>D:/Yujun/study/41/Dudream/2019.4.18f1/Editor/Data/Managed/UnityEngine/UnityEngine.AIModule.dll</HintPath>

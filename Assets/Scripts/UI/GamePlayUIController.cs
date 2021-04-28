@@ -45,7 +45,7 @@ public class GamePlayUIController : MonoBehaviour
     [SerializeField] private GameObject diceSkillIconPrefab;
     private List<SkillIcon> diceSkillIcons = new List<SkillIcon>();
 
-    [SerializeField] private List<DiceIcon> dices;
+    [SerializeField] private List<DiceIcon> diceIcons;
     [SerializeField] private RectTransform selectedDice;
 
     [SerializeField] private SkillDescription description;
@@ -66,6 +66,7 @@ public class GamePlayUIController : MonoBehaviour
     private int selectedCharacterIndex;
 
 
+    [SerializeField] private Text turnText;
     [Header("PLAY ROUND")]
     [SerializeField] private GameObject playRoundView;
     [SerializeField] private Transform mapParent;
@@ -74,7 +75,7 @@ public class GamePlayUIController : MonoBehaviour
     private List<CharacterObject> enemyObjects = new List<CharacterObject>();
     private GameObject mapObject;
 
-    [SerializeField] private Text turnText;
+    [SerializeField] private GameObject dicePrefab;
     #endregion
 
     #region Instance
@@ -345,7 +346,7 @@ public class GamePlayUIController : MonoBehaviour
             for (int i = 0; i < 3; i++)
                 diceTierList[i] = new List<GameObject>();
 
-            for (int i = 0; i < dices.Count; i++)
+            for (int i = 0; i < diceSkills.Count; i++)
             {
                 int tier = diceSkills[i].tier;
                 GameObject obj = Instantiate(diceSkillIconPrefab);
@@ -450,9 +451,9 @@ public class GamePlayUIController : MonoBehaviour
         if (type == UserType.Defender)
         {
             MonsterSkill skill = DefenderController.Instance.GetSelectedDice(selectedDiceIndex);
-            dices[selectedDiceIndex++].SetSkill(skill);
+            diceIcons[selectedDiceIndex++].SetSkill(skill);
 
-            if (selectedDiceIndex >= dices.Count) selectedDiceIndex -= 1;
+            if (selectedDiceIndex >= diceIcons.Count) selectedDiceIndex -= 1;
             SelectDice(selectedDiceIndex);
 
             int totalCost = DefenderController.MAX_COST - DefenderController.Instance.GetDiceCost();
@@ -462,9 +463,9 @@ public class GamePlayUIController : MonoBehaviour
         else
         {
             CharacterSkill skill = OffenderController.Instance.GetSelectedDice(selectedDiceIndex);
-            dices[selectedDiceIndex++].SetSkill(skill);
+            diceIcons[selectedDiceIndex++].SetSkill(skill);
 
-            if (selectedDiceIndex >= dices.Count) selectedDiceIndex -= 1;
+            if (selectedDiceIndex >= diceIcons.Count) selectedDiceIndex -= 1;
             SelectDice(selectedDiceIndex);
         }
     }
@@ -501,9 +502,9 @@ public class GamePlayUIController : MonoBehaviour
                 return;
             }
 
-            dices[selectedDiceIndex++].SetSkill(skill as MonsterSkill);
+            diceIcons[selectedDiceIndex++].SetSkill(skill as MonsterSkill);
 
-            if (selectedDiceIndex >= dices.Count) selectedDiceIndex -= 1;
+            if (selectedDiceIndex >= diceIcons.Count) selectedDiceIndex -= 1;
             SelectDice(selectedDiceIndex);
 
             int totalCost = DefenderController.MAX_COST - DefenderController.Instance.GetDiceCost();
@@ -519,9 +520,9 @@ public class GamePlayUIController : MonoBehaviour
                 return;
             }
 
-            dices[selectedDiceIndex++].SetSkill(skill as CharacterSkill);
+            diceIcons[selectedDiceIndex++].SetSkill(skill as CharacterSkill);
 
-            if (selectedDiceIndex >= dices.Count) selectedDiceIndex -= 1;
+            if (selectedDiceIndex >= diceIcons.Count) selectedDiceIndex -= 1;
             SelectDice(selectedDiceIndex);
         }
     }
@@ -533,7 +534,7 @@ public class GamePlayUIController : MonoBehaviour
     }
     public void SelectDice(int index)
     {
-        RectTransform rect = dices[index].GetComponent<RectTransform>();
+        RectTransform rect = diceIcons[index].GetComponent<RectTransform>();
         Vector3 pos = new Vector3(rect.anchoredPosition.x - 6.25f, rect.anchoredPosition.y + 6.25f, 0);
         selectedDiceIndex = index;
         selectedDice.anchoredPosition = pos;
@@ -662,18 +663,6 @@ public class GamePlayUIController : MonoBehaviour
             enemyObjects[i].SetFlip(true);
     }
 
-    private void ClearCharacters()
-    {
-        for (int i = 0; i < charObjects.Count; i++)
-            Destroy(charObjects[i].gameObject);
-        for (int i = 0; i < enemyObjects.Count; i++)
-            Destroy(enemyObjects[i].gameObject);
-
-        charObjects.Clear();
-        enemyObjects.Clear();
-        Destroy(mapObject);
-    }
-
     public void UpdateCharacters()
     {
         int monHp = 0, monTurn = 0;
@@ -689,6 +678,75 @@ public class GamePlayUIController : MonoBehaviour
             for (int i = 0; i < enemyObjects.Count; i++)
                 enemyObjects[i].UpdateCharacterInfo(monHp, monTurn);
         }
+    }
+
+    List<Dice> diceObjects = new List<Dice>();
+    public void DiceRoll()
+    {
+        diceObjects.Clear();
+        if (type == UserType.Defender)
+        {
+            for (int i = 0; i < charObjects.Count; i++)
+            {
+                GameObject dice = Instantiate(dicePrefab);
+                dice.transform.position = new Vector3(charObjects[i].transform.position.x - 1, dice.transform.position.y, 0);
+                Dice diceObj = dice.GetComponent<Dice>();
+                diceObjects.Add(diceObj);
+                GameObject dice2 = Instantiate(dicePrefab);
+                dice2.transform.position = new Vector3(charObjects[i].transform.position.x + 1, dice2.transform.position.y, 0);
+                diceObj = dice2.GetComponent<Dice>();
+                diceObjects.Add(diceObj);
+            }
+
+            for (int i = 0; i < enemyObjects.Count; i++)
+            {
+                GameObject dice = Instantiate(dicePrefab);
+                dice.transform.position = new Vector3(enemyObjects[i].transform.position.x, dice.transform.position.y, 0);
+                Dice diceObj = dice.GetComponent<Dice>();
+                diceObjects.Add(diceObj);
+            }
+        }
+        else
+        {
+            for (int i = 0; i < enemyObjects.Count; i++)
+            {
+                GameObject dice = Instantiate(dicePrefab);
+                dice.transform.position = new Vector3(enemyObjects[i].transform.position.x - 1, dice.transform.position.y, 0);
+                Dice diceObj = dice.GetComponent<Dice>();
+                diceObjects.Add(diceObj);
+                GameObject dice2 = Instantiate(dicePrefab);
+                dice2.transform.position = new Vector3(enemyObjects[i].transform.position.x + 1, dice2.transform.position.y, 0);
+                diceObj = dice2.GetComponent<Dice>();
+                diceObjects.Add(diceObj);
+            }
+
+            for (int i = 0; i < charObjects.Count; i++)
+            {
+                GameObject dice = Instantiate(dicePrefab);
+                dice.transform.position = new Vector3(charObjects[i].transform.position.x, dice.transform.position.y, 0);
+                Dice diceObj = dice.GetComponent<Dice>();
+                diceObjects.Add(diceObj);
+            }
+        }
+
+        foreach (Dice dice in diceObjects) dice.Roll();
+    }
+
+    public void SetDiceSkill(int index, int id)
+    {
+        diceObjects[index].SetSkill(id);
+    }
+
+    private void ClearCharacters()
+    {
+        for (int i = 0; i < charObjects.Count; i++)
+            Destroy(charObjects[i].gameObject);
+        for (int i = 0; i < enemyObjects.Count; i++)
+            Destroy(enemyObjects[i].gameObject);
+
+        charObjects.Clear();
+        enemyObjects.Clear();
+        Destroy(mapObject);
     }
 
     public void PlayAnimation(int index, string anim)
