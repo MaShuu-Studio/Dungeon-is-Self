@@ -66,5 +66,18 @@ namespace GameControl
                 DefenderController.Instance.SetRoster();
             }
         }
+
+        /*public int LearnSkill()
+        {
+            if (GameController.Instance.userType == UserType.Defender)
+            {
+                for (int i = 0; i < 6; i++)
+                {
+                    Character c = OffenderController.Instance.characters[i];
+                    int index = c.mySkills.
+                }
+                
+            }
+        }*/
     }
 }

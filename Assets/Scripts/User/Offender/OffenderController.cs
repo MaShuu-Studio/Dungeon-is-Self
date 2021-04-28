@@ -128,6 +128,14 @@ namespace GameControl
             if (index != -1)
             {
                 if (skillPoints[characterIndex] <= 0) return -1;
+                //List<int> prior = SkillDatabase.Instance.GetCharacterSkill(skill.id).prior;
+                foreach (int i in SkillDatabase.Instance.GetCharacterSkill(skill.id).prior)
+                {
+                    if (!IsSkillGotten(i % 100)) 
+                    {
+                        return -2;
+                    }
+                }
                 skillPoints[characterIndex] -= 1;
                 gottenSkills[characterIndex][index] = true;
             }
