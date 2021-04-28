@@ -378,7 +378,7 @@ public class GamePlayUIController : MonoBehaviour
                     rect.anchoredPosition = new Vector3(x, y, 0);
                 }
 
-            offenderSkillPointText.text = "SKILL POINT: " + OffenderController.Instance.GetSkillPoint().ToString();
+            UpdateSkillPoint();
         }
     }
 
@@ -437,7 +437,7 @@ public class GamePlayUIController : MonoBehaviour
             if (index != -1)
             {
                 diceSkillIcons[index].SetOnOff(true);
-                offenderSkillPointText.text = "SKILL POINT: " + OffenderController.Instance.GetSkillPoint().ToString();
+                UpdateSkillPoint();
             }
             else
             {
@@ -480,6 +480,10 @@ public class GamePlayUIController : MonoBehaviour
         }
     }
 
+    public void UpdateSkillPoint()
+    {        
+        offenderSkillPointText.text = "SKILL POINT: " + OffenderController.Instance.GetSkillPoint().ToString();
+    }
     public void SelectDice(int index)
     {
         RectTransform rect = dices[index].GetComponent<RectTransform>();

@@ -58,7 +58,7 @@ namespace GameControl
                     else list.Add(false);
                 }
                 gottenSkills.Add(list);
-                skillPoints.Add(2);
+                skillPoints.Add(0);
             }
 
             for (int i = 0; i < 3; i++)
@@ -108,6 +108,8 @@ namespace GameControl
             {
                 skillPoints[i] += point;
             }
+
+            GamePlayUIController.Instance.UpdateSkillPoint();
         }
 
         public int GetSkillPoint()

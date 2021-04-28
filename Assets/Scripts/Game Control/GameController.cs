@@ -44,6 +44,8 @@ namespace GameControl
         public int[] offenderUnits { get; private set; } = new int[3];
         private Dictionary<int, bool> animationEnd = new Dictionary<int, bool>();
 
+        private readonly int[] skillPointPerRound = new int[3] { 1, 2, 2 };
+
         // Start is called before the first frame update
         void Start()
         {
@@ -104,6 +106,7 @@ namespace GameControl
         {
             if (isPlay)
             {
+                OffenderController.Instance.AddSkillPoint(skillPointPerRound[round]);
                 round++;
                 animationEnd.Clear();
                 currentProgress = GameProgress.ReadyRound;
