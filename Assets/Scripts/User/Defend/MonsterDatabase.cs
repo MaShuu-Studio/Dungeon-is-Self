@@ -179,5 +179,10 @@ namespace Data
                 monsterNames.Add(monster.name);
             }
         }
+
+        public int GetMonsterHP(string name)
+        {
+            return monsterDB.Find(monster => monster.name == name).hp;
+        }
     }
 }

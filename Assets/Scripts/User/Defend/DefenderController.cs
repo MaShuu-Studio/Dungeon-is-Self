@@ -221,6 +221,11 @@ namespace GameControl
             isDead[index % 10] = true;
         }
 
+        public void HealBattleMonster(int index)
+        {
+            monsters[index % 10].Heal();
+        }
+
         #endregion
     }
 }

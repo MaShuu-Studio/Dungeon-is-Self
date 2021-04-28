@@ -343,6 +343,7 @@ namespace GameControl
                 {
                     if (i != deadIndex) OffenderController.Instance.Alive(offenderUnits[i]);
                 }
+                DefenderController.Instance.HealBattleMonster(defenderUnit);
                 ReadyRound(true);
             }
         }

@@ -74,5 +74,10 @@ namespace Data
         {
             hp -= skill.damage;
         }
+
+        public void Heal()
+        {
+            hp = MonsterDatabase.Instance.GetMonsterHP(name);
+        }
     }
 }
