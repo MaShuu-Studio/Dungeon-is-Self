@@ -102,6 +102,11 @@ namespace GameControl
                 selectedCharacterCandidates[i] = "";
             }
         }
+
+        public void ResetDead()
+        {
+            for (int i = 0; i < isDead.Count; i++) isDead[i] = false;
+        }
         #endregion
 
         #region Ready Round
@@ -242,6 +247,10 @@ namespace GameControl
         public void Dead(int index)
         {
             isDead[index % 10] = true;
+        }
+        public void Alive(int index)
+        {
+            isDead[index % 10] = false;
         }
 
         #endregion

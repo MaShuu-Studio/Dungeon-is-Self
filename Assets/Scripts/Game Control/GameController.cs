@@ -42,9 +42,11 @@ namespace GameControl
 
         public int defenderUnit { get; private set; }
         public int[] offenderUnits { get; private set; } = new int[3];
+        private bool[] offenderUnitIsDead = new bool[3];
         private Dictionary<int, bool> animationEnd = new Dictionary<int, bool>();
 
         private readonly int[] skillPointPerRound = new int[3] { 1, 2, 2 };
+        private bool isRoundEnd = false;
 
         // Start is called before the first frame update
         void Start()
@@ -102,12 +104,15 @@ namespace GameControl
             ReadyRound();
         }
 
-        public void ReadyRound()
+        public void ReadyRound(bool isOffenderDefeated = false)
         {
             if (isPlay)
             {
-                OffenderController.Instance.AddSkillPoint(skillPointPerRound[round]);
-                round++;
+                if (isOffenderDefeated == false)
+                {
+                    OffenderController.Instance.AddSkillPoint(skillPointPerRound[round]);
+                    round++;
+                }
                 animationEnd.Clear();
                 currentProgress = GameProgress.ReadyRound;
             }
@@ -136,6 +141,7 @@ namespace GameControl
 
             currentProgress = GameProgress.PlayRound;
             turn = 0;
+            isRoundEnd = false;
             progressRound = false;
             animationEnd.Clear();
 
@@ -143,6 +149,9 @@ namespace GameControl
             animationEnd.Add(defenderUnit, true);
             foreach (int key in offenderUnits)
                 animationEnd.Add(key, true);
+
+            for (int i = 0; i < offenderUnitIsDead.Length; i++)
+                offenderUnitIsDead[i] = false;
 
             if (userType == UserType.Defender)
             {
@@ -226,6 +235,8 @@ namespace GameControl
 
         public void NextTurn()
         {
+            if (isRoundEnd) return;
+
             GamePlayUIController.Instance.SetTurn(++turn);
 
             bool isAttack = DefenderController.Instance.AttackSkillNextTurn();
@@ -233,7 +244,32 @@ namespace GameControl
             if (isAttack)
             {
                 // 공격부분
-                Debug.Log("Attack");
+                MonsterSkill skill = DefenderController.Instance.GetAttackSkill();
+                
+                switch(skill.type)
+                {
+                    case MonsterSkill.SkillType.AttackAll:
+                        OffenderDefeated();
+                        return;
+
+                    case MonsterSkill.SkillType.AttackOne:
+                        List<int> aliveIndexes = new List<int>();
+                        for (int i = 0; i < offenderUnitIsDead.Length; i++)
+                        {
+                            if (offenderUnitIsDead[i] == false) aliveIndexes.Add(i);
+                        }
+
+                        if (aliveIndexes.Count == 0)
+                        {
+                            OffenderDefeated();
+                            return;
+                        }
+
+                        int deadUnit = Random.Range(0, aliveIndexes.Count);
+                        offenderUnitIsDead[deadUnit] = true;
+                        break;
+                }
+
                 DefenderController.Instance.ResetAttackSkill();
                 GamePlayUIController.Instance.UpdateCharacters();
             }
@@ -246,10 +282,11 @@ namespace GameControl
 
         private void DefenderDefeated()
         {
+            isRoundEnd = true;
             // 전투가 넘어가기전에 애니메이션 등
             Debug.Log("Defender Defeated");
 
-            List<int> keys = animationEnd.Keys.ToList<int>();
+            List<int> keys = animationEnd.Keys.ToList();
             for (int i = 0; i < animationEnd.Count; i++)
             {
                 animationEnd[keys[i]] = true;
@@ -262,14 +299,52 @@ namespace GameControl
 
             StopAllCoroutines();
 
-            if (round >= 3) SceneController.Instance.ChangeScene("Main"); // 씬 이동 임시
+            if (round >= 3)
+            {
+                OffenderController.Instance.ResetDead();
+                DefenderController.Instance.ResetDead();
+                SceneController.Instance.ChangeScene("Main"); // 씬 이동 임시
+            }
             else ReadyRound();
         }
 
         private void OffenderDefeated()
         {
+            isRoundEnd = true;
             // 전투가 넘어가기전에 애니메이션 등
             Debug.Log("Offender Defeated");
+
+            List<int> keys = animationEnd.Keys.ToList();
+            for (int i = 0; i < animationEnd.Count; i++)
+            {
+                animationEnd[keys[i]] = true;
+            }
+
+            readyState[0] = false;
+            readyState[1] = false;
+
+            progressRound = false;
+
+            StopAllCoroutines();
+
+            foreach(int index in offenderUnits)
+                OffenderController.Instance.Dead(index);
+
+            if (OffenderController.Instance.GetAliveCharacterList().Count == 0)
+            {
+                OffenderController.Instance.ResetDead();
+                DefenderController.Instance.ResetDead();
+                SceneController.Instance.ChangeScene("Main"); // 씬 이동 임시
+            }
+            else
+            {
+                int deadIndex = Random.Range(0, offenderUnits.Length);
+                for (int i = 0; i < offenderUnits.Length; i++)
+                {
+                    if (i != deadIndex) OffenderController.Instance.Alive(offenderUnits[i]);
+                }
+                ReadyRound(true);
+            }
         }
     }
 }

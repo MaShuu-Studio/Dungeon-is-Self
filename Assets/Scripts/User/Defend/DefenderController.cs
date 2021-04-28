@@ -46,6 +46,7 @@ namespace GameControl
             monsterIndex = 0;
             
             monsters.Clear();
+            isDead.Clear();
 
             foreach (string name in selectedMonsterCandidates)
             {
@@ -90,6 +91,10 @@ namespace GameControl
             {
                 selectedMonsterCandidates[i] = "";
             }
+        }
+        public void ResetDead()
+        {
+            for (int i = 0; i < isDead.Count; i++) isDead[i] = false;
         }
         #endregion
 

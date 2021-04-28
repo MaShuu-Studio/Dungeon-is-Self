@@ -201,7 +201,7 @@ public class GamePlayUIController : MonoBehaviour
                     for (int i = 0; i < aliveList.Count; i++)
                     {
                         OffenderController.Instance.SelectCharacter(aliveList[i]);
-                        SetOffenderRoster(aliveList[i]);
+                        SetOffenderRoster(i);
                     }
                     OffenderController.Instance.SelectCharacter(0);
                 }
