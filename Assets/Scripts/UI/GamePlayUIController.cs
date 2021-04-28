@@ -396,7 +396,7 @@ public class GamePlayUIController : MonoBehaviour
     public void ShowDescription(Skill skill)
     {
         if (skill == null) return;
-        description.SetDescription(skill.name, "", "DESCRIPTION");
+        description.SetDescription(skill.id, "", "DESCRIPTION");
     }
 
     public void SetAllDice()

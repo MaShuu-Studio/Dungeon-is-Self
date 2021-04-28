@@ -41,16 +41,16 @@ public class SkillIcon : UIIcon, IPointerClickHandler
     public void SetSkill(MonsterSkill skill, bool isOn = true)
     {
         this.skill = skill; // 복사방법 조정
-        iconImage.sprite = Resources.Load<Sprite>("Sprites/Skills/" + skill.name);
+        iconImage.sprite = Resources.Load<Sprite>("Sprites/Skills/" + skill.id.ToString());
         if (costText != null)
-            costText.text = (skill.type == MonsterSkill.SkillType.DICE) ? skill.cost.ToString() : "";
+            costText.text = (skill.type == MonsterSkill.SkillType.Dice) ? skill.cost.ToString() : "";
 
         SetOnOff(isOn);
     }
     public void SetSkill(CharacterSkill skill, bool isOn = true)
     {
         this.skill = skill; // 복사방법 조정
-        iconImage.sprite = Resources.Load<Sprite>("Sprites/Skills/" + skill.name);
+        iconImage.sprite = Resources.Load<Sprite>("Sprites/Skills/" + skill.id.ToString());
         if (costText != null)
             costText.text = "";
 

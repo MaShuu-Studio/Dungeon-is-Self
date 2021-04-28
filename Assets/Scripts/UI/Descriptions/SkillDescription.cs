@@ -19,10 +19,10 @@ public class SkillDescription : UIDescription
         typeText.text = "";
         descriptionText.text = "";
     }
-    public void SetDescription(string name, string type, string description)
+    public void SetDescription(int id, string type, string description)
     {
         skillImage.color = Color.white;
-        skillImage.sprite = Resources.Load<Sprite>("Sprites/Skills/" + name);
+        skillImage.sprite = Resources.Load<Sprite>("Sprites/Skills/" + id.ToString());
         nameText.text = name;
         typeText.text = type;
         descriptionText.text = description;

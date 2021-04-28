@@ -6,7 +6,7 @@ namespace Data
 {
     public class MonsterSkill : Skill
     {
-        public enum SkillType { ATTACK = 1, DICE }
+        public enum SkillType { Dice = 1, AttackAll, AttackOne, }
 
         public SkillType type { get; private set; }
         public int cost { get; private set; }
@@ -15,9 +15,10 @@ namespace Data
         {
             // ID 구조 2abcc
             // 2는 몬스터스킬임을 표기
-            // a는 SkillType을 표기. 1: ATTACK, 2: DICE
-            // bbb는 스킬의 고유 넘버를 표기
-            // 결과적으로 abbb가 전체적으로 스킬 전체 고유 넘버가 되는 것.
+            // a는 SkillType을 표기. 1: Dice, 2 > Attack -> 2: AttackAll, 3: AttackOne
+            // b는 티어
+            // cc는 스킬의 고유 넘버를 표기
+            // 결과적으로 abcc가 전체적으로 스킬 전체 고유 넘버가 되는 것.
             this.id = id;
 
             int tmp = id;
@@ -26,7 +27,6 @@ namespace Data
             tmp /= 10;
 
             this.type = (SkillType)(tmp % 10);
-            this.tier = tier;
             this.name = name;
             this.turn = turn;
             this.cost = cost;

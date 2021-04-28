@@ -41,7 +41,7 @@ public class CharacterObject : MonoBehaviour
 
     public void SetSkill(Skill skill)
     {
-        skillImage.sprite = Resources.Load<Sprite>("Sprites/Skills/" + skill.name);
+        skillImage.sprite = Resources.Load<Sprite>("Sprites/Skills/" + skill.id);
     }
     public void UpdateCharacterInfo(int hp, int turn)
     {

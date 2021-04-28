@@ -83,24 +83,26 @@ namespace Data
         {
             monSkillDB = new List<MonsterSkill>();
 
-            #region AttackSkill
-            monSkillDB.Add(new MonsterSkill(21101, "SKILL1-1", 5, 0));
-            monSkillDB.Add(new MonsterSkill(21102, "SKILL1-2", 5, 0));
-            monSkillDB.Add(new MonsterSkill(21103, "SKILL1-3", 5, 0));
+            #region Dice
+            monSkillDB.Add(new MonsterSkill(21101, "DICE1-1", 5, 0));
+            monSkillDB.Add(new MonsterSkill(21102, "DICE1-2", 5, 0));
+            monSkillDB.Add(new MonsterSkill(21103, "DICE1-3", 5, 1));
+            monSkillDB.Add(new MonsterSkill(21104, "DICE1-4", 5, 1));
+            monSkillDB.Add(new MonsterSkill(21201, "DICE2-1", 5, 2));
+            monSkillDB.Add(new MonsterSkill(21202, "DICE2-2", 5, 2));
+            monSkillDB.Add(new MonsterSkill(21203, "DICE2-3", 5, 3));
+            monSkillDB.Add(new MonsterSkill(21301, "DICE3-1", 5, 5));
+            monSkillDB.Add(new MonsterSkill(21302, "DICE3-2", 5, 6));
+            monSkillDB.Add(new MonsterSkill(21303, "DICE3-3", 5, 7));
             #endregion
 
-            #region Dice
-            monSkillDB.Add(new MonsterSkill(22101, "DICE1-1", 5, 0));
-            monSkillDB.Add(new MonsterSkill(22102, "DICE1-2", 5, 0));
-            monSkillDB.Add(new MonsterSkill(22103, "DICE1-3", 5, 1));
-            monSkillDB.Add(new MonsterSkill(22103, "DICE1-4", 5, 1));
-            monSkillDB.Add(new MonsterSkill(22201, "DICE2-1", 5, 2));
-            monSkillDB.Add(new MonsterSkill(22202, "DICE2-2", 5, 2));
-            monSkillDB.Add(new MonsterSkill(22203, "DICE2-3", 5, 3));
-            monSkillDB.Add(new MonsterSkill(22301, "DICE3-1", 5, 5));
-            monSkillDB.Add(new MonsterSkill(22302, "DICE3-2", 5, 6));
-            monSkillDB.Add(new MonsterSkill(22302, "DICE3-3", 5, 7));
+            #region Attack One
+            monSkillDB.Add(new MonsterSkill(22101, "SKILL1-1", 5, 0));
+            monSkillDB.Add(new MonsterSkill(23101, "SKILL1-2", 5, 0));
+            monSkillDB.Add(new MonsterSkill(23102, "SKILL1-3", 5, 0));
             #endregion
+
+
         }
 
         public CharacterSkill GetCharacterSkill(string name)
