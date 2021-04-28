@@ -57,29 +57,26 @@ namespace GameControl
         {
             if (GameController.Instance.userType == UserType.Defender)
             {
-                List<int> roster = new List<int>();
+                List<int> roster = OffenderController.Instance.GetAliveCharacterList();
+                while (roster.Count > 3)
+                {
+                    int index = Random.Range(0, roster.Count);
+                    roster.RemoveAt(index);
+                }
+
                 for (int i = 0; i < 3; i++)
                 {
-                    while (true)
-                    {
-                        int index = UnityEngine.Random.Range(0, 6);
-
-                        int check = roster.FindIndex(a => a == index);
-                        if (check == -1)
-                        {
-                            OffenderController.Instance.SelectCharacter(index);
-                            OffenderController.Instance.SelectRoster(i);
-                            roster.Add(index);
-                            break;
-                        }
-                    }
+                    OffenderController.Instance.SelectCharacter(roster[i]);
+                    OffenderController.Instance.SelectRoster(i);
                 }
+
                 GameController.Instance.SelectUnit(UserType.Offender, OffenderController.Instance.roster);
             }
             else
             {
-                int unit = UnityEngine.Random.Range(0, 6);
-                DefenderController.Instance.SelectMonster(unit);
+                List<int> roster = DefenderController.Instance.GetAliveMonsterList();
+                int unit = UnityEngine.Random.Range(0, roster.Count);
+                DefenderController.Instance.SelectMonster(roster[unit]);
                 DefenderController.Instance.SetRoster();
             }
         }

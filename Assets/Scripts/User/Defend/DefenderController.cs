@@ -108,6 +108,18 @@ namespace GameControl
             }
             return i;
         }
+
+        public List<int> GetAliveMonsterList()
+        {
+            List<int> alives = new List<int>();
+            for (int i = 0 ; i < monsters.Count; i++)
+            {
+                if (isDead[i] == false) alives.Add(i);
+            }
+
+            return alives;
+        }
+
         public void SelectMonster(int index)
         {
             if (isDead[index]) return;

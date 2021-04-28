@@ -46,6 +46,7 @@ namespace GameControl
 
             characters.Clear();
             skillPoints.Clear();
+            gottenSkills.Clear();
 
             foreach (string name in selectedCharacterCandidates)
             {
@@ -128,7 +129,6 @@ namespace GameControl
                 if (isDead[i] == false)
                 {
                     indexes.Add(i);
-                    if (indexes.Count == 3) break;
                 }
             }
             return indexes;
@@ -259,6 +259,7 @@ namespace GameControl
             {
                 if (!IsSkillGotten(i))
                 {
+                    
                     foreach (int j in characters[characterIndex].mySkills[i].prior)
                     {
                         if (IsSkillGotten(j % 100)) check = true;

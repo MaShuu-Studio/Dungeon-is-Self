@@ -198,7 +198,7 @@ public class GamePlayUIController : MonoBehaviour
 
                     List<int> aliveList = OffenderController.Instance.GetAliveCharacterList();
                     // 죽은애 알아서 잘 찾아갈 수 있게 조정
-                    for (int i = 0; i < aliveList.Count; i++)
+                    for (int i = 0; i < aliveList.Count && i < 3; i++)
                     {
                         OffenderController.Instance.SelectCharacter(aliveList[i]);
                         SetOffenderRoster(i);
