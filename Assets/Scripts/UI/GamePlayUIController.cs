@@ -433,7 +433,7 @@ public class GamePlayUIController : MonoBehaviour
     public void ShowDescription(Skill skill)
     {
         if (skill == null) return;
-        description.SetDescription(skill.id, "", "DESCRIPTION");
+        description.SetDescription(skill.id, skill.name, "", "DESCRIPTION");
     }
 
     public void SetAllDice()
@@ -470,21 +470,24 @@ public class GamePlayUIController : MonoBehaviour
     }
     public void SetDiceOnce(Skill skill, bool isOn = true)
     {
-        if (isOn == false && type == UserType.Offender)
+        if (isOn == false)
         {
-            int index = OffenderController.Instance.LearnSkill(skill as CharacterSkill);
-            if (index > -1)
+            if (type == UserType.Offender)
             {
-                diceSkillIcons[index].SetOnOff(true);
-                UpdateSkillPoint();
-            }
-            else if (index == -2)
-            {
-                Alert(28);
-            }
-            else
-            {
-                Alert(29);
+                int index = OffenderController.Instance.LearnSkill(skill as CharacterSkill);
+                if (index > -1)
+                {
+                    diceSkillIcons[index].SetOnOff(true);
+                    UpdateSkillPoint();
+                }
+                else if (index == -2)
+                {
+                    Alert(28);
+                }
+                else
+                {
+                    Alert(29);
+                }
             }
             return;
         }
