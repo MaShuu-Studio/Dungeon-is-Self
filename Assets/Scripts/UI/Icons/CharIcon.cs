@@ -8,7 +8,6 @@ using UnityEngine.UI;
 public class CharIcon : UIIcon, IPointerDownHandler, IPointerClickHandler
 {
     [SerializeField] private bool isCandidate;
-    private GamePlayUIController gamePlayUI;
     private string characterName;
     private UserType type;
 
@@ -16,15 +15,16 @@ public class CharIcon : UIIcon, IPointerDownHandler, IPointerClickHandler
     protected override void Start()
     {
         base.Start();
-        gamePlayUI = GameObject.FindWithTag("UI").GetComponent<GamePlayUIController>();
+    }
+
+    public override void OnPointerEnter(PointerEventData pointerEventData)
+    {
+        if (isCandidate) base.OnPointerEnter(pointerEventData);
     }
 
     public override void OnPointerDown(PointerEventData eventData)
     {
-        if (isCandidate)
-        {
-            base.OnPointerDown(eventData);
-        }
+        if (isCandidate) base.OnPointerDown(eventData);
     }
 
     public override void OnPointerClick(PointerEventData eventData)
@@ -32,13 +32,12 @@ public class CharIcon : UIIcon, IPointerDownHandler, IPointerClickHandler
         if (isCandidate)
         {
             base.OnPointerClick(eventData);
-            gamePlayUI.SelectCandidate(characterName);
+            GamePlayUIController.Instance.SelectCandidate(characterName);
         }
     }
     public override void OnPointerExit(PointerEventData pointerEventData)
     {
-        base.OnPointerExit(pointerEventData);
-        SetColor(Color.white);
+        if (isCandidate) base.OnPointerExit(pointerEventData);
     }
 
     public override void SetImage(UserType type, string name)
@@ -46,5 +45,11 @@ public class CharIcon : UIIcon, IPointerDownHandler, IPointerClickHandler
         base.SetImage(type, name);
         characterName = name;
         this.type = type;
+    }
+
+    public void SetIsDead(bool isDead)
+    {
+        if (isDead) SetColor(Color.gray);
+        else SetColor(Color.white);
     }
 }

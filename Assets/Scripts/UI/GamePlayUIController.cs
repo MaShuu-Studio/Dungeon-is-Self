@@ -105,14 +105,6 @@ public class GamePlayUIController : MonoBehaviour
 
     void Update()
     {
-        for (int i = 0; i < characterToggles.Count; i++)
-        {
-            string name = (type == UserType.Defender) ? DefenderController.Instance.selectedMonsterCandidates[i] : OffenderController.Instance.selectedCharacterCandidates[i];
-            string enemyName = (type == UserType.Defender) ? OffenderController.Instance.selectedCharacterCandidates[i] : DefenderController.Instance.selectedMonsterCandidates[i];
-            userRosters[i].SetImage(type, name);
-            enemyRosters[i].SetImage(enemyType, enemyName);
-        }
-
         if (progress != GameController.Instance.currentProgress)
         {
             ChangeView();
@@ -139,6 +131,26 @@ public class GamePlayUIController : MonoBehaviour
         progress = GameController.Instance.currentProgress;
     }
 
+    private void UpdateRosterStatus()
+    {
+        for (int i = 0; i < userRosters.Count; i++)
+        {
+            string name = (type == UserType.Defender) ? DefenderController.Instance.selectedMonsterCandidates[i] : OffenderController.Instance.selectedCharacterCandidates[i];
+            string enemyName = (type == UserType.Defender) ? OffenderController.Instance.selectedCharacterCandidates[i] : DefenderController.Instance.selectedMonsterCandidates[i];
+            
+            userRosters[i].SetImage(type, name);
+            enemyRosters[i].SetImage(enemyType, enemyName);
+
+            if (progress != GameProgress.ReadyGame)
+            {
+                bool isCharDead = (type == UserType.Defender) ? DefenderController.Instance.isDead[i] : OffenderController.Instance.isDead[i];
+                bool isEnemyDead = (type == UserType.Defender) ? OffenderController.Instance.isDead[i] : DefenderController.Instance.isDead[i];
+                userRosters[i].SetIsDead(isCharDead);
+                enemyRosters[i].SetIsDead(isEnemyDead);
+            }
+        }
+    }
+
     public void ChangeView()
     {
         readyButton.SetButtonInteract(true);
@@ -146,6 +158,7 @@ public class GamePlayUIController : MonoBehaviour
         turnText.gameObject.SetActive(false);
         SetProgress();
         ClearCharacters();
+        UpdateRosterStatus();
         foreach (GameObject view in gameViews) view.SetActive(false);
 
         switch (GameController.Instance.currentProgress)
@@ -169,7 +182,8 @@ public class GamePlayUIController : MonoBehaviour
                     offenderSpecialView.SetActive(false);
                     // 유닛 선택시 Defender에서 몬스터가 죽었는지 체크해야함.
                     // 기존에 선택했던 유닛부터 다시 세팅할 수 있게 해줘야 함.
-                    characterToggles[0].toggle.isOn = true;
+                    int index = DefenderController.Instance.GetFirstAliveMonster();
+                    characterToggles[index].toggle.isOn = true;
                 }
                 else
                 {
@@ -179,12 +193,15 @@ public class GamePlayUIController : MonoBehaviour
                     offenderSpecialView.SetActive(true);
                     // 유닛 선택시 Offender에서 유닛이 죽었는지 체크해야 함.
                     // 기존에 선택했던 유닛부터 다시 세팅할 수 있게 해줘야 함.
-                    characterToggles[0].toggle.isOn = true;
+                    int index = OffenderController.Instance.GetFirstAliveCharacter();
+                    characterToggles[index].toggle.isOn = true;
 
-                    for (int i = 0; i < 3; i++)
+                    List<int> aliveList = OffenderController.Instance.GetAliveCharacterList();
+                    // 죽은애 알아서 잘 찾아갈 수 있게 조정
+                    for (int i = 0; i < aliveList.Count; i++)
                     {
-                        OffenderController.Instance.SelectCharacter(i);
-                        SetOffenderRoster(i);
+                        OffenderController.Instance.SelectCharacter(aliveList[i]);
+                        SetOffenderRoster(aliveList[i]);
                     }
                     OffenderController.Instance.SelectCharacter(0);
                 }
@@ -192,7 +209,9 @@ public class GamePlayUIController : MonoBehaviour
                 for (int i = 0; i < characterToggles.Count; i++)
                 {
                     string name = (type == UserType.Defender) ? DefenderController.Instance.selectedMonsterCandidates[i] : OffenderController.Instance.selectedCharacterCandidates[i];
+                    bool isCharDead = (type == UserType.Defender) ? DefenderController.Instance.isDead[i] : OffenderController.Instance.isDead[i];
                     characterToggles[i].SetFace(type, name);
+                    characterToggles[i].CharacterDead(isCharDead);
                 }
                 SetAllDice();
                 break;

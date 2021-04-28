@@ -201,7 +201,11 @@ namespace GameControl
                         if (isMonster == false)
                         {
                             int restHp = DefenderController.Instance.MonsterDamaged(defenderUnit % 10, charSkills[keys[i]]);
-                            if (restHp <= 0) MonsterDefeated();
+                            if (restHp <= 0)
+                            {
+                                DefenderController.Instance.Dead(defenderUnit);
+                                DefenderDefeated();
+                            }
                         }
                         else
                         {
@@ -240,10 +244,10 @@ namespace GameControl
             else if (userType == UserType.Offender) ReadyTurn(UserType.Defender, true);
         }
 
-        public void MonsterDefeated()
+        private void DefenderDefeated()
         {
             // 전투가 넘어가기전에 애니메이션 등
-            Debug.Log("Monster Defeated");
+            Debug.Log("Defender Defeated");
 
             List<int> keys = animationEnd.Keys.ToList<int>();
             for (int i = 0; i < animationEnd.Count; i++)
@@ -260,6 +264,12 @@ namespace GameControl
 
             if (round >= 3) SceneController.Instance.ChangeScene("Main"); // 씬 이동 임시
             else ReadyRound();
+        }
+
+        private void OffenderDefeated()
+        {
+            // 전투가 넘어가기전에 애니메이션 등
+            Debug.Log("Offender Defeated");
         }
     }
 }

@@ -7,6 +7,7 @@ using Data;
 public class CharacterToggle : MonoBehaviour
 {
     [SerializeField] private GamePlayUIController gamePlayUI;
+    [SerializeField] private GameObject deadIcon;
     [SerializeField] private Image face;
     [SerializeField] private int index;
     public Toggle toggle { get; private set; }
@@ -14,6 +15,7 @@ public class CharacterToggle : MonoBehaviour
 
     private void Awake()
     {
+        deadIcon.SetActive(false);
         frame = GetComponent<Image>();
         toggle = GetComponent<Toggle>();
         toggle.onValueChanged.AddListener(SetSkillTree); 
@@ -42,6 +44,16 @@ public class CharacterToggle : MonoBehaviour
         if (b)
         {
             gamePlayUI.SetSkillTree(index);
+        }
+    }
+
+    public void CharacterDead(bool isDead)
+    {
+        if (isDead)
+        {
+            toggle.interactable = false;
+            deadIcon.SetActive(true);
+            SetColor(Color.gray);
         }
     }
 }

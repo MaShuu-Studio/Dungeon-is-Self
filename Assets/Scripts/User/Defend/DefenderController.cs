@@ -31,6 +31,7 @@ namespace GameControl
         #endregion
 
         public string[] selectedMonsterCandidates { get; private set; } = new string[6];
+        public List<bool> isDead { get; private set; } = new List<bool>();
         public List<Monster> monsters { get; private set; } = new List<Monster>();
 
         private List<MonsterSkill[]> dices = new List<MonsterSkill[]>();
@@ -49,6 +50,7 @@ namespace GameControl
             foreach (string name in selectedMonsterCandidates)
             {
                 monsters.Add(MonsterDatabase.Instance.GetMonster(name));
+                isDead.Add(false);
             }
 
 
@@ -92,8 +94,18 @@ namespace GameControl
         #endregion
 
         #region Ready Round
+        public int GetFirstAliveMonster()
+        {
+            int i = 0;
+            for (; i < monsters.Count; i++)
+            {
+                if (isDead[i] == false) break;
+            }
+            return i;
+        }
         public void SelectMonster(int index)
         {
+            if (isDead[index]) return;
             monsterIndex = index;
         }
 
@@ -144,6 +156,8 @@ namespace GameControl
             GameController.Instance.SelectUnit(UserType.Defender, unit);
         }
         #endregion
+
+        #region Play Round
         public MonsterSkill GetSelectedDice(int index)
         {
             if (dices.Count <= monsterIndex) return null;
@@ -196,5 +210,12 @@ namespace GameControl
         {
             attackSkillTurn = attackSkills[monsterIndex].turn;
         }
+
+        public void Dead(int index)
+        {
+            isDead[index % 10] = true;
+        }
+
+        #endregion
     }
 }
