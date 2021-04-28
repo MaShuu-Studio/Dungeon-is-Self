@@ -1559,7 +1559,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 80a7b5cfd73e53b479ce88fdaee8b1fe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gamePlayUI: {fileID: 1303942447}
   deadIcon: {fileID: 741571891}
   face: {fileID: 1922211855}
   index: 5
@@ -3294,7 +3293,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 80a7b5cfd73e53b479ce88fdaee8b1fe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gamePlayUI: {fileID: 1303942447}
   deadIcon: {fileID: 91020494}
   face: {fileID: 196602288}
   index: 4
@@ -4895,7 +4893,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 80a7b5cfd73e53b479ce88fdaee8b1fe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gamePlayUI: {fileID: 1303942447}
   deadIcon: {fileID: 1924426455}
   face: {fileID: 613111803}
   index: 2
@@ -7691,7 +7688,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 80a7b5cfd73e53b479ce88fdaee8b1fe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gamePlayUI: {fileID: 1303942447}
   deadIcon: {fileID: 107058906}
   face: {fileID: 101339986}
   index: 0
@@ -10077,7 +10073,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 80a7b5cfd73e53b479ce88fdaee8b1fe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gamePlayUI: {fileID: 1303942447}
   deadIcon: {fileID: 738242069}
   face: {fileID: 1777678324}
   index: 1
@@ -13534,7 +13529,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 80a7b5cfd73e53b479ce88fdaee8b1fe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gamePlayUI: {fileID: 1303942447}
   deadIcon: {fileID: 1314134558}
   face: {fileID: 2002539782}
   index: 3

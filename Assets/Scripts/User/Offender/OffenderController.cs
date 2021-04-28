@@ -273,18 +273,6 @@ namespace GameControl
 
             return upgradableSkills;
         }
-        /*public void SetBench(string name)
-        {
-            if (bench.Count >= 3) return;
-            else bench.Add(name);
-        }
-        
-        public void ResetDice(int n)
-        {
-            character[n].dice.RemoveRange(0, 6);
-        }
-
-        
 
         public void Dead(int index)
         {
