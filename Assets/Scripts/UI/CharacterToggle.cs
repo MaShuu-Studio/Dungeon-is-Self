@@ -6,7 +6,6 @@ using Data;
 
 public class CharacterToggle : MonoBehaviour
 {
-    [SerializeField] private GamePlayUIController gamePlayUI;
     [SerializeField] private GameObject deadIcon;
     [SerializeField] private Image face;
     [SerializeField] private int index;
@@ -43,7 +42,7 @@ public class CharacterToggle : MonoBehaviour
     {
         if (b)
         {
-            gamePlayUI.SetSkillTree(index);
+            GamePlayUIController.Instance.SetSkillTree(index);
         }
     }
 

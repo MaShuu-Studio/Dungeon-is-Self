@@ -7,6 +7,11 @@ using Data;
 public class AttackSkillIcon : SkillIcon
 {
     [SerializeField] private int index;
+    protected override void Start()
+    {
+        base.Start();
+        isSkill = false;
+    }
     public override void OnPointerClick(PointerEventData pointerEventData)
     {
         base.OnPointerClick(pointerEventData);

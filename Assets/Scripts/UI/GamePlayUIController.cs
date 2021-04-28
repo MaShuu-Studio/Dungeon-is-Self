@@ -321,7 +321,6 @@ public class GamePlayUIController : MonoBehaviour
     public void SetSkillTree(int index)
     {
         ClearSkillTree();
-        SetAllDice();
 
         // 자동화 코드.
         // 자동화가 아니라 프리팹을 활용해야할지는 고민이 좀 필요할 듯
@@ -334,7 +333,7 @@ public class GamePlayUIController : MonoBehaviour
             DefenderController.Instance.SelectMonster(selectedCharacterIndex);
 
             name = DefenderController.Instance.monsters[index].name;
-            List<MonsterSkill> dices = SkillDatabase.Instance.GetMonsterDices(name);
+            List<MonsterSkill> diceSkills = SkillDatabase.Instance.GetMonsterDices(name);
 
             List<GameObject>[] diceTierList = new List<GameObject>[3];
             for (int i = 0; i < 3; i++)
@@ -342,12 +341,12 @@ public class GamePlayUIController : MonoBehaviour
 
             for (int i = 0; i < dices.Count; i++)
             {
-                int tier = dices[i].tier;
+                int tier = diceSkills[i].tier;
                 GameObject obj = Instantiate(diceSkillIconPrefab);
                 obj.transform.SetParent(defenderSkillTiers[tier - 1]);
                 obj.transform.localScale = new Vector3(1, 1, 1);
                 SkillIcon diceIcon = obj.GetComponent<SkillIcon>();
-                diceIcon.SetSkill(dices[i], (GameController.Instance.round >= tier));
+                diceIcon.SetSkill(diceSkills[i], (GameController.Instance.round >= tier));
 
                 diceTierList[tier - 1].Add(obj);
                 diceSkillIcons.Add(diceIcon);
@@ -377,21 +376,21 @@ public class GamePlayUIController : MonoBehaviour
             OffenderController.Instance.SelectCharacter(selectedCharacterIndex);
 
             name = OffenderController.Instance.characters[index]._role;
-            List<CharacterSkill> dices = SkillDatabase.Instance.GetCharacterDices(name);
+            List<CharacterSkill> diceSkills = SkillDatabase.Instance.GetCharacterDices(name);
 
             int maxTier = OffenderController.Instance.GetMaxTier();
             List<GameObject>[] diceTierList = new List<GameObject>[maxTier];
             for (int i = 0; i < maxTier; i++)
                 diceTierList[i] = new List<GameObject>();
 
-            for (int i = 0; i < dices.Count; i++)
+            for (int i = 0; i < diceSkills.Count; i++)
             {
-                int tier = dices[i].tier;
+                int tier = diceSkills[i].tier;
                 GameObject obj = Instantiate(diceSkillIconPrefab);
                 obj.transform.SetParent(offenderSkillTree);
                 obj.transform.localScale = new Vector3(1, 1, 1);
                 SkillIcon diceIcon = obj.GetComponent<SkillIcon>();
-                diceIcon.SetSkill(dices[i], OffenderController.Instance.IsSkillGotten(i));
+                diceIcon.SetSkill(diceSkills[i], OffenderController.Instance.IsSkillGotten(i));
 
                 diceTierList[tier - 1].Add(obj);
                 diceSkillIcons.Add(diceIcon);
@@ -411,6 +410,8 @@ public class GamePlayUIController : MonoBehaviour
 
             UpdateSkillPoint();
         }
+
+        SetAllDice();
     }
 
     private void ClearSkillTree()
@@ -431,6 +432,7 @@ public class GamePlayUIController : MonoBehaviour
 
     public void SetAllDice()
     {
+        selectedDiceIndex = 0;
         for (int i = 0; i < 6; i++)
         {
             SetDiceOnce();
