@@ -115,6 +115,8 @@ namespace GameControl
                 }
                 animationEnd.Clear();
                 currentProgress = GameProgress.ReadyRound;
+                
+                if (userType == UserType.Defender) AIBot.Instance.LearnSkill();
             }
         }
 

@@ -83,5 +83,22 @@ namespace GameControl
                 DefenderController.Instance.SetRoster();
             }
         }
+
+        public void LearnSkill()
+        {
+            for (int i = 0; i < 6; i++)
+            {
+                OffenderController.Instance.SelectCharacter(i);
+                Character c = OffenderController.Instance.characters[i];
+                List<int> upgradableSkill = new List<int>();
+
+                while (OffenderController.Instance.skillPoints[i] > 0)
+                {
+                    upgradableSkill = OffenderController.Instance.GetUpgradableSkill();
+                    int index = UnityEngine.Random.Range(0, upgradableSkill.Count);
+                    OffenderController.Instance.LearnSkill(c.mySkills[upgradableSkill[index]]);
+                }
+            }
+        }
     }
 }
