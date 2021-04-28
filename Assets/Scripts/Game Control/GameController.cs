@@ -90,7 +90,7 @@ namespace GameControl
         {
             // Defender, Offender의 Init (selected Candidates에서 목록 뽑아옴)
             // Init 전에 Candidate 생성
-            
+
             AIBot.Instance.StartGame();
 
             /*if (userType == UserType.Defender) DefenderController.Instance.Init();
@@ -126,14 +126,12 @@ namespace GameControl
                     offenderUnits[i] = units[i] + 10;
                 }
             }
-
-            GamePlayUIController.Instance.ShowSelectedRoster(units);
         }
 
         public void StartRound()
         {
-                // 로스터 세팅
-                // 주사위 세팅
+            // 로스터 세팅
+            // 주사위 세팅
             AIBot.Instance.SetRoster();
 
             currentProgress = GameProgress.PlayRound;
@@ -146,8 +144,16 @@ namespace GameControl
             foreach (int key in offenderUnits)
                 animationEnd.Add(key, true);
 
-            if (userType == UserType.Defender) GamePlayUIController.Instance.ShowSelectedRoster(defenderUnit);
-            else if (userType == UserType.Offender) GamePlayUIController.Instance.ShowSelectedRoster(offenderUnits);
+            if (userType == UserType.Defender)
+            {
+                GamePlayUIController.Instance.ShowSelectedRoster(defenderUnit);
+                GamePlayUIController.Instance.ShowSelectedRoster(offenderUnits, true);
+            }
+            else if (userType == UserType.Offender)
+            {
+                GamePlayUIController.Instance.ShowSelectedRoster(offenderUnits);
+                GamePlayUIController.Instance.ShowSelectedRoster(defenderUnit, true);
+            }
 
             NextTurn();
         }

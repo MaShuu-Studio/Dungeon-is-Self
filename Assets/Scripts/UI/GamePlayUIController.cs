@@ -9,6 +9,7 @@ public class GamePlayUIController : MonoBehaviour
 {
     #region Value
     private UserType type;
+    private UserType enemyType;
     private GameProgress progress;
 
     [Header("COMMONS")]
@@ -18,7 +19,9 @@ public class GamePlayUIController : MonoBehaviour
 
     [Space]
     [SerializeField] private List<CharIcon> userRosters;
+    [SerializeField] private List<CharIcon> enemyRosters;
     [SerializeField] private List<RectTransform> rosterSelected;
+    [SerializeField] private List<RectTransform> enemyRosterSelected;
 
     [Header("READY GAME")]
     [SerializeField] private Transform candidatesTransform;
@@ -105,7 +108,9 @@ public class GamePlayUIController : MonoBehaviour
         for (int i = 0; i < characterToggles.Count; i++)
         {
             string name = (type == UserType.Defender) ? DefenderController.Instance.selectedMonsterCandidates[i] : OffenderController.Instance.selectedCharacterCandidates[i];
+            string enemyName = (type == UserType.Defender) ? OffenderController.Instance.selectedCharacterCandidates[i] : DefenderController.Instance.selectedMonsterCandidates[i];
             userRosters[i].SetImage(type, name);
+            enemyRosters[i].SetImage(enemyType, enemyName);
         }
 
         if (progress != GameController.Instance.currentProgress)
@@ -124,6 +129,9 @@ public class GamePlayUIController : MonoBehaviour
     public void SetUserType()
     {
         type = GameController.Instance.userType;
+
+        if (type == UserType.Defender) enemyType = UserType.Offender;
+        else enemyType = UserType.Defender;
     }
 
     public void SetProgress()
@@ -134,6 +142,8 @@ public class GamePlayUIController : MonoBehaviour
     public void ChangeView()
     {
         readyButton.SetButtonInteract(true);
+        roundText.gameObject.SetActive(false);
+        turnText.gameObject.SetActive(false);
         SetProgress();
         ClearCharacters();
         foreach (GameObject view in gameViews) view.SetActive(false);
@@ -147,6 +157,7 @@ public class GamePlayUIController : MonoBehaviour
                 break;
 
             case GameProgress.ReadyRound:
+                roundText.gameObject.SetActive(true);
                 roundText.text = "ROUND " + GameController.Instance.round.ToString();
                 BlindSelectedRoster();
                 gameViews[1].SetActive(true);
@@ -187,6 +198,7 @@ public class GamePlayUIController : MonoBehaviour
                 break;
 
             case GameProgress.PlayRound:
+                turnText.gameObject.SetActive(true);
                 gameViews[2].SetActive(true);
                 playRoundView.SetActive(true);
                 SetCharacters();
@@ -481,7 +493,7 @@ public class GamePlayUIController : MonoBehaviour
     }
 
     public void UpdateSkillPoint()
-    {        
+    {
         offenderSkillPointText.text = "SKILL POINT: " + OffenderController.Instance.GetSkillPoint().ToString();
     }
     public void SelectDice(int index)
@@ -673,27 +685,61 @@ public class GamePlayUIController : MonoBehaviour
     private void BlindSelectedRoster()
     {
         foreach (RectTransform rect in rosterSelected) rect.gameObject.SetActive(false);
+        foreach (RectTransform rect in enemyRosterSelected) rect.gameObject.SetActive(false);
     }
-    public void ShowSelectedRoster(int[] indexes)
+    public void ShowSelectedRoster(int[] indexes, bool isEnemy = false)
     {
-        int i = 0;
-        for (; i < indexes.Length; i++)
+        if (isEnemy == false)
         {
-            rosterSelected[i].transform.SetParent(userRosters[indexes[i] % 10].transform);
-            rosterSelected[i].anchoredPosition = new Vector2(0, 0);
-            rosterSelected[i].gameObject.SetActive(true);
+            int i = 0;
+            for (; i < indexes.Length; i++)
+            {
+                rosterSelected[i].transform.SetParent(userRosters[indexes[i] % 10].transform);
+                rosterSelected[i].anchoredPosition = new Vector2(0, 0);
+                rosterSelected[i].gameObject.SetActive(true);
+            }
+            for (; i < rosterSelected.Count; i++)
+                rosterSelected[i].gameObject.SetActive(false);
         }
-    }
-    public void ShowSelectedRoster(int index)
-    {
-        rosterSelected[0].transform.SetParent(userRosters[index % 10].transform);
-        rosterSelected[0].anchoredPosition = new Vector2(0, 0);
-        rosterSelected[0].gameObject.SetActive(true);
+        else
+        {
+            int i = 0;
+            for (; i < indexes.Length; i++)
+            {
+                enemyRosterSelected[i].transform.SetParent(enemyRosters[indexes[i] % 10].transform);
+                enemyRosterSelected[i].anchoredPosition = new Vector2(0, 0);
+                enemyRosterSelected[i].gameObject.SetActive(true);
+            }
+            for (; i < enemyRosterSelected.Count; i++)
+                enemyRosterSelected[i].gameObject.SetActive(false);
+        }
 
-        for (int i = 1; i < rosterSelected.Count; i++)
+    }
+    public void ShowSelectedRoster(int index, bool isEnemy = false)
+    {
+        if (isEnemy == false)
         {
-            rosterSelected[i].gameObject.SetActive(false);
+            rosterSelected[0].transform.SetParent(userRosters[index % 10].transform);
+            rosterSelected[0].anchoredPosition = new Vector2(0, 0);
+            rosterSelected[0].gameObject.SetActive(true);
+
+            for (int i = 1; i < rosterSelected.Count; i++)
+            {
+                rosterSelected[i].gameObject.SetActive(false);
+            }
         }
+        else
+        {
+            enemyRosterSelected[0].transform.SetParent(enemyRosters[index % 10].transform);
+            enemyRosterSelected[0].anchoredPosition = new Vector2(0, 0);
+            enemyRosterSelected[0].gameObject.SetActive(true);
+
+            for (int i = 1; i < enemyRosterSelected.Count; i++)
+            {
+                enemyRosterSelected[i].gameObject.SetActive(false);
+            }
+        }
+
     }
     #endregion
 }
