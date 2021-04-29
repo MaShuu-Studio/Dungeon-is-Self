@@ -25,7 +25,7 @@ namespace Data
             this.name = name;
             this.turn = turn;
             this.damage = damage;
-            this.prior = null;
+            this.prior = new List<int>();
             
         }
     }

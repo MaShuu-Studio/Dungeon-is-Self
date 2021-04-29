@@ -122,7 +122,7 @@ namespace GameControl
                     AIBot.Instance.LearnSkill();
                     AIBot.Instance.OffenderSetDice();
                 }
-                else AIBot.Instance.SetDice();
+                else AIBot.Instance.DefenderSetDice();
             }
         }
 

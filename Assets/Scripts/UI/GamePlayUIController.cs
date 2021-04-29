@@ -398,7 +398,7 @@ public class GamePlayUIController : MonoBehaviour
             name = OffenderController.Instance.characters[index]._role;
             List<CharacterSkill> diceSkills = SkillDatabase.Instance.GetCharacterDices(name);
 
-            int maxTier = OffenderController.Instance.GetMaxTier();
+            int maxTier = OffenderController.Instance.GetMaxTier() + 1;
             List<GameObject>[] diceTierList = new List<GameObject>[maxTier];
             for (int i = 0; i < maxTier; i++)
                 diceTierList[i] = new List<GameObject>();
@@ -412,7 +412,7 @@ public class GamePlayUIController : MonoBehaviour
                 SkillIcon diceIcon = obj.GetComponent<SkillIcon>();
                 diceIcon.SetSkill(diceSkills[i], OffenderController.Instance.IsSkillGotten(i));
 
-                diceTierList[tier - 1].Add(obj);
+                diceTierList[tier].Add(obj);
                 diceSkillIcons.Add(diceIcon);
             }
 

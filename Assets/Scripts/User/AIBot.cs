@@ -93,12 +93,12 @@ namespace GameControl
                 {
                     upgradableSkill = OffenderController.Instance.GetUpgradableSkill();
                     int index = UnityEngine.Random.Range(0, upgradableSkill.Count);
-                    OffenderController.Instance.LearnSkill(c.mySkills[upgradableSkill[index]]);
+                    int isLearn = OffenderController.Instance.LearnSkill(c.mySkills[upgradableSkill[index]]);
                 }
             }
         }
 
-        public void SetDice()
+        public void DefenderSetDice()
         {
             for (int i = 0; i < 6; i++)
             {
@@ -134,17 +134,15 @@ namespace GameControl
 
                 for (int j = 0; j < 6; j++)
                 {
-                    //Debug.Log(usableSkill[n]);
-                    while (true)
+                    if (j < 2) OffenderController.Instance.SetDice(j, c.mySkills[usableSkill[0]]);
+                    else
                     {
-                        int n = UnityEngine.Random.Range(0, usableSkill.Count);
-                        
-                        if (j < 2)
+                        //Debug.Log(usableSkill[n]);
+                        while (true)
                         {
-                            OffenderController.Instance.SetDice(j, c.mySkills[usableSkill[0]]);
-                            break;
+                            int n = UnityEngine.Random.Range(0, usableSkill.Count);
+                            if (OffenderController.Instance.SetDice(j, c.mySkills[usableSkill[n]]) == 0) break;
                         }
-                        if (OffenderController.Instance.SetDice(j, c.mySkills[usableSkill[n]]) == 0) break;
                     }
                     //Debug.Log(c._role);
                 }

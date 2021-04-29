@@ -57,7 +57,7 @@ namespace GameControl
                 List<bool> list = new List<bool>();
                 for (int i = 0; i < c.mySkills.Count; i++)
                 {
-                    if (c.mySkills[i].tier == 1) list.Add(true);
+                    if (c.mySkills[i].tier <= 1) list.Add(true);
                     else list.Add(false);
                 }
                 gottenSkills.Add(list);
@@ -163,10 +163,7 @@ namespace GameControl
                 if (skillPoints[characterIndex] <= 0) return -1;
                 foreach (int i in skill.prior)
                 {
-                    if (!IsSkillGotten(i % 100)) 
-                    {
-                        return -2;
-                    }
+                    if (!IsSkillGotten(i % 100)) return -2;
                 }
                 skillPoints[characterIndex] -= 1;
                 gottenSkills[characterIndex][index] = true;
@@ -254,22 +251,16 @@ namespace GameControl
         public List<int> GetUpgradableSkill()
         {
             List<int> upgradableSkills = new List<int>();
-            bool check = false;
+            bool check;
             for (int i = 0; i < characters[characterIndex].mySkills.Count; i++)
             {
                 if (!IsSkillGotten(i))
                 {
-                    
+                    check = true;
                     foreach (int j in characters[characterIndex].mySkills[i].prior)
-                    {
-                        if (IsSkillGotten(j % 100)) check = true;
-                        else { check = false; break; }
-                    }
-                    if (check == true) 
-                    {
-                        upgradableSkills.Add(i);
-                    }
-                } 
+                        if (IsSkillGotten(j % 100) == false) check = false;
+                    if (check == true) upgradableSkills.Add(i);
+                }
             }
 
             return upgradableSkills;
