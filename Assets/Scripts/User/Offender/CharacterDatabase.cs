@@ -38,9 +38,9 @@ namespace Data
         // Update is called once per frame
         private void InitializeDataBase()
         {
-            characterDB.Add(new Character("FIGHTER"));
-            characterDB.Add(new Character("MARKSMAN"));
-            characterDB.Add(new Character("MAGE"));
+            characterDB.Add(new Character("KNIGHT", 1));
+            characterDB.Add(new Character("MARKSMAN", 2));
+            characterDB.Add(new Character("MAGE", 3));
         }
 
         public Character GetCharacter(string name)

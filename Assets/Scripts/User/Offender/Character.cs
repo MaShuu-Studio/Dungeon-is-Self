@@ -6,22 +6,23 @@ namespace Data
 {
     public class Character
     {
+        public int id;
         public string _role { get; private set; }
-        public List<CharacterSkill> mySkills { get; private set; } = new List<CharacterSkill>();
-        public Character(string role)
+        public List<CharacterSkill> mySkills { get; private set; }
+        public Character(string role, int id)
         {
             _role = role;
-            if(_role == "FIGHTER") {for(int i = 10100; i < 10112; i++) {mySkills.Add(SkillDatabase.Instance.GetCharacterSkill(i));}}
-            else if(_role == "MARKSMAN") {for(int i = 10200; i < 10210; i++) {mySkills.Add(SkillDatabase.Instance.GetCharacterSkill(i));}}
-            else {for(int i = 10300; i < 10312; i++) {mySkills.Add(SkillDatabase.Instance.GetCharacterSkill(i));}}
+            this.id = id;
+
+            mySkills = SkillDatabase.Instance.GetCharacterAllSkills(id);
         }
 
         public Character(Character character)
         {
             _role = character._role;
-            if (_role == "FIGHTER") { for (int i = 10100; i < 10112; i++) { mySkills.Add(SkillDatabase.Instance.GetCharacterSkill(i)); } }
-            else if (_role == "MARKSMAN") { for (int i = 10200; i < 10210; i++) { mySkills.Add(SkillDatabase.Instance.GetCharacterSkill(i)); } }
-            else { for (int i = 10300; i < 10312; i++) { mySkills.Add(SkillDatabase.Instance.GetCharacterSkill(i)); } }
+            id = character.id;
+
+            mySkills = SkillDatabase.Instance.GetCharacterAllSkills(id);
         }
 
         public void SetBasicDice(ref CharacterSkill[] dice)
