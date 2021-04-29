@@ -24,6 +24,7 @@ public class GamePlayUIController : MonoBehaviour
     [SerializeField] private List<RectTransform> enemyRosterSelected;
 
     [Header("READY GAME")]
+    // 후보 선택
     [SerializeField] private Transform candidatesTransform;
     [SerializeField] private Transform selectedListTransform;
     [SerializeField] private RectTransform selectedArrow;
@@ -33,15 +34,19 @@ public class GamePlayUIController : MonoBehaviour
     private int selectedCandidateIndex = 0;
 
     [Header("READY ROUND")]
+    // 가장 기본 부분
     [SerializeField] private Text roundText;
     [SerializeField] private List<CharacterToggle> characterToggles;
 
+    [Space]
+    // 스킬트리의 바탕이 되는 부분
     [SerializeField] private GameObject defenderSkillTree;
     [SerializeField] private List<RectTransform> defenderSkillTiers;
     [SerializeField] private RectTransform offenderSkillTree;
     [SerializeField] private Text offenderSkillPointText;
 
     [Space]
+    // 주사위 설정
     [SerializeField] private GameObject diceSkillIconPrefab;
     private List<SkillIcon> diceSkillIcons = new List<SkillIcon>();
 
@@ -51,6 +56,9 @@ public class GamePlayUIController : MonoBehaviour
     [SerializeField] private SkillDescription description;
 
     [Space]
+    // 디펜더 유닛 추가 정보
+    [SerializeField] private Text monsterNameText;
+    [SerializeField] private Text monsterHpText;
     [SerializeField] private GameObject defenderSpecialView;
     [SerializeField] private List<SkillIcon> defenderAttackSkills;
     [SerializeField] private RectTransform selectedAttackSkill;
@@ -58,6 +66,7 @@ public class GamePlayUIController : MonoBehaviour
     [SerializeField] private Text costText;
 
     [Space]
+    // 공격자 유닛 추가 정보
     [SerializeField] private GameObject offenderSpecialView;
     [SerializeField] private List<RosterIcon> offenderRosters;
 
@@ -338,8 +347,10 @@ public class GamePlayUIController : MonoBehaviour
         if (type == UserType.Defender)
         {
             DefenderController.Instance.SelectMonster(selectedCharacterIndex);
-
-            name = DefenderController.Instance.monsters[index].name;
+            Monster monster = DefenderController.Instance.monsters[index];
+            name = monster.name;
+            monsterNameText.text = name;
+            monsterHpText.text = monster.hp.ToString();
             List<MonsterSkill> diceSkills = SkillDatabase.Instance.GetMonsterDices(name);
 
             List<GameObject>[] diceTierList = new List<GameObject>[3];
@@ -364,9 +375,11 @@ public class GamePlayUIController : MonoBehaviour
                 {
                     RectTransform rect = diceTierList[i][j].GetComponent<RectTransform>();
 
+                    float x = 0;
                     float y = 0;
-                    if (diceTierList[i].Count > 1) y = -1 * (j * 100 + j * (defenderSkillTiers[i].rect.height - diceTierList[i].Count * 100) / (diceTierList[i].Count - 1));
-                    rect.anchoredPosition = new Vector3(0, y, 0);
+                    if (j % 2 == 1) x = 110;
+                    if (diceTierList[i].Count > 1) y = -1 * (int)(j / 2) * (defenderSkillTiers[i].rect.height - 100) / ((diceTierList[i].Count >= 5) ? 2 : 1);
+                    rect.anchoredPosition = new Vector3(x, y, 0);
                 }
 
             List<MonsterSkill> attackSkills = SkillDatabase.Instance.GetMonsterAttackSkills(name, GameController.Instance.round);
@@ -549,7 +562,7 @@ public class GamePlayUIController : MonoBehaviour
     public void SelectAttackSkill(int index)
     {
         RectTransform rect = defenderAttackSkills[index].GetComponent<RectTransform>();
-        Vector3 pos = new Vector3(0, rect.anchoredPosition.y + 6.25f, 0);
+        Vector3 pos = new Vector3(rect.anchoredPosition.x + 6.25f, 0, 0);
         selectedAttackSkill.anchoredPosition = pos;
     }
 

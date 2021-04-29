@@ -88,6 +88,7 @@ namespace Data
             monSkillDB.Add(new MonsterSkill(21102, "DICE1-2", 5, 0));
             monSkillDB.Add(new MonsterSkill(21103, "DICE1-3", 5, 1));
             monSkillDB.Add(new MonsterSkill(21104, "DICE1-4", 5, 1));
+            monSkillDB.Add(new MonsterSkill(21104, "DICE1-5", 5, 1));
             monSkillDB.Add(new MonsterSkill(21201, "DICE2-1", 5, 2));
             monSkillDB.Add(new MonsterSkill(21202, "DICE2-2", 5, 2));
             monSkillDB.Add(new MonsterSkill(21203, "DICE2-3", 5, 3));
@@ -97,9 +98,9 @@ namespace Data
             #endregion
 
             #region Attack One
-            monSkillDB.Add(new MonsterSkill(22101, "SKILL1-1", 5, 0));
-            monSkillDB.Add(new MonsterSkill(23101, "SKILL1-2", 2, 0));
-            monSkillDB.Add(new MonsterSkill(23102, "SKILL1-3", 5, 0));
+            monSkillDB.Add(new MonsterSkill(22101, "SKILL1-1", 10, 0));
+            monSkillDB.Add(new MonsterSkill(23101, "SKILL1-2", 4, 0));
+            monSkillDB.Add(new MonsterSkill(23102, "SKILL1-3", 6, 0));
             #endregion
 
 
