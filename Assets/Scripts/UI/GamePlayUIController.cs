@@ -447,7 +447,13 @@ public class GamePlayUIController : MonoBehaviour
     public void ShowDescription(Skill skill)
     {
         if (skill == null) return;
-        description.SetDescription(skill.id, skill.name, "", "DESCRIPTION");
+        int dmg = -1;
+        if (skill.id / 10000 == 1)
+        {
+            CharacterSkill cs = skill as CharacterSkill;
+            dmg = cs.damage;
+        }
+        description.SetDescription(skill.id, skill.name, "", "DESCRIPTION", dmg);
     }
 
     public void SetAllDice()
