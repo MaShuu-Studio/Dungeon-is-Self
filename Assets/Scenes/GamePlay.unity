@@ -8828,8 +8828,8 @@ MonoBehaviour:
   - {fileID: 1790744633}
   - {fileID: 18280935}
   - {fileID: 1497340600}
-  offenderSkillTree: {fileID: 295478945}
-  offenderSkillTreeImage: {fileID: 1202167538}
+  offenderSkillTree: {fileID: 1202167538}
+  offenderSkillTreeRect: {fileID: 295478945}
   offenderSkillPointText: {fileID: 680346730}
   diceSkillIconPrefab: {fileID: 2218946278486695827, guid: 7b895ca00f075d04b9d927c72f085bc2,
     type: 3}

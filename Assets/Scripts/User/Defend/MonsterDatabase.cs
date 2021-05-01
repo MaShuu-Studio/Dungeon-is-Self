@@ -43,146 +43,161 @@ namespace Data
 
             #region Tier 1
             monsterDB.Add(new Monster(
-                1, "Minotaurs", 250, Element.NORMAL,
-                new List<string>()
+                201, 1, "미노타우르스", 250, Element.NORMAL,
+                new List<int>()
                 {
-                "SKILL1-1",
-                "SKILL1-2",
-                "SKILL1-3",
+                    22101,
+                    23101,
+                    24101,
                 },
-                new List<string>()
+                new List<int>()
                 {
-                "DICE1-1",
-                "DICE1-2",
-                "DICE1-4",
-                "DICE2-1",
-                "DICE2-2",
-                "DICE3-2",
+                    21101,
+                    21102,
+                    21103,
+                    21104,
+                    21104,
+                    21201,
+                    21202,
+                    21203,
+                    21301,
+                    21302,
+                    21303,
+                }));
+            monsterDB.Add(new Monster(
+                202, 1, "하피", 250, Element.NORMAL,
+                new List<int>()
+                {
+                    22101,
+                    23101,
+                    24101,
+                },
+                new List<int>()
+                {
+                    21101,
+                    21102,
+                    21103,
+                    21104,
+                    21104,
+                    21201,
+                    21202,
+                    21203,
+                    21301,
+                    21302,
+                    21303,
+                }));
+
+            monsterDB.Add(new Monster(
+                203, 1, "스네이크", 250, Element.NORMAL,
+                new List<int>()
+                {
+                    22101,
+                    23101,
+                    24101,
+                },
+                new List<int>()
+                {
+                    21101,
+                    21102,
+                    21103,
+                    21104,
+                    21104,
+                    21201,
+                    21202,
+                    21203,
+                    21301,
+                    21302,
+                    21303,
+                }));
+
+            monsterDB.Add(new Monster(
+                204, 1, "구미호", 250, Element.NORMAL,
+                new List<int>()
+                {
+                    22101,
+                    23101,
+                    24101,
+                },
+                new List<int>()
+                {
+                    21101,
+                    21102,
+                    21103,
+                    21104,
+                    21104,
+                    21201,
+                    21202,
+                    21203,
+                    21301,
+                    21302,
+                    21303,
+                }));
+
+            monsterDB.Add(new Monster(
+                205, 1, "도깨비", 250, Element.NORMAL,
+                new List<int>()
+                {
+                    22101,
+                    23101,
+                    24101,
+                },
+                new List<int>()
+                {
+                    21101,
+                    21102,
+                    21103,
+                    21104,
+                    21104,
+                    21201,
+                    21202,
+                    21203,
+                    21301,
+                    21302,
+                    21303,
                 }));
             /*
             monsterDB.Add(new Monster(
                 1, "Kraken", 35, Element.NORMAL,
-                new List<string>()
+                new List<int>()
                 {
-                "SKILL1-1",
-                "SKILL1-2",
-                "SKILL1-3",
+                    22101,
+                    23101,
+                    24101,
                 },
-                new List<string>()
+                new List<int>()
                 {
-                "DICE1-1",
-                "DICE1-2",
-                "DICE1-3",
-                "DICE1-4",
-                "DICE2-1",
-                "DICE2-2",
-                "DICE2-3",
-                "DICE3-1",
-                "DICE3-2",
-                "DICE3-3",
+                    21101,
+                    21102,
+                    21103,
+                    21104,
+                    21104,
+                    21201,
+                    21202,
+                    21203,
+                    21301,
+                    21302,
+                    21303,
                 }));
             */
-            monsterDB.Add(new Monster(
-                1, "Harpy", 250, Element.NORMAL,
-                new List<string>()
-                {
-                "SKILL1-1",
-                "SKILL1-2",
-                "SKILL1-3",
-                },
-                new List<string>()
-                {
-                "DICE1-2",
-                "DICE1-3",
-                "DICE1-4",
-                "DICE2-2",
-                "DICE2-3",
-                "DICE3-3",
-                }));
-
-            monsterDB.Add(new Monster(
-                1, "Snake", 250, Element.NORMAL,
-                new List<string>()
-                {
-                "SKILL1-1",
-                "SKILL1-2",
-                "SKILL1-3",
-                },
-                new List<string>()
-                {
-                "DICE1-1",
-                "DICE1-2",
-                "DICE1-3",
-                "DICE2-1",
-                "DICE2-2",
-                "DICE2-3",
-                "DICE3-1",
-                "DICE3-2",
-                "DICE3-3",
-                }));
-
-            monsterDB.Add(new Monster(
-                1, "Ninetail", 250, Element.NORMAL,
-                new List<string>()
-                {
-                "SKILL1-1",
-                "SKILL1-2",
-                "SKILL1-3",
-                },
-                new List<string>()
-                {
-                "DICE1-1",
-                "DICE1-2",
-                "DICE1-3",
-                "DICE1-4",
-                "DICE1-5",
-                "DICE2-1",
-                "DICE2-2",
-                "DICE2-3",
-                "DICE3-1",
-                "DICE3-2",
-                "DICE3-3",
-                }));
-
-            monsterDB.Add(new Monster(
-                1, "Dokkaebi", 250, Element.NORMAL,
-                new List<string>()
-                {
-                "SKILL1-1",
-                "SKILL1-2",
-                "SKILL1-3",
-                },
-                new List<string>()
-                {
-                "DICE1-1",
-                "DICE1-2",
-                "DICE1-3",
-                "DICE2-1",
-                "DICE2-2",
-                "DICE2-3",
-                "DICE3-1",
-                "DICE3-2",
-                "DICE3-3",
-                }));
             #endregion
         }
 
-        public Monster GetMonster(string name)
+        public Monster GetMonster(int id)
         {
-            Monster copiedMonster = new Monster(monsterDB.Find(monster => monster.name == name));
+            Monster copiedMonster = new Monster(monsterDB.Find(monster => monster.id == id));
             return copiedMonster;
         }
 
-        public void GetAllMonsterCandidatesList(ref List<string> monsterNames)
+        public void GetAllMonsterCandidatesList(ref List<int> monsterId)
         {
-            monsterNames.Clear();
+            monsterId.Clear();
             foreach (Monster monster in monsterDB)
             {
-                monsterNames.Add(monster.name);
+                monsterId.Add(monster.id);
             }
         }
 
-        public int GetMonsterHP(string name)
+        public int GetMonsterHP(int id)
         {
             return monsterDB.Find(monster => monster.name == name).hp;
         }

@@ -32,7 +32,7 @@ namespace GameControl
         {
             if (GameController.Instance.userType == UserType.Defender)
             {
-                List<string> offenderBot = new List<string>();
+                List<int> offenderBot = new List<int>();
                 CharacterDatabase.Instance.GetAllCharacterCandidatesList(ref offenderBot);
 
                 for (int i = 0; i < 6; i++)
@@ -43,7 +43,7 @@ namespace GameControl
             }
             else
             {
-                List<string> defenderBot = new List<string>();
+                List<int> defenderBot = new List<int>();
                 MonsterDatabase.Instance.GetAllMonsterCandidatesList(ref defenderBot);
                 for (int i = 0; i < 6; i++)
                 {

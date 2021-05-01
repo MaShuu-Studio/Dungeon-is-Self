@@ -31,7 +31,7 @@ namespace GameControl
         }
         #endregion
 
-        public string[] selectedCharacterCandidates { get; private set; } = new string[6];
+        public int[] selectedCharacterCandidates { get; private set; } = new int[6];
         public List<Character> characters { get; private set; } = new List<Character>();
         public List<bool> isDead { get; private set; } = new List<bool>();
         private List<List<bool>> gottenSkills = new List<List<bool>>();
@@ -48,9 +48,9 @@ namespace GameControl
             skillPoints.Clear();
             gottenSkills.Clear();
 
-            foreach (string name in selectedCharacterCandidates)
+            foreach (int id in selectedCharacterCandidates)
             {
-                Character c = CharacterDatabase.Instance.GetCharacter(name);
+                Character c = CharacterDatabase.Instance.GetCharacter(id);
                 characters.Add(c);
                 isDead.Add(false);
 
@@ -82,16 +82,16 @@ namespace GameControl
 
         #region Ready Game
 
-        public void SetCharacterCandidate(int num, string name)
+        public void SetCharacterCandidate(int num, int id)
         {
-            selectedCharacterCandidates[num] = name;
+            selectedCharacterCandidates[num] = id;
         }
 
         public bool CheckCadndidate()
         {
-            foreach (string s in selectedCharacterCandidates)
+            foreach (int id in selectedCharacterCandidates)
             {
-                if (string.IsNullOrEmpty(s)) return false;
+                if (id == -1) return false;
             }
             return true;
         }
@@ -100,7 +100,7 @@ namespace GameControl
         {
             for (int i = 0; i < selectedCharacterCandidates.Length; i++)
             {
-                selectedCharacterCandidates[i] = "";
+                selectedCharacterCandidates[i] = -1;
             }
         }
 
@@ -238,12 +238,12 @@ namespace GameControl
             return skills;
         }
 
-        public List<string> GetCharacterRoster()
+        public List<int> GetCharacterRoster()
         {
-            List<string> tmp = new List<string>();
+            List<int> tmp = new List<int>();
             foreach (int i in roster)
             {
-                tmp.Add(characters[i]._role);
+                tmp.Add(characters[i].id);
             }
             return tmp;
         }

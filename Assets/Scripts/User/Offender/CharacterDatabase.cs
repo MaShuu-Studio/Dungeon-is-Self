@@ -38,23 +38,23 @@ namespace Data
         // Update is called once per frame
         private void InitializeDataBase()
         {
-            characterDB.Add(new Character("KNIGHT", 1));
-            characterDB.Add(new Character("MARKSMAN", 2));
-            characterDB.Add(new Character("MAGE", 3));
+            characterDB.Add(new Character("기사", 101));
+            characterDB.Add(new Character("궁수", 102));
+            characterDB.Add(new Character("마법사", 103));
         }
 
-        public Character GetCharacter(string name)
+        public Character GetCharacter(int id)
         {
-            Character copiedCharacter = new Character(characterDB.Find(character => character._role == name));
+            Character copiedCharacter = new Character(characterDB.Find(character => character.id == id));
             return copiedCharacter;
         }
 
-        public void GetAllCharacterCandidatesList(ref List<string> characterRoles)
+        public void GetAllCharacterCandidatesList(ref List<int> characterRoles)
         {
             characterRoles.Clear();
             foreach (Character character in characterDB)
             {
-                characterRoles.Add(character._role);
+                characterRoles.Add(character.id);
             }
         }
     }

@@ -8,7 +8,7 @@ using UnityEngine.UI;
 public class CharIcon : UIIcon, IPointerDownHandler, IPointerClickHandler
 {
     [SerializeField] private bool isCandidate;
-    private string characterName;
+    private int characterId;
     private UserType type;
 
 
@@ -32,7 +32,7 @@ public class CharIcon : UIIcon, IPointerDownHandler, IPointerClickHandler
         if (isCandidate)
         {
             base.OnPointerClick(eventData);
-            GamePlayUIController.Instance.SelectCandidate(characterName);
+            GamePlayUIController.Instance.SelectCandidate(characterId);
         }
     }
     public override void OnPointerExit(PointerEventData pointerEventData)
@@ -40,10 +40,10 @@ public class CharIcon : UIIcon, IPointerDownHandler, IPointerClickHandler
         if (isCandidate) base.OnPointerExit(pointerEventData);
     }
 
-    public override void SetImage(UserType type, string name)
+    public override void SetImage(UserType type, int id)
     {
-        base.SetImage(type, name);
-        characterName = name;
+        base.SetImage(type, id);
+        characterId = id;
         this.type = type;
     }
 

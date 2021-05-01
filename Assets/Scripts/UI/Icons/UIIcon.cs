@@ -44,12 +44,12 @@ public class UIIcon : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, 
         SetColor(Color.white);
     }
 
-    public virtual void SetImage(GameControl.UserType type, string name)
+    public virtual void SetImage(GameControl.UserType type, int id)
     {
         string path = (type == GameControl.UserType.Defender) ? MonsterDatabase.facePath : CharacterDatabase.facePath;
 
-        if (string.IsNullOrEmpty(name)) name = "None";
-        Sprite sprite = Resources.Load<Sprite>(path + name);
+        if (string.IsNullOrEmpty(name)) id = -1;
+        Sprite sprite = Resources.Load<Sprite>(path + id.ToString());
 
         iconImage.sprite = sprite;
     }

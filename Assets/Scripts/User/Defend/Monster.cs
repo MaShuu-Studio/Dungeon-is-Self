@@ -8,22 +8,24 @@ namespace Data
     public enum Element { NORMAL }
     public class Monster
     {
+        public int id { get; private set; }
         public string name { get; private set; }
         public int hp { get; private set; }
         public Element weak { get; private set; }
-        public List<string> diceSkills { get; private set; }
-        public List<string> attackSkills { get; private set; }
+        public List<int> diceSkills { get; private set; }
+        public List<int> attackSkills { get; private set; }
         public string prior { get; private set; }
         public int tier { get; private set; }
 
-        public Monster(int tier, string name, int hp, Element weak, List<string> atkSkills, List<string> dices, string prior = "")
+        public Monster(int id, int tier, string name, int hp, Element weak, List<int> atkSkills, List<int> dices, string prior = "")
         {
+            this.id = id;
             this.name = name;
             this.hp = hp;
             this.weak = weak;
 
-            attackSkills = new List<string>(atkSkills);
-            diceSkills = new List<string>(dices);
+            attackSkills = new List<int>(atkSkills);
+            diceSkills = new List<int>(dices);
             // 각 몬스터의 특징을 가진 개별 스킬 이름 목록
             // TUPLE LIST로 받아도 괜찮을듯
 
@@ -32,12 +34,13 @@ namespace Data
         }
         public Monster(Monster monster)
         {
+            this.id = monster.id;
             this.name = monster.name;
             this.hp = monster.hp;
             this.weak = monster.weak;
 
-            attackSkills = new List<string>(monster.attackSkills);
-            diceSkills = new List<string>(monster.diceSkills);
+            attackSkills = new List<int>(monster.attackSkills);
+            diceSkills = new List<int>(monster.diceSkills);
             // 각 몬스터의 특징을 가진 개별 스킬 이름 목록
             // TUPLE LIST로 받아도 괜찮을듯
 
@@ -49,9 +52,9 @@ namespace Data
         {
             List<MonsterSkill> tier1dices = new List<MonsterSkill>();
 
-            foreach (string name in diceSkills)
+            foreach (int id in diceSkills)
             {
-                MonsterSkill skill = SkillDatabase.Instance.GetMonsterSkill(name);
+                MonsterSkill skill = SkillDatabase.Instance.GetMonsterSkill(id);
                 if (skill != null && skill.tier == 1)
                 {
                     tier1dices.Add(skill);
@@ -77,7 +80,7 @@ namespace Data
 
         public void Heal()
         {
-            hp = MonsterDatabase.Instance.GetMonsterHP(name);
+            hp = MonsterDatabase.Instance.GetMonsterHP(id);
         }
     }
 }

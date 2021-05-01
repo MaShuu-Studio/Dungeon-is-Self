@@ -30,7 +30,7 @@ namespace GameControl
         }
         #endregion
 
-        public string[] selectedMonsterCandidates { get; private set; } = new string[6];
+        public int[] selectedMonsterCandidates { get; private set; } = new int[6];
         public List<bool> isDead { get; private set; } = new List<bool>();
         public List<Monster> monsters { get; private set; } = new List<Monster>();
 
@@ -48,9 +48,9 @@ namespace GameControl
             monsters.Clear();
             isDead.Clear();
 
-            foreach (string name in selectedMonsterCandidates)
+            foreach (int id in selectedMonsterCandidates)
             {
-                monsters.Add(MonsterDatabase.Instance.GetMonster(name));
+                monsters.Add(MonsterDatabase.Instance.GetMonster(id));
                 isDead.Add(false);
             }
 
@@ -71,16 +71,16 @@ namespace GameControl
         }
 
         #region Ready Game
-        public void SetMonsterCandidate(int num, string name)
+        public void SetMonsterCandidate(int num, int id)
         {
-            selectedMonsterCandidates[num] = name;
+            selectedMonsterCandidates[num] = id;
         }
 
         public bool CheckCadndidate()
         {
-            foreach (string s in selectedMonsterCandidates)
+            foreach (int id in selectedMonsterCandidates)
             {
-                if (string.IsNullOrEmpty(s)) return false;
+                if (id == -1) return false;
             }
             return true;
         }
@@ -89,7 +89,7 @@ namespace GameControl
         {
             for (int i = 0; i < selectedMonsterCandidates.Length; i++)
             {
-                selectedMonsterCandidates[i] = "";
+                selectedMonsterCandidates[i] = -1;
             }
         }
         public void ResetDead()
@@ -244,7 +244,7 @@ namespace GameControl
         public List<MonsterSkill> GetUsableSkill(int round)
         {
             List<MonsterSkill> usableSkill = new List<MonsterSkill>();
-            usableSkill = SkillDatabase.Instance.GetMonsterDices(monsters[monsterIndex].name);
+            usableSkill = SkillDatabase.Instance.GetMonsterDices(monsters[monsterIndex].id);
             
             for (int i = 0; i < usableSkill.Count; i++)
             {

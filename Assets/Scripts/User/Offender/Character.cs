@@ -6,7 +6,7 @@ namespace Data
 {
     public class Character
     {
-        public int id;
+        public int id { get; private set; }
         public string _role { get; private set; }
         public List<CharacterSkill> mySkills { get; private set; }
         public Character(string role, int id)
@@ -14,7 +14,7 @@ namespace Data
             _role = role;
             this.id = id;
 
-            mySkills = SkillDatabase.Instance.GetCharacterAllSkills(id);
+            mySkills = new List<CharacterSkill>(SkillDatabase.Instance.GetCharacterAllSkills(id % 100));
         }
 
         public Character(Character character)
@@ -22,7 +22,7 @@ namespace Data
             _role = character._role;
             id = character.id;
 
-            mySkills = SkillDatabase.Instance.GetCharacterAllSkills(id);
+            mySkills = new List<CharacterSkill>(SkillDatabase.Instance.GetCharacterAllSkills(id % 100));
         }
 
         public void SetBasicDice(ref CharacterSkill[] dice)

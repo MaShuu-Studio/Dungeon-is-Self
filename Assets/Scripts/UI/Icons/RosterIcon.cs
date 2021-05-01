@@ -14,9 +14,9 @@ public class RosterIcon : UIIcon
         GamePlayUIController.Instance.SetOffenderRoster(index);
     }
 
-    public override void SetImage(GameControl.UserType type, string name)
+    public override void SetImage(GameControl.UserType type, int id)
     {
-        base.SetImage(type, name);
+        base.SetImage(type, id);
     }
 
     public void SetNumber(int n)

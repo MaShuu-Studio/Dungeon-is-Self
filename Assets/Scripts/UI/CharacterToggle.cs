@@ -25,11 +25,11 @@ public class CharacterToggle : MonoBehaviour
         else SetColor(Color.gray);
     }
 
-    public void SetFace(GameControl.UserType type, string name)
+    public void SetFace(GameControl.UserType type, int id)
     {
         string path = (type == GameControl.UserType.Defender) ? MonsterDatabase.facePath : CharacterDatabase.facePath;
 
-        Sprite sprite = Resources.Load<Sprite>(path + name);
+        Sprite sprite = Resources.Load<Sprite>(path + id.ToString());
         face.sprite = sprite;
     }
     private void SetColor(Color color)

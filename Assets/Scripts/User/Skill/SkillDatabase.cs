@@ -118,24 +118,20 @@ namespace Data
             #region Attack One
             monSkillDB.Add(new MonsterSkill(22101, "SKILL1-1", 10, 0));
             monSkillDB.Add(new MonsterSkill(23101, "SKILL1-2", 4, 0));
-            monSkillDB.Add(new MonsterSkill(23102, "SKILL1-3", 6, 0));
+            monSkillDB.Add(new MonsterSkill(24101, "SKILL1-3", 6, 0));
             #endregion
 
 
         }
 
-        public CharacterSkill GetCharacterSkill(string name)
-        {
-            return charSkillDB.Find(skill => skill.name == name);
-        }
         public CharacterSkill GetCharacterSkill(int id)
         {
             return charSkillDB.Find(skill => skill.id == id);
         }
 
-        public MonsterSkill GetMonsterSkill(string name)
+        public MonsterSkill GetMonsterSkill(int id)
         {
-            return monSkillDB.Find(skill => skill.name == name);
+            return monSkillDB.Find(skill => skill.id == id);
         }
 
         public List<CharacterSkill> GetCharacterAllSkills(int charNumber)
@@ -146,9 +142,9 @@ namespace Data
             return charSkillDB.FindAll(skill => skill.id/100 == charNumber);
         }
 
-        public List<CharacterSkill> GetCharacterDices(string name)
+        public List<CharacterSkill> GetCharacterDices(int id)
         {
-            Character character = CharacterDatabase.Instance.GetCharacter(name);
+            Character character = CharacterDatabase.Instance.GetCharacter(id);
 
             if(character == null) return null;
 
@@ -160,31 +156,31 @@ namespace Data
 
             return characterSkills;
         }
-        public List<MonsterSkill> GetMonsterDices(string name)
+        public List<MonsterSkill> GetMonsterDices(int id)
         {
-            Monster monster = MonsterDatabase.Instance.GetMonster(name);
+            Monster monster = MonsterDatabase.Instance.GetMonster(id);
 
             if (monster == null) return null;
 
             List<MonsterSkill> monsterSkills = new List<MonsterSkill>();
-            foreach (string skillName in monster.diceSkills)
+            foreach (int skillId in monster.diceSkills)
             {
-                monsterSkills.Add(GetMonsterSkill(skillName));
+                monsterSkills.Add(GetMonsterSkill(skillId));
             }
 
             return monsterSkills;
         }
 
-        public List<MonsterSkill> GetMonsterAttackSkills(string name, int round)
+        public List<MonsterSkill> GetMonsterAttackSkills(int id, int round)
         {
-            Monster monster = MonsterDatabase.Instance.GetMonster(name);
+            Monster monster = MonsterDatabase.Instance.GetMonster(id);
 
             if (monster == null) return null;
 
             List<MonsterSkill> monsterSkills = new List<MonsterSkill>();
-            foreach (string skillName in monster.attackSkills)
+            foreach (int skillId in monster.attackSkills)
             {
-                MonsterSkill skill = GetMonsterSkill(skillName);
+                MonsterSkill skill = GetMonsterSkill(skillId);
                 if (skill.tier <= round)
                     monsterSkills.Add(skill);
 
