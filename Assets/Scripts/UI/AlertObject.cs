@@ -1,9 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class AlertObject : MonoBehaviour
+public class AlertObject : MonoBehaviour, IPointerDownHandler
 {
     [SerializeField] private Text nameText;
     [SerializeField] private Text contentsText;
@@ -53,5 +54,15 @@ public class AlertObject : MonoBehaviour
         }
         
         gameObject.SetActive(false);
+    }
+
+    public void OnPointerDown(PointerEventData eventData)
+    {
+        if (coroutine != null)
+        {
+            StopCoroutine(coroutine);
+            coroutine = null;
+            gameObject.SetActive(false);
+        }
     }
 }
