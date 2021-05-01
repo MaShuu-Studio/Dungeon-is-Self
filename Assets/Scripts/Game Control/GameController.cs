@@ -75,7 +75,7 @@ namespace GameControl
         public void SetUserType(UserType type)
         {
             userType = type;
-            Debug.Log(type.ToString());
+            Debug.Log("You are: " + type.ToString());
         }
 
         public void ReadyGame()
@@ -196,7 +196,7 @@ namespace GameControl
             bool monIsParalysis = IsParalysis(defenderUnit);
             for (int j = 0; j < 2; j++)
                 monSkills.Add(DefenderController.Instance.DiceRoll(defenderUnit % 10, monIsParalysis));
-            
+
             Dictionary<int, CharacterSkill> charSkills = new Dictionary<int, CharacterSkill>();
             for (int j = 0; j < offenderUnits.Length; j++)
                 charSkills.Add(offenderUnits[j], OffenderController.Instance.DiceRoll(offenderUnits[j], IsParalysis(offenderUnits[j])));
@@ -218,7 +218,7 @@ namespace GameControl
 
             foreach (CharacterSkill skill in charSkills.Values)
             {
-                if (isAttack[i-1]) GamePlayUIController.Instance.SetDiceSkill(i, skill.id);
+                if (isAttack[i - 1]) GamePlayUIController.Instance.SetDiceSkill(i, skill.id);
                 i++;
             }
             isDiceRolled = true;
@@ -275,14 +275,34 @@ namespace GameControl
                             }
 
                             if (charSkills[keys[i]].ccList.Count != 0)
-                                AddCrowdControl(defenderUnit, charSkills[keys[i]]);
+                            {
+                                foreach (CrowdControl cc in charSkills[keys[i]].ccList.Keys)
+                                {
+                                    if (cc.target == CCTarget.ENEMY)
+                                        AddCrowdControl(defenderUnit, cc, charSkills[keys[i]].ccList[cc]);
+                                    else if (cc.target == CCTarget.SELF)
+                                        AddCrowdControl(keys[i], cc, charSkills[keys[i]].ccList[cc]);
+                                    else
+                                        AddCrowdControl(keys[i], cc, charSkills[keys[i]].ccList[cc], true);
+                                }
+                            }
                         }
                         else
                         {
                             // 주사위 결과 발생
                             int index = Random.Range(0, offenderUnits.Length);
                             if (monSkills[0].ccList.Count != 0)
-                                AddCrowdControl(offenderUnits[index], charSkills[keys[i]]);
+                            {
+                                foreach (CrowdControl cc in monSkills[0].ccList.Keys)
+                                {
+                                    if (cc.target == CCTarget.ENEMY)
+                                        AddCrowdControl(offenderUnits[index], cc, monSkills[0].ccList[cc]);
+                                    else if (cc.target == CCTarget.SELF)
+                                        AddCrowdControl(keys[i], cc, monSkills[0].ccList[cc]);
+                                    else
+                                        AddCrowdControl(defenderUnit, cc, monSkills[0].ccList[cc], true);
+                                }
+                            }
                         }
                         GamePlayUIController.Instance.UpdateCharacters();
                     }
@@ -308,28 +328,50 @@ namespace GameControl
         }
 
         #region CrowdControl
-        private void AddCrowdControl(int index, Skill skill)
+        private void AddCrowdControl(int index, CrowdControl cc, int ccStack, bool isAll = false)
         {
-            foreach (CrowdControl cc in skill.ccList.Keys)
-            {
-                int ccIndex = ccList[index].FindIndex(charCC => charCC.name == cc.name);
+            bool isMonster = (index / 10 == 2);
 
-                if (ccIndex == -1)
+            int ccIndex = ccList[index].FindIndex(charCC => charCC.name == cc.name);
+
+            if (ccIndex == -1)
+            {
+                List<int> indexes = new List<int>();
+                if (isAll)
                 {
-                    ccList[index].Add(SkillDatabase.Instance.GetCrowdControl(cc.id));
-                    bool isStackSkill = ccList[index][ccList[index].Count - 1].ControlCC(skill.ccList[cc]);
-                    GamePlayUIController.Instance.UpdateCrowdControl(index, cc.id, 
-                        (isStackSkill && ccList[index][ccList[index].Count - 1].stack <= 0)? cc.turn: -1, 
-                        ccList[index][ccList[index].Count - 1].stack);
+                    foreach (int key in offenderUnits)
+                        indexes.Add(key);
                 }
-                else
+                else indexes.Add(index);
+
+                for (int i = 0; i < indexes.Count; i++)
                 {
-                    CrowdControl curCC = ccList[index][ccIndex];
-                    bool isStackSkill = curCC.ControlCC(skill.ccList[cc]);
+                    ccList[indexes[i]].Add(SkillDatabase.Instance.GetCrowdControl(cc.id));
+                    bool isStackSkill = ccList[indexes[i]][ccList[indexes[i]].Count - 1].ControlCC(ccStack);
+
+                    if (isStackSkill && ccList[indexes[i]][ccList[indexes[i]].Count - 1].stack > 0)
+                        GamePlayUIController.Instance.UpdateCrowdControl(indexes[i], cc.id, -1, ccList[indexes[i]][ccList[indexes[i]].Count - 1].stack);
+                    else GamePlayUIController.Instance.UpdateCrowdControl(indexes[i], cc.id, cc.turn, ccList[indexes[i]][ccList[indexes[i]].Count - 1].stack);
+                }
+            }
+            else
+            {
+                List<int> indexes = new List<int>();
+                if (isAll)
+                {
+                    foreach (int key in offenderUnits)
+                        indexes.Add(key);
+                }
+                else indexes.Add(index);
+
+                for (int i = 0; i < indexes.Count; i++)
+                {
+                    CrowdControl curCC = ccList[indexes[i]][ccIndex];
+                    bool isStackSkill = curCC.ControlCC(ccStack);
 
                     if (isStackSkill == false)
                     {
-                        if (curCC.turn < cc.turn) curCC.SetTurn(cc.turn);
+                        if (curCC.turn < cc.turn)curCC.SetTurn(cc.turn);
                     }
                     else
                     {
@@ -339,21 +381,21 @@ namespace GameControl
                         {
                             // CC 발동
                             curCC.SetTurn(cc.turn);
-                            GamePlayUIController.Instance.UpdateCrowdControl(index, cc.id, cc.turn, 0);
+                            GamePlayUIController.Instance.UpdateCrowdControl(indexes[i], cc.id, cc.turn, 0);
                         }
                         // CC 스택 쌓는 시점
                         else if (curStack > 0)
                         {
-                            GamePlayUIController.Instance.UpdateCrowdControl(index, cc.id, -1, curCC.stack);
+                            GamePlayUIController.Instance.UpdateCrowdControl(indexes[i], cc.id, -1, curCC.stack);
                         }
                         // CC 발동 후 이번 턴에 발동된 CC가 아니라면 스택 리셋 후 해당수치만큼 감소
                         else if (curCC.turn != curCC.GetCCBasicTurn())
                         {
                             curCC.ResetCCStack();
-                            curCC.ControlCC(skill.ccList[cc]);
+                            curCC.ControlCC(ccStack);
                         }
                     }
-                }
+                }                
             }
         }
 
@@ -376,7 +418,6 @@ namespace GameControl
                         i--;
                         if (isStackSkill && curCC.stack > 0)
                         {
-                            Debug.Log(curCC.stack);
                             // 만약에 지웠는데 스택이 남았었다면 턴 초기화 후 그대로 다시 추가
                             curCC.SetTurn(curCC.GetCCBasicTurn());
                             ccList[key].Add(curCC); GamePlayUIController.Instance.UpdateCrowdControl(key, curCC.id, -1, curCC.stack, true);
@@ -446,7 +487,8 @@ namespace GameControl
                             int stunUnit = Random.Range(0, aliveIndexes.Count);
                             if (stunUnit != deadUnit)
                             {
-                                AddCrowdControl(aliveIndexes[stunUnit], skill);
+                                List<CrowdControl> ccs = skill.ccList.Keys.ToList();
+                                AddCrowdControl(aliveIndexes[stunUnit], ccs[0], skill.ccList[ccs[0]]);
                                 break;
                             }
                         } while (true);

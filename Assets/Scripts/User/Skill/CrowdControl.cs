@@ -78,7 +78,7 @@ namespace Data
                     turn = 1;
                     break;
                 case CCtype.PURITY:
-                    turn = 1;
+                    turn = 0;
                     break;
                 case CCtype.INVINCIBLE:
                     turn = 1;
