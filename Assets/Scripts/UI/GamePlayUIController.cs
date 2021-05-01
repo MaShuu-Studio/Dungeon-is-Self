@@ -43,6 +43,7 @@ public class GamePlayUIController : MonoBehaviour
     [SerializeField] private GameObject defenderSkillTree;
     [SerializeField] private List<RectTransform> defenderSkillTiers;
     [SerializeField] private RectTransform offenderSkillTree;
+    [SerializeField] private Image offenderSkillTreeImage;
     [SerializeField] private Text offenderSkillPointText;
 
     [Space]
@@ -396,6 +397,7 @@ public class GamePlayUIController : MonoBehaviour
             OffenderController.Instance.SelectCharacter(selectedCharacterIndex);
 
             name = OffenderController.Instance.characters[index]._role;
+            offenderSkillTreeImage.sprite = Resources.Load<Sprite>("Sprites/UI/Offender Skill Tree/" + name);
             List<CharacterSkill> diceSkills = SkillDatabase.Instance.GetCharacterDices(name);
 
             int maxTier = OffenderController.Instance.GetMaxTier() + 1;
@@ -406,6 +408,16 @@ public class GamePlayUIController : MonoBehaviour
             for (int i = 0; i < diceSkills.Count; i++)
             {
                 int tier = diceSkills[i].tier;
+
+                #region 스킬 배치를 위한 조정부
+                if (diceSkills[i].id == 10107) diceTierList[tier].Add(null);
+                else if (diceSkills[i].id == 10211)
+                {
+                    diceTierList[tier].Add(null);
+                    diceTierList[tier].Add(null);
+                }
+                #endregion
+
                 GameObject obj = Instantiate(diceSkillIconPrefab);
                 obj.transform.SetParent(offenderSkillTree);
                 obj.transform.localScale = new Vector3(1, 1, 1);
@@ -414,17 +426,23 @@ public class GamePlayUIController : MonoBehaviour
 
                 diceTierList[tier].Add(obj);
                 diceSkillIcons.Add(diceIcon);
+
+                #region 스킬 배치를 위한 조정부2
+                if (diceSkills[i].id == 10211) diceTierList[tier].Add(null);
+                #endregion
             }
 
             for (int i = 0; i < maxTier; i++)
                 for (int j = 0; j < diceTierList[i].Count; j++)
                 {
+                    if (diceTierList[i][j] == null) continue;
                     RectTransform rect = diceTierList[i][j].GetComponent<RectTransform>();
 
                     float x = 0;
                     x = i * (100 + ((offenderSkillTree.rect.width - 100 * maxTier) / (maxTier - 1)));
                     float y = 0;
                     if (diceTierList[i].Count > 1) y = -1 * (j * 100 + j * (offenderSkillTree.rect.height - diceTierList[i].Count * 100) / (diceTierList[i].Count - 1));
+                    else y = (offenderSkillTree.rect.height - 100) / -2;
                     rect.anchoredPosition = new Vector3(x, y, 0);
                 }
 

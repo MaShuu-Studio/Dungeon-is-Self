@@ -7972,6 +7972,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1202167537}
+  - component: {fileID: 1202167539}
+  - component: {fileID: 1202167538}
   m_Layer: 5
   m_Name: Offender Skill Tree
   m_TagString: Untagged
@@ -8000,6 +8002,43 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1202167538
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1202167536}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 21300000, guid: 658eb9aa38bbb6b4fb1467e9c88d268a, type: 3}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &1202167539
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1202167536}
+  m_CullTransparentMesh: 0
 --- !u!1 &1205524475
 GameObject:
   m_ObjectHideFlags: 0
@@ -8790,6 +8829,7 @@ MonoBehaviour:
   - {fileID: 18280935}
   - {fileID: 1497340600}
   offenderSkillTree: {fileID: 295478945}
+  offenderSkillTreeImage: {fileID: 1202167538}
   offenderSkillPointText: {fileID: 680346730}
   diceSkillIconPrefab: {fileID: 2218946278486695827, guid: 7b895ca00f075d04b9d927c72f085bc2,
     type: 3}
@@ -12325,7 +12365,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1869610349
 RectTransform:
   m_ObjectHideFlags: 0
@@ -12366,8 +12406,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
-  m_Type: 0
+  m_Sprite: {fileID: 21300000, guid: 8d5f3364b49ec7b4b9d82ef2e4dc95d1, type: 3}
+  m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4

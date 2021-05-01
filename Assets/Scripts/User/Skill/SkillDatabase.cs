@@ -38,40 +38,40 @@ namespace Data
             charSkillDB.Add(new CharacterSkill(10100, 0, "베기", 0, 7));
             charSkillDB.Add(new CharacterSkill(10101, 1, "찌르기", 0, 9));
             charSkillDB.Add(new CharacterSkill(10102, 1, "도발", 0, 0));
-            charSkillDB.Add(new CharacterSkill(10103, 2, "강철방패", 1, 0));
+            charSkillDB.Add(new CharacterSkill(10103, 2, "작살베기", 0, 18));
             charSkillDB.Add(new CharacterSkill(10104, 2, "방패찍기", 0, 13));
-            charSkillDB.Add(new CharacterSkill(10105, 2, "작살베기", 0, 18));
+            charSkillDB.Add(new CharacterSkill(10105, 2, "강철방패", 1, 0));
             charSkillDB.Add(new CharacterSkill(10106, 2, "야성의외침", 1, 0));
             charSkillDB.Add(new CharacterSkill(10107, 3, "반격", 1, 20, 
-                new List<int> { 10103, 10104 }));
+                new List<int> { 10104, 10105 }));
             charSkillDB.Add(new CharacterSkill(10108, 3, "용기", 1, 0, 
                 new List<int> { 10106 }));
-            charSkillDB.Add(new CharacterSkill(10109, 4, "데드락", 1, 30, 
+            charSkillDB.Add(new CharacterSkill(10109, 4, "가시방패", 2, 30,
+                new List<int> { 10103, 10107 }));
+            charSkillDB.Add(new CharacterSkill(10110, 4, "데드락", 1, 30, 
                 new List<int> { 10107 }));
-            charSkillDB.Add(new CharacterSkill(10110, 4, "포효", 2, 10, 
+            charSkillDB.Add(new CharacterSkill(10111, 4, "포효", 2, 10, 
                 new List<int> { 10108 }));
-            charSkillDB.Add(new CharacterSkill(10111, 4, "가시방패", 2, 30, 
-                new List<int> { 10105, 10107 }));
             #endregion
 
             #region Marksman Skill
             charSkillDB.Add(new CharacterSkill(10200, 0, "화살쏘기", 0, 9));
-            charSkillDB.Add(new CharacterSkill(10201, 1, "그물화살", 0, 8));
-            charSkillDB.Add(new CharacterSkill(10202, 1, "더블샷", 0, 11));
-            charSkillDB.Add(new CharacterSkill(10203, 2, "톱날화살", 0, 16));
-            charSkillDB.Add(new CharacterSkill(10204, 2, "파워샷", 1, 32));
-            charSkillDB.Add(new CharacterSkill(10205, 2, "트리플샷", 0, 20));
-            charSkillDB.Add(new CharacterSkill(10206, 2, "화살촉 변경", 0, 0));
-            charSkillDB.Add(new CharacterSkill(10207, 3, "독화살", 0, 24, 
+            charSkillDB.Add(new CharacterSkill(10201, 1, "더블샷", 0, 11));
+            charSkillDB.Add(new CharacterSkill(10202, 1, "그물화살", 0, 8));
+            charSkillDB.Add(new CharacterSkill(10203, 2, "트리플샷", 0, 20));
+            charSkillDB.Add(new CharacterSkill(10204, 2, "톱날화살", 0, 16));
+            charSkillDB.Add(new CharacterSkill(10205, 2, "파워샷", 1, 32));
+            charSkillDB.Add(new CharacterSkill(10206, 2, "화살촉 강화", 0, 0));
+            charSkillDB.Add(new CharacterSkill(10207, 3, "화살비", 1, 60,
                 new List<int> { 10203 }));
-            charSkillDB.Add(new CharacterSkill(10208, 3, "저격", 1, 60, 
-                new List<int> { 10204, 10206 }));
-            charSkillDB.Add(new CharacterSkill(10209, 3, "화살비", 1, 60, 
-                new List<int> { 10205 }));
-            charSkillDB.Add(new CharacterSkill(10210, 3, "허수아비", 0, 0, 
+            charSkillDB.Add(new CharacterSkill(10208, 3, "독화살", 0, 24, 
+                new List<int> { 10204 }));
+            charSkillDB.Add(new CharacterSkill(10209, 3, "저격", 1, 60, 
+                new List<int> { 10205, 10206 }));
+            charSkillDB.Add(new CharacterSkill(10210, 3, "매 소환", 0, 0, 
                 new List<int> { 10206 }));
             charSkillDB.Add(new CharacterSkill(10211, 4, "헤드샷", 2, 150, 
-                new List<int> { 10208 }));
+                new List<int> { 10209 }));
             #endregion
 
             #region Mage Skill
