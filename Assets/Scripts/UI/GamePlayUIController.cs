@@ -721,7 +721,7 @@ public class GamePlayUIController : MonoBehaviour
     List<Dice> diceObjects = new List<Dice>();
     public void DiceRoll(List<bool> isRolled)
     {
-        
+
         diceObjects.Clear();
         if (type == UserType.Defender)
         {
@@ -791,7 +791,7 @@ public class GamePlayUIController : MonoBehaviour
                     diceObjects.Add(diceObj);
                 }
                 else
-                    diceObjects.Add(null); 
+                    diceObjects.Add(null);
             }
         }
 
@@ -801,17 +801,16 @@ public class GamePlayUIController : MonoBehaviour
 
     public void SetDiceSkill(int index, int id)
     {
-        if (diceObjects[index] != null) ;
-        diceObjects[index].SetSkill(id);
+        if (diceObjects[index] != null) diceObjects[index].SetSkill(id);
     }
 
-    public void SetCrowdControl(int index, int id, bool isAdd)
+    public void UpdateCrowdControl(int index, int id, int turn, bool isRemove = false)
     {
         for (int i = 0; i < charObjects.Count; i++)
         {
             if (index == charObjects[i].GetIndex())
             {
-                charObjects[i].SetCrowdControl(id, isAdd, crowdControlIconPrefab);
+                charObjects[i].UpdateCrowdControl(id, isRemove, turn, crowdControlIconPrefab);
                 return;
             }
         }
@@ -820,7 +819,7 @@ public class GamePlayUIController : MonoBehaviour
         {
             if (index == enemyObjects[i].GetIndex())
             {
-                enemyObjects[i].SetCrowdControl(id, isAdd, crowdControlIconPrefab);
+                enemyObjects[i].UpdateCrowdControl(id, isRemove, turn, crowdControlIconPrefab);
                 return;
             }
         }

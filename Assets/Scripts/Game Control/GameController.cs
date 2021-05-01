@@ -308,7 +308,7 @@ namespace GameControl
                 int ccIndex = ccList[index].FindIndex(charCC => charCC.name == cc.name);
                 if (ccIndex == -1)
                 {
-                    GamePlayUIController.Instance.SetCrowdControl(index, cc.id, true);
+                    GamePlayUIController.Instance.UpdateCrowdControl(index, cc.id, cc.turn);
                     ccList[index].Add(SkillDatabase.Instance.GetCrowdControl(cc.id));
                 }
                 else
@@ -335,11 +335,12 @@ namespace GameControl
                 {
                     bool isStackSkill = ccList[key][i].ControlCC(0);
 
-                    if (isStackSkill) continue;
+                    //if (isStackSkill) continue;
 
                     bool b = ccList[key][i].ProgressTurn();
+                    GamePlayUIController.Instance.UpdateCrowdControl(key, ccList[key][i].id, ccList[key][i].turn, b);
                     if (b)
-                    {
+                    {                        
                         ccList[key].RemoveAt(i);
                         i--;
                     }

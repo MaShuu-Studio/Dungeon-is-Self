@@ -37,30 +37,40 @@ public class CharacterObject : MonoBehaviour
         if (turnText.text != null) turnText.text = turn.ToString();
     }
 
-    public void SetCrowdControl(int id, bool isAdd, CrowdControlIcon prefab = null)
+    public void UpdateCrowdControl(int id, bool isRemove, int turn, CrowdControlIcon prefab = null)
     {
-        if (isAdd)
+        bool isFind = false;
+        for (int i = 0; i < ccIcons.Count; i++)
+        {
+            if (ccIcons[i].id == id)
+            {
+                isFind = true;
+                if (isRemove)
+                {
+                    Destroy(ccIcons[i].gameObject);
+                    ccIcons.RemoveAt(i);
+                }
+                else
+                {
+                    ccIcons[i].SetTurn(turn);
+                }
+                break;
+            }
+        }
+
+        if (isFind == false)
         {
             GameObject obj = Instantiate(prefab.gameObject);
             obj.transform.SetParent(CCList);
 
             CrowdControlIcon crowdControlIcon = obj.GetComponent<CrowdControlIcon>();
             crowdControlIcon.SetImage(id);
+            crowdControlIcon.SetTurn(turn);
 
             ccIcons.Add(crowdControlIcon);
         }
-        else
-        {
-            for (int i = 0; i < ccIcons.Count; i++)
-            {
-                if (ccIcons[i].id == id)
-                {
-                    ccIcons.RemoveAt(i);
-                    break;
-                }
-            }
-        }
     }
+
     public void SetCharacterIndex(int n)
     {
         index = n;
@@ -93,7 +103,7 @@ public class CharacterObject : MonoBehaviour
         while (_animator.GetCurrentAnimatorStateInfo(0).IsName(name.ToUpper())) yield return null;
 
         float time = 0.2f;
-        while(time > 0)
+        while (time > 0)
         {
             time -= Time.deltaTime;
             yield return null;
