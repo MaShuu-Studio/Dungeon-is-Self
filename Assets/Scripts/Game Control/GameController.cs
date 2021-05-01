@@ -267,7 +267,13 @@ namespace GameControl
                     {
                         if (isMonster == false)
                         {
-                            int restHp = DefenderController.Instance.MonsterDamaged(defenderUnit % 10, charSkills[keys[i]]);
+                            int damage = charSkills[keys[i]].damage;
+
+                            if (HasCrowdControl(keys[i], CCType.ATTACKSTAT, CCTarget.SELF)) damage = (int)(damage * 1.5f);
+                            if (HasCrowdControl(keys[i], CCType.ATTACKSTAT, CCTarget.ENEMY)) damage = (int)(damage * 0.5f);
+
+
+                            int restHp = DefenderController.Instance.MonsterDamaged(defenderUnit % 10, damage);
                             if (restHp <= 0)
                             {
                                 DefenderController.Instance.Dead(defenderUnit);
@@ -453,10 +459,14 @@ namespace GameControl
             }
         }
 
-        private bool HasCrowdControl(int index, CCType ccType)
+        private bool HasCrowdControl(int index, CCType ccType, CCTarget target = CCTarget.ENEMY)
         {
             CrowdControl tmp = ccList[index].Find(cc => cc.cc == ccType);
-            return tmp != null;
+            bool b = tmp != null;
+            if (b)
+                if (ccType == CCType.ATTACKSTAT) b = (tmp.target == target);
+
+            return b;
         }
         #endregion
 

@@ -219,12 +219,6 @@ namespace GameControl
             return monsters[monsterIndex];
         }
 
-        public int MonsterDamaged(int index, CharacterSkill skill)
-        {
-            monsters[index].Damaged(skill);
-
-            return monsters[index].hp;
-        }
         public int MonsterDamaged(int index, int damage)
         {
             monsters[index].Damaged(damage);

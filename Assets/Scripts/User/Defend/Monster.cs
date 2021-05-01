@@ -74,10 +74,6 @@ namespace Data
             return skill;
         }
 
-        public void Damaged(CharacterSkill skill)
-        {
-            hp -= skill.damage;
-        }
         public void Damaged(int damage)
         {
             hp -= damage;
