@@ -298,7 +298,10 @@ namespace GameControl
 
             foreach (CrowdControl cc in ccList[index])
             {
-                if (cc.cc == CCtype.STUN) return false;
+                if (cc.cc == CCtype.STUN)
+                {
+                    if (cc.turn < cc.GetCCBasicTurn()) return false;
+                }
             }
 
             return true;
