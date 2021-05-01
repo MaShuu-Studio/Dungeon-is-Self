@@ -457,6 +457,7 @@ namespace GameControl
 
                 // 죽을 유닛 선정
                 List<int> aliveIndexes = new List<int>();
+                int tauntIndex = -1;
                 foreach (int key in offenderUnits)
                 {
                     if (offenderUnitIsDead[key] == false) aliveIndexes.Add(key);
@@ -469,7 +470,14 @@ namespace GameControl
                     return;
                 }
 
+                for (int i = 0; i < offenderUnits.Length; i++)
+                {
+                    CrowdControl tmp = ccList[offenderUnits[i]].Find(cc => cc.cc == CCtype.TAUNT);
+                    if (tmp != null) tauntIndex = i;
+                }
+
                 int deadUnit = Random.Range(0, aliveIndexes.Count);
+                if (tauntIndex != -1) deadUnit = tauntIndex;
 
                 switch (skill.type)
                 {
