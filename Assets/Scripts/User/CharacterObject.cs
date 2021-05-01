@@ -16,7 +16,6 @@ public class CharacterObject : MonoBehaviour
     private SpriteRenderer _sprite;
     private Animator _animator;
     private int index;
-    private bool isAnimation = false;
 
     // Start is called before the first frame update
     void Awake()
@@ -24,19 +23,6 @@ public class CharacterObject : MonoBehaviour
         _animator = GetComponent<Animator>();
         _sprite = GetComponent<SpriteRenderer>();
         canvas.worldCamera = GameObject.FindWithTag("MainCamera").GetComponent<Camera>();
-    }
-
-    void Update()
-    {
-        if (isAnimation)
-        {
-            AnimatorStateInfo stateInfo = _animator.GetCurrentAnimatorStateInfo(0);
-            if (stateInfo.IsName("ATTACK") && stateInfo.normalizedTime >= 1.0f)
-            {
-                AnimationEnd();
-                isAnimation = false;
-            }
-        }
     }
 
     public void SetSkill(Skill skill)
@@ -62,7 +48,7 @@ public class CharacterObject : MonoBehaviour
     public void SetAnimation(string name)
     {
         _animator.SetTrigger(name);
-        isAnimation = true;
+        StartCoroutine(Animation(name));
     }
 
     public void SetFlip(bool isFlip)
@@ -80,9 +66,18 @@ public class CharacterObject : MonoBehaviour
         return index;
     }
 
-    public void AnimationEnd()
+    IEnumerator Animation(string name)
     {
+        while (_animator.GetCurrentAnimatorStateInfo(0).IsName("IDLE")) yield return null;
+        while (_animator.GetCurrentAnimatorStateInfo(0).IsName(name.ToUpper())) yield return null;
+
+        float time = 0.2f;
+        while(time > 0)
+        {
+            time -= Time.deltaTime;
+            yield return null;
+        }
+
         GameController.Instance.AnimationEnd(index);
-        _animator.SetTrigger("Idle");
     }
 }

@@ -42,8 +42,12 @@ namespace GameControl
 
         public int defenderUnit { get; private set; }
         public int[] offenderUnits { get; private set; } = new int[3];
+
+        private Dictionary<int, List<CrowdControl>> ccList = new Dictionary<int, List<CrowdControl>>();
+        
         private Dictionary<int, bool> offenderUnitIsDead = new Dictionary<int, bool>();
         private Dictionary<int, bool> animationEnd = new Dictionary<int, bool>();
+
         private bool isDiceRolled = false;
 
         private readonly int[] skillPointPerRound = new int[3] { 1, 2, 2 };
@@ -153,13 +157,16 @@ namespace GameControl
             progressRound = false;
             animationEnd.Clear();
             offenderUnitIsDead.Clear();
+            ccList.Clear();
 
             // 선공 확인해서 순서 조정
             animationEnd.Add(defenderUnit, true);
+            ccList.Add(defenderUnit, new List<CrowdControl>());
             foreach (int key in offenderUnits)
             {
                 animationEnd.Add(key, true);
                 offenderUnitIsDead.Add(key, false);
+                ccList.Add(key, new List<CrowdControl>());
             }
 
             if (userType == UserType.Defender)
