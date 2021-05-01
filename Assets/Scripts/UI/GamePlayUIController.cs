@@ -804,13 +804,13 @@ public class GamePlayUIController : MonoBehaviour
         if (diceObjects[index] != null) diceObjects[index].SetSkill(id);
     }
 
-    public void UpdateCrowdControl(int index, int id, int turn, bool isRemove = false)
+    public void UpdateCrowdControl(int index, int id, int turn, int stack, bool isRemove = false)
     {
         for (int i = 0; i < charObjects.Count; i++)
         {
             if (index == charObjects[i].GetIndex())
             {
-                charObjects[i].UpdateCrowdControl(id, isRemove, turn, crowdControlIconPrefab);
+                charObjects[i].UpdateCrowdControl(id, isRemove, turn, stack, crowdControlIconPrefab);
                 return;
             }
         }
@@ -819,7 +819,7 @@ public class GamePlayUIController : MonoBehaviour
         {
             if (index == enemyObjects[i].GetIndex())
             {
-                enemyObjects[i].UpdateCrowdControl(id, isRemove, turn, crowdControlIconPrefab);
+                enemyObjects[i].UpdateCrowdControl(id, isRemove, turn, stack, crowdControlIconPrefab);
                 return;
             }
         }

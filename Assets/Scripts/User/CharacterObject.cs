@@ -37,7 +37,7 @@ public class CharacterObject : MonoBehaviour
         if (turnText.text != null) turnText.text = turn.ToString();
     }
 
-    public void UpdateCrowdControl(int id, bool isRemove, int turn, CrowdControlIcon prefab = null)
+    public void UpdateCrowdControl(int id, bool isRemove, int turn, int stack, CrowdControlIcon prefab = null)
     {
         bool isFind = false;
         for (int i = 0; i < ccIcons.Count; i++)
@@ -52,7 +52,7 @@ public class CharacterObject : MonoBehaviour
                 }
                 else
                 {
-                    ccIcons[i].SetTurn(turn);
+                    ccIcons[i].SetTurn(turn, stack);
                 }
                 break;
             }
@@ -65,7 +65,7 @@ public class CharacterObject : MonoBehaviour
 
             CrowdControlIcon crowdControlIcon = obj.GetComponent<CrowdControlIcon>();
             crowdControlIcon.SetImage(id);
-            crowdControlIcon.SetTurn(turn);
+            crowdControlIcon.SetTurn(turn, stack);
 
             ccIcons.Add(crowdControlIcon);
         }

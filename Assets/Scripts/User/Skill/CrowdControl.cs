@@ -5,22 +5,26 @@ using UnityEngine;
 namespace Data
 {
     public enum CCtype { TAUNT = 1, BARRIER, REFLECT, PURITY, INVINCIBLE, BLIND, STUN, DOTDAMAGE, ATTACKSTAT, MIRRORIMAGE, }
+
+    public enum CCTarget { ENEMY, SELF, ALL }
     public class CrowdControl
     {
         public int id { get; private set; }
         public CCtype cc { get; private set; }
+        public CCTarget target { get; private set; }
         public int stack { get; private set; }
         public string name { get; private set; }
         public int turn { get; private set; }
         // public string name { get; private set; }
 
-        public CrowdControl(int id, string name, int stack = 0)
+        public CrowdControl(int id, string name, CCTarget target)
         {
             this.id = id;
             this.name = name;
             this.cc = (CCtype)((id / 100) % 100);
-            this.stack = stack;
-            SetCCBasicTurn();
+            this.stack = GetCCBasicStack();
+            this.target = target;
+            this.turn = GetCCBasicTurn();
         }
         public CrowdControl(CrowdControl crowdControl)
         {
@@ -28,7 +32,8 @@ namespace Data
             this.cc = crowdControl.cc;
             this.stack = crowdControl.stack;
             this.name = crowdControl.name;
-            SetCCBasicTurn();
+            this.target = crowdControl.target;
+            this.turn = GetCCBasicTurn();
         }
 
         public bool ProgressTurn()
@@ -58,44 +63,67 @@ namespace Data
             this.turn = turn;
         }
 
-        private void SetCCBasicTurn()
+        public int GetCCBasicTurn()
         {
+            int turn = 0;
             switch(cc)
             {
                 case CCtype.TAUNT:
-                    this.turn = 2;
+                    turn = 2;
                     break;
                 case CCtype.BARRIER:
-                    this.turn = 1;
+                    turn = 1;
                     break;
                 case CCtype.REFLECT:
-                    this.turn = 1;
+                    turn = 1;
                     break;
                 case CCtype.PURITY:
-                    this.turn = 1;
+                    turn = 1;
                     break;
                 case CCtype.INVINCIBLE:
-                    this.turn = 1;
+                    turn = 1;
                     break;
                 case CCtype.BLIND:
-                    this.turn = 1;
+                    turn = 1;
                     break;
                 case CCtype.STUN:
-                    this.turn = 1;
+                    turn = 1;
                     break;
                 case CCtype.DOTDAMAGE:
-                    this.turn = 3;
+                    turn = 3;
                     break;
                 case CCtype.ATTACKSTAT:
-                    this.turn = 1;
+                    turn = 1;
                     break;
                 case CCtype.MIRRORIMAGE:
-                    this.turn = 1;
+                    turn = 1;
                     break;
+            }
+            turn += 1;
 
+            return turn;
+        }
+
+        public int GetCCBasicStack()
+        {
+            int stack = 0;
+            switch (cc)
+            {
+                case CCtype.BLIND:
+                case CCtype.STUN:
+                    stack = 2;
+                    break;
+                default:
+                    stack = 0;
+                    break;
             }
 
-            turn += 1;
+            return stack;
+        }
+
+        public void ResetCCStack()
+        {
+            stack = GetCCBasicStack();
         }
     }
 }

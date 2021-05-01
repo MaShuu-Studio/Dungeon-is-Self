@@ -190,17 +190,28 @@ namespace GameControl
             return dices[monsterIndex][index];
         }
 
-        public List<MonsterSkill> DiceRoll(int index)
+        public MonsterSkill DiceRoll(int roster, bool isParalysis)
         {
-            List<MonsterSkill> skills = new List<MonsterSkill>();
+            int diceIndex = Random.Range(0, dices[roster % 10].Length);
 
-            for (int i = 0; i < 2; i++)
+            if (isParalysis)
             {
-                int diceIndex = Random.Range(0, 6);
-                skills.Add(dices[index][diceIndex]);
+                int blindAmount = 3;
+                List<int> blind = new List<int>();
+                for (int i = 0; i < blindAmount; i++)
+                    while (true)
+                    {
+                        int index = Random.Range(0, dices[roster % 10].Length);
+                        if (blind.FindIndex(n => n == index) == -1) break;
+                    }
+                while (true)
+                {
+                    diceIndex = Random.Range(0, dices[roster % 10].Length);
+                    if (blind.FindIndex(n => n == diceIndex) == -1) break;
+                }
             }
 
-            return skills;
+            return dices[roster % 10][diceIndex];
         }
 
         public Monster GetMonsterRoster()

@@ -225,17 +225,28 @@ namespace GameControl
             return dices[characterIndex][index];
         }
 
-        public Dictionary<int, CharacterSkill> DiceRoll(int[] roster)
+        public CharacterSkill DiceRoll(int roster, bool isPalaysis)
         {
-            Dictionary<int, CharacterSkill> skills = new Dictionary<int, CharacterSkill>();
-
-            for (int i = 0; i < roster.Length; i++)
+            int diceIndex = Random.Range(0, dices[roster % 10].Length);
+            
+            if (isPalaysis)
             {
-                int diceIndex = Random.Range(0, 6);
-                skills.Add(roster[i], dices[roster[i] % 10][diceIndex]);
+                int blindAmount = 3;
+                List<int> blind = new List<int>();
+                for (int i = 0; i < blindAmount; i++)
+                    while (true)
+                    {
+                        int index = Random.Range(0, dices[roster % 10].Length);
+                        if (blind.FindIndex(n => n == index) == -1) break;
+                    }
+                while (true)
+                {
+                    diceIndex = Random.Range(0, dices[roster % 10].Length);
+                    if (blind.FindIndex(n => n == diceIndex) == -1) break;
+                }
             }
 
-            return skills;
+            return dices[roster % 10][diceIndex];
         }
 
         public List<int> GetCharacterRoster()

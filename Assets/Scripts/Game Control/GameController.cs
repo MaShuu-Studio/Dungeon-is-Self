@@ -192,8 +192,14 @@ namespace GameControl
 
         private void ProgressTurn()
         {
-            List<MonsterSkill> monSkills = DefenderController.Instance.DiceRoll(defenderUnit % 10);
-            Dictionary<int, CharacterSkill> charSkills = OffenderController.Instance.DiceRoll(offenderUnits);
+            List<MonsterSkill> monSkills = new List<MonsterSkill>();
+            bool monIsParalysis = IsParalysis(defenderUnit);
+            for (int j = 0; j < 2; j++)
+                monSkills.Add(DefenderController.Instance.DiceRoll(defenderUnit % 10, monIsParalysis));
+            
+            Dictionary<int, CharacterSkill> charSkills = new Dictionary<int, CharacterSkill>();
+            for (int j = 0; j < offenderUnits.Length; j++)
+                charSkills.Add(offenderUnits[j], OffenderController.Instance.DiceRoll(offenderUnits[j], IsParalysis(offenderUnits[j])));
 
             List<bool> isAttack = new List<bool>();
 
@@ -216,7 +222,7 @@ namespace GameControl
                 i++;
             }
             isDiceRolled = true;
-            StartCoroutine(Battle(monSkills, charSkills));
+            StartCoroutine(Battle(monSkills, charSkills, isAttack));
         }
 
         public void DiceRolled()
@@ -224,25 +230,22 @@ namespace GameControl
             isDiceRolled = false;
         }
 
-        IEnumerator Battle(List<MonsterSkill> monSkills, Dictionary<int, CharacterSkill> charSkills)
+        IEnumerator Battle(List<MonsterSkill> monSkills, Dictionary<int, CharacterSkill> charSkills, List<bool> isAttack)
         {
             while (isDiceRolled) yield return null;
 
             bool defenderOk = (monSkills[0].id == monSkills[1].id);
-            Debug.Log($"1: {monSkills[0].name} , 2: {monSkills[1].name} : {defenderOk}");
-            Debug.Log($"1: {charSkills[offenderUnits[0]].name}, 2: {charSkills[offenderUnits[1]].name}, 3: {charSkills[offenderUnits[2]].name}");
+            Debug.Log($"1: {monSkills[0].name} , 2: {monSkills[1].name} : {defenderOk && isAttack[0]}");
+            Debug.Log($"1: {charSkills[offenderUnits[0]].name} | {isAttack[1]}, 2: {charSkills[offenderUnits[1]].name} | {isAttack[2]}, 3: {charSkills[offenderUnits[2]].name} | {isAttack[3]}");
 
             // 순차적으로 공격을 누가 먼저 해서 진행될지 정할 필요 있음.
-            if (defenderOk) animationEnd[defenderUnit] = false;
+            if (defenderOk && isAttack[0]) animationEnd[defenderUnit] = false;
             for (int i = 1; i < animationEnd.Count; i++)
             {
                 int offenderUnit = offenderUnits[i - 1];
                 // 전투불능 상태 체크해서 Animation End 이용
-                if (offenderUnitIsDead[offenderUnit])
-                {
-                    animationEnd[offenderUnit] = true;
-                }
-                else animationEnd[offenderUnit] = false;
+                if (isAttack[i]) animationEnd[offenderUnit] = false;
+                else animationEnd[offenderUnit] = true;
             }
 
             // 전투 시 전투불능 확인해서 그 때 그 때 바꿔줘야함
@@ -301,27 +304,51 @@ namespace GameControl
             return true;
         }
 
+        #region CrowdControl
         private void AddCrowdControl(int index, Skill skill)
         {
             foreach (CrowdControl cc in skill.ccList.Keys)
             {
                 int ccIndex = ccList[index].FindIndex(charCC => charCC.name == cc.name);
+
                 if (ccIndex == -1)
                 {
-                    GamePlayUIController.Instance.UpdateCrowdControl(index, cc.id, cc.turn);
                     ccList[index].Add(SkillDatabase.Instance.GetCrowdControl(cc.id));
+                    bool isStackSkill = ccList[index][ccList[index].Count - 1].ControlCC(skill.ccList[cc]);
+                    GamePlayUIController.Instance.UpdateCrowdControl(index, cc.id, 
+                        (isStackSkill && ccList[index][ccList[index].Count - 1].stack <= 0)? cc.turn: -1, 
+                        ccList[index][ccList[index].Count - 1].stack);
                 }
                 else
                 {
-                    bool isStackSkill = ccList[index][ccIndex].ControlCC(cc.stack);
+                    CrowdControl curCC = ccList[index][ccIndex];
+                    bool isStackSkill = curCC.ControlCC(skill.ccList[cc]);
 
                     if (isStackSkill == false)
                     {
-                        if (ccList[index][ccIndex].turn < cc.turn) ccList[index][ccIndex].SetTurn(cc.turn);
+                        if (curCC.turn < cc.turn) curCC.SetTurn(cc.turn);
                     }
-                    else if (ccList[index][ccIndex].stack <= 0)
+                    else
                     {
-                        // CC 발동
+                        int curStack = curCC.stack;
+                        // CC 발동 시점
+                        if (curStack == 0)
+                        {
+                            // CC 발동
+                            curCC.SetTurn(cc.turn);
+                            GamePlayUIController.Instance.UpdateCrowdControl(index, cc.id, cc.turn, 0);
+                        }
+                        // CC 스택 쌓는 시점
+                        else if (curStack > 0)
+                        {
+                            GamePlayUIController.Instance.UpdateCrowdControl(index, cc.id, -1, curCC.stack);
+                        }
+                        // CC 발동 후 이번 턴에 발동된 CC가 아니라면 스택 리셋 후 해당수치만큼 감소
+                        else if (curCC.turn != curCC.GetCCBasicTurn())
+                        {
+                            curCC.ResetCCStack();
+                            curCC.ControlCC(skill.ccList[cc]);
+                        }
                     }
                 }
             }
@@ -333,20 +360,35 @@ namespace GameControl
             {
                 for (int i = 0; i < ccList[key].Count; i++)
                 {
-                    bool isStackSkill = ccList[key][i].ControlCC(0);
+                    CrowdControl curCC = ccList[key][i];
+                    bool isStackSkill = curCC.ControlCC(0);
 
-                    //if (isStackSkill) continue;
+                    if (isStackSkill && curCC.stack > 0 && curCC.turn == curCC.GetCCBasicTurn()) continue;
 
-                    bool b = ccList[key][i].ProgressTurn();
-                    GamePlayUIController.Instance.UpdateCrowdControl(key, ccList[key][i].id, ccList[key][i].turn, b);
+                    bool b = curCC.ProgressTurn();
+                    GamePlayUIController.Instance.UpdateCrowdControl(key, curCC.id, curCC.turn, curCC.stack, b);
                     if (b)
-                    {                        
+                    {
                         ccList[key].RemoveAt(i);
                         i--;
+                        if (isStackSkill && curCC.stack > 0)
+                        {
+                            Debug.Log(curCC.stack);
+                            // 만약에 지웠는데 스택이 남았었다면 턴 초기화 후 그대로 다시 추가
+                            curCC.SetTurn(curCC.GetCCBasicTurn());
+                            ccList[key].Add(curCC); GamePlayUIController.Instance.UpdateCrowdControl(key, curCC.id, -1, curCC.stack, true);
+                        }
                     }
                 }
             }
         }
+
+        private bool IsParalysis(int index)
+        {
+            CrowdControl tmp = ccList[index].Find(cc => cc.cc == CCtype.BLIND);
+            return tmp != null;
+        }
+        #endregion
 
         public void AnimationEnd(int index)
         {

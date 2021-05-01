@@ -15,21 +15,21 @@ namespace Data
             // INVINCIBLE = 5, BLIND = 6, STUN = 7, DOTDAMAGE = 8,
             // ATTACKSTAT = 9, MIRRORIMAGE = 10,
 
-            ccDatabase.Add(new CrowdControl(30101, "도발"));
-            ccDatabase.Add(new CrowdControl(30201, "방어"));
-            ccDatabase.Add(new CrowdControl(30301, "반사"));
-            ccDatabase.Add(new CrowdControl(30401, "무효화"));
-            ccDatabase.Add(new CrowdControl(30501, "무적"));
-            ccDatabase.Add(new CrowdControl(30601, "실명", 2));
-            ccDatabase.Add(new CrowdControl(30602, "마비", 2));
-            ccDatabase.Add(new CrowdControl(30701, "스턴",  2));
-            ccDatabase.Add(new CrowdControl(30801, "출혈"));
-            ccDatabase.Add(new CrowdControl(30802, "중독"));
-            ccDatabase.Add(new CrowdControl(30803, "화상"));
-            ccDatabase.Add(new CrowdControl(30804, "감전"));
-            ccDatabase.Add(new CrowdControl(30901, "공격력 증가"));
-            ccDatabase.Add(new CrowdControl(30902, "공격력 감소"));
-            ccDatabase.Add(new CrowdControl(31001, "분신"));
+            ccDatabase.Add(new CrowdControl(30101, "도발", CCTarget.SELF));
+            ccDatabase.Add(new CrowdControl(30201, "방어", CCTarget.ALL));
+            ccDatabase.Add(new CrowdControl(30301, "반사", CCTarget.ALL));
+            ccDatabase.Add(new CrowdControl(30401, "무효화", CCTarget.SELF));
+            ccDatabase.Add(new CrowdControl(30501, "무적", CCTarget.ALL));
+            ccDatabase.Add(new CrowdControl(30601, "실명", CCTarget.ENEMY));
+            ccDatabase.Add(new CrowdControl(30602, "마비", CCTarget.ENEMY));
+            ccDatabase.Add(new CrowdControl(30701, "스턴", CCTarget.ENEMY));
+            ccDatabase.Add(new CrowdControl(30801, "출혈", CCTarget.ENEMY));
+            ccDatabase.Add(new CrowdControl(30802, "중독", CCTarget.ENEMY));
+            ccDatabase.Add(new CrowdControl(30803, "화상", CCTarget.ENEMY));
+            ccDatabase.Add(new CrowdControl(30804, "감전", CCTarget.ENEMY));
+            ccDatabase.Add(new CrowdControl(30901, "공격력 증가", CCTarget.SELF));
+            ccDatabase.Add(new CrowdControl(30902, "공격력 감소", CCTarget.ENEMY));
+            ccDatabase.Add(new CrowdControl(31001, "분신", CCTarget.SELF));
         }
 
         public CrowdControl GetCrowdControl(int id)
@@ -96,7 +96,7 @@ namespace Data
                     new System.Tuple<CrowdControl, int>(GetCrowdControl(30201), 0),
                 }));
 
-            charSkillDB.Add(new CharacterSkill(10106, 2, "야성의외침", turn: 1, damage: 0,
+            charSkillDB.Add(new CharacterSkill(10106, 2, "야성의외침", turn: 0, damage: 0,
                 new List<System.Tuple<CrowdControl, int>>()
                 {
                     new System.Tuple<CrowdControl, int>(GetCrowdControl(30401), 0),
