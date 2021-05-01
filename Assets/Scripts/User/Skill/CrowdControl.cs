@@ -14,30 +14,51 @@ namespace Data
         public int turn { get; private set; }
         // public string name { get; private set; }
 
-        public CrowdControl(int id, int stack = 0)
+        public CrowdControl(int id, string name, int stack = 0)
         {
             this.id = id;
-            this.cc = (CCtype)(this.id % 100);
+            this.name = name;
+            this.cc = (CCtype)((id / 100) % 100);
             this.stack = stack;
-            this.turn = 0;
+            SetCCBasicTurn();
         }
-        public CrowdControl(CrowdControl crowdControl, string name)
+        public CrowdControl(CrowdControl crowdControl)
         {
             this.id = crowdControl.id;
             this.cc = crowdControl.cc;
             this.stack = crowdControl.stack;
-            this.name = name;
-            SetCCTurn();
+            this.name = crowdControl.name;
+            SetCCBasicTurn();
         }
 
-        public bool AddStack(int stack)
+        public bool ProgressTurn()
         {
-            this.stack -= stack;
-            if (this.stack == 0) return true;
+            turn -= 1;
+            if (turn <= 0) return true;
             return false;
         }
 
-        private void SetCCTurn()
+        public bool ControlCC(int stack)
+        {
+            bool isStackSkill = false;
+
+            switch (cc)
+            {
+                case CCtype.BLIND:
+                case CCtype.STUN:
+                    this.stack -= stack;
+                    isStackSkill = true;
+                    break;
+            }
+            return isStackSkill;
+        }
+        
+        public void SetTurn(int turn)
+        {
+            this.turn = turn;
+        }
+
+        private void SetCCBasicTurn()
         {
             switch(cc)
             {
@@ -73,6 +94,8 @@ namespace Data
                     break;
 
             }
+
+            turn += 1;
         }
     }
 }

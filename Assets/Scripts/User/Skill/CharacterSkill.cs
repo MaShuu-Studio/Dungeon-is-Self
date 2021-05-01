@@ -8,8 +8,7 @@ namespace Data
     {
         public int damage { get; protected set; }
         public List<int> prior { get; protected set; }
-        public Dictionary<CrowdControl, int> ccList { get; protected set; } = new Dictionary<CrowdControl, int>();
-
+        
         public CharacterSkill(int id, int tier, string name, int turn, int damage, List<int> prior, List<System.Tuple<CrowdControl, int>> ccs = null)
         {
             this.id = id;

@@ -44,7 +44,7 @@ namespace GameControl
         public int[] offenderUnits { get; private set; } = new int[3];
 
         private Dictionary<int, List<CrowdControl>> ccList = new Dictionary<int, List<CrowdControl>>();
-        
+
         private Dictionary<int, bool> offenderUnitIsDead = new Dictionary<int, bool>();
         private Dictionary<int, bool> animationEnd = new Dictionary<int, bool>();
 
@@ -120,7 +120,7 @@ namespace GameControl
                 }
                 animationEnd.Clear();
                 currentProgress = GameProgress.ReadyRound;
-                
+
                 if (userType == UserType.Defender)
                 {
                     AIBot.Instance.LearnSkill();
@@ -193,11 +193,25 @@ namespace GameControl
             List<MonsterSkill> monSkills = DefenderController.Instance.DiceRoll(defenderUnit % 10);
             Dictionary<int, CharacterSkill> charSkills = OffenderController.Instance.DiceRoll(offenderUnits);
 
-            GamePlayUIController.Instance.DiceRoll();
+            Dictionary<int, bool> isAttack = new Dictionary<int, bool>();
+
+            for (int j = 0; j < offenderUnits.Length + 1; j++)
+            {
+                if (j == 0) isAttack.Add(defenderUnit, CanAttack(defenderUnit));
+                else isAttack.Add(offenderUnits[j - 1], CanAttack(offenderUnits[j - 1]));
+            }
+
+            GamePlayUIController.Instance.DiceRoll(isAttack);
             int i = 0;
-            for (; i < monSkills.Count; i++) GamePlayUIController.Instance.SetDiceSkill(i, monSkills[i].id);
+
+            for (; i < monSkills.Count; i++)
+            {
+                GamePlayUIController.Instance.SetDiceSkill(i, monSkills[i].id);
+            }
+
             foreach (CharacterSkill skill in charSkills.Values)
             {
+                //offenderUnitIsDead[offenderUnits[i - monSkills.Count]]
                 GamePlayUIController.Instance.SetDiceSkill(i, skill.id);
                 i++;
             }
@@ -248,19 +262,27 @@ namespace GameControl
                     while (animationEnd[keys[i]] == false) yield return null;
                     // 전투 정보 전송
                     {
+                        Debug.Log(keys[i]);
                         if (isMonster == false)
                         {
+                            Debug.Log("Offender Attack");
                             int restHp = DefenderController.Instance.MonsterDamaged(defenderUnit % 10, charSkills[keys[i]]);
                             if (restHp <= 0)
                             {
                                 DefenderController.Instance.Dead(defenderUnit);
                                 DefenderDefeated();
                             }
+
+                            if (charSkills[keys[i]].ccList.Count != 0)
+                                AddCrowdControl(defenderUnit, charSkills[keys[i]]);
                         }
                         else
                         {
+                            Debug.Log("Defender Attack");
                             // 주사위 결과 발생
                             int index = Random.Range(0, offenderUnits.Length);
+                            if (monSkills[0].ccList.Count != 0)
+                                AddCrowdControl(offenderUnits[index], charSkills[keys[i]]);
                         }
                         GamePlayUIController.Instance.UpdateCharacters();
                     }
@@ -268,6 +290,61 @@ namespace GameControl
 
             progressRound = false;
             NextTurn();
+        }
+
+        private bool CanAttack(int index)
+        {
+            if (index / 10 == 1 && offenderUnitIsDead[index]) return false;
+
+            //ccList[index].Find()
+
+            return true;
+        }
+
+        private void AddCrowdControl(int index, Skill skill)
+        {
+            foreach (CrowdControl cc in skill.ccList.Keys)
+            {
+                int ccIndex = ccList[index].FindIndex(charCC => charCC.name == cc.name);
+                if (ccIndex == -1)
+                {
+                    GamePlayUIController.Instance.SetCrowdControl(index, cc.id, true);
+                    ccList[index].Add(SkillDatabase.Instance.GetCrowdControl(cc.id));
+                }
+                else
+                {
+                    bool isStackSkill = ccList[index][ccIndex].ControlCC(cc.stack);
+
+                    if (isStackSkill == false)
+                    {
+                        if (ccList[index][ccIndex].turn < cc.turn) ccList[index][ccIndex].SetTurn(cc.turn);
+                    }
+                    else if (ccList[index][ccIndex].stack <= 0)
+                    {
+                        // CC 발동
+                    }
+                }
+            }
+        }
+
+        private void CrowdControlProgressTurn()
+        {
+            foreach (int key in ccList.Keys)
+            {
+                for (int i = 0; i < ccList[key].Count; i++)
+                {
+                    bool isStackSkill = ccList[key][i].ControlCC(0);
+
+                    if (isStackSkill) continue;
+
+                    bool b = ccList[key][i].ProgressTurn();
+                    if (b)
+                    {
+                        ccList[key].RemoveAt(i);
+                        i--;
+                    }
+                }
+            }
         }
 
         public void AnimationEnd(int index)
@@ -283,11 +360,29 @@ namespace GameControl
 
             bool isAttack = false;
             if (turn != 1) isAttack = DefenderController.Instance.AttackSkillNextTurn();
+
             GamePlayUIController.Instance.UpdateCharacters();
+
             if (isAttack)
             {
                 // 공격부분
                 MonsterSkill skill = DefenderController.Instance.GetAttackSkill();
+
+                // 죽을 유닛 선정
+                List<int> aliveIndexes = new List<int>();
+                foreach (int key in offenderUnits)
+                {
+                    if (offenderUnitIsDead[key] == false) aliveIndexes.Add(key);
+                }
+
+                if (aliveIndexes.Count == 1)
+                {
+                    DefenderController.Instance.ResetAttackSkill();
+                    OffenderDefeated();
+                    return;
+                }
+
+                int deadUnit = Random.Range(0, aliveIndexes.Count);
 
                 switch (skill.type)
                 {
@@ -296,27 +391,18 @@ namespace GameControl
                         return;
 
                     case MonsterSkill.SkillType.AttackOne:
-                        List<int> aliveIndexes = new List<int>();
-                        foreach (int key in offenderUnits)
-                        {
-                            if (offenderUnitIsDead[key] == false) aliveIndexes.Add(key);
-                        }
-
-                        if (aliveIndexes.Count == 1)
-                        {
-                            DefenderController.Instance.ResetAttackSkill();
-                            OffenderDefeated();
-                            return;
-                        }
-
-                        int deadUnit = Random.Range(0, aliveIndexes.Count);
+                        offenderUnitIsDead[aliveIndexes[deadUnit]] = true;
+                        break;
+                    case MonsterSkill.SkillType.AttackOneStun:
                         offenderUnitIsDead[aliveIndexes[deadUnit]] = true;
                         break;
                 }
 
                 DefenderController.Instance.ResetAttackSkill();
-                GamePlayUIController.Instance.UpdateCharacters();
             }
+
+            CrowdControlProgressTurn();
+            GamePlayUIController.Instance.UpdateCharacters();
 
             readyState[0] = false;
             readyState[1] = false;

@@ -90,6 +90,7 @@
     <Compile Include="Assets\Scripts\UI\Icons\AttackSkillIcon.cs" />
     <Compile Include="Assets\Scripts\UI\Icons\CharIcon.cs" />
     <Compile Include="Assets\Scripts\UI\Icons\CharSelectIcon.cs" />
+    <Compile Include="Assets\Scripts\UI\Icons\CrowdControlIcon.cs" />
     <Compile Include="Assets\Scripts\UI\Icons\DiceIcon.cs" />
     <Compile Include="Assets\Scripts\UI\Icons\RosterIcon.cs" />
     <Compile Include="Assets\Scripts\UI\Icons\SkillIcon.cs" />

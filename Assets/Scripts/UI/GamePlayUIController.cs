@@ -86,6 +86,7 @@ public class GamePlayUIController : MonoBehaviour
     private GameObject mapObject;
 
     [SerializeField] private GameObject dicePrefab;
+    [SerializeField] private CrowdControlIcon crowdControlIconPrefab;
     #endregion
 
     #region Instance
@@ -490,7 +491,7 @@ public class GamePlayUIController : MonoBehaviour
             MonsterSkill skill = DefenderController.Instance.GetSelectedDice(selectedDiceIndex);
             diceIcons[selectedDiceIndex++].SetSkill(skill);
 
-            if (selectedDiceIndex >= diceIcons.Count) selectedDiceIndex -= 1;
+            if (selectedDiceIndex >= diceIcons.Count) selectedDiceIndex = 0;
             SelectDice(selectedDiceIndex);
 
             int totalCost = DefenderController.MAX_COST - DefenderController.Instance.GetDiceCost();
@@ -502,7 +503,7 @@ public class GamePlayUIController : MonoBehaviour
             CharacterSkill skill = OffenderController.Instance.GetSelectedDice(selectedDiceIndex);
             diceIcons[selectedDiceIndex++].SetSkill(skill);
 
-            if (selectedDiceIndex >= diceIcons.Count) selectedDiceIndex -= 1;
+            if (selectedDiceIndex >= diceIcons.Count) selectedDiceIndex = 0;
             SelectDice(selectedDiceIndex);
         }
     }
@@ -541,7 +542,7 @@ public class GamePlayUIController : MonoBehaviour
 
             diceIcons[selectedDiceIndex++].SetSkill(skill as MonsterSkill);
 
-            if (selectedDiceIndex >= diceIcons.Count) selectedDiceIndex -= 1;
+            if (selectedDiceIndex >= diceIcons.Count) selectedDiceIndex = 0;
             SelectDice(selectedDiceIndex);
 
             int totalCost = DefenderController.MAX_COST - DefenderController.Instance.GetDiceCost();
@@ -559,7 +560,7 @@ public class GamePlayUIController : MonoBehaviour
 
             diceIcons[selectedDiceIndex++].SetSkill(skill as CharacterSkill);
 
-            if (selectedDiceIndex >= diceIcons.Count) selectedDiceIndex -= 1;
+            if (selectedDiceIndex >= diceIcons.Count) selectedDiceIndex = 0;
             SelectDice(selectedDiceIndex);
         }
     }
@@ -718,7 +719,7 @@ public class GamePlayUIController : MonoBehaviour
     }
 
     List<Dice> diceObjects = new List<Dice>();
-    public void DiceRoll()
+    public void DiceRoll(Dictionary<int, bool> isRolled)
     {
         diceObjects.Clear();
         if (type == UserType.Defender)
@@ -772,6 +773,27 @@ public class GamePlayUIController : MonoBehaviour
     public void SetDiceSkill(int index, int id)
     {
         diceObjects[index].SetSkill(id);
+    }
+
+    public void SetCrowdControl(int index, int id, bool isAdd)
+    {
+        for (int i = 0; i < charObjects.Count; i++)
+        {
+            if (index == charObjects[i].GetIndex())
+            {
+                charObjects[i].SetCrowdControl(id, isAdd, crowdControlIconPrefab);
+                return;
+            }
+        }
+
+        for (int i = 0; i < enemyObjects.Count; i++)
+        {
+            if (index == enemyObjects[i].GetIndex())
+            {
+                enemyObjects[i].SetCrowdControl(id, isAdd, crowdControlIconPrefab);
+                return;
+            }
+        }
     }
 
     private void ClearCharacters()

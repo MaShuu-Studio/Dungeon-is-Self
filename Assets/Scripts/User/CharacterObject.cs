@@ -17,6 +17,8 @@ public class CharacterObject : MonoBehaviour
     private Animator _animator;
     private int index;
 
+    private List<CrowdControlIcon> ccIcons = new List<CrowdControlIcon>();
+
     // Start is called before the first frame update
     void Awake()
     {
@@ -35,11 +37,30 @@ public class CharacterObject : MonoBehaviour
         if (turnText.text != null) turnText.text = turn.ToString();
     }
 
-    public void AddCrowdControl()
+    public void SetCrowdControl(int id, bool isAdd, CrowdControlIcon prefab = null)
     {
+        if (isAdd)
+        {
+            GameObject obj = Instantiate(prefab.gameObject);
+            obj.transform.SetParent(CCList);
 
+            CrowdControlIcon crowdControlIcon = obj.GetComponent<CrowdControlIcon>();
+            crowdControlIcon.SetImage(id);
+
+            ccIcons.Add(crowdControlIcon);
+        }
+        else
+        {
+            for (int i = 0; i < ccIcons.Count; i++)
+            {
+                if (ccIcons[i].id == id)
+                {
+                    ccIcons.RemoveAt(i);
+                    break;
+                }
+            }
+        }
     }
-
     public void SetCharacterIndex(int n)
     {
         index = n;

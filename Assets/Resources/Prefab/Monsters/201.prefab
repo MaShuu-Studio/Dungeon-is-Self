@@ -357,7 +357,7 @@ GameObject:
   - component: {fileID: 8422070191889729927}
   - component: {fileID: 9169395120173925066}
   m_Layer: 0
-  m_Name: Minotaurs
+  m_Name: 201
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -445,6 +445,7 @@ MonoBehaviour:
   hpText: {fileID: 8182844385443439760}
   turnText: {fileID: 6445285383472032681}
   CCList: {fileID: 5956532401533759543}
+  crowdControlPrefab: {fileID: 0}
 --- !u!95 &9169395120173925066
 Animator:
   serializedVersion: 3

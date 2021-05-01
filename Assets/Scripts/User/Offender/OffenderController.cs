@@ -202,7 +202,7 @@ namespace GameControl
             for (int i = 0; i < dices[characterIndex].Length; i++)
             {
                 if (dices[characterIndex][i].id % 100 == 0) { basicSkill++; continue; }
-                if (dices[characterIndex][i].id == skill.id) overlabCount++;
+                if (dices[characterIndex][i].id == skill.id && i != index) overlabCount++;
 
             }
             if ((basicSkill <= 1 && skill.id % 100 != 0) || (basicSkill == 2 && dices[characterIndex][index].id % 100 == 0 && skill.id % 100 != 0)) return 1;
