@@ -719,59 +719,89 @@ public class GamePlayUIController : MonoBehaviour
     }
 
     List<Dice> diceObjects = new List<Dice>();
-    public void DiceRoll(Dictionary<int, bool> isRolled)
+    public void DiceRoll(List<bool> isRolled)
     {
+        
         diceObjects.Clear();
         if (type == UserType.Defender)
         {
-            for (int i = 0; i < charObjects.Count; i++)
+            if (isRolled[0])
             {
-                GameObject dice = Instantiate(dicePrefab);
-                dice.transform.position = new Vector3(charObjects[i].transform.position.x - 1, dice.transform.position.y, 0);
-                Dice diceObj = dice.GetComponent<Dice>();
-                diceObjects.Add(diceObj);
-                GameObject dice2 = Instantiate(dicePrefab);
-                dice2.transform.position = new Vector3(charObjects[i].transform.position.x + 1, dice2.transform.position.y, 0);
-                diceObj = dice2.GetComponent<Dice>();
-                diceObjects.Add(diceObj);
+                for (int i = 0; i < charObjects.Count; i++)
+                {
+                    GameObject dice = Instantiate(dicePrefab);
+                    dice.transform.position = new Vector3(charObjects[i].transform.position.x - 1, dice.transform.position.y, 0);
+                    Dice diceObj = dice.GetComponent<Dice>();
+                    diceObjects.Add(diceObj);
+                    GameObject dice2 = Instantiate(dicePrefab);
+                    dice2.transform.position = new Vector3(charObjects[i].transform.position.x + 1, dice2.transform.position.y, 0);
+                    diceObj = dice2.GetComponent<Dice>();
+                    diceObjects.Add(diceObj);
+                }
+            }
+            else
+            {
+                diceObjects.Add(null);
+                diceObjects.Add(null);
             }
 
             for (int i = 0; i < enemyObjects.Count; i++)
             {
-                GameObject dice = Instantiate(dicePrefab);
-                dice.transform.position = new Vector3(enemyObjects[i].transform.position.x, dice.transform.position.y, 0);
-                Dice diceObj = dice.GetComponent<Dice>();
-                diceObjects.Add(diceObj);
+                if (isRolled[i + 1])
+                {
+                    GameObject dice = Instantiate(dicePrefab);
+                    dice.transform.position = new Vector3(enemyObjects[i].transform.position.x, dice.transform.position.y, 0);
+                    Dice diceObj = dice.GetComponent<Dice>();
+                    diceObjects.Add(diceObj);
+                }
+                else
+                    diceObjects.Add(null);
             }
         }
         else
         {
-            for (int i = 0; i < enemyObjects.Count; i++)
+            if (isRolled[0])
             {
-                GameObject dice = Instantiate(dicePrefab);
-                dice.transform.position = new Vector3(enemyObjects[i].transform.position.x - 1, dice.transform.position.y, 0);
-                Dice diceObj = dice.GetComponent<Dice>();
-                diceObjects.Add(diceObj);
-                GameObject dice2 = Instantiate(dicePrefab);
-                dice2.transform.position = new Vector3(enemyObjects[i].transform.position.x + 1, dice2.transform.position.y, 0);
-                diceObj = dice2.GetComponent<Dice>();
-                diceObjects.Add(diceObj);
+                for (int i = 0; i < enemyObjects.Count; i++)
+                {
+                    GameObject dice = Instantiate(dicePrefab);
+                    dice.transform.position = new Vector3(enemyObjects[i].transform.position.x - 1, dice.transform.position.y, 0);
+                    Dice diceObj = dice.GetComponent<Dice>();
+                    diceObjects.Add(diceObj);
+                    GameObject dice2 = Instantiate(dicePrefab);
+                    dice2.transform.position = new Vector3(enemyObjects[i].transform.position.x + 1, dice2.transform.position.y, 0);
+                    diceObj = dice2.GetComponent<Dice>();
+                    diceObjects.Add(diceObj);
+                }
             }
+            else
+            {
+                diceObjects.Add(null);
+                diceObjects.Add(null);
+            }
+
 
             for (int i = 0; i < charObjects.Count; i++)
             {
-                GameObject dice = Instantiate(dicePrefab);
-                dice.transform.position = new Vector3(charObjects[i].transform.position.x, dice.transform.position.y, 0);
-                Dice diceObj = dice.GetComponent<Dice>();
-                diceObjects.Add(diceObj);
+                if (isRolled[i + 1])
+                {
+                    GameObject dice = Instantiate(dicePrefab);
+                    dice.transform.position = new Vector3(charObjects[i].transform.position.x, dice.transform.position.y, 0);
+                    Dice diceObj = dice.GetComponent<Dice>();
+                    diceObjects.Add(diceObj);
+                }
+                else
+                    diceObjects.Add(null); 
             }
         }
 
-        foreach (Dice dice in diceObjects) dice.Roll();
+        foreach (Dice dice in diceObjects)
+            if (dice != null) dice.Roll();
     }
 
     public void SetDiceSkill(int index, int id)
     {
+        if (diceObjects[index] != null) ;
         diceObjects[index].SetSkill(id);
     }
 

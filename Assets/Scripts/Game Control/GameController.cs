@@ -193,26 +193,24 @@ namespace GameControl
             List<MonsterSkill> monSkills = DefenderController.Instance.DiceRoll(defenderUnit % 10);
             Dictionary<int, CharacterSkill> charSkills = OffenderController.Instance.DiceRoll(offenderUnits);
 
-            Dictionary<int, bool> isAttack = new Dictionary<int, bool>();
+            List<bool> isAttack = new List<bool>();
 
-            for (int j = 0; j < offenderUnits.Length + 1; j++)
-            {
-                if (j == 0) isAttack.Add(defenderUnit, CanAttack(defenderUnit));
-                else isAttack.Add(offenderUnits[j - 1], CanAttack(offenderUnits[j - 1]));
-            }
+            isAttack.Add(CanAttack(defenderUnit));
+
+            for (int j = 0; j < offenderUnits.Length; j++)
+                isAttack.Add(CanAttack(offenderUnits[j]));
 
             GamePlayUIController.Instance.DiceRoll(isAttack);
             int i = 0;
 
             for (; i < monSkills.Count; i++)
             {
-                GamePlayUIController.Instance.SetDiceSkill(i, monSkills[i].id);
+                if (isAttack[0]) GamePlayUIController.Instance.SetDiceSkill(i, monSkills[i].id);
             }
 
             foreach (CharacterSkill skill in charSkills.Values)
             {
-                //offenderUnitIsDead[offenderUnits[i - monSkills.Count]]
-                GamePlayUIController.Instance.SetDiceSkill(i, skill.id);
+                if (isAttack[i-1]) GamePlayUIController.Instance.SetDiceSkill(i, skill.id);
                 i++;
             }
             isDiceRolled = true;
@@ -296,7 +294,10 @@ namespace GameControl
         {
             if (index / 10 == 1 && offenderUnitIsDead[index]) return false;
 
-            //ccList[index].Find()
+            foreach (CrowdControl cc in ccList[index])
+            {
+                if (cc.cc == CCtype.STUN) return false;
+            }
 
             return true;
         }
