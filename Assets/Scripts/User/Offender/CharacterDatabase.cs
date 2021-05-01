@@ -9,6 +9,8 @@ namespace Data
     {
         public static string facePath { get; private set; } = "Sprites/Classes/Faces/";
         private List<Character> characterDB = new List<Character>();
+
+        #region Instance
         private static CharacterDatabase instance;
         public static CharacterDatabase Instance
         {
@@ -28,6 +30,7 @@ namespace Data
             }
             DontDestroyOnLoad(gameObject);
         }
+        #endregion
 
         // Start is called before the first frame update
         void Start()

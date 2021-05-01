@@ -11,6 +11,8 @@ namespace Data
 
         private List<Monster> monsterDB;
 
+        #region Instace
+
         private static MonsterDatabase instance;
         public static MonsterDatabase Instance
         {
@@ -30,6 +32,7 @@ namespace Data
             }
             DontDestroyOnLoad(gameObject);
         }
+        #endregion
 
         // Start is called before the first frame update
         void Start()

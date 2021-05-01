@@ -64,7 +64,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\Scripts\Charater\CrowdControl.cs" />
     <Compile Include="Assets\Scripts\Dummy\MyPlayer.cs" />
     <Compile Include="Assets\Scripts\Dummy\Player.cs" />
     <Compile Include="Assets\Scripts\Dummy\PlayerManager.cs" />
@@ -105,6 +104,7 @@
     <Compile Include="Assets\Scripts\User\Offender\CharacterDatabase.cs" />
     <Compile Include="Assets\Scripts\User\Offender\OffenderController.cs" />
     <Compile Include="Assets\Scripts\User\Skill\CharacterSkill.cs" />
+    <Compile Include="Assets\Scripts\User\Skill\CrowdControl.cs" />
     <Compile Include="Assets\Scripts\User\Skill\MonsterSkill.cs" />
     <Compile Include="Assets\Scripts\User\Skill\Skill.cs" />
     <Compile Include="Assets\Scripts\User\Skill\SkillDatabase.cs" />
