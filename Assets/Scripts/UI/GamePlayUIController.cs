@@ -718,6 +718,28 @@ public class GamePlayUIController : MonoBehaviour
         }
     }
 
+    public void DeadCharacter(int index)
+    {
+        if (type == UserType.Defender)
+        {
+            for (int i = 0; i < enemyObjects.Count; i++)
+                if (enemyObjects[i].GetIndex() == index)
+                {
+                    enemyObjects[i].Dead();
+                    break;
+                }
+        }
+        else
+        {
+            for (int i = 0; i < charObjects.Count; i++)
+                if (charObjects[i].GetIndex() == index)
+                {
+                    charObjects[i].Dead();
+                    break;
+                }
+        }
+    }
+
     List<Dice> diceObjects = new List<Dice>();
     public void DiceRoll(List<bool> isRolled)
     {
@@ -747,7 +769,7 @@ public class GamePlayUIController : MonoBehaviour
 
             for (int i = 0; i < enemyObjects.Count; i++)
             {
-                if (isRolled[i + 1])
+                if (isRolled[i + 1] && enemyObjects[i] != null)
                 {
                     GameObject dice = Instantiate(dicePrefab);
                     dice.transform.position = new Vector3(enemyObjects[i].transform.position.x, dice.transform.position.y, 0);
@@ -783,7 +805,7 @@ public class GamePlayUIController : MonoBehaviour
 
             for (int i = 0; i < charObjects.Count; i++)
             {
-                if (isRolled[i + 1])
+                if (isRolled[i + 1] && enemyObjects[i] != null)
                 {
                     GameObject dice = Instantiate(dicePrefab);
                     dice.transform.position = new Vector3(charObjects[i].transform.position.x, dice.transform.position.y, 0);
@@ -920,7 +942,6 @@ public class GamePlayUIController : MonoBehaviour
                 enemyRosterSelected[i].gameObject.SetActive(false);
             }
         }
-
     }
     #endregion
 }

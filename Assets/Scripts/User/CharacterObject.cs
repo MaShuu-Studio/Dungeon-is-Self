@@ -111,4 +111,9 @@ public class CharacterObject : MonoBehaviour
 
         GameController.Instance.AnimationEnd(index);
     }
+
+    public void Dead()
+    {
+        Destroy(gameObject);
+    }
 }

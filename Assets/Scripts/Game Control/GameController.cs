@@ -272,7 +272,6 @@ namespace GameControl
                             if (HasCrowdControl(keys[i], CCType.ATTACKSTAT, CCTarget.SELF)) damage = (int)(damage * 1.5f);
                             if (HasCrowdControl(keys[i], CCType.ATTACKSTAT, CCTarget.ENEMY)) damage = (int)(damage * 0.5f);
 
-
                             int restHp = DefenderController.Instance.MonsterDamaged(defenderUnit % 10, damage);
                             if (restHp <= 0)
                             {
@@ -495,9 +494,7 @@ namespace GameControl
                 List<int> aliveIndexes = new List<int>();
                 int tauntIndex = -1;
                 foreach (int key in offenderUnits)
-                {
                     if (offenderUnitIsDead[key] == false) aliveIndexes.Add(key);
-                }
 
                 if (aliveIndexes.Count == 1)
                 {
@@ -523,9 +520,11 @@ namespace GameControl
 
                     case MonsterSkill.SkillType.AttackOne:
                         offenderUnitIsDead[aliveIndexes[deadUnit]] = true;
+                        GamePlayUIController.Instance.DeadCharacter(offenderUnits[deadUnit]);
                         break;
                     case MonsterSkill.SkillType.AttackOneStun:
                         offenderUnitIsDead[aliveIndexes[deadUnit]] = true;
+                        GamePlayUIController.Instance.DeadCharacter(offenderUnits[deadUnit]);
                         do
                         {
                             int stunUnit = Random.Range(0, aliveIndexes.Count);
