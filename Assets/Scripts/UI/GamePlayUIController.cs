@@ -805,7 +805,7 @@ public class GamePlayUIController : MonoBehaviour
 
             for (int i = 0; i < charObjects.Count; i++)
             {
-                if (isRolled[i + 1] && enemyObjects[i] != null)
+                if (isRolled[i + 1] && charObjects[i] != null)
                 {
                     GameObject dice = Instantiate(dicePrefab);
                     dice.transform.position = new Vector3(charObjects[i].transform.position.x, dice.transform.position.y, 0);

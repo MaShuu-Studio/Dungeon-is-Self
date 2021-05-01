@@ -45,6 +45,7 @@ namespace GameControl
 
         private Dictionary<int, List<CrowdControl>> ccList = new Dictionary<int, List<CrowdControl>>();
 
+        private Dictionary<int, System.Tuple<CharacterSkill, int>> offednerReadyTurn = new Dictionary<int, System.Tuple<CharacterSkill, int>>();
         private Dictionary<int, bool> offenderUnitIsDead = new Dictionary<int, bool>();
         private Dictionary<int, bool> animationEnd = new Dictionary<int, bool>();
 
@@ -159,6 +160,7 @@ namespace GameControl
             progressRound = false;
             animationEnd.Clear();
             offenderUnitIsDead.Clear();
+            offednerReadyTurn.Clear();
             ccList.Clear();
 
             // 선공 확인해서 순서 조정
@@ -168,6 +170,7 @@ namespace GameControl
             {
                 animationEnd.Add(key, true);
                 offenderUnitIsDead.Add(key, false);
+                offednerReadyTurn.Add(key, null);
                 ccList.Add(key, new List<CrowdControl>());
             }
 
@@ -199,7 +202,10 @@ namespace GameControl
 
             Dictionary<int, CharacterSkill> charSkills = new Dictionary<int, CharacterSkill>();
             for (int j = 0; j < offenderUnits.Length; j++)
-                charSkills.Add(offenderUnits[j], OffenderController.Instance.DiceRoll(offenderUnits[j], HasCrowdControl(defenderUnit, CCType.BLIND)));
+            {
+                if (offednerReadyTurn[offenderUnits[j]] != null) charSkills.Add(offenderUnits[j], offednerReadyTurn[offenderUnits[j]].Item1);
+                else charSkills.Add(offenderUnits[j], OffenderController.Instance.DiceRoll(offenderUnits[j], HasCrowdControl(defenderUnit, CCType.BLIND)));
+            }
 
             List<bool> isAttack = new List<bool>();
 
@@ -207,6 +213,17 @@ namespace GameControl
 
             for (int j = 0; j < offenderUnits.Length; j++)
                 isAttack.Add(CanAttack(offenderUnits[j]));
+
+
+            for (int j = 0; j < offenderUnits.Length; j++)
+            {
+                if (offednerReadyTurn[offenderUnits[j]] == null && isAttack[j] && charSkills[offenderUnits[j]].turn > 0)
+                {
+                    offednerReadyTurn[offenderUnits[j]] = 
+                        new System.Tuple<CharacterSkill, int>(charSkills[offenderUnits[j]],
+                        charSkills[offenderUnits[j]].turn);
+                }
+            }
 
             GamePlayUIController.Instance.DiceRoll(isAttack);
             int i = 0;
@@ -244,7 +261,7 @@ namespace GameControl
             {
                 int offenderUnit = offenderUnits[i - 1];
                 // 전투불능 상태 체크해서 Animation End 이용
-                if (isAttack[i]) animationEnd[offenderUnit] = false;
+                if (isAttack[i] || offednerReadyTurn[offenderUnits[i - 1]] != null) animationEnd[offenderUnit] = false;
                 else animationEnd[offenderUnit] = true;
             }
 
@@ -268,6 +285,17 @@ namespace GameControl
                         if (isMonster == false)
                         {
                             int damage = charSkills[keys[i]].damage;
+
+                            if (offednerReadyTurn[keys[i]] != null)
+                            {
+                                if (offednerReadyTurn[keys[i]].Item2 == 0)
+                                    offednerReadyTurn[keys[i]] = null;
+                                else
+                                {
+                                    offednerReadyTurn[keys[i]] = new System.Tuple<CharacterSkill, int>(offednerReadyTurn[keys[i]].Item1, offednerReadyTurn[keys[i]].Item2 - 1);
+                                    continue;
+                                }
+                            }
 
                             if (HasCrowdControl(keys[i], CCType.ATTACKSTAT, CCTarget.SELF)) damage = (int)(damage * 1.5f);
                             if (HasCrowdControl(keys[i], CCType.ATTACKSTAT, CCTarget.ENEMY)) damage = (int)(damage * 0.5f);
@@ -325,6 +353,7 @@ namespace GameControl
 
         private bool CanAttack(int index)
         {
+            if (index / 10 != 2 && offednerReadyTurn[index] != null) return false;
             if (index / 10 == 1 && offenderUnitIsDead[index]) return false;
 
             foreach (CrowdControl cc in ccList[index])
