@@ -11,17 +11,18 @@ namespace Data
         public int id { get; private set; }
         public string name { get; private set; }
         public int hp { get; private set; }
+        public List<int> tierHp { get; private set; }
         public Element weak { get; private set; }
         public List<int> diceSkills { get; private set; }
         public List<int> attackSkills { get; private set; }
         public string prior { get; private set; }
         public int tier { get; private set; }
 
-        public Monster(int id, int tier, string name, int hp, Element weak, List<int> atkSkills, List<int> dices, string prior = "")
+        public Monster(int id, int tier, string name, List<int> tierHp, Element weak, List<int> atkSkills, List<int> dices, string prior = "")
         {
             this.id = id;
             this.name = name;
-            this.hp = hp;
+            this.tierHp = new List<int>(tierHp);
             this.weak = weak;
 
             attackSkills = new List<int>(atkSkills);
@@ -36,7 +37,7 @@ namespace Data
         {
             this.id = monster.id;
             this.name = monster.name;
-            this.hp = monster.hp;
+            this.tierHp = new List<int>(monster.tierHp);
             this.weak = monster.weak;
 
             attackSkills = new List<int>(monster.attackSkills);
@@ -78,9 +79,9 @@ namespace Data
             hp -= skill.damage;
         }
 
-        public void Heal()
+        public void Heal(int round)
         {
-            hp = MonsterDatabase.Instance.GetMonsterHP(id);
+            hp = tierHp[round - 1];
         }
     }
 }

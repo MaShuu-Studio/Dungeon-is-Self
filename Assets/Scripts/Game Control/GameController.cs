@@ -118,6 +118,8 @@ namespace GameControl
                     OffenderController.Instance.AddSkillPoint(skillPointPerRound[round]);
                     round++;
                 }
+                DefenderController.Instance.SetMonsterHp();
+
                 animationEnd.Clear();
                 currentProgress = GameProgress.ReadyRound;
 
@@ -260,10 +262,8 @@ namespace GameControl
                     while (animationEnd[keys[i]] == false) yield return null;
                     // 전투 정보 전송
                     {
-                        Debug.Log(keys[i]);
                         if (isMonster == false)
                         {
-                            Debug.Log("Offender Attack");
                             int restHp = DefenderController.Instance.MonsterDamaged(defenderUnit % 10, charSkills[keys[i]]);
                             if (restHp <= 0)
                             {
@@ -276,7 +276,6 @@ namespace GameControl
                         }
                         else
                         {
-                            Debug.Log("Defender Attack");
                             // 주사위 결과 발생
                             int index = Random.Range(0, offenderUnits.Length);
                             if (monSkills[0].ccList.Count != 0)

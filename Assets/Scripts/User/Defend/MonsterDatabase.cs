@@ -46,7 +46,13 @@ namespace Data
 
             #region Tier 1
             monsterDB.Add(new Monster(
-                201, 1, "미노타우르스", 250, Element.NORMAL,
+                201, 1, "미노타우르스", 
+                new List<int>()
+                {
+                    250,
+                    400,
+                    650,
+                }, Element.NORMAL,
                 new List<int>()
                 {
                     22101,
@@ -68,53 +74,12 @@ namespace Data
                     21303,
                 }));
             monsterDB.Add(new Monster(
-                202, 1, "하피", 250, Element.NORMAL,
-                new List<int>()
+                202, 1, "하피", new List<int>()
                 {
-                    22101,
-                    23101,
-                    24101,
-                },
-                new List<int>()
-                {
-                    21101,
-                    21102,
-                    21103,
-                    21104,
-                    21104,
-                    21201,
-                    21202,
-                    21203,
-                    21301,
-                    21302,
-                    21303,
-                }));
-
-            monsterDB.Add(new Monster(
-                203, 1, "스네이크", 250, Element.NORMAL,
-                new List<int>()
-                {
-                    22101,
-                    23101,
-                    24101,
-                },
-                new List<int>()
-                {
-                    21101,
-                    21102,
-                    21103,
-                    21104,
-                    21104,
-                    21201,
-                    21202,
-                    21203,
-                    21301,
-                    21302,
-                    21303,
-                }));
-
-            monsterDB.Add(new Monster(
-                204, 1, "구미호", 250, Element.NORMAL,
+                    250,
+                    400,
+                    650,
+                }, Element.NORMAL,
                 new List<int>()
                 {
                     22101,
@@ -137,7 +102,68 @@ namespace Data
                 }));
 
             monsterDB.Add(new Monster(
-                205, 1, "도깨비", 250, Element.NORMAL,
+                203, 1, "스네이크", new List<int>()
+                {
+                    250,
+                    400,
+                    650,
+                }, Element.NORMAL,
+                new List<int>()
+                {
+                    22101,
+                    23101,
+                    24101,
+                },
+                new List<int>()
+                {
+                    21101,
+                    21102,
+                    21103,
+                    21104,
+                    21104,
+                    21201,
+                    21202,
+                    21203,
+                    21301,
+                    21302,
+                    21303,
+                }));
+
+            monsterDB.Add(new Monster(
+                204, 1, "구미호", new List<int>()
+                {
+                    250,
+                    400,
+                    650,
+                }, Element.NORMAL,
+                new List<int>()
+                {
+                    22101,
+                    23101,
+                    24101,
+                },
+                new List<int>()
+                {
+                    21101,
+                    21102,
+                    21103,
+                    21104,
+                    21104,
+                    21201,
+                    21202,
+                    21203,
+                    21301,
+                    21302,
+                    21303,
+                }));
+
+            monsterDB.Add(new Monster(
+                205, 1, "도깨비", new List<int>()
+                {
+                    250,
+                    400,
+                    650,
+                }, Element.NORMAL,
                 new List<int>()
                 {
                     22101,
@@ -198,11 +224,6 @@ namespace Data
             {
                 monsterId.Add(monster.id);
             }
-        }
-
-        public int GetMonsterHP(int id)
-        {
-            return monsterDB.Find(monster => monster.name == name).hp;
         }
     }
 }

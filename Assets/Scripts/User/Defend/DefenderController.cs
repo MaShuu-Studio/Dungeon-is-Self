@@ -173,6 +173,14 @@ namespace GameControl
             ResetAttackSkill();
             GameController.Instance.SelectUnit(UserType.Defender, unit);
         }
+
+        public void SetMonsterHp()
+        {
+            foreach (Monster monster in monsters)
+            {
+                monster.Heal(GameController.Instance.round);
+            }
+        }
         #endregion
 
         #region Play Round
@@ -236,7 +244,7 @@ namespace GameControl
 
         public void HealBattleMonster(int index)
         {
-            monsters[index % 10].Heal();
+            monsters[index % 10].Heal(GameController.Instance.round);
         }
 
         #endregion
