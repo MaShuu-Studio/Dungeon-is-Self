@@ -193,13 +193,13 @@ namespace GameControl
         private void ProgressTurn()
         {
             List<MonsterSkill> monSkills = new List<MonsterSkill>();
-            bool monIsParalysis = IsParalysis(defenderUnit);
+            bool monIsParalysis = HasCrowdControl(defenderUnit, CCType.BLIND);
             for (int j = 0; j < 2; j++)
                 monSkills.Add(DefenderController.Instance.DiceRoll(defenderUnit % 10, monIsParalysis));
 
             Dictionary<int, CharacterSkill> charSkills = new Dictionary<int, CharacterSkill>();
             for (int j = 0; j < offenderUnits.Length; j++)
-                charSkills.Add(offenderUnits[j], OffenderController.Instance.DiceRoll(offenderUnits[j], IsParalysis(offenderUnits[j])));
+                charSkills.Add(offenderUnits[j], OffenderController.Instance.DiceRoll(offenderUnits[j], HasCrowdControl(defenderUnit, CCType.BLIND)));
 
             List<bool> isAttack = new List<bool>();
 
@@ -308,6 +308,12 @@ namespace GameControl
                     }
                 }
 
+            float time = 0.5f;
+            while (time > 0)
+            {
+                time -= Time.deltaTime;
+                yield return null;
+            }
             progressRound = false;
             NextTurn();
         }
@@ -318,7 +324,7 @@ namespace GameControl
 
             foreach (CrowdControl cc in ccList[index])
             {
-                if (cc.cc == CCtype.STUN)
+                if (cc.cc == CCType.STUN)
                 {
                     if (cc.turn < cc.GetCCBasicTurn()) return false;
                 }
@@ -347,6 +353,10 @@ namespace GameControl
                 for (int i = 0; i < indexes.Count; i++)
                 {
                     ccList[indexes[i]].Add(SkillDatabase.Instance.GetCrowdControl(cc.id));
+
+                    if (cc.cc == CCType.DOTDAMAGE)
+                        ccList[indexes[i]][ccList[indexes[i]].Count - 1].SetDotDamage(ccStack);
+
                     bool isStackSkill = ccList[indexes[i]][ccList[indexes[i]].Count - 1].ControlCC(ccStack);
 
                     if (isStackSkill && ccList[indexes[i]][ccList[indexes[i]].Count - 1].stack > 0)
@@ -367,11 +377,17 @@ namespace GameControl
                 for (int i = 0; i < indexes.Count; i++)
                 {
                     CrowdControl curCC = ccList[indexes[i]][ccIndex];
+
+                    if (curCC.cc == CCType.DOTDAMAGE && curCC.id == cc.id && curCC.dotDamage < ccStack)
+                    {
+                        curCC.SetDotDamage(ccStack);
+                    }
+
                     bool isStackSkill = curCC.ControlCC(ccStack);
 
                     if (isStackSkill == false)
                     {
-                        if (curCC.turn < cc.turn)curCC.SetTurn(cc.turn);
+                        if (curCC.turn < cc.turn) curCC.SetTurn(cc.turn);
                     }
                     else
                     {
@@ -395,7 +411,7 @@ namespace GameControl
                             curCC.ControlCC(ccStack);
                         }
                     }
-                }                
+                }
             }
         }
 
@@ -411,6 +427,16 @@ namespace GameControl
                     if (isStackSkill && curCC.stack > 0 && curCC.turn == curCC.GetCCBasicTurn()) continue;
 
                     bool b = curCC.ProgressTurn();
+                    if (curCC.cc == CCType.DOTDAMAGE)
+                    {
+                        int restHp = DefenderController.Instance.MonsterDamaged(key % 10, curCC.dotDamage);
+                        GamePlayUIController.Instance.UpdateCharacters();
+                        if (restHp < 0)
+                        {
+                            DefenderController.Instance.Dead(defenderUnit);
+                            DefenderDefeated();
+                        }
+                    }
                     GamePlayUIController.Instance.UpdateCrowdControl(key, curCC.id, curCC.turn, curCC.stack, b);
                     if (b)
                     {
@@ -427,9 +453,9 @@ namespace GameControl
             }
         }
 
-        private bool IsParalysis(int index)
+        private bool HasCrowdControl(int index, CCType ccType)
         {
-            CrowdControl tmp = ccList[index].Find(cc => cc.cc == CCtype.BLIND);
+            CrowdControl tmp = ccList[index].Find(cc => cc.cc == ccType);
             return tmp != null;
         }
         #endregion
@@ -472,7 +498,7 @@ namespace GameControl
 
                 for (int i = 0; i < offenderUnits.Length; i++)
                 {
-                    CrowdControl tmp = ccList[offenderUnits[i]].Find(cc => cc.cc == CCtype.TAUNT);
+                    CrowdControl tmp = ccList[offenderUnits[i]].Find(cc => cc.cc == CCType.TAUNT);
                     if (tmp != null) tauntIndex = i;
                 }
 

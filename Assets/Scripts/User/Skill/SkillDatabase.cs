@@ -153,7 +153,7 @@ namespace Data
             charSkillDB.Add(new CharacterSkill(10204, 2, "톱날화살", turn: 0, damage: 16,
                 new List<System.Tuple<CrowdControl, int>>()
                 {
-                    new System.Tuple<CrowdControl, int>(GetCrowdControl(30801), 0),
+                    new System.Tuple<CrowdControl, int>(GetCrowdControl(30801), 3),
                 }));
             charSkillDB.Add(new CharacterSkill(10205, 2, "파워샷", turn: 1, damage: 32,
                 new List<System.Tuple<CrowdControl, int>>()
@@ -171,7 +171,7 @@ namespace Data
                 new List<int> { 10204 },
                 new List<System.Tuple<CrowdControl, int>>()
                 {
-                    new System.Tuple<CrowdControl, int>(GetCrowdControl(30802), 0),
+                    new System.Tuple<CrowdControl, int>(GetCrowdControl(30802), 6),
                     new System.Tuple<CrowdControl, int>(GetCrowdControl(30602), 1),
                 }));
             charSkillDB.Add(new CharacterSkill(10209, 3, "저격", turn: 1, damage: 60, 
@@ -212,7 +212,7 @@ namespace Data
             charSkillDB.Add(new CharacterSkill(10306, 2, "블레이즈", turn: 1, damage: 48,
                 new List<System.Tuple<CrowdControl, int>>()
                 {
-                    new System.Tuple<CrowdControl, int>(GetCrowdControl(30803), 0),
+                    new System.Tuple<CrowdControl, int>(GetCrowdControl(30803), 4),
                 }));
             charSkillDB.Add(new CharacterSkill(10307, 3, "전격폭발", turn: 0, damage: 30, 
                 new List<int> { 10304 },
@@ -230,14 +230,14 @@ namespace Data
                 new List<int> { 10306 },
                 new List<System.Tuple<CrowdControl, int>>()
                 {
-                    new System.Tuple<CrowdControl, int>(GetCrowdControl(30803), 0),
+                    new System.Tuple<CrowdControl, int>(GetCrowdControl(30803), 8),
                 }));
             charSkillDB.Add(new CharacterSkill(10310, 4, "뇌룡", turn: 2, damage: 180, 
                 new List<int> { 10307, 10309 },
                 new List<System.Tuple<CrowdControl, int>>()
                 {
                     new System.Tuple<CrowdControl, int>(GetCrowdControl(30602), 0),
-                    new System.Tuple<CrowdControl, int>(GetCrowdControl(30804), 0),
+                    new System.Tuple<CrowdControl, int>(GetCrowdControl(30804), 13),
                 }));
             charSkillDB.Add(new CharacterSkill(10311, 4, "빙하기", turn: 2, damage: 180, 
                 new List<int> { 10307, 10308 },
@@ -250,7 +250,7 @@ namespace Data
                 new List<System.Tuple<CrowdControl, int>>()
                 {
                     new System.Tuple<CrowdControl, int>(GetCrowdControl(30701), 1),
-                    new System.Tuple<CrowdControl, int>(GetCrowdControl(30803), 0),
+                    new System.Tuple<CrowdControl, int>(GetCrowdControl(30803), 11),
                 }));
             #endregion
         }

@@ -225,6 +225,11 @@ namespace GameControl
 
             return monsters[index].hp;
         }
+        public int MonsterDamaged(int index, int damage)
+        {
+            monsters[index].Damaged(damage);
+            return monsters[index].hp;
+        }
 
         public void GetMonsterInfo(ref int hp, ref int turn)
         {

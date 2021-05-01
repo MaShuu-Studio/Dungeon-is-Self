@@ -78,6 +78,10 @@ namespace Data
         {
             hp -= skill.damage;
         }
+        public void Damaged(int damage)
+        {
+            hp -= damage;
+        }
 
         public void Heal(int round)
         {
