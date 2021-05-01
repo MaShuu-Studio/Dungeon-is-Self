@@ -225,11 +225,11 @@ namespace GameControl
             return dices[characterIndex][index];
         }
 
-        public CharacterSkill DiceRoll(int roster, bool isPalaysis)
+        public CharacterSkill DiceRoll(int roster, bool isParalysis)
         {
             int diceIndex = Random.Range(0, dices[roster % 10].Length);
             
-            if (isPalaysis)
+            if (isParalysis)
             {
                 int blindAmount = 3;
                 List<int> blind = new List<int>();

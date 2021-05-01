@@ -441,6 +441,15 @@ namespace GameControl
                         break;
                     case MonsterSkill.SkillType.AttackOneStun:
                         offenderUnitIsDead[aliveIndexes[deadUnit]] = true;
+                        do
+                        {
+                            int stunUnit = Random.Range(0, aliveIndexes.Count);
+                            if (stunUnit != deadUnit)
+                            {
+                                AddCrowdControl(aliveIndexes[stunUnit], skill);
+                                break;
+                            }
+                        } while (true);
                         break;
                 }
 

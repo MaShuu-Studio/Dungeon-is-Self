@@ -273,10 +273,14 @@ namespace Data
             monSkillDB.Add(new MonsterSkill(21303, "DICE3-3", 5, 7));
             #endregion
 
-            #region Attack One
-            monSkillDB.Add(new MonsterSkill(22101, "SKILL1-1", 10, 0));
-            monSkillDB.Add(new MonsterSkill(23101, "SKILL1-2", 4, 0));
-            monSkillDB.Add(new MonsterSkill(24101, "SKILL1-3", 6, 0));
+            #region Attack
+            monSkillDB.Add(new MonsterSkill(22101, "Attack All", 10, 0));
+            monSkillDB.Add(new MonsterSkill(23101, "Attack One", 4, 0));
+            monSkillDB.Add(new MonsterSkill(24101, "Attack One and Stun", 6, 0,
+                new List<System.Tuple<CrowdControl, int>>()
+                {
+                    new System.Tuple<CrowdControl, int>(GetCrowdControl(30701), 2),
+                }));
             #endregion
 
 

@@ -11,7 +11,7 @@ namespace Data
         public SkillType type { get; private set; }
         public int cost { get; private set; }
 
-        public MonsterSkill(int id, string name, int turn, int cost)
+        public MonsterSkill(int id, string name, int turn, int cost, List<System.Tuple<CrowdControl, int>> ccs = null)
         {
             // ID 구조 2abcc
             // 2는 몬스터스킬임을 표기
@@ -30,6 +30,13 @@ namespace Data
             this.name = name;
             this.turn = turn;
             this.cost = cost;
+
+            if (ccs != null)
+                for (int i = 0; i < ccs.Count; i++)
+                {
+                    CrowdControl cc = ccs[i].Item1;
+                    ccList.Add(cc, ccs[i].Item2);
+                }
         }
     }
 }

@@ -116,7 +116,12 @@ namespace GameControl
                         if (DefenderController.Instance.SetDice(j, usableSkill[n]) == 0) break;
                     }
                 }
+
+                int attackSkillIndex = Random.Range(0, m.attackSkills.Count);
+                MonsterSkill atkSkill = SkillDatabase.Instance.GetMonsterSkill(m.attackSkills[attackSkillIndex]);
+                DefenderController.Instance.SetAttackSkill(atkSkill);
             }
+
         }
 
         public void OffenderSetDice()
