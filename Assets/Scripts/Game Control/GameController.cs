@@ -505,9 +505,17 @@ namespace GameControl
         private bool HasCrowdControl(int index, CCType ccType, CCTarget target = CCTarget.ENEMY)
         {
             CrowdControl tmp = ccList[index].Find(cc => cc.cc == ccType);
+
             bool b = tmp != null;
             if (b)
+            {
                 if (ccType == CCType.ATTACKSTAT) b = (tmp.target == target);
+                if (tmp.ControlCC(0))
+                {
+                    if (tmp.stack <= 0) b = true;
+                    else b = false;
+                }
+            }
 
             return b;
         }
