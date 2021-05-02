@@ -105,15 +105,38 @@ namespace GameControl
                 DefenderController.Instance.SelectMonster(i);
                 Monster m = DefenderController.Instance.monsters[i];
 
+                int maxTier = GameController.Instance.round;
+                List<MonsterSkill> usableSkill = DefenderController.Instance.GetUsableSkill(GameController.Instance.round);
+
                 for (int j = 0; j < 6; j++)
                 {
-                    List<MonsterSkill> usableSkill = new List<MonsterSkill>();
-                    usableSkill = DefenderController.Instance.GetUsableSkill(GameController.Instance.round);
-                    
-                    while (true)
+
+                    // maxTier 1개, 다 포함해서 나머지
+                    // 10번 돌때마다 대기 주사위 추가
+                    if (j == 0)
                     {
-                        int n = UnityEngine.Random.Range(0, usableSkill.Count);
-                        if (DefenderController.Instance.SetDice(j, usableSkill[n]) == 0) break;
+                        List<MonsterSkill> maxSkills = usableSkill.FindAll(skill => skill.tier == maxTier);
+                        int n = 0;
+                        do
+                        {
+                            n = UnityEngine.Random.Range(0, maxSkills.Count);
+
+                        } while (maxSkills[n].id != 200110);
+                        DefenderController.Instance.SetDice(j, maxSkills[n]);
+                    }
+                    else
+                    {
+                        int count = 10;
+                        while (true)
+                        {
+                            int n = UnityEngine.Random.Range(1, usableSkill.Count);
+                            if (DefenderController.Instance.SetDice(j, usableSkill[n]) == 0) break;
+                            if (count <= 0)
+                            {
+                                DefenderController.Instance.SetDice(j, usableSkill[0]);
+                                break;
+                            }
+                        }
                     }
                 }
 
