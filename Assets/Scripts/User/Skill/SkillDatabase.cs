@@ -20,7 +20,6 @@ namespace Data
             ccDatabase.Add(new CrowdControl(30202, "방어", CCTarget.SELF));
             ccDatabase.Add(new CrowdControl(30301, "반사", CCTarget.ALL));
             ccDatabase.Add(new CrowdControl(30401, "무효화", CCTarget.SELF));
-            ccDatabase.Add(new CrowdControl(30402, "상대무효화", CCTarget.ENEMY));
             ccDatabase.Add(new CrowdControl(30501, "무적", CCTarget.ALL));
             ccDatabase.Add(new CrowdControl(30502, "무적", CCTarget.SELF));
             ccDatabase.Add(new CrowdControl(30601, "실명", CCTarget.ENEMY));
@@ -40,6 +39,7 @@ namespace Data
             ccDatabase.Add(new CrowdControl(31101, "흡혈", CCTarget.SELF));
             ccDatabase.Add(new CrowdControl(31201, "턴감소", CCTarget.SELF));
             ccDatabase.Add(new CrowdControl(31301, "혼란", CCTarget.ENEMY));
+            ccDatabase.Add(new CrowdControl(31401, "상대무효화", CCTarget.ENEMY));
         }
 
         public CrowdControl GetCrowdControl(int id)
@@ -327,7 +327,7 @@ namespace Data
                 description: "고함소리를 질러 상대의 집중을 흐트린다.",
                 new List<System.Tuple<CrowdControl, int>>()
                 {
-                    new System.Tuple<CrowdControl, int>(GetCrowdControl(30402), 0),
+                    new System.Tuple<CrowdControl, int>(GetCrowdControl(31401), 0),
                 }));
             monSkillDB.Add(new MonsterSkill(201121, "돌진", 0, cost: 4,
                 description: "강력한 박치기로 1명을 행동 불능으로 만든다.",
@@ -423,7 +423,7 @@ namespace Data
                 description: "상대의 정기를 흡수하여 이로운 효과를 제거한다.",
                 new List<System.Tuple<CrowdControl, int>>()
                 {
-                    new System.Tuple<CrowdControl, int>(GetCrowdControl(30402), 0),
+                    new System.Tuple<CrowdControl, int>(GetCrowdControl(31401), 0),
                 }));
             monSkillDB.Add(new MonsterSkill(204113, "여우불", 0, cost: 0,
                 description: "여우불을 소환하여 상대에게 더 큰 효과를 준다.",

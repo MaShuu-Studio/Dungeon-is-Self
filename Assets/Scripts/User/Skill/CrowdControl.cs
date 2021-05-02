@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Data
 {
-    public enum CCType { TAUNT = 1, BARRIER, REFLECT, PURITY, INVINCIBLE, BLIND, STUN, DOTDAMAGE, ATTACKSTAT, MIRRORIMAGE, DRAIN, DECREASETURN, CONFUSION }
+    public enum CCType { TAUNT = 1, BARRIER, REFLECT, PURITY, INVINCIBLE, BLIND, STUN, DOTDAMAGE, ATTACKSTAT, MIRRORIMAGE, DRAIN, DECREASETURN, CONFUSION, REMOVE }
 
     public enum CCTarget { ENEMY, SELF, ALL }
     public class CrowdControl
@@ -113,6 +113,9 @@ namespace Data
                     turn = 0;
                     break;
                 case CCType.CONFUSION:
+                    turn = 0;
+                    break;
+                case CCType.REMOVE:
                     turn = 0;
                     break;
             }

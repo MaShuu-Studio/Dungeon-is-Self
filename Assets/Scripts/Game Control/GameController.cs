@@ -359,7 +359,16 @@ namespace GameControl
                             foreach (CrowdControl cc in monSkills[0].ccList.Keys)
                             {
                                 if (cc.target == CCTarget.ENEMY)
-                                    AddCrowdControl(offenderUnits[index], cc, monSkills[0].ccList[cc]);
+                                {
+                                    int target = offenderUnits[index];
+                                    foreach (int unit in offenderUnits)
+                                    {
+                                        CrowdControl tmp = ccList[unit].Find(crowdControl => crowdControl.cc == CCType.TAUNT);
+                                        if (tmp != null) target = unit;
+                                    }
+
+                                    AddCrowdControl(target, cc, monSkills[0].ccList[cc]);
+                                }
                                 else if (cc.target == CCTarget.SELF)
                                     AddCrowdControl(keys[i], cc, monSkills[0].ccList[cc]);
                                 else
@@ -406,6 +415,16 @@ namespace GameControl
 
             for (int i = 0; i < indexes.Count; i++)
             {
+                if (cc.cc == CCType.PURITY || cc.cc == CCType.INVINCIBLE)
+                {
+                    PurifyCrowdControl(indexes[i], true);
+                    if (cc.cc == CCType.PURITY) continue;
+                }
+                else if (cc.cc == CCType.REMOVE)
+                {
+                    PurifyCrowdControl(indexes[i], false);
+                    continue;
+                }
                 int ccIndex = ccList[indexes[i]].FindIndex(charCC => charCC.name == cc.name);
 
                 if (ccIndex == -1)
@@ -519,6 +538,62 @@ namespace GameControl
 
             return b;
         }
+
+        private void PurifyCrowdControl(int index, bool isGood)
+        {
+            Debug.Log("Purify");
+            // 몬스터
+            if (index / 10 == 2)
+            {
+                for (int i = 0; i < ccList[index].Count; i++)
+                {
+                    if (isGood)
+                    {
+                        if (ccList[index][i].target == CCTarget.ENEMY)
+                        {
+                            GamePlayUIController.Instance.UpdateCrowdControl(index, ccList[index][i].id, 0, 0, true);
+                            ccList[index].RemoveAt(i);
+                            i--;
+                        }
+                    }
+                    else
+                    {
+                        if (ccList[index][i].target == CCTarget.ALL || ccList[index][i].target == CCTarget.SELF)
+                        {
+                            GamePlayUIController.Instance.UpdateCrowdControl(index, ccList[index][i].id, 0, 0, true);
+                            ccList[index].RemoveAt(i);
+                            i--;
+                        }
+                    }
+                }
+            }
+            // 유닛들
+            else
+            {
+                for (int i = 0; i < ccList[index].Count; i++)
+                {
+                    if (isGood)
+                    {
+                        if (ccList[index][i].target == CCTarget.ENEMY || ccList[index][i].target == CCTarget.ALL)
+                        {
+                            GamePlayUIController.Instance.UpdateCrowdControl(index, ccList[index][i].id, 0, 0, true);
+                            ccList[index].RemoveAt(i);
+                            i--;
+                        }
+                    }
+                    else
+                    {
+                        if (ccList[index][i].target == CCTarget.SELF)
+                        {
+                            GamePlayUIController.Instance.UpdateCrowdControl(index, ccList[index][i].id, 0, 0, true);
+                            ccList[index].RemoveAt(i);
+                            i--;
+                        }
+                    }
+                }
+            }
+        }
+
         #endregion
 
         public void AnimationEnd(int index)
