@@ -257,6 +257,11 @@ namespace GameControl
             monsters[index % 10].Heal(GameController.Instance.round);
         }
 
+        public void HealBattleMonster(int index, int amount)
+        {
+            monsters[index % 10].Cure(amount);
+        }
+
         #endregion
 
         public List<MonsterSkill> GetUsableSkill(int round)

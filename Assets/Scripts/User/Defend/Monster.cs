@@ -83,5 +83,9 @@ namespace Data
         {
             hp = tierHp[round - 1];
         }
+        public void Cure(int amount)
+        {
+            hp += amount;
+        }
     }
 }

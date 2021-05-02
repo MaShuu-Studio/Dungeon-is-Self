@@ -342,17 +342,18 @@ namespace GameControl
                             foreach (CrowdControl cc in charSkills[keys[i]].ccList.Keys)
                             {
                                 if (cc.target == CCTarget.ENEMY)
-                                    AddCrowdControl(defenderUnit, cc, charSkills[keys[i]].ccList[cc]);
+                                    AddCrowdControl(defenderUnit, cc, charSkills[keys[i]].ccList[cc], keys[i]);
                                 else if (cc.target == CCTarget.SELF)
-                                    AddCrowdControl(keys[i], cc, charSkills[keys[i]].ccList[cc]);
+                                    AddCrowdControl(keys[i], cc, charSkills[keys[i]].ccList[cc], keys[i]);
                                 else
-                                    AddCrowdControl(keys[i], cc, charSkills[keys[i]].ccList[cc], true);
+                                    AddCrowdControl(keys[i], cc, charSkills[keys[i]].ccList[cc], keys[i], true);
                             }
                         }
                     }
                     else
                     {
                         // 주사위 결과 발생
+                        // 몬스터가 공격하는 입장.
                         int index = Random.Range(0, offenderUnits.Length);
                         if (monSkills[0].ccList.Count != 0)
                         {
@@ -366,13 +367,12 @@ namespace GameControl
                                         CrowdControl tmp = ccList[unit].Find(crowdControl => crowdControl.cc == CCType.TAUNT);
                                         if (tmp != null) target = unit;
                                     }
-
-                                    AddCrowdControl(target, cc, monSkills[0].ccList[cc]);
+                                    AddCrowdControl(target, cc, monSkills[0].ccList[cc], keys[i]);
                                 }
                                 else if (cc.target == CCTarget.SELF)
-                                    AddCrowdControl(keys[i], cc, monSkills[0].ccList[cc]);
+                                    AddCrowdControl(keys[i], cc, monSkills[0].ccList[cc], keys[i]);
                                 else
-                                    AddCrowdControl(defenderUnit, cc, monSkills[0].ccList[cc], true);
+                                    AddCrowdControl(defenderUnit, cc, monSkills[0].ccList[cc], defenderUnit, true);
                             }
                         }
                     }
@@ -399,7 +399,7 @@ namespace GameControl
         }
 
         #region CrowdControl
-        private void AddCrowdControl(int index, CrowdControl cc, int ccStack, bool isAll = false)
+        private void AddCrowdControl(int index, CrowdControl cc, int ccStack, int useIndex, bool isAll = false)
         {
             bool isMonster = (index / 10 == 2);
 
@@ -424,7 +424,28 @@ namespace GameControl
                 {
                     PurifyCrowdControl(indexes[i], false);
                     continue;
+                }else if (cc.cc == CCType.DRAIN)
+                {
+                    DefenderController.Instance.HealBattleMonster(defenderUnit, ccStack);
+                    GamePlayUIController.Instance.UpdateCharacters();
+                    continue;
                 }
+
+                if (cc.target == CCTarget.ENEMY || (cc.target == CCTarget.ALL && isMonster))
+                {
+                    if (HasCrowdControl(indexes[i], CCType.BARRIER) || HasCrowdControl(indexes[i], CCType.INVINCIBLE))
+                    {
+                        Debug.Log("Guard " + cc.name);
+                        continue;
+                    }
+                    else if (HasCrowdControl(indexes[i], CCType.REFLECT))
+                    {
+                        Debug.Log("Reflect " + cc.name);
+                        if (HasCrowdControl(useIndex, CCType.REFLECT) == false) AddCrowdControl(useIndex, cc, ccStack, indexes[i], false);
+                        continue;
+                    }
+                }
+
                 int ccIndex = ccList[indexes[i]].FindIndex(charCC => charCC.name == cc.name);
 
                 if (ccIndex == -1)
@@ -667,7 +688,7 @@ namespace GameControl
                             if (stunUnit != deadUnit)
                             {
                                 List<CrowdControl> ccs = skill.ccList.Keys.ToList();
-                                AddCrowdControl(aliveIndexes[stunUnit], ccs[0], skill.ccList[ccs[0]]);
+                                AddCrowdControl(aliveIndexes[stunUnit], ccs[0], skill.ccList[ccs[0]], defenderUnit);
                                 break;
                             }
                         } while (true);

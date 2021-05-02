@@ -65,7 +65,6 @@ namespace Data
         {
             dotDamage = damage;
         }
-        
         public void SetTurn(int turn)
         {
             this.turn = turn;
