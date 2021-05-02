@@ -551,10 +551,12 @@ namespace GameControl
                     case MonsterSkill.SkillType.AttackOne:
                         offenderUnitIsDead[aliveIndexes[deadUnit]] = true;
                         GamePlayUIController.Instance.DeadCharacter(offenderUnits[deadUnit]);
+                        if (offednerReadyTurn[aliveIndexes[deadUnit]] != null) offednerReadyTurn[aliveIndexes[deadUnit]] = null;
                         break;
                     case MonsterSkill.SkillType.AttackOneStun:
                         offenderUnitIsDead[aliveIndexes[deadUnit]] = true;
                         GamePlayUIController.Instance.DeadCharacter(offenderUnits[deadUnit]);
+                        if (offednerReadyTurn[aliveIndexes[deadUnit]] != null) offednerReadyTurn[aliveIndexes[deadUnit]] = null;
                         do
                         {
                             int stunUnit = Random.Range(0, aliveIndexes.Count);
@@ -599,13 +601,15 @@ namespace GameControl
 
             StopAllCoroutines();
 
+            bool roundEnd = false;
             if (round >= 3)
             {
                 OffenderController.Instance.ResetDead();
                 DefenderController.Instance.ResetDead();
-                SceneController.Instance.ChangeScene("Main"); // 씬 이동 임시
+                roundEnd = true;
             }
-            else ReadyRound();
+
+            StartCoroutine(ShowResult(UserType.Offender, roundEnd));
         }
 
         private void OffenderDefeated()
@@ -630,11 +634,12 @@ namespace GameControl
             foreach (int index in offenderUnits)
                 OffenderController.Instance.Dead(index);
 
+            bool roundEnd = false;
             if (OffenderController.Instance.GetAliveCharacterList().Count == 0)
             {
                 OffenderController.Instance.ResetDead();
                 DefenderController.Instance.ResetDead();
-                SceneController.Instance.ChangeScene("Main"); // 씬 이동 임시
+                roundEnd = true;
             }
             else
             {
@@ -660,8 +665,26 @@ namespace GameControl
                     else if (i != deadIndexes[0]) OffenderController.Instance.Alive(offenderUnits[i]);
                 }
                 DefenderController.Instance.HealBattleMonster(defenderUnit);
-                ReadyRound(true);
             }
+            StartCoroutine(ShowResult(UserType.Defender, roundEnd));
+        }
+
+        IEnumerator ShowResult(UserType winner, bool gameEnd)
+        {
+            int alertIndex = 40;
+            if (winner == UserType.Defender) alertIndex = 41;
+
+            GamePlayUIController.Instance.Alert(alertIndex);
+
+            float time = 1.5f;
+            while(time > 0)
+            {
+                time -= Time.deltaTime;
+                yield return null;
+            }
+            if (gameEnd) SceneController.Instance.ChangeScene("Main"); // 씬 이동 임시
+            else if (winner == UserType.Defender) ReadyRound(true);
+            else ReadyRound(false);
         }
     }
 }

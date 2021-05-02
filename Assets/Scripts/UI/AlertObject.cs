@@ -18,6 +18,15 @@ public class AlertObject : MonoBehaviour, IPointerDownHandler
         gameObject.SetActive(false);
         alpha = background.color.a;
     }
+    public void RemoveAlert()
+    {
+        if (coroutine != null)
+        {
+            StopCoroutine(coroutine);
+            coroutine = null;
+        }
+        gameObject.SetActive(false);
+    }
     public void ShowAlert(string str)
     {
         if (coroutine != null)

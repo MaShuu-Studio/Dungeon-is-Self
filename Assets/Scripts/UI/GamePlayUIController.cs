@@ -171,6 +171,7 @@ public class GamePlayUIController : MonoBehaviour
         SetProgress();
         ClearCharacters();
         UpdateRosterStatus();
+        alert.RemoveAlert();
         foreach (GameObject view in gameViews) view.SetActive(false);
 
         switch (GameController.Instance.currentProgress)
@@ -262,6 +263,12 @@ public class GamePlayUIController : MonoBehaviour
                 break;
             case 29:
                 str = "스킬 포인트가 모자랍니다.";
+                break;
+            case 40:
+                str = "승자는 공격자입니다.";
+                break;
+            case 41:
+                str = "승자는 방어자입니다.";
                 break;
 
         }
