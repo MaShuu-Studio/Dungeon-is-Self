@@ -17,6 +17,7 @@ namespace Data
 
             ccDatabase.Add(new CrowdControl(30101, "도발", CCTarget.SELF));
             ccDatabase.Add(new CrowdControl(30201, "방어", CCTarget.ALL));
+            ccDatabase.Add(new CrowdControl(30202, "방어", CCTarget.SELF));
             ccDatabase.Add(new CrowdControl(30301, "반사", CCTarget.ALL));
             ccDatabase.Add(new CrowdControl(30401, "무효화", CCTarget.SELF));
             ccDatabase.Add(new CrowdControl(30402, "상대무효화", CCTarget.ENEMY));
@@ -26,7 +27,7 @@ namespace Data
             ccDatabase.Add(new CrowdControl(30602, "마비", CCTarget.ENEMY));
             ccDatabase.Add(new CrowdControl(30603, "전체마비", CCTarget.ALL));
             ccDatabase.Add(new CrowdControl(30701, "스턴", CCTarget.ENEMY));
-            ccDatabase.Add(new CrowdControl(30701, "전체스턴", CCTarget.ALL));
+            ccDatabase.Add(new CrowdControl(30702, "전체스턴", CCTarget.ALL));
             ccDatabase.Add(new CrowdControl(30801, "출혈", CCTarget.ENEMY));
             ccDatabase.Add(new CrowdControl(30802, "중독", CCTarget.ENEMY));
             ccDatabase.Add(new CrowdControl(30803, "화상", CCTarget.ENEMY));
@@ -38,6 +39,7 @@ namespace Data
             ccDatabase.Add(new CrowdControl(31001, "분신", CCTarget.SELF));
             ccDatabase.Add(new CrowdControl(31101, "흡혈", CCTarget.SELF));
             ccDatabase.Add(new CrowdControl(31201, "턴감소", CCTarget.SELF));
+            ccDatabase.Add(new CrowdControl(31301, "혼란", CCTarget.ENEMY));
         }
 
         public CrowdControl GetCrowdControl(int id)
@@ -307,61 +309,159 @@ namespace Data
             #region Dice
             monSkillDB.Add(new MonsterSkill(200110, "대기", 0, -1,
                 description: "아무런 행동도 취하지 않는다."));
+
             #region 미노타
             monSkillDB.Add(new MonsterSkill(201111, "바위 던지기", 0, cost: 2,
-                description: "잘 깨지는 바위를 던져 상대를 상처입힌다."));
+                description: "잘 깨지는 바위를 던져 상대를 상처입힌다.",
+                new List<System.Tuple<CrowdControl, int>>()
+                {
+                    new System.Tuple<CrowdControl, int>(GetCrowdControl(30602), 2),
+                }));
             monSkillDB.Add(new MonsterSkill(201112, "위협적인 눈빛", 0, cost: 1,
-                description: "상대 1명을 위협적으로 노려봐 사기를 저하시킨다."));
+                description: "상대 1명을 위협적으로 노려봐 사기를 저하시킨다.",
+                new List<System.Tuple<CrowdControl, int>>()
+                {
+                    new System.Tuple<CrowdControl, int>(GetCrowdControl(30902), 0),
+                }));
             monSkillDB.Add(new MonsterSkill(201113, "소리지르기", 0, cost: 1,
-                description: "고함소리를 질러 상대의 집중을 흐트린다."));
+                description: "고함소리를 질러 상대의 집중을 흐트린다.",
+                new List<System.Tuple<CrowdControl, int>>()
+                {
+                    new System.Tuple<CrowdControl, int>(GetCrowdControl(30402), 0),
+                }));
             monSkillDB.Add(new MonsterSkill(201121, "돌진", 0, cost: 4,
-                description: "강력한 박치기로 1명을 행동 불능으로 만든다."));
+                description: "강력한 박치기로 1명을 행동 불능으로 만든다.",
+                new List<System.Tuple<CrowdControl, int>>()
+                {
+                    new System.Tuple<CrowdControl, int>(GetCrowdControl(30701), 2),
+                }));
             monSkillDB.Add(new MonsterSkill(201122, "단단해지기", 0, cost: 3,
-                description: "근육량을 증가시켜 방어력을 상승시킨다."));
+                description: "근육량을 증가시켜 방어력을 상승시킨다.",
+                new List<System.Tuple<CrowdControl, int>>()
+                {
+                    new System.Tuple<CrowdControl, int>(GetCrowdControl(30904), 0),
+                }));
             monSkillDB.Add(new MonsterSkill(201123, "밥상뒤엎기", 0, cost: 3,
-                description: "자기 앞의 지면을 뒤집어 상대 공격을 방어한다."));
+                description: "자기 앞의 지면을 뒤집어 적의 해로운 효과를 방어한다.",
+                new List<System.Tuple<CrowdControl, int>>()
+                {
+                    new System.Tuple<CrowdControl, int>(GetCrowdControl(30202), 0),
+                }));
             monSkillDB.Add(new MonsterSkill(201131, "지진", 0, cost: 7,
-                description: "큰 지진을 이르켜 상대 전체를 행동 불능으로 만든다."));
+                description: "큰 지진을 이르켜 상대 전체를 행동 불능으로 만든다.",
+                new List<System.Tuple<CrowdControl, int>>()
+                {
+                    new System.Tuple<CrowdControl, int>(GetCrowdControl(30702), 2),
+                }));
             monSkillDB.Add(new MonsterSkill(201132, "성난황소", 0, cost: 5,
-                description: "미노타우르스가 크게 분노하여 해로운 효과에 면역을 갖는다."));
+                description: "미노타우르스가 분노하여 해로운 효과에 면역을 갖는다.",
+                new List<System.Tuple<CrowdControl, int>>()
+                {
+                    new System.Tuple<CrowdControl, int>(GetCrowdControl(30502), 0),
+                }));
             #endregion
 
             #region 스네이크
             monSkillDB.Add(new MonsterSkill(203111, "물기", 0, cost: 2,
-                description: "상대를 물어 마비독을 주입한다."));            
+                description: "상대를 물어 마비독을 주입한다.",
+                new List<System.Tuple<CrowdControl, int>>()
+                {
+                    new System.Tuple<CrowdControl, int>(GetCrowdControl(30602), 2),
+                }));
             monSkillDB.Add(new MonsterSkill(203112, "탈피", 0, cost: 1,
-                description: "탈피하여 안 좋은 효과들을 해제한다."));            
+                description: "탈피하여 안 좋은 효과들을 해제한다.",
+                new List<System.Tuple<CrowdControl, int>>()
+                {
+                    new System.Tuple<CrowdControl, int>(GetCrowdControl(30401), 0),
+                }));
             monSkillDB.Add(new MonsterSkill(203113, "뱀의 눈", 0, cost: 1,
-                description: "뱀 눈으로 상대를 위협해 사기를 떨어뜨린다."));            
+                description: "뱀 눈으로 상대를 위협해 사기를 떨어뜨린다.",
+                new List<System.Tuple<CrowdControl, int>>()
+                {
+                    new System.Tuple<CrowdControl, int>(GetCrowdControl(30902), 0),
+                }));
             monSkillDB.Add(new MonsterSkill(203121, "꼬리속박", 0, cost: 5,
-                description: "꼬리로 상대 1명을 행동 불능으로 만든다."));            
+                description: "꼬리로 상대 1명을 행동 불능으로 만든다.",
+                new List<System.Tuple<CrowdControl, int>>()
+                {
+                    new System.Tuple<CrowdControl, int>(GetCrowdControl(30701), 0),
+                }));            
             monSkillDB.Add(new MonsterSkill(203122, "또아리말기", 0, cost: 3,
-                description: "몸을 말아 상대 공격을 방어한다."));            
+                description: "몸을 말아 상대 공격을 방어한다.",
+                new List<System.Tuple<CrowdControl, int>>()
+                {
+                    new System.Tuple<CrowdControl, int>(GetCrowdControl(30202), 0),
+                }));
             monSkillDB.Add(new MonsterSkill(203123, "흡혈", 0, cost: 2,
-                description: "상대 체액을 빨아 체력을 흡수한다."));            
+                description: "상대 체액을 빨아 체력을 흡수한다.",
+                new List<System.Tuple<CrowdControl, int>>()
+                {
+                    new System.Tuple<CrowdControl, int>(GetCrowdControl(31101), 25),
+                }));            
             monSkillDB.Add(new MonsterSkill(203131, "독안개", 0, cost: 6,
-                description: "마비독 안개를 생성하여 모든 적을 마비시킨다."));            
+                description: "마비독 안개를 생성하여 모든 적을 마비시킨다.",
+                new List<System.Tuple<CrowdControl, int>>()
+                {
+                    new System.Tuple<CrowdControl, int>(GetCrowdControl(30603), 2),
+                }));
             monSkillDB.Add(new MonsterSkill(203132, "선악과", 0, cost: 7,
-                description: "상대를 유혹하여 선악과를 먹게 하여 혼란에 빠뜨린다."));
+                description: "상대를 유혹하여 선악과를 먹게 하여 혼란에 빠뜨린다.",
+                new List<System.Tuple<CrowdControl, int>>()
+                {
+                    new System.Tuple<CrowdControl, int>(GetCrowdControl(31301), 0),
+                }));
             #endregion
 
             #region 구미호
             monSkillDB.Add(new MonsterSkill(204111, "회피", 0, cost: 2,
-                description: "빠르게 움직여 상대의 특수효과를 피한다."));            
+                description: "빠르게 움직여 상대의 특수효과를 피한다.",
+                new List<System.Tuple<CrowdControl, int>>()
+                {
+                    new System.Tuple<CrowdControl, int>(GetCrowdControl(30202), 0),
+                }));
             monSkillDB.Add(new MonsterSkill(204112, "정기 흡수", 0, cost: 1,
-                description: "상대의 정기를 흡수하여 이로운 효과를 제거한다."));
+                description: "상대의 정기를 흡수하여 이로운 효과를 제거한다.",
+                new List<System.Tuple<CrowdControl, int>>()
+                {
+                    new System.Tuple<CrowdControl, int>(GetCrowdControl(30402), 0),
+                }));
             monSkillDB.Add(new MonsterSkill(204113, "여우불", 0, cost: 0,
-                description: "여우불을 소환하여 상대에게 더 큰 효과를 준다."));
+                description: "여우불을 소환하여 상대에게 더 큰 효과를 준다.",
+                new List<System.Tuple<CrowdControl, int>>()
+                {
+                    new System.Tuple<CrowdControl, int>(GetCrowdControl(31001), 0),
+                }));
             monSkillDB.Add(new MonsterSkill(204114, "매혹적인 눈빛", 0, cost: 1,
-                description: "매혹적인 눈빛으로 상대의 공격 의지를 감소시킨다."));
+                description: "매혹적인 눈빛으로 상대의 공격 의지를 감소시킨다.",
+                new List<System.Tuple<CrowdControl, int>>()
+                {
+                    new System.Tuple<CrowdControl, int>(GetCrowdControl(30902), 0),
+                }));
             monSkillDB.Add(new MonsterSkill(204121, "털갈이", 0, cost: 2,
-                description: "오염된 털을 제거한다."));
+                description: "오염된 털을 제거한다.",
+                new List<System.Tuple<CrowdControl, int>>()
+                {
+                    new System.Tuple<CrowdControl, int>(GetCrowdControl(30401), 0),
+                }));
             monSkillDB.Add(new MonsterSkill(204131, "유혹", 0, cost: 5,
-                description: "상대를 유혹하여 혼란에 빠뜨린다."));
+                description: "상대를 유혹하여 혼란에 빠뜨린다.",
+                new List<System.Tuple<CrowdControl, int>>()
+                {
+                    new System.Tuple<CrowdControl, int>(GetCrowdControl(31301), 0),
+                }));
             monSkillDB.Add(new MonsterSkill(204132, "여우구슬", 0, cost: 5,
-                description: "여우구슬을 통해 기운을 모은다."));
+                description: "여우구슬을 통해 기운을 모은다.",
+                new List<System.Tuple<CrowdControl, int>>()
+                {
+                    new System.Tuple<CrowdControl, int>(GetCrowdControl(31201), 0),
+                    new System.Tuple<CrowdControl, int>(GetCrowdControl(31101), 20),
+                }));
             monSkillDB.Add(new MonsterSkill(204133, "정신조종", 0, cost: 5,
-                description: "정신을 조종하여 자신을 공격하게 만든다."));
+                description: "정신을 조종하여 자신을 공격하게 만든다.",
+                new List<System.Tuple<CrowdControl, int>>()
+                {
+                    new System.Tuple<CrowdControl, int>(GetCrowdControl(30301), 0),
+                }));
             #endregion
             #endregion
 
