@@ -137,22 +137,33 @@ namespace GameControl
                     if (OffenderController.Instance.IsSkillGotten(j)) usableSkill.Add(j);
                 }
 
+                int maxTier = OffenderController.Instance.GetGottenSkillsMaxTier();
+                // 기본스킬 2개
+                // maxTier 2개 maxTier보다 하나 낮은거 2개
+                List<int> maxSkills = usableSkill.FindAll(index => c.mySkills[index].tier == maxTier);
+                List<int> goodSkills = usableSkill.FindAll(index => c.mySkills[index].tier == (maxTier - 1));
+
                 for (int j = 0; j < 6; j++)
                 {
                     if (j < 2) OffenderController.Instance.SetDice(j, c.mySkills[usableSkill[0]]);
                     else
                     {
-                        //Debug.Log(usableSkill[n]);
-                        while (true)
+                        int n = 0;
+                        if (j < 4)
                         {
-                            int n = UnityEngine.Random.Range(0, usableSkill.Count);
-                            if (OffenderController.Instance.SetDice(j, c.mySkills[usableSkill[n]]) == 0) break;
+                            int m = UnityEngine.Random.Range(0, maxSkills.Count);
+                            n = maxSkills[m];
                         }
+                        else
+                        {
+                            int m = UnityEngine.Random.Range(0, goodSkills.Count);
+                            n = goodSkills[m];
+                        }
+                        OffenderController.Instance.SetDice(j, c.mySkills[n]);
                     }
-                    //Debug.Log(c._role);
                 }
             }
-            
+
         }
     }
 }

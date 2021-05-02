@@ -195,6 +195,21 @@ namespace GameControl
             return characters[characterIndex].GetMaxTier();
         }
 
+        public int GetGottenSkillsMaxTier()
+        {
+            int tier = 0;
+            for (int i = characters[characterIndex].mySkills.Count - 1; i > 0; i--)
+            {
+                if (IsSkillGotten(i))
+                {
+                    tier = characters[characterIndex].mySkills[i].tier;
+                    break;
+                }
+            }
+
+            return tier;            
+        }
+
         public int SetDice(int index, CharacterSkill skill)
         {
             int overlabCount = 0;
