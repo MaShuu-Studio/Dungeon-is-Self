@@ -19,17 +19,25 @@ namespace Data
             ccDatabase.Add(new CrowdControl(30201, "방어", CCTarget.ALL));
             ccDatabase.Add(new CrowdControl(30301, "반사", CCTarget.ALL));
             ccDatabase.Add(new CrowdControl(30401, "무효화", CCTarget.SELF));
+            ccDatabase.Add(new CrowdControl(30402, "상대무효화", CCTarget.ENEMY));
             ccDatabase.Add(new CrowdControl(30501, "무적", CCTarget.ALL));
+            ccDatabase.Add(new CrowdControl(30502, "무적", CCTarget.SELF));
             ccDatabase.Add(new CrowdControl(30601, "실명", CCTarget.ENEMY));
             ccDatabase.Add(new CrowdControl(30602, "마비", CCTarget.ENEMY));
+            ccDatabase.Add(new CrowdControl(30603, "전체마비", CCTarget.ALL));
             ccDatabase.Add(new CrowdControl(30701, "스턴", CCTarget.ENEMY));
+            ccDatabase.Add(new CrowdControl(30701, "전체스턴", CCTarget.ALL));
             ccDatabase.Add(new CrowdControl(30801, "출혈", CCTarget.ENEMY));
             ccDatabase.Add(new CrowdControl(30802, "중독", CCTarget.ENEMY));
             ccDatabase.Add(new CrowdControl(30803, "화상", CCTarget.ENEMY));
             ccDatabase.Add(new CrowdControl(30804, "감전", CCTarget.ENEMY));
             ccDatabase.Add(new CrowdControl(30901, "공격력 증가", CCTarget.SELF));
             ccDatabase.Add(new CrowdControl(30902, "공격력 감소", CCTarget.ENEMY));
+            ccDatabase.Add(new CrowdControl(30903, "공격력 전체 증가", CCTarget.ALL));
+            ccDatabase.Add(new CrowdControl(30904, "공격력 전체 감소", CCTarget.ALL));
             ccDatabase.Add(new CrowdControl(31001, "분신", CCTarget.SELF));
+            ccDatabase.Add(new CrowdControl(31101, "흡혈", CCTarget.SELF));
+            ccDatabase.Add(new CrowdControl(31201, "턴감소", CCTarget.SELF));
         }
 
         public CrowdControl GetCrowdControl(int id)
@@ -119,12 +127,12 @@ namespace Data
                 }));
 
             charSkillDB.Add(new CharacterSkill(10108, 3, "용기", turn: 1, damage: 0,
-                description: "용기를 고취시킨다.", 
+                description: "아군의 사기를 고취시킨다.", 
                 new List<int> { 10106 },
                 new List<System.Tuple<CrowdControl, int>>()
                 {
                     new System.Tuple<CrowdControl, int>(GetCrowdControl(30401), 0),
-                    new System.Tuple<CrowdControl, int>(GetCrowdControl(30901), 0),
+                    new System.Tuple<CrowdControl, int>(GetCrowdControl(30903), 0),
                 }));
 
             charSkillDB.Add(new CharacterSkill(10109, 4, "가시방패", turn: 2, damage: 30,
@@ -297,7 +305,7 @@ namespace Data
             monSkillDB = new List<MonsterSkill>();
 
             #region Dice
-            monSkillDB.Add(new MonsterSkill(200000, "대기", 0, -1,
+            monSkillDB.Add(new MonsterSkill(200110, "대기", 0, -1,
                 description: "아무런 행동도 취하지 않는다."));
             #region 미노타
             monSkillDB.Add(new MonsterSkill(201111, "바위 던지기", 0, cost: 2,
@@ -358,11 +366,11 @@ namespace Data
             #endregion
 
             #region Attack
-            monSkillDB.Add(new MonsterSkill(22101, "전체공격", 10, cost: 0,
+            monSkillDB.Add(new MonsterSkill(200211, "전체공격", 10, cost: 0,
                 description: "모든 적을 공격한다."));
-            monSkillDB.Add(new MonsterSkill(23101, "단일공격", 4, cost: 0,
+            monSkillDB.Add(new MonsterSkill(200311, "단일공격", 4, cost: 0,
                 description: "하나의 적을 공격한다."));
-            monSkillDB.Add(new MonsterSkill(24101, "스턴공격", 5, cost: 0,
+            monSkillDB.Add(new MonsterSkill(200411, "스턴공격", 5, cost: 0,
                 description: "하나의 적을 공격한 뒤 다른 하나의 적을 기절에 걸리게 한다.",
                 new List<System.Tuple<CrowdControl, int>>()
                 {
@@ -390,6 +398,7 @@ namespace Data
             List<MonsterSkill> skills = monSkillDB.FindAll(skill => skill.id / 1000 == monsterNumber);
 
             List<int> dices = new List<int>();
+            dices.Add(200110);
             foreach (MonsterSkill skill in skills) dices.Add(skill.id);
 
             return dices;

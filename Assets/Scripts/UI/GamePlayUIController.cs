@@ -473,13 +473,18 @@ public class GamePlayUIController : MonoBehaviour
     public void ShowDescription(Skill skill)
     {
         if (skill == null) return;
-        int dmg = -1;
         if (skill.id / 10000 == 1)
         {
             CharacterSkill cs = skill as CharacterSkill;
-            dmg = cs.damage;
+            description.SetDescription(skill.id, skill.name, "", skill.description, "DMG: " + cs.damage);
         }
-        description.SetDescription(skill.id, skill.name, "", skill.description, dmg);
+        else
+        {
+            MonsterSkill ms = skill as MonsterSkill;
+            string str = "";
+            if (ms.type == MonsterSkill.SkillType.Dice) str = "COST: " + ms.cost;
+            description.SetDescription(skill.id, skill.name, "", skill.description, str);
+        }
     }
 
     public void SetAllDice()
@@ -502,8 +507,10 @@ public class GamePlayUIController : MonoBehaviour
             SelectDice(selectedDiceIndex);
 
             int totalCost = DefenderController.MAX_COST - DefenderController.Instance.GetDiceCost();
-            costSlider.value = (totalCost >= 0) ? totalCost : 0;
             costText.text = totalCost.ToString();
+            if (totalCost > 10) costSlider.value = 10;
+            else if (totalCost < 0) costSlider.value = 0;
+            else costSlider.value = totalCost;
         }
         else
         {
@@ -553,8 +560,10 @@ public class GamePlayUIController : MonoBehaviour
             SelectDice(selectedDiceIndex);
 
             int totalCost = DefenderController.MAX_COST - DefenderController.Instance.GetDiceCost();
-            costSlider.value = (totalCost >= 0) ? totalCost : 0;
             costText.text = totalCost.ToString();
+            if (totalCost > 10) costSlider.value = 10;
+            else if (totalCost < 0) costSlider.value = 0;
+            else costSlider.value = totalCost;
         }
         else
         {

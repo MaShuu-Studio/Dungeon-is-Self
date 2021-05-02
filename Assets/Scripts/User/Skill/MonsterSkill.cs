@@ -24,8 +24,7 @@ namespace Data
             int tmp = id;
             tmp /= 10;
             tier = tmp % 10;
-            Debug.Log(id + ": " + tier);
-            tmp /= 100;
+            tmp /= 10;
 
             this.type = (SkillType)(tmp % 10);
             this.name = name;

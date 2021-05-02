@@ -55,9 +55,9 @@ namespace Data
                 }, Element.NORMAL,
                 new List<int>()
                 {
-                    22101,
-                    23101,
-                    24101,
+                    200211,
+                    200311,
+                    200411,
                 }));
             /*
             monsterDB.Add(new Monster(
@@ -97,9 +97,9 @@ namespace Data
                 }, Element.NORMAL,
                 new List<int>()
                 {
-                    22101,
-                    23101,
-                    24101,
+                    200211,
+                    200311,
+                    200411,
                 }));
 
             monsterDB.Add(new Monster(
@@ -111,9 +111,9 @@ namespace Data
                 }, Element.NORMAL,
                 new List<int>()
                 {
-                    22101,
-                    23101,
-                    24101,
+                    200211,
+                    200311,
+                    200411,
                 }));
             /*
             monsterDB.Add(new Monster(

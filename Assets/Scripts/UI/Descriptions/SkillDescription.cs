@@ -19,15 +19,16 @@ public class SkillDescription : UIDescription
         nameText.text = "";
         typeText.text = "";
         descriptionText.text = "";
+        dmgText.text = "";
     }
-    public void SetDescription(int id, string name, string type, string description, int dmg = -1, List<int> ccs = null)
+    public void SetDescription(int id, string name, string type, string description, string dmg, List<int> ccs = null)
     {
         skillImage.color = Color.white;
         skillImage.sprite = Resources.Load<Sprite>("Sprites/Skills/" + id.ToString());
         nameText.text = name;
         typeText.text = type;
         descriptionText.text = description;
-        dmgText.text = (dmg != -1) ? "DMG: " + dmg.ToString() : "";
+        dmgText.text = dmg;
         if (ccs != null) ;
     }
 }

@@ -131,8 +131,8 @@ namespace GameControl
             int count = 0;
             for (int i = 0; i < dices[monsterIndex].Length; i++)
             {
-                if (dices[monsterIndex][i].id == skill.id) count++;
-                if (dices[monsterIndex][index].id == skill.id) count--;
+                if (dices[monsterIndex][i].id == 200110) continue;
+                if (dices[monsterIndex][i].id == skill.id && index != i) count++;
             }
             if (count > 1) return 1;
 
