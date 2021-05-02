@@ -9,7 +9,7 @@ namespace Data
         public int damage { get; protected set; }
         public List<int> prior { get; protected set; }
         
-        public CharacterSkill(int id, int tier, string name, int turn, int damage, List<int> prior, List<System.Tuple<CrowdControl, int>> ccs = null)
+        public CharacterSkill(int id, int tier, string name, int turn, int damage, string description, List<int> prior, List<System.Tuple<CrowdControl, int>> ccs = null)
         {
             this.id = id;
             this.name = name;
@@ -17,6 +17,7 @@ namespace Data
             this.damage = damage;
             this.prior = prior;
             this.tier = tier;
+            this.description = description;
 
             if (ccs != null)
                 for (int i = 0; i < ccs.Count; i++)
@@ -25,7 +26,7 @@ namespace Data
                     ccList.Add(cc, ccs[i].Item2);
                 }
         }
-        public CharacterSkill(int id, int tier, string name, int turn, int damage, List<System.Tuple<CrowdControl, int>> ccs = null)
+        public CharacterSkill(int id, int tier, string name, int turn, int damage, string description, List<System.Tuple<CrowdControl, int>> ccs = null)
         {
             this.id = id;
             this.tier = tier;
@@ -33,6 +34,7 @@ namespace Data
             this.turn = turn;
             this.damage = damage;
             this.prior = new List<int>();
+            this.description = description;
 
             if (ccs != null)
                 for (int i = 0; i < ccs.Count; i++)

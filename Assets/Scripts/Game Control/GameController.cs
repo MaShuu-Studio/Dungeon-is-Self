@@ -298,7 +298,7 @@ namespace GameControl
                             }
 
                             if (HasCrowdControl(keys[i], CCType.ATTACKSTAT, CCTarget.SELF)) damage = (int)(damage * 1.5f);
-                            if (HasCrowdControl(keys[i], CCType.ATTACKSTAT, CCTarget.ENEMY)) damage = (int)(damage * 0.5f);
+                            if (HasCrowdControl(keys[i], CCType.ATTACKSTAT, CCTarget.ENEMY)) damage = (int)(damage * 0.7f);
 
                             int restHp = DefenderController.Instance.MonsterDamaged(defenderUnit % 10, damage);
                             if (restHp <= 0)

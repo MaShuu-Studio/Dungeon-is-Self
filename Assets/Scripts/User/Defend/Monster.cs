@@ -18,7 +18,7 @@ namespace Data
         public string prior { get; private set; }
         public int tier { get; private set; }
 
-        public Monster(int id, int tier, string name, List<int> tierHp, Element weak, List<int> atkSkills, List<int> dices, string prior = "")
+        public Monster(int id, int tier, string name, List<int> tierHp, Element weak, List<int> atkSkills, string prior = "")
         {
             this.id = id;
             this.name = name;
@@ -26,7 +26,7 @@ namespace Data
             this.weak = weak;
 
             attackSkills = new List<int>(atkSkills);
-            diceSkills = new List<int>(dices);
+            diceSkills = new List<int>(SkillDatabase.Instance.GetMonsterAllSkills(id));
             // 각 몬스터의 특징을 가진 개별 스킬 이름 목록
             // TUPLE LIST로 받아도 괜찮을듯
 

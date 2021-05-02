@@ -479,7 +479,7 @@ public class GamePlayUIController : MonoBehaviour
             CharacterSkill cs = skill as CharacterSkill;
             dmg = cs.damage;
         }
-        description.SetDescription(skill.id, skill.name, "", "DESCRIPTION", dmg);
+        description.SetDescription(skill.id, skill.name, "", skill.description, dmg);
     }
 
     public void SetAllDice()
