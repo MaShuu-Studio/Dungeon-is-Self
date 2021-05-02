@@ -177,7 +177,7 @@ namespace Data
             charSkillDB.Add(new CharacterSkill(10203, 2, "트리플샷", turn: 0, damage: 20
                 , description: "화살을 동시에 세 발을 발사한다."));
             charSkillDB.Add(new CharacterSkill(10204, 2, "톱날화살", turn: 0, damage: 16,
-                description: "톱날같은 화살을 발사해 적에게 지속적인 출혈을 입힌다.",
+                description: "톱날같은 화살을 발사해 적에게 출혈을 입힌다.",
                 new List<System.Tuple<CrowdControl, int>>()
                 {
                     new System.Tuple<CrowdControl, int>(GetCrowdControl(30801), 3),
@@ -206,7 +206,7 @@ namespace Data
                     new System.Tuple<CrowdControl, int>(GetCrowdControl(30602), 1),
                 }));
             charSkillDB.Add(new CharacterSkill(10209, 3, "저격", turn: 1, damage: 60,
-                description: "매우 강력한 화살을 적에게 정확히 맞추어 큰 피해를 입힌다.", 
+                description: "강력한 화살을 적에게 정확히 맞추어 큰 피해를 입힌다.", 
                 new List<int> { 10205, 10206 },
                 new List<System.Tuple<CrowdControl, int>>()
                 {

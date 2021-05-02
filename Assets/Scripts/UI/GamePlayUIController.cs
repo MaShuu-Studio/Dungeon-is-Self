@@ -791,7 +791,7 @@ public class GamePlayUIController : MonoBehaviour
     }
 
     List<Dice> diceObjects = new List<Dice>();
-    public void DiceRoll(List<bool> isRolled)
+    public void DiceRoll(List<bool> isRolled, List<bool> isReady)
     {
         diceObjects.Clear();
         if (type == UserType.Defender)
@@ -818,7 +818,7 @@ public class GamePlayUIController : MonoBehaviour
 
             for (int i = 0; i < enemyObjects.Count; i++)
             {
-                if (isRolled[i + 1] && enemyObjects[i] != null)
+                if (isRolled[i + 1] && isReady[i + 1] == false && enemyObjects[i] != null)
                 {
                     GameObject dice = Instantiate(dicePrefab);
                     dice.transform.position = new Vector3(enemyObjects[i].transform.position.x, dice.transform.position.y, 0);
@@ -854,7 +854,7 @@ public class GamePlayUIController : MonoBehaviour
 
             for (int i = 0; i < charObjects.Count; i++)
             {
-                if (isRolled[i + 1] && charObjects[i] != null)
+                if (isRolled[i + 1] && isReady[i + 1] == false && charObjects[i] != null)
                 {
                     GameObject dice = Instantiate(dicePrefab);
                     dice.transform.position = new Vector3(charObjects[i].transform.position.x, dice.transform.position.y, 0);

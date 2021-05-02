@@ -195,37 +195,49 @@ namespace GameControl
 
         private void ProgressTurn()
         {
+            if (isRoundEnd) return;
+
             List<MonsterSkill> monSkills = new List<MonsterSkill>();
             bool monIsParalysis = HasCrowdControl(defenderUnit, CCType.BLIND);
+
             for (int j = 0; j < 2; j++)
                 monSkills.Add(DefenderController.Instance.DiceRoll(defenderUnit % 10, monIsParalysis));
+
+
+            List<bool> isAttack = new List<bool>();
+            List<bool> isWait = new List<bool>();
+
+            isAttack.Add(CanAttack(defenderUnit));
+            isWait.Add(false);
 
             Dictionary<int, CharacterSkill> charSkills = new Dictionary<int, CharacterSkill>();
             for (int j = 0; j < offenderUnits.Length; j++)
             {
-                if (offednerReadyTurn[offenderUnits[j]] != null) charSkills.Add(offenderUnits[j], offednerReadyTurn[offenderUnits[j]].Item1);
-                else charSkills.Add(offenderUnits[j], OffenderController.Instance.DiceRoll(offenderUnits[j], HasCrowdControl(defenderUnit, CCType.BLIND)));
-            }
-
-            List<bool> isAttack = new List<bool>();
-
-            isAttack.Add(CanAttack(defenderUnit));
-
-            for (int j = 0; j < offenderUnits.Length; j++)
                 isAttack.Add(CanAttack(offenderUnits[j]));
-
+                if (offednerReadyTurn[offenderUnits[j]] != null)
+                {
+                    charSkills.Add(offenderUnits[j], offednerReadyTurn[offenderUnits[j]].Item1);
+                    isWait.Add(true);
+                }
+                else
+                {
+                    charSkills.Add(offenderUnits[j], OffenderController.Instance.DiceRoll(offenderUnits[j], HasCrowdControl(defenderUnit, CCType.BLIND)));
+                    isWait.Add(false);
+                }
+            }
 
             for (int j = 0; j < offenderUnits.Length; j++)
             {
                 if (offednerReadyTurn[offenderUnits[j]] == null && isAttack[j] && charSkills[offenderUnits[j]].turn > 0)
                 {
-                    offednerReadyTurn[offenderUnits[j]] = 
-                        new System.Tuple<CharacterSkill, int>(charSkills[offenderUnits[j]],
-                        charSkills[offenderUnits[j]].turn);
+                    int turn = charSkills[offenderUnits[j]].turn;
+                    offednerReadyTurn[offenderUnits[j]] =
+                        new System.Tuple<CharacterSkill, int>(charSkills[offenderUnits[j]], turn);
                 }
             }
 
-            GamePlayUIController.Instance.DiceRoll(isAttack);
+
+            GamePlayUIController.Instance.DiceRoll(isAttack, isWait);
             int i = 0;
 
             for (; i < monSkills.Count; i++)
@@ -238,7 +250,6 @@ namespace GameControl
                 if (isAttack[i - 1]) GamePlayUIController.Instance.SetDiceSkill(i, skill.id);
                 i++;
             }
-            isDiceRolled = true;
             StartCoroutine(Battle(monSkills, charSkills, isAttack));
         }
 
@@ -249,99 +260,116 @@ namespace GameControl
 
         IEnumerator Battle(List<MonsterSkill> monSkills, Dictionary<int, CharacterSkill> charSkills, List<bool> isAttack)
         {
+            foreach (bool b in isAttack)
+            {
+                DiceRolled();
+                if (b)
+                {
+                    isDiceRolled = true;
+                    break;
+                }
+            }
             while (isDiceRolled) yield return null;
 
-            bool defenderOk = (monSkills[0].id == monSkills[1].id);
-            Debug.Log($"1: {monSkills[0].name} , 2: {monSkills[1].name} : {defenderOk && isAttack[0]}");
-            Debug.Log($"1: {charSkills[offenderUnits[0]].name} | {isAttack[1]}, 2: {charSkills[offenderUnits[1]].name} | {isAttack[2]}, 3: {charSkills[offenderUnits[2]].name} | {isAttack[3]}");
-
             // 순차적으로 공격을 누가 먼저 해서 진행될지 정할 필요 있음.
-            if (defenderOk && isAttack[0]) animationEnd[defenderUnit] = false;
+            if (isAttack[0]) animationEnd[defenderUnit] = false;
+            else animationEnd[defenderUnit] = true;
+
             for (int i = 1; i < animationEnd.Count; i++)
             {
                 int offenderUnit = offenderUnits[i - 1];
                 // 전투불능 상태 체크해서 Animation End 이용
-                if (isAttack[i] || offednerReadyTurn[offenderUnits[i - 1]] != null) animationEnd[offenderUnit] = false;
+                if (isAttack[i]) animationEnd[offenderUnit] = false;
                 else animationEnd[offenderUnit] = true;
             }
+
+            bool defenderOk = (monSkills[0].id == monSkills[1].id);
+            Debug.Log($"1: {monSkills[0].name} , 2: {monSkills[1].name} : {defenderOk && isAttack[0]}");
+            Debug.Log($"1: {charSkills[offenderUnits[0]].name} : {charSkills[offenderUnits[0]].turn}, 2: {charSkills[offenderUnits[1]].name} : {charSkills[offenderUnits[1]].turn}, 3: {charSkills[offenderUnits[2]].name} : {charSkills[offenderUnits[2]].turn}");
+
+            Debug.Log($"1: {isAttack[0]}, 2: {isAttack[1]}, 3: {isAttack[2]}, 4: {isAttack[3]}");
 
             // 전투 시 전투불능 확인해서 그 때 그 때 바꿔줘야함
             List<int> keys = animationEnd.Keys.ToList<int>();
             for (int i = 0; i < animationEnd.Count; i++)
-                if (animationEnd[keys[i]] == false)
+            {
+                if (animationEnd[keys[i]] == true) continue;
+
+                bool isMonster = ((keys[i] / 10) == 2);
+
+                if (isMonster && defenderOk == false)
                 {
-                    bool isMonster = ((keys[i] / 10) == 2);
-                    if (isMonster && defenderOk == false)
-                    {
-                        animationEnd[keys[i]] = true;
-                        continue;
-                    }
-
-                    GamePlayUIController.Instance.PlayAnimation(keys[i], "Attack");
-
-                    while (animationEnd[keys[i]] == false) yield return null;
-                    // 전투 정보 전송
-                    {
-                        if (isMonster == false)
-                        {
-                            int damage = charSkills[keys[i]].damage;
-
-                            GamePlayUIController.Instance.UpdateOffenderCharacter(keys[i], offednerReadyTurn[keys[i]]);
-                            if (offednerReadyTurn[keys[i]] != null)
-                            {
-                                if (offednerReadyTurn[keys[i]].Item2 <= 0)
-                                    offednerReadyTurn[keys[i]] = null;
-                                else
-                                {
-                                    offednerReadyTurn[keys[i]] = new System.Tuple<CharacterSkill, int>(offednerReadyTurn[keys[i]].Item1, offednerReadyTurn[keys[i]].Item2 - 1);
-                                    continue;
-                                }
-                            }
-                            GamePlayUIController.Instance.UpdateOffenderCharacter(keys[i], offednerReadyTurn[keys[i]]);
-
-                            if (HasCrowdControl(keys[i], CCType.ATTACKSTAT, CCTarget.SELF)) damage = (int)(damage * 1.5f);
-                            if (HasCrowdControl(keys[i], CCType.ATTACKSTAT, CCTarget.ENEMY)) damage = (int)(damage * 0.7f);
-
-                            int restHp = DefenderController.Instance.MonsterDamaged(defenderUnit % 10, damage);
-                            if (restHp <= 0)
-                            {
-                                DefenderController.Instance.Dead(defenderUnit);
-                                DefenderDefeated();
-                            }
-
-                            if (charSkills[keys[i]].ccList.Count != 0)
-                            {
-                                foreach (CrowdControl cc in charSkills[keys[i]].ccList.Keys)
-                                {
-                                    if (cc.target == CCTarget.ENEMY)
-                                        AddCrowdControl(defenderUnit, cc, charSkills[keys[i]].ccList[cc]);
-                                    else if (cc.target == CCTarget.SELF)
-                                        AddCrowdControl(keys[i], cc, charSkills[keys[i]].ccList[cc]);
-                                    else
-                                        AddCrowdControl(keys[i], cc, charSkills[keys[i]].ccList[cc], true);
-                                }
-                            }
-                        }
-                        else
-                        {
-                            // 주사위 결과 발생
-                            int index = Random.Range(0, offenderUnits.Length);
-                            if (monSkills[0].ccList.Count != 0)
-                            {
-                                foreach (CrowdControl cc in monSkills[0].ccList.Keys)
-                                {
-                                    if (cc.target == CCTarget.ENEMY)
-                                        AddCrowdControl(offenderUnits[index], cc, monSkills[0].ccList[cc]);
-                                    else if (cc.target == CCTarget.SELF)
-                                        AddCrowdControl(keys[i], cc, monSkills[0].ccList[cc]);
-                                    else
-                                        AddCrowdControl(defenderUnit, cc, monSkills[0].ccList[cc], true);
-                                }
-                            }
-                        }
-                        GamePlayUIController.Instance.UpdateCharacters();
-                    }
+                    animationEnd[keys[i]] = true;
+                    continue;
                 }
+
+                GamePlayUIController.Instance.PlayAnimation(keys[i], "Attack");
+
+                while (animationEnd[keys[i]] == false) yield return null;
+                // 전투 정보 전송
+                {
+                    if (isMonster == false)
+                    {
+                        int damage = charSkills[keys[i]].damage;
+
+                        if (offednerReadyTurn[keys[i]] != null)
+                        {
+                            if (offednerReadyTurn[keys[i]].Item2 <= 0)
+                            {
+                                offednerReadyTurn[keys[i]] = null;
+                            }
+                            else
+                            {
+                                offednerReadyTurn[keys[i]] = new System.Tuple<CharacterSkill, int>(offednerReadyTurn[keys[i]].Item1, offednerReadyTurn[keys[i]].Item2 - 1);
+                                GamePlayUIController.Instance.UpdateOffenderCharacter(keys[i], offednerReadyTurn[keys[i]]);
+                                continue;
+                            }
+                        }
+                        GamePlayUIController.Instance.UpdateOffenderCharacter(keys[i], offednerReadyTurn[keys[i]]);
+
+                        if (HasCrowdControl(keys[i], CCType.ATTACKSTAT, CCTarget.SELF)) damage = (int)(damage * 1.5f);
+                        if (HasCrowdControl(keys[i], CCType.ATTACKSTAT, CCTarget.ENEMY)) damage = (int)(damage * 0.7f);
+
+                        int restHp = DefenderController.Instance.MonsterDamaged(defenderUnit % 10, damage);
+                        if (restHp <= 0)
+                        {
+                            DefenderController.Instance.Dead(defenderUnit);
+                            DefenderDefeated();
+                        }
+
+                        if (charSkills[keys[i]].ccList.Count != 0)
+                        {
+                            foreach (CrowdControl cc in charSkills[keys[i]].ccList.Keys)
+                            {
+                                if (cc.target == CCTarget.ENEMY)
+                                    AddCrowdControl(defenderUnit, cc, charSkills[keys[i]].ccList[cc]);
+                                else if (cc.target == CCTarget.SELF)
+                                    AddCrowdControl(keys[i], cc, charSkills[keys[i]].ccList[cc]);
+                                else
+                                    AddCrowdControl(keys[i], cc, charSkills[keys[i]].ccList[cc], true);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        // 주사위 결과 발생
+                        int index = Random.Range(0, offenderUnits.Length);
+                        if (monSkills[0].ccList.Count != 0)
+                        {
+                            foreach (CrowdControl cc in monSkills[0].ccList.Keys)
+                            {
+                                if (cc.target == CCTarget.ENEMY)
+                                    AddCrowdControl(offenderUnits[index], cc, monSkills[0].ccList[cc]);
+                                else if (cc.target == CCTarget.SELF)
+                                    AddCrowdControl(keys[i], cc, monSkills[0].ccList[cc]);
+                                else
+                                    AddCrowdControl(defenderUnit, cc, monSkills[0].ccList[cc], true);
+                            }
+                        }
+                    }
+                    GamePlayUIController.Instance.UpdateCharacters();
+                }
+            }
 
             float time = 0.3f;
             while (time > 0)
@@ -355,16 +383,8 @@ namespace GameControl
 
         private bool CanAttack(int index)
         {
-            if (index / 10 != 2 && offednerReadyTurn[index] != null) return false;
             if (index / 10 == 1 && offenderUnitIsDead[index]) return false;
-
-            foreach (CrowdControl cc in ccList[index])
-            {
-                if (cc.cc == CCType.STUN)
-                {
-                    if (cc.turn < cc.GetCCBasicTurn()) return false;
-                }
-            }
+            if (HasCrowdControl(index, CCType.STUN)) return false;
 
             return true;
         }
@@ -374,19 +394,21 @@ namespace GameControl
         {
             bool isMonster = (index / 10 == 2);
 
-            int ccIndex = ccList[index].FindIndex(charCC => charCC.name == cc.name);
-
-            if (ccIndex == -1)
+            List<int> indexes = new List<int>();
+            if (isAll)
             {
-                List<int> indexes = new List<int>();
-                if (isAll)
+                foreach (int key in offenderUnits)
                 {
-                    foreach (int key in offenderUnits)
-                        indexes.Add(key);
+                    if (offenderUnitIsDead[key] == false) indexes.Add(key);
                 }
-                else indexes.Add(index);
+            }
+            else indexes.Add(index);
 
-                for (int i = 0; i < indexes.Count; i++)
+            for (int i = 0; i < indexes.Count; i++)
+            {
+                int ccIndex = ccList[indexes[i]].FindIndex(charCC => charCC.name == cc.name);
+
+                if (ccIndex == -1)
                 {
                     ccList[indexes[i]].Add(SkillDatabase.Instance.GetCrowdControl(cc.id));
 
@@ -398,19 +420,9 @@ namespace GameControl
                     if (isStackSkill && ccList[indexes[i]][ccList[indexes[i]].Count - 1].stack > 0)
                         GamePlayUIController.Instance.UpdateCrowdControl(indexes[i], cc.id, -1, ccList[indexes[i]][ccList[indexes[i]].Count - 1].stack);
                     else GamePlayUIController.Instance.UpdateCrowdControl(indexes[i], cc.id, cc.turn, ccList[indexes[i]][ccList[indexes[i]].Count - 1].stack);
-                }
-            }
-            else
-            {
-                List<int> indexes = new List<int>();
-                if (isAll)
-                {
-                    foreach (int key in offenderUnits)
-                        indexes.Add(key);
-                }
-                else indexes.Add(index);
 
-                for (int i = 0; i < indexes.Count; i++)
+                }
+                else
                 {
                     CrowdControl curCC = ccList[indexes[i]][ccIndex];
 
@@ -550,6 +562,8 @@ namespace GameControl
                 switch (skill.type)
                 {
                     case MonsterSkill.SkillType.AttackAll:
+                        offednerReadyTurn.Clear();
+                        ccList.Clear();
                         OffenderDefeated();
                         return;
 
@@ -557,10 +571,12 @@ namespace GameControl
                         offenderUnitIsDead[aliveIndexes[deadUnit]] = true;
                         GamePlayUIController.Instance.DeadCharacter(offenderUnits[deadUnit]);
                         if (offednerReadyTurn[aliveIndexes[deadUnit]] != null) offednerReadyTurn[aliveIndexes[deadUnit]] = null;
+                        ccList[aliveIndexes[deadUnit]].Clear();
                         break;
                     case MonsterSkill.SkillType.AttackOneStun:
                         offenderUnitIsDead[aliveIndexes[deadUnit]] = true;
                         GamePlayUIController.Instance.DeadCharacter(offenderUnits[deadUnit]);
+                        ccList[aliveIndexes[deadUnit]].Clear();
                         if (offednerReadyTurn[aliveIndexes[deadUnit]] != null) offednerReadyTurn[aliveIndexes[deadUnit]] = null;
                         do
                         {
@@ -682,7 +698,7 @@ namespace GameControl
             GamePlayUIController.Instance.Alert(alertIndex);
 
             float time = 1.5f;
-            while(time > 0)
+            while (time > 0)
             {
                 time -= Time.deltaTime;
                 yield return null;

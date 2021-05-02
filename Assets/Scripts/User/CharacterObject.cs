@@ -20,6 +20,8 @@ public class CharacterObject : MonoBehaviour
 
     private List<CrowdControlIcon> ccIcons = new List<CrowdControlIcon>();
 
+    private IEnumerator coroutine;
+
     // Start is called before the first frame update
     void Awake()
     {
@@ -27,6 +29,15 @@ public class CharacterObject : MonoBehaviour
         _sprite = GetComponent<SpriteRenderer>();
         canvas.worldCamera = GameObject.FindWithTag("MainCamera").GetComponent<Camera>();
         if (skillObject != null) skillObject.SetActive(false);
+    }
+
+    private void Update()
+    {
+        if (!_animator.GetCurrentAnimatorStateInfo(0).IsName("IDLE") && coroutine != null)
+        {
+            StartCoroutine(coroutine);
+            coroutine = null;
+        }
     }
 
     public void SetSkill(Skill skill)
@@ -84,7 +95,7 @@ public class CharacterObject : MonoBehaviour
     public void SetAnimation(string name)
     {
         _animator.SetTrigger(name);
-        StartCoroutine(Animation(name));
+        coroutine = Animation(name);
     }
 
     public void SetFlip(bool isFlip)
@@ -104,7 +115,6 @@ public class CharacterObject : MonoBehaviour
 
     IEnumerator Animation(string name)
     {
-        while (_animator.GetCurrentAnimatorStateInfo(0).IsName("IDLE")) yield return null;
         while (_animator.GetCurrentAnimatorStateInfo(0).IsName(name.ToUpper())) yield return null;
 
         float time = 0.2f;
