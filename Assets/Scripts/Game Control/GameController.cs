@@ -629,7 +629,11 @@ namespace GameControl
             GamePlayUIController.Instance.SetTurn(++turn);
 
             bool isAttack = false;
-            if (turn != 1) isAttack = DefenderController.Instance.AttackSkillNextTurn();
+            if (turn != 1)
+            {
+                isAttack = DefenderController.Instance.AttackSkillNextTurn();
+                if (HasCrowdControl(defenderUnit, CCType.DECREASETURN)) isAttack = DefenderController.Instance.AttackSkillNextTurn();
+            }
 
             for (int i = 0; i < offenderUnits.Length; i++)
             {
