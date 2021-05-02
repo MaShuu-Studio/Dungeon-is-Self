@@ -121,7 +121,7 @@ namespace GameControl
                         {
                             n = UnityEngine.Random.Range(0, maxSkills.Count);
 
-                        } while (maxSkills[n].id != 200110);
+                        } while (maxSkills[n].id == 200110);
                         DefenderController.Instance.SetDice(j, maxSkills[n]);
                     }
                     else
@@ -136,6 +136,7 @@ namespace GameControl
                                 DefenderController.Instance.SetDice(j, usableSkill[0]);
                                 break;
                             }
+                            count--;
                         }
                     }
                 }
