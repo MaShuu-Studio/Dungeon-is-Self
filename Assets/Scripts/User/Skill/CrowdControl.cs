@@ -112,7 +112,7 @@ namespace Data
                     turn = 0;
                     break;
                 case CCType.CONFUSION:
-                    turn = 0;
+                    turn = 1;
                     break;
                 case CCType.REMOVE:
                     turn = 0;

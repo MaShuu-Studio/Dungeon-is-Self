@@ -330,19 +330,48 @@ namespace GameControl
                         if (HasCrowdControl(keys[i], CCType.ATTACKSTAT, CCTarget.SELF)) damage = (int)(damage * 1.5f);
                         if (HasCrowdControl(keys[i], CCType.ATTACKSTAT, CCTarget.ENEMY)) damage = (int)(damage * 0.7f);
 
-                        int restHp = DefenderController.Instance.MonsterDamaged(defenderUnit % 10, damage);
-                        if (restHp <= 0)
+                        int target = defenderUnit;
+
+                        if (HasCrowdControl(keys[i], CCType.CONFUSION))
                         {
-                            DefenderController.Instance.Dead(defenderUnit);
-                            DefenderDefeated();
+                            List<int> aliveIndexes = new List<int>();
+
+                            foreach (int key in offenderUnits)
+                                if (offenderUnitIsDead[key] == false) aliveIndexes.Add(key);
+
+                            int random = Random.Range(0, aliveIndexes.Count + 1);
+                            if (random != 0) target = aliveIndexes[random - 1];
+
+                            Debug.Log(keys[i] + "is Confused Attack " + target);
+                            continue;
                         }
+                        else
+                        {
+                            int restHp = DefenderController.Instance.MonsterDamaged(defenderUnit % 10, damage);
+                            if (restHp <= 0)
+                            {
+                                DefenderController.Instance.Dead(defenderUnit);
+                                DefenderDefeated();
+                            }
+                        }
+
 
                         if (charSkills[keys[i]].ccList.Count != 0)
                         {
                             foreach (CrowdControl cc in charSkills[keys[i]].ccList.Keys)
                             {
                                 if (cc.target == CCTarget.ENEMY)
-                                    AddCrowdControl(defenderUnit, cc, charSkills[keys[i]].ccList[cc], keys[i]);
+                                {
+                                    if (target != defenderUnit)
+                                    {
+                                        foreach (int unit in offenderUnits)
+                                        {
+                                            CrowdControl tmp = ccList[unit].Find(crowdControl => crowdControl.cc == CCType.TAUNT);
+                                            if (tmp != null) target = unit;
+                                        }
+                                    }
+                                    AddCrowdControl(target, cc, charSkills[keys[i]].ccList[cc], keys[i]);
+                                }
                                 else if (cc.target == CCTarget.SELF)
                                     AddCrowdControl(keys[i], cc, charSkills[keys[i]].ccList[cc], keys[i]);
                                 else
