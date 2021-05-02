@@ -37,5 +37,6 @@ public class CrowdControlIcon : MonoBehaviour
             frameImage.color = Color.white;
             iconImage.color = Color.white;
         }
+
     }
 }

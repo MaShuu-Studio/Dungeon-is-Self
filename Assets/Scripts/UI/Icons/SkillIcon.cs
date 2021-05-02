@@ -42,7 +42,6 @@ public class SkillIcon : UIIcon, IPointerClickHandler
     {
         this.skill = skill; // 복사방법 조정
         iconImage.sprite = Resources.Load<Sprite>("Sprites/Skills/" + skill.id.ToString());
-        Debug.Log(skill.id + ":" + skill.type + ": " + skill.cost.ToString());
         if (costText != null)
             costText.text = (skill.type == MonsterSkill.SkillType.Dice) ? skill.cost.ToString() : "";
 

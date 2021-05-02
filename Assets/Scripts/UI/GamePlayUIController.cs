@@ -476,14 +476,15 @@ public class GamePlayUIController : MonoBehaviour
         if (skill.id / 10000 == 1)
         {
             CharacterSkill cs = skill as CharacterSkill;
-            description.SetDescription(skill.id, skill.name, "", skill.description, "DMG: " + cs.damage);
+            description.SetDescription(skill.id, skill.name, "", skill.description, "DMG: " + cs.damage, skill.ccList, skill.turn);
         }
         else
         {
             MonsterSkill ms = skill as MonsterSkill;
             string str = "";
             if (ms.type == MonsterSkill.SkillType.Dice) str = "COST: " + ms.cost;
-            description.SetDescription(skill.id, skill.name, "", skill.description, str);
+            else str = "TURN: " + ms.turn;
+            description.SetDescription(skill.id, skill.name, "", skill.description, str, skill.ccList);
         }
     }
 
