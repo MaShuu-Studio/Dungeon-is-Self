@@ -292,6 +292,15 @@ namespace GameControl
             return upgradableSkills;
         }
 
+        public int GetDeadUnitCount()
+        {
+            int count = 0;
+            foreach (bool b in isDead)
+                if (b) count++;
+
+            return count;
+        }
+
         public void Dead(int index)
         {
             isDead[index % 10] = true;

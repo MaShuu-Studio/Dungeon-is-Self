@@ -341,7 +341,7 @@ namespace GameControl
                     }
                 }
 
-            float time = 0.5f;
+            float time = 0.3f;
             while (time > 0)
             {
                 time -= Time.deltaTime;
@@ -453,6 +453,7 @@ namespace GameControl
         {
             foreach (int key in ccList.Keys)
             {
+                if (key / 10 == 1 && offenderUnitIsDead[key]) ccList[key].Clear();
                 for (int i = 0; i < ccList[key].Count; i++)
                 {
                     CrowdControl curCC = ccList[key][i];
@@ -532,9 +533,9 @@ namespace GameControl
                     return;
                 }
 
-                for (int i = 0; i < offenderUnits.Length; i++)
+                for (int i = 0; i < aliveIndexes.Count; i++)
                 {
-                    CrowdControl tmp = ccList[offenderUnits[i]].Find(cc => cc.cc == CCType.TAUNT);
+                    CrowdControl tmp = ccList[aliveIndexes[i]].Find(cc => cc.cc == CCType.TAUNT);
                     if (tmp != null) tauntIndex = i;
                 }
 
@@ -637,10 +638,26 @@ namespace GameControl
             }
             else
             {
-                int deadIndex = Random.Range(0, offenderUnits.Length);
+                int deadAmount = 1;
+                if (OffenderController.Instance.GetAliveCharacterList().Count == 2) deadAmount = 2;
+
+                int[] deadIndexes = new int[deadAmount];
+
+                deadIndexes[0] = Random.Range(0, offenderUnits.Length);
+                if (deadIndexes.Length > 1)
+                    do
+                    {
+                        deadIndexes[1] = Random.Range(0, offenderUnits.Length);
+                        if (deadIndexes[0] != deadIndexes[1]) break;
+                    } while (true);
+
                 for (int i = 0; i < offenderUnits.Length; i++)
                 {
-                    if (i != deadIndex) OffenderController.Instance.Alive(offenderUnits[i]);
+                    if (deadIndexes.Length > 1)
+                    {
+                        if (i != deadIndexes[0] && i != deadIndexes[1]) OffenderController.Instance.Alive(offenderUnits[i]);
+                    }
+                    else if (i != deadIndexes[0]) OffenderController.Instance.Alive(offenderUnits[i]);
                 }
                 DefenderController.Instance.HealBattleMonster(defenderUnit);
                 ReadyRound(true);

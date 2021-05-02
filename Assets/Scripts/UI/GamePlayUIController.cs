@@ -708,13 +708,13 @@ public class GamePlayUIController : MonoBehaviour
         if (type == UserType.Defender)
         {
             for (int i = 0; i < charObjects.Count; i++)
-                charObjects[i].UpdateCharacterInfo(monHp, monTurn);
+                if (charObjects[i] != null) charObjects[i].UpdateCharacterInfo(monHp, monTurn);
         }
 
         else
         {
             for (int i = 0; i < enemyObjects.Count; i++)
-                enemyObjects[i].UpdateCharacterInfo(monHp, monTurn);
+                if (enemyObjects[i] != null) enemyObjects[i].UpdateCharacterInfo(monHp, monTurn);
         }
     }
 
@@ -726,6 +726,7 @@ public class GamePlayUIController : MonoBehaviour
                 if (enemyObjects[i].GetIndex() == index)
                 {
                     enemyObjects[i].Dead();
+                    enemyObjects[i] = null;
                     break;
                 }
         }
@@ -735,6 +736,7 @@ public class GamePlayUIController : MonoBehaviour
                 if (charObjects[i].GetIndex() == index)
                 {
                     charObjects[i].Dead();
+                    charObjects[i] = null;
                     break;
                 }
         }
@@ -743,7 +745,6 @@ public class GamePlayUIController : MonoBehaviour
     List<Dice> diceObjects = new List<Dice>();
     public void DiceRoll(List<bool> isRolled)
     {
-
         diceObjects.Clear();
         if (type == UserType.Defender)
         {
@@ -830,7 +831,7 @@ public class GamePlayUIController : MonoBehaviour
     {
         for (int i = 0; i < charObjects.Count; i++)
         {
-            if (index == charObjects[i].GetIndex())
+            if (charObjects[i] != null && index == charObjects[i].GetIndex())
             {
                 charObjects[i].UpdateCrowdControl(id, isRemove, turn, stack, crowdControlIconPrefab);
                 return;
@@ -839,7 +840,7 @@ public class GamePlayUIController : MonoBehaviour
 
         for (int i = 0; i < enemyObjects.Count; i++)
         {
-            if (index == enemyObjects[i].GetIndex())
+            if (enemyObjects[i] != null && index == enemyObjects[i].GetIndex())
             {
                 enemyObjects[i].UpdateCrowdControl(id, isRemove, turn, stack, crowdControlIconPrefab);
                 return;
@@ -850,9 +851,9 @@ public class GamePlayUIController : MonoBehaviour
     private void ClearCharacters()
     {
         for (int i = 0; i < charObjects.Count; i++)
-            Destroy(charObjects[i].gameObject);
+            if (charObjects[i] != null) Destroy(charObjects[i].gameObject);
         for (int i = 0; i < enemyObjects.Count; i++)
-            Destroy(enemyObjects[i].gameObject);
+            if (enemyObjects[i] != null) Destroy(enemyObjects[i].gameObject);
 
         charObjects.Clear();
         enemyObjects.Clear();
@@ -863,7 +864,7 @@ public class GamePlayUIController : MonoBehaviour
     {
         foreach (CharacterObject c in charObjects)
         {
-            if (c.CheckIndex(index))
+            if (c != null && c.CheckIndex(index))
             {
                 c.SetAnimation(anim);
                 return;
@@ -872,7 +873,7 @@ public class GamePlayUIController : MonoBehaviour
 
         foreach (CharacterObject c in enemyObjects)
         {
-            if (c.CheckIndex(index))
+            if (c != null && c.CheckIndex(index))
             {
                 c.SetAnimation(anim);
                 return;

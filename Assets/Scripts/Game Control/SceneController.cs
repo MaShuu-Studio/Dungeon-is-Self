@@ -27,7 +27,7 @@ public class SceneController : MonoBehaviour
         }
         DontDestroyOnLoad(gameObject);
 
-        StartCoroutine(ChangeScene("Title", LoadSceneMode.Single));
+        StartCoroutine(ChangeScene("Main", LoadSceneMode.Single));
     }
 
     public void ChangeScene(string name, string mode = "SINGLE")
