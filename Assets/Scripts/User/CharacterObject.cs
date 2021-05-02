@@ -8,9 +8,10 @@ using Data;
 public class CharacterObject : MonoBehaviour
 {
     [SerializeField] private Canvas canvas;
+    [SerializeField] private GameObject skillObject;
     [SerializeField] private Image skillImage;
-    [SerializeField] private Text hpText;
     [SerializeField] private Text turnText;
+    [SerializeField] private Text hpText;
     [SerializeField] private Transform CCList;
 
     private SpriteRenderer _sprite;
@@ -25,16 +26,20 @@ public class CharacterObject : MonoBehaviour
         _animator = GetComponent<Animator>();
         _sprite = GetComponent<SpriteRenderer>();
         canvas.worldCamera = GameObject.FindWithTag("MainCamera").GetComponent<Camera>();
+        if (skillObject != null) skillObject.SetActive(false);
     }
 
     public void SetSkill(Skill skill)
     {
+        if (skillObject != null) skillObject.SetActive(true);
         skillImage.sprite = Resources.Load<Sprite>("Sprites/Skills/" + skill.id);
     }
-    public void UpdateCharacterInfo(int hp, int turn)
+
+    public void UpdateCharacterInfo(int hp, int turn, bool isOff = false)
     {
-        if (hpText.text != null) hpText.text = hp.ToString();
-        if (turnText.text != null) turnText.text = turn.ToString();
+        if (hpText != null) hpText.text = hp.ToString();
+        if (turnText != null) turnText.text = turn.ToString();
+        if (isOff && skillObject != null) skillObject.SetActive(false);
     }
 
     public void UpdateCrowdControl(int id, bool isRemove, int turn, int stack, CrowdControlIcon prefab = null)

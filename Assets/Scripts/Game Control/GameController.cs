@@ -286,9 +286,10 @@ namespace GameControl
                         {
                             int damage = charSkills[keys[i]].damage;
 
+                            GamePlayUIController.Instance.UpdateOffenderCharacter(keys[i], offednerReadyTurn[keys[i]]);
                             if (offednerReadyTurn[keys[i]] != null)
                             {
-                                if (offednerReadyTurn[keys[i]].Item2 == 0)
+                                if (offednerReadyTurn[keys[i]].Item2 <= 0)
                                     offednerReadyTurn[keys[i]] = null;
                                 else
                                 {
@@ -296,6 +297,7 @@ namespace GameControl
                                     continue;
                                 }
                             }
+                            GamePlayUIController.Instance.UpdateOffenderCharacter(keys[i], offednerReadyTurn[keys[i]]);
 
                             if (HasCrowdControl(keys[i], CCType.ATTACKSTAT, CCTarget.SELF)) damage = (int)(damage * 1.5f);
                             if (HasCrowdControl(keys[i], CCType.ATTACKSTAT, CCTarget.ENEMY)) damage = (int)(damage * 0.7f);
@@ -513,7 +515,10 @@ namespace GameControl
             bool isAttack = false;
             if (turn != 1) isAttack = DefenderController.Instance.AttackSkillNextTurn();
 
-            GamePlayUIController.Instance.UpdateCharacters();
+            for (int i = 0; i < offenderUnits.Length; i++)
+            {
+                GamePlayUIController.Instance.UpdateOffenderCharacter(offenderUnits[i], offednerReadyTurn[offenderUnits[i]]);
+            }
 
             if (isAttack)
             {

@@ -727,11 +727,42 @@ public class GamePlayUIController : MonoBehaviour
             for (int i = 0; i < charObjects.Count; i++)
                 if (charObjects[i] != null) charObjects[i].UpdateCharacterInfo(monHp, monTurn);
         }
-
         else
         {
             for (int i = 0; i < enemyObjects.Count; i++)
-                if (enemyObjects[i] != null) enemyObjects[i].UpdateCharacterInfo(monHp, monTurn);
+                if (enemyObjects[i] != null) enemyObjects[i].UpdateCharacterInfo(monHp, monTurn);            
+        }
+    }
+
+    public void UpdateOffenderCharacter(int index, System.Tuple<CharacterSkill, int> readyTurn)
+    {
+        if (type == UserType.Defender)
+        {
+            for (int i = 0; i < enemyObjects.Count; i++)
+                if (enemyObjects[i] != null && enemyObjects[i].GetIndex() == index)
+                {
+                    if (readyTurn != null)
+                    {
+                        enemyObjects[i].SetSkill(readyTurn.Item1);
+                        enemyObjects[i].UpdateCharacterInfo(0, readyTurn.Item2);
+                    }
+                    else enemyObjects[i].UpdateCharacterInfo(0, 0, true);
+                    break;
+                }
+        }
+        else
+        {
+            for (int i = 0; i < charObjects.Count; i++)
+                if (charObjects[i] != null && charObjects[i].GetIndex() == index)
+                {
+                    if (readyTurn != null)
+                    {
+                        charObjects[i].SetSkill(readyTurn.Item1);
+                        charObjects[i].UpdateCharacterInfo(0, readyTurn.Item2);
+                    }
+                    else charObjects[i].UpdateCharacterInfo(0, 0, true);
+                    break;
+                }
         }
     }
 
