@@ -7,7 +7,7 @@ using GameControl;
 
 public class CustomButton : MonoBehaviour
 {
-    public enum ButtonMethod { SceneMovement = 0, GameReady, GamePlayReady };
+    public enum ButtonMethod { SceneMovement = 0, GameReady, GamePlayReady, GameExit};
 
     [SerializeField] private string moveScene = "";
     [SerializeField] private UserType userType = UserType.Offender;
@@ -35,6 +35,9 @@ public class CustomButton : MonoBehaviour
                 break;
             case ButtonMethod.GamePlayReady:
                 button.onClick.AddListener(GamePlayReady);
+                break;
+            case ButtonMethod.GameExit:
+                button.onClick.AddListener(Application.Quit);
                 break;
         }
     }
