@@ -7,7 +7,7 @@ using Data;
 
 public class GamePlayUIController : MonoBehaviour
 {
-    #region Value
+    #region Variables
     private UserType type;
     private UserType enemyType;
     private GameProgress progress;
@@ -23,6 +23,17 @@ public class GamePlayUIController : MonoBehaviour
     [SerializeField] private List<RectTransform> rosterSelected;
     [SerializeField] private List<RectTransform> enemyRosterSelected;
 
+    [SerializeField] private Image selectedCharacterImage;
+    [SerializeField] private Text selectedCharacterText;
+
+    [SerializeField] private Transform skillRosterTransform;
+    [SerializeField] private Transform diceTransform;
+
+    [SerializeField] private UsingSkillIcon usingSkillIcon;
+
+    private List<UsingSkillIcon> skillRosters = new List<UsingSkillIcon>();
+    private List<UsingSkillIcon> dices = new List<UsingSkillIcon>();
+
     [Header("READY GAME")]
     // 후보 선택
     [SerializeField] private Transform candidatesTransform;
@@ -36,7 +47,6 @@ public class GamePlayUIController : MonoBehaviour
     [Header("READY ROUND")]
     // 가장 기본 부분
     [SerializeField] private Text roundText;
-    [SerializeField] private List<CharacterToggle> characterToggles;
 
     [Space]
     // 스킬트리의 바탕이 되는 부분
@@ -51,7 +61,6 @@ public class GamePlayUIController : MonoBehaviour
     [SerializeField] private GameObject diceSkillIconPrefab;
     private List<SkillIcon> diceSkillIcons = new List<SkillIcon>();
 
-    [SerializeField] private List<DiceIcon> diceIcons;
     [SerializeField] private RectTransform selectedDice;
 
     [SerializeField] private SkillDescription description;
@@ -66,13 +75,6 @@ public class GamePlayUIController : MonoBehaviour
     [SerializeField] private Slider costSlider;
     [SerializeField] private Text costText;
 
-    [Space]
-    // 공격자 유닛 추가 정보
-    [SerializeField] private GameObject offenderSpecialView;
-    [SerializeField] private List<RosterIcon> offenderRosters;
-
-
-    private int selectedDiceIndex;
     private int selectedCharacterIndex;
 
 
@@ -192,41 +194,31 @@ public class GamePlayUIController : MonoBehaviour
                     defenderSkillTree.SetActive(true);
                     offenderSkillTree.gameObject.SetActive(false);
                     defenderSpecialView.SetActive(true);
-                    offenderSpecialView.SetActive(false);
                     // 유닛 선택시 Defender에서 몬스터가 죽었는지 체크해야함.
                     // 기존에 선택했던 유닛부터 다시 세팅할 수 있게 해줘야 함.
                     int index = DefenderController.Instance.GetFirstAliveMonster();
-                    characterToggles[index].toggle.isOn = true;
                 }
                 else
                 {
                     defenderSkillTree.SetActive(false);
-                    offenderSkillTree.gameObject.SetActive(true);
+                    offenderSkillTree.gameObject.SetActive(false);
                     defenderSpecialView.SetActive(false);
-                    offenderSpecialView.SetActive(true);
+                    /*
                     // 유닛 선택시 Offender에서 유닛이 죽었는지 체크해야 함.
                     // 기존에 선택했던 유닛부터 다시 세팅할 수 있게 해줘야 함.
                     int index = OffenderController.Instance.GetFirstAliveCharacter();
-                    characterToggles[index].toggle.isOn = true;
 
                     List<int> aliveList = OffenderController.Instance.GetAliveCharacterList();
                     // 죽은애 알아서 잘 찾아갈 수 있게 조정
                     for (int i = 0; i < aliveList.Count && i < 3; i++)
                     {
                         OffenderController.Instance.SelectCharacter(aliveList[i]);
-                        SetOffenderRoster(i);
                     }
                     OffenderController.Instance.SelectCharacter(0);
+                    */
                 }
 
-                for (int i = 0; i < characterToggles.Count; i++)
-                {
-                    int id = (type == UserType.Defender) ? DefenderController.Instance.selectedMonsterCandidates[i] : OffenderController.Instance.selectedCharacterCandidates[i];
-                    bool isCharDead = (type == UserType.Defender) ? DefenderController.Instance.isDead[i] : OffenderController.Instance.isDead[i];
-                    characterToggles[i].SetFace(type, id);
-                    characterToggles[i].CharacterDead(isCharDead);
-                }
-                SetAllDice();
+                ShowCharacterSkillsInPanel();
                 break;
 
             case GameProgress.PlayRound:
@@ -343,7 +335,18 @@ public class GamePlayUIController : MonoBehaviour
 
     #region Ready Round
 
-    public void SetSkillTree(int index)
+    public void SelectCharacter(int index, int id)
+    {
+        selectedCharacterIndex = index;
+        string path = (type == UserType.Defender) ? MonsterDatabase.facePath : CharacterDatabase.facePath;
+        string name = (type == UserType.Defender) ? MonsterDatabase.Instance.GetMonster(id).name : CharacterDatabase.Instance.GetCharacter(id)._role;
+        Sprite sprite = Resources.Load<Sprite>(path + id.ToString());
+
+        selectedCharacterImage.sprite = sprite;
+        selectedCharacterText.text = name;
+    }
+
+    public void SetSkillTree()
     {
         ClearSkillTree();
 
@@ -351,12 +354,11 @@ public class GamePlayUIController : MonoBehaviour
         // 자동화가 아니라 프리팹을 활용해야할지는 고민이 좀 필요할 듯
         // 공격자와 방어자를 나중에 합칠 생각
 
-        selectedCharacterIndex = index;
         int id;
         if (type == UserType.Defender)
         {
             DefenderController.Instance.SelectMonster(selectedCharacterIndex);
-            Monster monster = DefenderController.Instance.monsters[index];
+            Monster monster = DefenderController.Instance.monsters[selectedCharacterIndex];
             id = monster.id;
             monsterNameText.text = monster.name;
             monsterHpText.text = monster.hp.ToString();
@@ -402,9 +404,10 @@ public class GamePlayUIController : MonoBehaviour
         }
         else
         {
+            offenderSkillTree.gameObject.SetActive(true);
             OffenderController.Instance.SelectCharacter(selectedCharacterIndex);
 
-            id = OffenderController.Instance.characters[index].id;
+            id = OffenderController.Instance.characters[selectedCharacterIndex].id;
             offenderSkillTree.sprite = Resources.Load<Sprite>("Sprites/UI/Offender Skill Tree/" + id);
             List<CharacterSkill> diceSkills = SkillDatabase.Instance.GetCharacterDices(id);
 
@@ -456,8 +459,6 @@ public class GamePlayUIController : MonoBehaviour
 
             UpdateSkillPoint();
         }
-
-        SetAllDice();
     }
 
     private void ClearSkillTree()
@@ -488,40 +489,10 @@ public class GamePlayUIController : MonoBehaviour
         }
     }
 
-    public void SetAllDice()
+    public void ShowCharacterSkillsInPanel()
     {
-        selectedDiceIndex = 0;
-        for (int i = 0; i < 6; i++)
-        {
-            SetDiceOnce();
-        }
-        SelectDice(0);
     }
-    public void SetDiceOnce()
-    {
-        if (type == UserType.Defender)
-        {
-            MonsterSkill skill = DefenderController.Instance.GetSelectedDice(selectedDiceIndex);
-            diceIcons[selectedDiceIndex++].SetSkill(skill);
 
-            if (selectedDiceIndex >= diceIcons.Count) selectedDiceIndex = 0;
-            SelectDice(selectedDiceIndex);
-
-            int totalCost = DefenderController.MAX_COST - DefenderController.Instance.GetDiceCost();
-            costText.text = totalCost.ToString();
-            if (totalCost > 10) costSlider.value = 10;
-            else if (totalCost < 0) costSlider.value = 0;
-            else costSlider.value = totalCost;
-        }
-        else
-        {
-            CharacterSkill skill = OffenderController.Instance.GetSelectedDice(selectedDiceIndex);
-            diceIcons[selectedDiceIndex++].SetSkill(skill);
-
-            if (selectedDiceIndex >= diceIcons.Count) selectedDiceIndex = 0;
-            SelectDice(selectedDiceIndex);
-        }
-    }
     public void SetDiceOnce(Skill skill, bool isOn = true)
     {
         if (isOn == false)
@@ -548,17 +519,12 @@ public class GamePlayUIController : MonoBehaviour
 
         if (type == UserType.Defender)
         {
-            int check = DefenderController.Instance.SetDice(selectedDiceIndex, skill as MonsterSkill);
+            int check = DefenderController.Instance.SetDice(0, skill as MonsterSkill);
             if (check != 0)
             {
                 Alert(check + 20);
                 return;
             }
-
-            diceIcons[selectedDiceIndex++].SetSkill(skill as MonsterSkill);
-
-            if (selectedDiceIndex >= diceIcons.Count) selectedDiceIndex = 0;
-            SelectDice(selectedDiceIndex);
 
             int totalCost = DefenderController.MAX_COST - DefenderController.Instance.GetDiceCost();
             costText.text = totalCost.ToString();
@@ -568,17 +534,12 @@ public class GamePlayUIController : MonoBehaviour
         }
         else
         {
-            int check = OffenderController.Instance.SetDice(selectedDiceIndex, skill as CharacterSkill);
+            int check = OffenderController.Instance.SetDice(0, skill as CharacterSkill);
             if (check != 0)
             {
                 Alert(check + 25);
                 return;
             }
-
-            diceIcons[selectedDiceIndex++].SetSkill(skill as CharacterSkill);
-
-            if (selectedDiceIndex >= diceIcons.Count) selectedDiceIndex = 0;
-            SelectDice(selectedDiceIndex);
         }
     }
 
@@ -586,13 +547,6 @@ public class GamePlayUIController : MonoBehaviour
     {
         if (type == UserType.Offender) offenderSkillPointText.text = "SKILL POINT: " + OffenderController.Instance.GetSkillPoint().ToString();
         else offenderSkillPointText.text = "";
-    }
-    public void SelectDice(int index)
-    {
-        RectTransform rect = diceIcons[index].GetComponent<RectTransform>();
-        Vector3 pos = new Vector3(rect.anchoredPosition.x - 6.25f, rect.anchoredPosition.y + 6.25f, 0);
-        selectedDiceIndex = index;
-        selectedDice.anchoredPosition = pos;
     }
 
     public void SetAttackSkill(int index, MonsterSkill skill)
@@ -606,24 +560,6 @@ public class GamePlayUIController : MonoBehaviour
         RectTransform rect = defenderAttackSkills[index].GetComponent<RectTransform>();
         Vector3 pos = new Vector3(rect.anchoredPosition.x + 6.25f, 0, 0);
         selectedAttackSkill.anchoredPosition = pos;
-    }
-
-    public void SetOffenderRoster(int index)
-    {
-        OffenderController.Instance.SelectRoster(index);
-        SetRosterIcons();
-    }
-
-    private void SetRosterIcons()
-    {
-        for (int i = 0; i < offenderRosters.Count; i++)
-        {
-            int index = OffenderController.Instance.roster[i];
-            int id = OffenderController.Instance.characters[index].id;
-
-            offenderRosters[i].SetImage(UserType.Offender, id);
-            offenderRosters[i].SetNumber(index);
-        }
     }
 
     #endregion

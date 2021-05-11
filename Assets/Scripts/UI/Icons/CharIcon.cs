@@ -8,6 +8,7 @@ using UnityEngine.UI;
 public class CharIcon : UIIcon, IPointerDownHandler, IPointerClickHandler
 {
     [SerializeField] private bool isCandidate;
+    [SerializeField] private int index = 0;
     private int characterId;
     private UserType type;
 
@@ -33,6 +34,12 @@ public class CharIcon : UIIcon, IPointerDownHandler, IPointerClickHandler
         {
             base.OnPointerClick(eventData);
             GamePlayUIController.Instance.SelectCandidate(characterId);
+        }
+        else if (GameController.Instance.currentProgress == GameProgress.ReadyRound)
+        {
+            base.OnPointerClick(eventData);
+            GamePlayUIController.Instance.SelectCharacter(index, characterId);
+            GamePlayUIController.Instance.SetSkillTree();
         }
     }
     public override void OnPointerExit(PointerEventData pointerEventData)
