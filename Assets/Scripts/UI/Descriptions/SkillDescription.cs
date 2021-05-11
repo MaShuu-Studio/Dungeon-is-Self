@@ -55,6 +55,6 @@ public class SkillDescription : UIDescription
         }
 
         if (readyTurn == -1) readyTurnText.text = "";
-        else readyTurnText.text = "WAIT TURN\n" + readyTurn;
+        else readyTurnText.text = "WAIT TURN " + readyTurn;
     }
 }
