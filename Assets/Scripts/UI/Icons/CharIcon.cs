@@ -5,13 +5,45 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class CharIcon : UIIcon, IPointerDownHandler, IPointerClickHandler
+public class CharIcon : UIIcon, IPointerDownHandler, IPointerClickHandler, IBeginDragHandler, IDragHandler, IEndDragHandler
 {
+    [SerializeField] private DragAndDropIcon dragIcon;
     [SerializeField] private bool isCandidate;
-    [SerializeField] private int index = 0;
-    private int characterId;
-    private UserType type;
+    private int characterId = -1;
+    private bool isDragging = false;
+    private RectTransform draggingRect;
 
+    public void OnBeginDrag(PointerEventData eventData)
+    {
+        if (isCandidate) return;
+        if (dragIcon == null) return;
+        if (characterId == -1) return;
+
+        dragIcon.gameObject.SetActive(true);
+        dragIcon.SetImage(iconImage.sprite, this);
+        draggingRect = dragIcon.GetComponent<RectTransform>();
+
+        isDragging = true;
+    }
+
+    public void OnDrag(PointerEventData eventData)
+    {
+        if (isDragging)
+        {
+            draggingRect.anchoredPosition = eventData.position;
+        }
+    }
+
+    public void OnEndDrag(PointerEventData eventData)
+    {
+        if (isCandidate) return;
+        if (dragIcon == null) return;
+        if (characterId == -1) return;
+
+        dragIcon.gameObject.SetActive(false);
+        dragIcon.SetImage(null, null);
+        isDragging = false;
+    }
 
     protected override void Start()
     {
@@ -51,7 +83,6 @@ public class CharIcon : UIIcon, IPointerDownHandler, IPointerClickHandler
     {
         base.SetImage(type, id);
         characterId = id;
-        this.type = type;
     }
 
     public void SetIsDead(bool isDead)
