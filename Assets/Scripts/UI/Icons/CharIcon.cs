@@ -38,7 +38,7 @@ public class CharIcon : UIIcon, IPointerDownHandler, IPointerClickHandler
         else if (GameController.Instance.currentProgress == GameProgress.ReadyRound)
         {
             base.OnPointerClick(eventData);
-            GamePlayUIController.Instance.SelectCharacter(index, characterId);
+            GamePlayUIController.Instance.SelectCharacter(this, characterId, rect.anchoredPosition);
             GamePlayUIController.Instance.SetSkillTree();
         }
     }

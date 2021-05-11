@@ -335,8 +335,14 @@ public class GamePlayUIController : MonoBehaviour
 
     #region Ready Round
 
-    public void SelectCharacter(int index, int id)
+    public void SelectCharacter(CharIcon charIcon, int id, Vector2 pos)
     {
+        int index = 0;
+        for (; index < userRosters.Count; index++)
+        {
+            if (userRosters[index] == charIcon) break;
+        }
+        if (index >= userRosters.Count) return;
         selectedCharacterIndex = index;
         string path = (type == UserType.Defender) ? MonsterDatabase.facePath : CharacterDatabase.facePath;
         string name = (type == UserType.Defender) ? MonsterDatabase.Instance.GetMonster(id).name : CharacterDatabase.Instance.GetCharacter(id)._role;
@@ -344,6 +350,9 @@ public class GamePlayUIController : MonoBehaviour
 
         selectedCharacterImage.sprite = sprite;
         selectedCharacterText.text = name;
+
+        rosterSelected[0].gameObject.SetActive(true);
+        rosterSelected[0].anchoredPosition = new Vector2(pos.x -5, pos.y);
     }
 
     public void SetSkillTree()
@@ -491,6 +500,7 @@ public class GamePlayUIController : MonoBehaviour
 
     public void ShowCharacterSkillsInPanel()
     {
+        // 캐릭터가 가진 스킬 리스트, 주사위를 띄워주는 패널
     }
 
     public void SetDiceOnce(Skill skill, bool isOn = true)
