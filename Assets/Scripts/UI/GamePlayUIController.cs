@@ -469,6 +469,7 @@ public class GamePlayUIController : MonoBehaviour
 
             UpdateSkillPoint();
         }
+        ShowCharacterSkillsInPanel();
     }
 
     private void ClearSkillTree()
@@ -502,6 +503,28 @@ public class GamePlayUIController : MonoBehaviour
     public void ShowCharacterSkillsInPanel()
     {
         // 캐릭터가 가진 스킬 리스트, 주사위를 띄워주는 패널
+
+        for (int i = 0; i < skillRosters.Count; i++)
+        {
+            Destroy(skillRosters[i].gameObject);
+        }
+        skillRosters.Clear();
+
+        for (int i = 0; i < usingDices.Count; i++)
+        {
+            Destroy(usingDices[i].gameObject);
+        }
+        usingDices.Clear();
+
+        // 여기서 띄워주기
+        // 어떤 유닛이 선택됐는지는 selectedCharacterIndex에 저장되어있음
+        int size = 0; // 가지고있는 스킬의 갯수
+        for (int i = 0; i < size; i++)
+        {
+            Skill skill = null; // n번째 스킬
+
+            AddSkillRoster(skill, true);
+        }
     }
 
     public void SetDiceOnce(Skill skill, bool isOn = true)
@@ -587,6 +610,7 @@ public class GamePlayUIController : MonoBehaviour
             }
 
             // 실제 로스터에 추가
+
             GameObject obj = Instantiate(usingSkillIconPrefab);
             obj.transform.SetParent(skillRosterTransform);
             obj.transform.localScale = new Vector3(1, 1, 1);
@@ -604,6 +628,7 @@ public class GamePlayUIController : MonoBehaviour
             if (skillRosters[i] == icon)
             {
                 // 실제 로스터에서 삭제
+
                 Destroy(skillRosters[i].gameObject);
                 skillRosters.RemoveAt(i);
                 break;
@@ -618,6 +643,7 @@ public class GamePlayUIController : MonoBehaviour
             if (skillRosters[i] == icon)
             {
                 // 실제 로스터에서 주사위로
+
                 skillRosters[i].transform.SetParent(diceTransform);
                 skillRosters.RemoveAt(i);
                 usingDices.Add(icon);
@@ -630,6 +656,7 @@ public class GamePlayUIController : MonoBehaviour
             if (usingDices[i] == icon)
             {
                 // 실제 주사위에서 로스터로
+
                 usingDices[i].transform.SetParent(skillRosterTransform);
                 usingDices.RemoveAt(i);
                 skillRosters.Add(icon);
