@@ -543,7 +543,7 @@ GameObject:
   - component: {fileID: 5684722668526963359}
   - component: {fileID: 4991458803472761298}
   m_Layer: 0
-  m_Name: Harpy
+  m_Name: 202
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -558,7 +558,7 @@ Transform:
   m_GameObject: {fileID: 8590615062383166772}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: -5, y: 0.5, z: 0}
-  m_LocalScale: {x: 6, y: 6, z: 1}
+  m_LocalScale: {x: 5, y: 5, z: 1}
   m_Children:
   - {fileID: 4067966619928156494}
   m_Father: {fileID: 0}
@@ -627,9 +627,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   canvas: {fileID: 4295755559588183537}
+  skillObject: {fileID: 0}
   skillImage: {fileID: 6340874555350655150}
-  hpText: {fileID: 2683976064730001321}
   turnText: {fileID: 5409492786939635352}
+  hpText: {fileID: 2683976064730001321}
   CCList: {fileID: 4396078281276802873}
 --- !u!95 &4991458803472761298
 Animator:

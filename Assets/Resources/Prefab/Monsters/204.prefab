@@ -37,7 +37,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 1, y: 1}
+  m_SizeDelta: {x: 1, y: 0.9}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!223 &14405402
 Canvas:
@@ -448,7 +448,7 @@ RectTransform:
   m_GameObject: {fileID: 1404479564}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.0017, y: 0.0017, z: 1}
+  m_LocalScale: {x: 0.0015, y: 0.0015, z: 1}
   m_Children:
   - {fileID: 167088116}
   - {fileID: 1325893148}
@@ -625,7 +625,7 @@ GameObject:
   - component: {fileID: 1076138180158600964}
   - component: {fileID: 382310677903195209}
   m_Layer: 0
-  m_Name: Ninetail
+  m_Name: 204
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -639,8 +639,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3980331317413263535}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -5, y: -0.5, z: 0}
-  m_LocalScale: {x: 6, y: 6, z: 1}
+  m_LocalPosition: {x: -5, y: 1.032, z: 0}
+  m_LocalScale: {x: 5, y: 5, z: 1}
   m_Children:
   - {fileID: 14405399}
   m_Father: {fileID: 0}
@@ -709,9 +709,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   canvas: {fileID: 14405402}
+  skillObject: {fileID: 0}
   skillImage: {fileID: 686461042141539687}
-  hpText: {fileID: 398499668}
   turnText: {fileID: 1854390314}
+  hpText: {fileID: 398499668}
   CCList: {fileID: 1325893148}
 --- !u!95 &382310677903195209
 Animator:

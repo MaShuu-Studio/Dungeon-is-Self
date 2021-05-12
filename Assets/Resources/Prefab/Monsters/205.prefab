@@ -338,7 +338,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 1, y: 1.3}
+  m_SizeDelta: {x: 1, y: 1.2}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!223 &3846499224172404914
 Canvas:
@@ -462,7 +462,7 @@ RectTransform:
   m_GameObject: {fileID: 5743777153240850876}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.0017, y: 0.0017, z: 1}
+  m_LocalScale: {x: 0.0015, y: 0.0015, z: 1}
   m_Children:
   - {fileID: 9102904026520107191}
   - {fileID: 6623963550205895323}
@@ -699,7 +699,7 @@ GameObject:
   - component: {fileID: 4643061797436358811}
   - component: {fileID: 5462427001865702358}
   m_Layer: 0
-  m_Name: Dokkaebi
+  m_Name: 205
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -713,8 +713,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8772088335657111344}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -5, y: -0.5, z: 0}
-  m_LocalScale: {x: 6, y: 6, z: 1}
+  m_LocalPosition: {x: -5, y: 1.032, z: 0}
+  m_LocalScale: {x: 5, y: 5, z: 1}
   m_Children:
   - {fileID: 5011164606843511135}
   m_Father: {fileID: 0}
@@ -783,9 +783,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   canvas: {fileID: 3846499224172404914}
+  skillObject: {fileID: 0}
   skillImage: {fileID: 6297702658300990849}
-  hpText: {fileID: 903194367511865160}
   turnText: {fileID: 1041488599346363189}
+  hpText: {fileID: 903194367511865160}
   CCList: {fileID: 6623963550205895323}
 --- !u!95 &5462427001865702358
 Animator:

@@ -412,8 +412,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5542120866454654081}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -5, y: -0.5, z: 0}
-  m_LocalScale: {x: 6, y: 6, z: 1}
+  m_LocalPosition: {x: -5, y: 1.032, z: 0}
+  m_LocalScale: {x: 5, y: 5, z: 1}
   m_Children:
   - {fileID: 3245904201141523150}
   m_Father: {fileID: 0}
@@ -482,9 +482,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   canvas: {fileID: 2909155345124601198}
+  skillObject: {fileID: 0}
   skillImage: {fileID: 5018418573457550413}
-  hpText: {fileID: 6385487169741358541}
   turnText: {fileID: 6576428962891885379}
+  hpText: {fileID: 6385487169741358541}
   CCList: {fileID: 1400924529259277489}
 --- !u!95 &9122980196407494759
 Animator:
