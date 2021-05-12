@@ -1,18 +1,18 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
-public class UsingSkillIcon : MonoBehaviour
+public class UsingSkillIcon : SkillIcon
 {
-    // Start is called before the first frame update
-    void Start()
+    public override void OnPointerClick(PointerEventData pointerEventData)
     {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        if (GameControl.GameController.Instance.currentProgress == GameControl.GameProgress.ReadyRound)
+            GamePlayUIController.Instance.RemoveSkillRoster(this);
+        else if (GameControl.GameController.Instance.currentProgress == GameControl.GameProgress.PlayRound)
+        {
+            GamePlayUIController.Instance.AddOrRemoveDice(this);
+        }
+        SetColor(Color.white);
     }
 }

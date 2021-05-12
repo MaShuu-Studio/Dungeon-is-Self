@@ -29,7 +29,11 @@ public class SkillIcon : UIIcon, IPointerClickHandler
 
     public override void OnPointerClick(PointerEventData pointerEventData)
     {
-        if (isSkill) GamePlayUIController.Instance.SetDiceOnce(skill, isOn);
+        if (isSkill)
+        {
+            //GamePlayUIController.Instance.SetDiceOnce(skill, isOn);
+            GamePlayUIController.Instance.AddSkillRoster(skill, isOn);
+        }
         if (isOn) base.OnPointerClick(pointerEventData);
     }
 
@@ -38,21 +42,20 @@ public class SkillIcon : UIIcon, IPointerClickHandler
         if (isOn) base.OnPointerExit(pointerEventData);
     }
 
-    public void SetSkill(MonsterSkill skill, bool isOn = true)
+    public void SetSkill(GameControl.UserType type, Skill skill, bool isOn = true)
     {
         this.skill = skill; // 복사방법 조정
         iconImage.sprite = Resources.Load<Sprite>("Sprites/Skills/" + skill.id.ToString());
-        if (costText != null)
-            costText.text = (skill.type == MonsterSkill.SkillType.Dice) ? skill.cost.ToString() : "";
 
-        SetOnOff(isOn);
-    }
-    public void SetSkill(CharacterSkill skill, bool isOn = true)
-    {
-        this.skill = skill; // 복사방법 조정
-        iconImage.sprite = Resources.Load<Sprite>("Sprites/Skills/" + skill.id.ToString());
         if (costText != null)
-            costText.text = "";
+        {
+            if (type == GameControl.UserType.Defender)
+            {
+                MonsterSkill monSkill = skill as MonsterSkill;
+                costText.text = (monSkill.type == MonsterSkill.SkillType.Dice) ? monSkill.cost.ToString() : "";
+            }
+            else costText.text = "";
+        }
 
         SetOnOff(isOn);
     }

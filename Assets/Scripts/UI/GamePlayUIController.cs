@@ -29,10 +29,10 @@ public class GamePlayUIController : MonoBehaviour
     [SerializeField] private Transform skillRosterTransform;
     [SerializeField] private Transform diceTransform;
 
-    [SerializeField] private UsingSkillIcon usingSkillIcon;
+    [SerializeField] private GameObject usingSkillIconPrefab;
 
     private List<UsingSkillIcon> skillRosters = new List<UsingSkillIcon>();
-    private List<UsingSkillIcon> dices = new List<UsingSkillIcon>();
+    private List<UsingSkillIcon> usingDices = new List<UsingSkillIcon>();
 
     [Header("READY GAME")]
     // 후보 선택
@@ -61,8 +61,6 @@ public class GamePlayUIController : MonoBehaviour
     [SerializeField] private GameObject diceSkillIconPrefab;
     private List<SkillIcon> diceSkillIcons = new List<SkillIcon>();
 
-    [SerializeField] private RectTransform selectedDice;
-
     [SerializeField] private SkillDescription description;
 
     [Space]
@@ -81,8 +79,8 @@ public class GamePlayUIController : MonoBehaviour
     [SerializeField] private Text turnText;
     [Header("PLAY ROUND")]
     [SerializeField] private GameObject playRoundView;
-    [SerializeField] private Transform mapParent;
-    [SerializeField] private Transform characterParent;
+    [SerializeField] private Transform mapTransform;
+    [SerializeField] private Transform characterTransform;
     private List<CharacterObject> charObjects = new List<CharacterObject>();
     private List<CharacterObject> enemyObjects = new List<CharacterObject>();
     private GameObject mapObject;
@@ -256,6 +254,9 @@ public class GamePlayUIController : MonoBehaviour
             case 29:
                 str = "스킬 포인트가 모자랍니다.";
                 break;
+            case 30:
+                str = "스킬 로스터에는 8개까지만 넣을 수 있습니다.";
+                break;
             case 40:
                 str = "승자는 공격자입니다.";
                 break;
@@ -384,7 +385,7 @@ public class GamePlayUIController : MonoBehaviour
                 obj.transform.SetParent(defenderSkillTiers[tier - 1]);
                 obj.transform.localScale = new Vector3(1, 1, 1);
                 SkillIcon diceIcon = obj.GetComponent<SkillIcon>();
-                diceIcon.SetSkill(diceSkills[i], (GameController.Instance.round >= tier));
+                diceIcon.SetSkill(type, diceSkills[i], (GameController.Instance.round >= tier));
 
                 diceTierList[tier - 1].Add(obj);
                 diceSkillIcons.Add(diceIcon);
@@ -406,7 +407,7 @@ public class GamePlayUIController : MonoBehaviour
             MonsterSkill charAttackSkill = DefenderController.Instance.GetAttackSkill();
             for (int i = 0; i < defenderAttackSkills.Count; i++)
             {
-                defenderAttackSkills[i].SetSkill(attackSkills[i]);
+                defenderAttackSkills[i].SetSkill(type, attackSkills[i]);
                 if (charAttackSkill.id == attackSkills[i].id) SelectAttackSkill(i);
             }
 
@@ -442,7 +443,7 @@ public class GamePlayUIController : MonoBehaviour
                 obj.transform.SetParent(offenderSkillTreeRect);
                 obj.transform.localScale = new Vector3(1, 1, 1);
                 SkillIcon diceIcon = obj.GetComponent<SkillIcon>();
-                diceIcon.SetSkill(diceSkills[i], OffenderController.Instance.IsSkillGotten(i));
+                diceIcon.SetSkill(type, diceSkills[i], OffenderController.Instance.IsSkillGotten(i));
 
                 diceTierList[tier].Add(obj);
                 diceSkillIcons.Add(diceIcon);
@@ -553,6 +554,90 @@ public class GamePlayUIController : MonoBehaviour
         }
     }
 
+    public void AddSkillRoster(Skill skill, bool isOn)
+    {
+        if (isOn == false)
+        {
+            if (type == UserType.Offender)
+            {
+                int index = OffenderController.Instance.LearnSkill(skill as CharacterSkill);
+                if (index > -1)
+                {
+                    diceSkillIcons[index].SetOnOff(true);
+                    UpdateSkillPoint();
+                }
+                else if (index == -2)
+                {
+                    Alert(28);
+                }
+                else
+                {
+                    Alert(29);
+                }
+            }
+            return;
+        }
+        else
+        {
+            // 알림 설정
+            if (skillRosters.Count >= 8)
+            {
+                Alert(30);
+                return;
+            }
+
+            // 실제 로스터에 추가
+            GameObject obj = Instantiate(usingSkillIconPrefab);
+            obj.transform.SetParent(skillRosterTransform);
+            obj.transform.localScale = new Vector3(1, 1, 1);
+            UsingSkillIcon usingSkillIcon = obj.GetComponent<UsingSkillIcon>();
+            usingSkillIcon.SetSkill(type, skill, true);
+
+            skillRosters.Add(usingSkillIcon);
+        }
+    }
+
+    public void RemoveSkillRoster(UsingSkillIcon icon)
+    {
+        for (int i = 0; i < skillRosters.Count; i++)
+        {
+            if (skillRosters[i] == icon)
+            {
+                // 실제 로스터에서 삭제
+                Destroy(skillRosters[i].gameObject);
+                skillRosters.RemoveAt(i);
+                break;
+            }
+        }    
+    }
+
+    public void AddOrRemoveDice(UsingSkillIcon icon)
+    {
+        for (int i = 0; i < skillRosters.Count; i++)
+        {
+            if (skillRosters[i] == icon)
+            {
+                // 실제 로스터에서 주사위로
+                skillRosters[i].transform.SetParent(diceTransform);
+                skillRosters.RemoveAt(i);
+                usingDices.Add(icon);
+                return;
+            }
+        }
+
+        for (int i = 0; i < usingDices.Count; i++)
+        {
+            if (usingDices[i] == icon)
+            {
+                // 실제 주사위에서 로스터로
+                usingDices[i].transform.SetParent(skillRosterTransform);
+                usingDices.RemoveAt(i);
+                skillRosters.Add(icon);
+                return;
+            }
+        }
+    }
+
     public void UpdateSkillPoint()
     {
         if (type == UserType.Offender) offenderSkillPointText.text = "SKILL POINT: " + OffenderController.Instance.GetSkillPoint().ToString();
@@ -593,7 +678,7 @@ public class GamePlayUIController : MonoBehaviour
 
                 prefab = Resources.Load(charPath + monster.id);
                 obj = Instantiate(prefab) as GameObject;
-                obj.transform.SetParent(characterParent);
+                obj.transform.SetParent(characterTransform);
                 obj.transform.position = new Vector3(obj.transform.position.x, obj.transform.position.y, 0);
 
                 CharacterObject character = obj.GetComponent<CharacterObject>();
@@ -608,7 +693,7 @@ public class GamePlayUIController : MonoBehaviour
             {
                 prefab = Resources.Load(enemyPath + characterIds[i]);
                 obj = Instantiate(prefab) as GameObject;
-                obj.transform.SetParent(characterParent);
+                obj.transform.SetParent(characterTransform);
                 obj.transform.position = new Vector3(obj.transform.position.x + 2f * i, obj.transform.position.y, 0);
                 CharacterObject character = obj.GetComponent<CharacterObject>();
                 character.SetCharacterIndex(GameController.Instance.offenderUnits[i]);
@@ -618,7 +703,7 @@ public class GamePlayUIController : MonoBehaviour
 
             prefab = Resources.Load("Prefab/Maps/" + "Forest");
             mapObject = Instantiate(prefab) as GameObject;
-            mapObject.transform.SetParent(mapParent);
+            mapObject.transform.SetParent(mapTransform);
             mapObject.transform.SetAsLastSibling();
         }
         else
@@ -633,7 +718,7 @@ public class GamePlayUIController : MonoBehaviour
             {
                 prefab = Resources.Load(charPath + characterNames[i]);
                 obj = Instantiate(prefab) as GameObject;
-                obj.transform.SetParent(characterParent);
+                obj.transform.SetParent(characterTransform);
                 obj.transform.position = new Vector3((obj.transform.position.x + 2f * i) * -1, obj.transform.position.y, 0);
                 CharacterObject character = obj.GetComponent<CharacterObject>();
                 character.SetCharacterIndex(GameController.Instance.offenderUnits[i]);
@@ -644,7 +729,7 @@ public class GamePlayUIController : MonoBehaviour
             {
                 prefab = Resources.Load(enemyPath + monster.id);
                 obj = Instantiate(prefab) as GameObject;
-                obj.transform.SetParent(characterParent);
+                obj.transform.SetParent(characterTransform);
                 obj.transform.position = new Vector3(obj.transform.position.x * -1, obj.transform.position.y, 0);
                 CharacterObject character = obj.GetComponent<CharacterObject>();
                 character.SetCharacterIndex(GameController.Instance.defenderUnit);
@@ -655,7 +740,7 @@ public class GamePlayUIController : MonoBehaviour
 
             prefab = Resources.Load("Prefab/Maps/" + "Forest");
             mapObject = Instantiate(prefab) as GameObject;
-            mapObject.transform.SetParent(mapParent);
+            mapObject.transform.SetParent(mapTransform);
         }
 
         for (int i = 0; i < charObjects.Count; i++)
