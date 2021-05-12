@@ -86,7 +86,6 @@
     <Compile Include="Assets\Scripts\UI\Descriptions\UIDescription.cs" />
     <Compile Include="Assets\Scripts\UI\Dice.cs" />
     <Compile Include="Assets\Scripts\UI\GamePlayUIController.cs" />
-    <Compile Include="Assets\Scripts\UI\IconBar.cs" />
     <Compile Include="Assets\Scripts\UI\Icons\AttackSkillIcon.cs" />
     <Compile Include="Assets\Scripts\UI\Icons\CharIcon.cs" />
     <Compile Include="Assets\Scripts\UI\Icons\CharSelectIcon.cs" />

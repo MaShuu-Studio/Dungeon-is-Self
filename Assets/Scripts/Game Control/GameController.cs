@@ -176,13 +176,11 @@ namespace GameControl
 
             if (userType == UserType.Defender)
             {
-                GamePlayUIController.Instance.ShowSelectedRoster(defenderUnit);
-                GamePlayUIController.Instance.ShowSelectedRoster(offenderUnits, true);
+                GamePlayUIController.Instance.ShowSelectedEnemy(offenderUnits);
             }
             else if (userType == UserType.Offender)
             {
-                GamePlayUIController.Instance.ShowSelectedRoster(offenderUnits);
-                GamePlayUIController.Instance.ShowSelectedRoster(defenderUnit, true);
+                GamePlayUIController.Instance.ShowSelectedEnemy(new int[] { defenderUnit });
             }
 
             NextTurn();

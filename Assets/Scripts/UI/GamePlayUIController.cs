@@ -18,9 +18,12 @@ public class GamePlayUIController : MonoBehaviour
     [SerializeField] private AlertObject alert;
 
     [Space]
+    [SerializeField] private Transform userRosterTransform;
+    [SerializeField] private Transform userBenchTransform;
     [SerializeField] private List<CharIcon> userRosters;
     [SerializeField] private List<CharIcon> enemyRosters;
-    [SerializeField] private List<RectTransform> rosterSelected;
+    [SerializeField] private RectTransform rosterSelected;
+    [SerializeField] private RectTransform benchSelected;
     [SerializeField] private List<RectTransform> enemyRosterSelected;
 
     [SerializeField] private Image selectedCharacterImage;
@@ -183,6 +186,9 @@ public class GamePlayUIController : MonoBehaviour
                 break;
 
             case GameProgress.ReadyRound:
+                benchSelected.gameObject.SetActive(false);
+                rosterSelected.gameObject.SetActive(false);
+                ShowCharacterRoster();
                 roundText.gameObject.SetActive(true);
                 roundText.text = "ROUND " + GameController.Instance.round.ToString();
                 BlindSelectedRoster();
@@ -220,6 +226,8 @@ public class GamePlayUIController : MonoBehaviour
                 break;
 
             case GameProgress.PlayRound:
+                benchSelected.gameObject.SetActive(false);
+                rosterSelected.gameObject.SetActive(false);
                 turnText.gameObject.SetActive(true);
                 gameViews[2].SetActive(true);
                 playRoundView.SetActive(true);
@@ -336,6 +344,64 @@ public class GamePlayUIController : MonoBehaviour
 
     #region Ready Round
 
+    private bool IsRoster(int i)
+    {
+        if (type == UserType.Defender)
+        {
+            return DefenderController.Instance.monsterIndex == i;
+        }
+        else
+        {
+            return System.Array.Exists(OffenderController.Instance.roster, index => index == i);
+        }
+    }
+
+    private void ShowCharacterRoster()
+    {
+        for (int i = 0; i < userRosters.Count; i++)
+        {
+            if (IsRoster(i)) userRosters[i].transform.SetParent(userRosterTransform);
+            else userRosters[i].transform.SetParent(userBenchTransform);
+        }
+    }
+
+    public void ChangeRoster(CharIcon icon1, CharIcon icon2)
+    {
+        int icon1Index = -1;
+        int icon2Index = -1;
+
+        for (int i = 0; i < userRosters.Count; i++)
+        {
+            if (userRosters[i] == icon1) icon1Index = i;
+            if (userRosters[i] == icon2) icon2Index = i;
+        }
+
+        if (icon1.transform.parent == userRosterTransform)
+        {
+            if (type == UserType.Defender) DefenderController.Instance.SelectMonster(icon2Index);
+            else OffenderController.Instance.AddRoster(icon1Index, icon2Index);
+        }
+        else if (icon2.transform.parent == userRosterTransform)
+        {
+            if (type == UserType.Defender) DefenderController.Instance.SelectMonster(icon1Index);
+            else OffenderController.Instance.AddRoster(icon2Index, icon1Index);
+        }
+
+        Transform tmp = icon1.transform.parent;
+        icon1.transform.SetParent(icon2.transform.parent);
+        icon2.transform.SetParent(tmp);
+
+        OrderCharacterRosterBench();
+    }
+
+    private void OrderCharacterRosterBench()
+    {
+        for (int i = 0; i < userRosters.Count; i++)
+        {
+            userRosters[i].transform.SetAsLastSibling();
+        }
+    }
+
     public void SelectCharacter(CharIcon charIcon, int id, Vector2 pos)
     {
         int index = 0;
@@ -352,11 +418,23 @@ public class GamePlayUIController : MonoBehaviour
         selectedCharacterImage.sprite = sprite;
         selectedCharacterText.text = name;
 
-        rosterSelected[0].gameObject.SetActive(true);
-        rosterSelected[0].anchoredPosition = new Vector2(pos.x -5, pos.y);
+        if (IsRoster(index))
+        {
+            benchSelected.gameObject.SetActive(false);
+            rosterSelected.gameObject.SetActive(true);
+            rosterSelected.anchoredPosition = new Vector2(pos.x - 5, pos.y);
+        }
+        else
+        {
+            rosterSelected.gameObject.SetActive(false);
+            benchSelected.gameObject.SetActive(true);
+            benchSelected.anchoredPosition = new Vector2(pos.x - 5, pos.y);
+        }
+
+        SetSkillTree();
     }
 
-    public void SetSkillTree()
+    private void SetSkillTree()
     {
         ClearSkillTree();
 
@@ -524,56 +602,6 @@ public class GamePlayUIController : MonoBehaviour
             Skill skill = null; // n번째 스킬
 
             AddSkillRoster(skill, true);
-        }
-    }
-
-    public void SetDiceOnce(Skill skill, bool isOn = true)
-    {
-        if (isOn == false)
-        {
-            if (type == UserType.Offender)
-            {
-                int index = OffenderController.Instance.LearnSkill(skill as CharacterSkill);
-                if (index > -1)
-                {
-                    diceSkillIcons[index].SetOnOff(true);
-                    UpdateSkillPoint();
-                }
-                else if (index == -2)
-                {
-                    Alert(28);
-                }
-                else
-                {
-                    Alert(29);
-                }
-            }
-            return;
-        }
-
-        if (type == UserType.Defender)
-        {
-            int check = DefenderController.Instance.SetDice(0, skill as MonsterSkill);
-            if (check != 0)
-            {
-                Alert(check + 20);
-                return;
-            }
-
-            int totalCost = DefenderController.MAX_COST - DefenderController.Instance.GetDiceCost();
-            costText.text = totalCost.ToString();
-            if (totalCost > 10) costSlider.value = 10;
-            else if (totalCost < 0) costSlider.value = 0;
-            else costSlider.value = totalCost;
-        }
-        else
-        {
-            int check = OffenderController.Instance.SetDice(0, skill as CharacterSkill);
-            if (check != 0)
-            {
-                Alert(check + 25);
-                return;
-            }
         }
     }
 
@@ -997,58 +1025,17 @@ public class GamePlayUIController : MonoBehaviour
         foreach (RectTransform rect in rosterSelected) rect.gameObject.SetActive(false);
         foreach (RectTransform rect in enemyRosterSelected) rect.gameObject.SetActive(false);
     }
-    public void ShowSelectedRoster(int[] indexes, bool isEnemy = false)
+    public void ShowSelectedEnemy(int[] indexes)
     {
-        if (isEnemy == false)
+        int i = 0;
+        for (; i < indexes.Length; i++)
         {
-            int i = 0;
-            for (; i < indexes.Length; i++)
-            {
-                rosterSelected[i].transform.SetParent(userRosters[indexes[i] % 10].transform);
-                rosterSelected[i].anchoredPosition = new Vector2(0, 0);
-                rosterSelected[i].gameObject.SetActive(true);
-            }
-            for (; i < rosterSelected.Count; i++)
-                rosterSelected[i].gameObject.SetActive(false);
+            enemyRosterSelected[i].transform.SetParent(enemyRosters[indexes[i] % 10].transform);
+            enemyRosterSelected[i].anchoredPosition = new Vector2(0, 0);
+            enemyRosterSelected[i].gameObject.SetActive(true);
         }
-        else
-        {
-            int i = 0;
-            for (; i < indexes.Length; i++)
-            {
-                enemyRosterSelected[i].transform.SetParent(enemyRosters[indexes[i] % 10].transform);
-                enemyRosterSelected[i].anchoredPosition = new Vector2(0, 0);
-                enemyRosterSelected[i].gameObject.SetActive(true);
-            }
-            for (; i < enemyRosterSelected.Count; i++)
-                enemyRosterSelected[i].gameObject.SetActive(false);
-        }
-
-    }
-    public void ShowSelectedRoster(int index, bool isEnemy = false)
-    {
-        if (isEnemy == false)
-        {
-            rosterSelected[0].transform.SetParent(userRosters[index % 10].transform);
-            rosterSelected[0].anchoredPosition = new Vector2(0, 0);
-            rosterSelected[0].gameObject.SetActive(true);
-
-            for (int i = 1; i < rosterSelected.Count; i++)
-            {
-                rosterSelected[i].gameObject.SetActive(false);
-            }
-        }
-        else
-        {
-            enemyRosterSelected[0].transform.SetParent(enemyRosters[index % 10].transform);
-            enemyRosterSelected[0].anchoredPosition = new Vector2(0, 0);
-            enemyRosterSelected[0].gameObject.SetActive(true);
-
-            for (int i = 1; i < enemyRosterSelected.Count; i++)
-            {
-                enemyRosterSelected[i].gameObject.SetActive(false);
-            }
-        }
+        for (; i < enemyRosterSelected.Count; i++)
+            enemyRosterSelected[i].gameObject.SetActive(false);
     }
     #endregion
 }

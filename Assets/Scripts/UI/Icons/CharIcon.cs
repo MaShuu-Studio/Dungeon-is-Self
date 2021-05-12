@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class CharIcon : UIIcon, IPointerDownHandler, IPointerClickHandler, IBeginDragHandler, IDragHandler, IEndDragHandler
+public class CharIcon : UIIcon, IPointerDownHandler, IPointerClickHandler, IBeginDragHandler, IDragHandler, IEndDragHandler, IDropHandler
 {
     [SerializeField] private DragAndDropIcon dragIcon;
     [SerializeField] private bool isCandidate;
@@ -15,9 +15,8 @@ public class CharIcon : UIIcon, IPointerDownHandler, IPointerClickHandler, IBegi
 
     public void OnBeginDrag(PointerEventData eventData)
     {
-        if (isCandidate) return;
+        if (GameController.Instance.currentProgress != GameProgress.ReadyRound) return;
         if (dragIcon == null) return;
-        if (characterId == -1) return;
 
         dragIcon.gameObject.SetActive(true);
         dragIcon.SetImage(iconImage.sprite, this);
@@ -36,18 +35,18 @@ public class CharIcon : UIIcon, IPointerDownHandler, IPointerClickHandler, IBegi
 
     public void OnEndDrag(PointerEventData eventData)
     {
-        if (isCandidate) return;
+        if (GameController.Instance.currentProgress != GameProgress.ReadyRound) return;
         if (dragIcon == null) return;
-        if (characterId == -1) return;
 
         dragIcon.gameObject.SetActive(false);
         dragIcon.SetImage(null, null);
         isDragging = false;
     }
-
-    protected override void Start()
+    public void OnDrop(PointerEventData eventData)
     {
-        base.Start();
+        if (GameController.Instance.currentProgress != GameProgress.ReadyRound) return;
+        if (dragIcon.charIcon == null) return;
+        GamePlayUIController.Instance.ChangeRoster(this, dragIcon.charIcon);
     }
 
     public override void OnPointerEnter(PointerEventData pointerEventData)
@@ -71,7 +70,6 @@ public class CharIcon : UIIcon, IPointerDownHandler, IPointerClickHandler, IBegi
         {
             base.OnPointerClick(eventData);
             GamePlayUIController.Instance.SelectCharacter(this, characterId, rect.anchoredPosition);
-            GamePlayUIController.Instance.SetSkillTree();
         }
     }
     public override void OnPointerExit(PointerEventData pointerEventData)

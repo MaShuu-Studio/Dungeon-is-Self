@@ -190,6 +190,19 @@ namespace GameControl
             roster[index] = characterIndex;
         }
 
+        public void AddRoster(int originRoster, int newRoster)
+        {
+            if (isDead[newRoster]) return;
+            int index = 0;
+            for (; index < roster.Length; index++)
+            {
+                if (roster[index] == originRoster) break;
+            }
+
+            if (index >= roster.Length) return;
+            roster[index] = newRoster;
+        }
+
         public int GetMaxTier()
         {
             return characters[characterIndex].GetMaxTier();
