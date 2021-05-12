@@ -5,18 +5,26 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class CharIcon : UIIcon, IPointerDownHandler, IPointerClickHandler, IBeginDragHandler, IDragHandler, IEndDragHandler, IDropHandler
+public class CharIcon : UIIcon, IPointerDownHandler, IPointerClickHandler, IBeginDragHandler, IDragHandler, IEndDragHandler
 {
     [SerializeField] private DragAndDropIcon dragIcon;
     [SerializeField] private bool isCandidate;
-    private int characterId = -1;
+    [SerializeField] private GameObject deadIcon;
+    [SerializeField] private int index;
+    [SerializeField] private bool isEnemy = false;
+    public int characterId { get; private set; } = -1;
+    private bool isRoster = false;
     private bool isDragging = false;
+    private bool isDead = false;
     private RectTransform draggingRect;
 
     public void OnBeginDrag(PointerEventData eventData)
     {
-        if (GameController.Instance.currentProgress != GameProgress.ReadyRound) return;
         if (dragIcon == null) return;
+        if (dragIcon.gameObject.activeSelf == true) dragIcon.gameObject.SetActive(false);
+
+        if (isDead) return;
+        if (GameController.Instance.currentProgress != GameProgress.ReadyRound) return;
 
         dragIcon.gameObject.SetActive(true);
         dragIcon.SetImage(iconImage.sprite, this);
@@ -34,33 +42,36 @@ public class CharIcon : UIIcon, IPointerDownHandler, IPointerClickHandler, IBegi
     }
 
     public void OnEndDrag(PointerEventData eventData)
-    {
-        if (GameController.Instance.currentProgress != GameProgress.ReadyRound) return;
+    { 
         if (dragIcon == null) return;
+        if (dragIcon.gameObject.activeSelf == true) dragIcon.gameObject.SetActive(false);
+
+        if (isDead) return;
+        if (GameController.Instance.currentProgress != GameProgress.ReadyRound) return;
 
         dragIcon.gameObject.SetActive(false);
         dragIcon.SetImage(null, null);
         isDragging = false;
     }
-    public void OnDrop(PointerEventData eventData)
-    {
-        if (GameController.Instance.currentProgress != GameProgress.ReadyRound) return;
-        if (dragIcon.charIcon == null) return;
-        GamePlayUIController.Instance.ChangeRoster(this, dragIcon.charIcon);
-    }
 
     public override void OnPointerEnter(PointerEventData pointerEventData)
     {
+        if (isEnemy) return;
+
         if (isCandidate) base.OnPointerEnter(pointerEventData);
     }
 
     public override void OnPointerDown(PointerEventData eventData)
     {
+        if (isEnemy) return;
+
         if (isCandidate) base.OnPointerDown(eventData);
     }
 
     public override void OnPointerClick(PointerEventData eventData)
     {
+        if (isEnemy) return;
+
         if (isCandidate)
         {
             base.OnPointerClick(eventData);
@@ -68,13 +79,15 @@ public class CharIcon : UIIcon, IPointerDownHandler, IPointerClickHandler, IBegi
         }
         else if (GameController.Instance.currentProgress == GameProgress.ReadyRound)
         {
-            base.OnPointerClick(eventData);
-            GamePlayUIController.Instance.SelectCharacter(this, characterId, rect.anchoredPosition);
+            SelectUnit(isRoster);
+            GamePlayUIController.Instance.SelectCharacter(index, characterId);
         }
     }
     public override void OnPointerExit(PointerEventData pointerEventData)
     {
-        if (isCandidate) base.OnPointerExit(pointerEventData);
+        if (isEnemy) return;
+
+        if (isCandidate) SelectUnit(isRoster);
     }
 
     public override void SetImage(UserType type, int id)
@@ -83,9 +96,18 @@ public class CharIcon : UIIcon, IPointerDownHandler, IPointerClickHandler, IBegi
         characterId = id;
     }
 
+    public void SelectUnit(bool isSelected)
+    {
+        isRoster = isSelected;
+        if (isSelected) SetColor(Color.gray);
+        else SetColor(Color.white);
+    }
+
     public void SetIsDead(bool isDead)
     {
+        this.isDead = isDead;
         if (isDead) SetColor(Color.gray);
         else SetColor(Color.white);
+        deadIcon.SetActive(this.isDead);
     }
 }

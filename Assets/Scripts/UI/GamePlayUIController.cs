@@ -20,7 +20,8 @@ public class GamePlayUIController : MonoBehaviour
     [Space]
     [SerializeField] private Transform userRosterTransform;
     [SerializeField] private Transform userBenchTransform;
-    [SerializeField] private List<CharIcon> userRosters;
+    [SerializeField] private List<RosterIcon> userRosters;
+    [SerializeField] private List<CharIcon> userBenchs;
     [SerializeField] private List<CharIcon> enemyRosters;
     [SerializeField] private RectTransform rosterSelected;
     [SerializeField] private RectTransform benchSelected;
@@ -148,19 +149,19 @@ public class GamePlayUIController : MonoBehaviour
 
     private void UpdateRosterStatus()
     {
-        for (int i = 0; i < userRosters.Count; i++)
+        for (int i = 0; i < userBenchs.Count; i++)
         {
             int id = (type == UserType.Defender) ? DefenderController.Instance.selectedMonsterCandidates[i] : OffenderController.Instance.selectedCharacterCandidates[i];
             int enemyId = (type == UserType.Defender) ? OffenderController.Instance.selectedCharacterCandidates[i] : DefenderController.Instance.selectedMonsterCandidates[i];
 
-            userRosters[i].SetImage(type, id);
+            userBenchs[i].SetImage(type, id);
             enemyRosters[i].SetImage(enemyType, enemyId);
 
             if (progress != GameProgress.ReadyGame)
             {
                 bool isCharDead = (type == UserType.Defender) ? DefenderController.Instance.isDead[i] : OffenderController.Instance.isDead[i];
                 bool isEnemyDead = (type == UserType.Defender) ? OffenderController.Instance.isDead[i] : DefenderController.Instance.isDead[i];
-                userRosters[i].SetIsDead(isCharDead);
+                userBenchs[i].SetIsDead(isCharDead);
                 enemyRosters[i].SetIsDead(isEnemyDead);
             }
         }
@@ -180,9 +181,23 @@ public class GamePlayUIController : MonoBehaviour
         switch (GameController.Instance.currentProgress)
         {
             case GameProgress.ReadyGame:
+                for (int i = 0; i < userRosters.Count; i++)
+                {
+                    userRosters[i].SetImage(type, -1);
+                }
                 BlindSelectedRoster();
                 gameViews[0].SetActive(true);
                 ShowAllCandidates();
+                if (type == UserType.Defender)
+                {
+                    userRosters[1].gameObject.SetActive(false);
+                    userRosters[2].gameObject.SetActive(false);
+                }
+                else
+                {
+                    userRosters[1].gameObject.SetActive(true);
+                    userRosters[2].gameObject.SetActive(true);
+                }
                 break;
 
             case GameProgress.ReadyRound:
@@ -200,13 +215,19 @@ public class GamePlayUIController : MonoBehaviour
                     defenderSpecialView.SetActive(true);
                     // 유닛 선택시 Defender에서 몬스터가 죽었는지 체크해야함.
                     // 기존에 선택했던 유닛부터 다시 세팅할 수 있게 해줘야 함.
-                    int index = DefenderController.Instance.GetFirstAliveMonster();
+                    //int index = DefenderController.Instance.GetFirstAliveMonster();
+                    userRosters[0].SetRosterNumber(DefenderController.Instance.monsterIndex);
                 }
                 else
                 {
                     defenderSkillTree.SetActive(false);
                     offenderSkillTree.gameObject.SetActive(false);
                     defenderSpecialView.SetActive(false);
+
+                    for (int i = 0; i < userRosters.Count; i++)
+                    {
+                        userRosters[i].SetRosterNumber(OffenderController.Instance.roster[i]);
+                    }
                     /*
                     // 유닛 선택시 Offender에서 유닛이 죽었는지 체크해야 함.
                     // 기존에 선택했던 유닛부터 다시 세팅할 수 있게 해줘야 함.
@@ -358,58 +379,70 @@ public class GamePlayUIController : MonoBehaviour
 
     private void ShowCharacterRoster()
     {
-        for (int i = 0; i < userRosters.Count; i++)
+        for (int i = 0; i < userBenchs.Count; i++)
         {
-            if (IsRoster(i)) userRosters[i].transform.SetParent(userRosterTransform);
-            else userRosters[i].transform.SetParent(userBenchTransform);
+            if (IsRoster(i))
+            {
+                userRosters[i].SetImage(type, userBenchs[i].characterId);
+                userBenchs[i].SelectUnit(true);
+            }
+            else userBenchs[i].SelectUnit(false);
         }
     }
 
-    public void ChangeRoster(CharIcon icon1, CharIcon icon2)
+    public void ChangeRoster(RosterIcon roster, CharIcon bench)
     {
-        int icon1Index = -1;
-        int icon2Index = -1;
+        int rosterIndex = -1;
+        int benchIndex = -1;
+
+        for (int i = 0; i < userBenchs.Count; i++)
+        {
+            if (userBenchs[i] == bench)
+            {
+                benchIndex = i;
+                break;
+            }
+        }
+
+        for (int i = 0; i <  userRosters.Count; i++)
+        {
+            if (userRosters[i] == roster)
+            {
+                rosterIndex = i;
+                break;
+            }
+        }
+
+        userBenchs[roster.index].SelectUnit(false);
+        bench.SelectUnit(true);
 
         for (int i = 0; i < userRosters.Count; i++)
         {
-            if (userRosters[i] == icon1) icon1Index = i;
-            if (userRosters[i] == icon2) icon2Index = i;
+            if (benchIndex == userRosters[i].index)
+            {
+                userRosters[i].SetImage(type, roster.characterId);
+                userRosters[i].SetRosterNumber(roster.index);
+                userBenchs[roster.index].SelectUnit(true);
+
+                if (type == UserType.Defender) DefenderController.Instance.SelectMonster(roster.index);
+                else OffenderController.Instance.AddRoster(i, roster.index);
+
+                break;
+            }
         }
 
-        if (icon1.transform.parent == userRosterTransform)
-        {
-            if (type == UserType.Defender) DefenderController.Instance.SelectMonster(icon2Index);
-            else OffenderController.Instance.AddRoster(icon1Index, icon2Index);
-        }
-        else if (icon2.transform.parent == userRosterTransform)
-        {
-            if (type == UserType.Defender) DefenderController.Instance.SelectMonster(icon1Index);
-            else OffenderController.Instance.AddRoster(icon2Index, icon1Index);
-        }
 
-        Transform tmp = icon1.transform.parent;
-        icon1.transform.SetParent(icon2.transform.parent);
-        icon2.transform.SetParent(tmp);
+        roster.SetImage(type, bench.characterId);
+        roster.SetRosterNumber(benchIndex);
 
-        OrderCharacterRosterBench();
+        if (type == UserType.Defender) DefenderController.Instance.SelectMonster(benchIndex);
+        else OffenderController.Instance.AddRoster(rosterIndex, benchIndex);
+
     }
 
-    private void OrderCharacterRosterBench()
+    public void SelectCharacter(int index, int id)
     {
-        for (int i = 0; i < userRosters.Count; i++)
-        {
-            userRosters[i].transform.SetAsLastSibling();
-        }
-    }
-
-    public void SelectCharacter(CharIcon charIcon, int id, Vector2 pos)
-    {
-        int index = 0;
-        for (; index < userRosters.Count; index++)
-        {
-            if (userRosters[index] == charIcon) break;
-        }
-        if (index >= userRosters.Count) return;
+        if (index >= userBenchs.Count) return;
         selectedCharacterIndex = index;
         string path = (type == UserType.Defender) ? MonsterDatabase.facePath : CharacterDatabase.facePath;
         string name = (type == UserType.Defender) ? MonsterDatabase.Instance.GetMonster(id).name : CharacterDatabase.Instance.GetCharacter(id)._role;
@@ -420,15 +453,26 @@ public class GamePlayUIController : MonoBehaviour
 
         if (IsRoster(index))
         {
-            benchSelected.gameObject.SetActive(false);
+            benchSelected.gameObject.SetActive(true);
             rosterSelected.gameObject.SetActive(true);
-            rosterSelected.anchoredPosition = new Vector2(pos.x - 5, pos.y);
+            for (int i = 0; i < userRosters.Count; i++)
+            {
+                if (userRosters[i].index == index)
+                {
+                    rosterSelected.transform.SetParent(userRosters[i].transform);
+                    rosterSelected.anchoredPosition = Vector2.zero;
+                    break;
+                }
+            }
+            benchSelected.transform.SetParent(userBenchs[index].transform);
+            benchSelected.anchoredPosition = Vector2.zero;
         }
         else
         {
             rosterSelected.gameObject.SetActive(false);
             benchSelected.gameObject.SetActive(true);
-            benchSelected.anchoredPosition = new Vector2(pos.x - 5, pos.y);
+            benchSelected.transform.SetParent(userBenchs[index].transform);
+            benchSelected.anchoredPosition = Vector2.zero;
         }
 
         SetSkillTree();
@@ -1031,7 +1075,7 @@ public class GamePlayUIController : MonoBehaviour
         for (; i < indexes.Length; i++)
         {
             enemyRosterSelected[i].transform.SetParent(enemyRosters[indexes[i] % 10].transform);
-            enemyRosterSelected[i].anchoredPosition = new Vector2(0, 0);
+            enemyRosterSelected[i].anchoredPosition = Vector2.zero;
             enemyRosterSelected[i].gameObject.SetActive(true);
         }
         for (; i < enemyRosterSelected.Count; i++)

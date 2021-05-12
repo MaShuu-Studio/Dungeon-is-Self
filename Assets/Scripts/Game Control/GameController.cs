@@ -150,6 +150,10 @@ namespace GameControl
 
         public void StartRound()
         {
+            Debug.Log(OffenderController.Instance.roster[0]);
+            Debug.Log(OffenderController.Instance.roster[1]);
+            Debug.Log(OffenderController.Instance.roster[2]);
+            Debug.Log(DefenderController.Instance.monsterIndex);
             // 로스터 세팅
             // 주사위 세팅
             AIBot.Instance.SetRoster();
