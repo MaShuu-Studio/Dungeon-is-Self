@@ -37,6 +37,7 @@ namespace GameControl
         private List<List<bool>> gottenSkills = new List<List<bool>>();
         public List<int> skillPoints { get; private set; } = new List<int>();
         private List<CharacterSkill[]> dices = new List<CharacterSkill[]>();
+        private List<List<CharacterSkill>> skillRoster = new List<List<CharacterSkill>>();
         private int characterIndex = 0;
         public int[] roster { get; private set; } = new int[3];
 
@@ -215,23 +216,38 @@ namespace GameControl
                 }
             }
 
-            return tier;            
+            return tier;
         }
 
-        public int SetDice(int index, CharacterSkill skill)
+        public int SetDice(int index, int skillRosteridx)
         {
-            int overlabCount = 0;
+            //int overlabCount = 0;
             int basicSkill = 0;
             for (int i = 0; i < dices[characterIndex].Length; i++)
             {
                 if (dices[characterIndex][i].id % 100 == 0) { basicSkill++; continue; }
-                if (dices[characterIndex][i].id == skill.id && i != index) overlabCount++;
+                //if (dices[characterIndex][i].id == skill.id && i != index) overlabCount++;
 
             }
-            if ((basicSkill <= 1 && skill.id % 100 != 0) || (basicSkill == 2 && dices[characterIndex][index].id % 100 == 0 && skill.id % 100 != 0)) return 1;
+            if ((basicSkill <= 1 && skillRoster[characterIndex][skillRosteridx].id % 100 != 0) || (basicSkill == 2 && dices[characterIndex][index].id % 100 == 0 && skillRoster[characterIndex][skillRosteridx].id % 100 != 0)) return 1;
+            //if (overlabCount > 2) return 2;
+            skillRoster[characterIndex].Add(dices[characterIndex][index]);
+            dices[characterIndex][index] = skillRoster[characterIndex][skillRosteridx];
+            skillRoster[characterIndex].RemoveAt(skillRosteridx);
+            //dices[characterIndex][index] = skill;
+            return 0;
+        }
+
+        public int SetSkillRoster(CharacterSkill skill)
+        {
+            int overlabCount = 0;
+            for (int i = 0; i < skillRoster.Count; i++)
+            {
+                if (skillRoster[characterIndex][i].id == skill.id) overlabCount++;
+            }
             if (overlabCount > 2) return 2;
 
-            dices[characterIndex][index] = skill;
+            skillRoster[characterIndex].Add(skill);
             return 0;
         }
 
@@ -250,25 +266,75 @@ namespace GameControl
 
         public CharacterSkill DiceRoll(int roster, bool isParalysis)
         {
-            int diceIndex = Random.Range(0, dices[roster % 10].Length);
             
-            if (isParalysis)
+            int[] result = new int[6]{0, 0, 0, 0, 0, 0};
+            int diceIndex = new int();
+            
+            for (int n = 0; n < 5; n++)
             {
-                int blindAmount = 3;
-                List<int> blind = new List<int>();
-                for (int i = 0; i < blindAmount; i++)
+                diceIndex = Random.Range(0, dices[roster % 10].Length);
+                if (isParalysis)
+                {
+                    int blindAmount = 3;
+                    List<int> blind = new List<int>();
+                    for (int i = 0; i < blindAmount; i++)
+                        while (true)
+                        {
+                            int index = Random.Range(0, dices[roster % 10].Length);
+                            if (blind.FindIndex(n => n == index) == -1) break;
+                        }
                     while (true)
                     {
-                        int index = Random.Range(0, dices[roster % 10].Length);
-                        if (blind.FindIndex(n => n == index) == -1) break;
+                        diceIndex = Random.Range(0, dices[roster % 10].Length);
+                        if (blind.FindIndex(n => n == diceIndex) == -1) break;
                     }
-                while (true)
+                }
+                int check = 0;
+                for (int i = 0; i < 6; i++)
                 {
-                    diceIndex = Random.Range(0, dices[roster % 10].Length);
-                    if (blind.FindIndex(n => n == diceIndex) == -1) break;
+                    if(result[i] > 0 && (dices[roster % 10][i].id == dices[roster % 10][diceIndex].id)) { check = 1; result[i] += 1; break;}
+                }
+                if (check == 0) result[diceIndex] += 1;
+
+                if (n >= 4)
+                {
+                    int max = 0;
+                    for (int i = 1; i < 6; i++)
+                    {
+                        if (result[i] > max) max = result[i];
+                    }
+                    if (max >= 3)
+                    {
+                        for (int i = 0; i < 6; i++)
+                        {
+                            if (result[i] == max) { diceIndex = i; break; }
+                        }
+                    }
+                    else if (max == 2)
+                    {
+                        int[] tmp = new int[2]{-1, -1};
+                        for (int i = 0; i < 6; i++)
+                        {
+                            if (tmp[0] == -1 && result[i] == max) tmp[0] = i;
+                            else if (tmp[0] > -1 && result[i] == max) tmp[1] = i;
+                        }
+                        if (tmp[1] == -1) diceIndex = tmp[0];
+                        else
+                        {
+                            int t = Random.Range(0, 2);
+                            diceIndex = tmp[t];
+                        }
+                    }
+                    else if (max == 1)
+                    {
+                        while(true)
+                        {
+                            int t = Random.Range(0, 6);
+                            if (result[t] == 1) { diceIndex = t; break;}
+                        }
+                    }
                 }
             }
-
             return dices[roster % 10][diceIndex];
         }
 
