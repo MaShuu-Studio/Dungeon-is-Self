@@ -194,9 +194,23 @@ count += sizeof(ushort);
 this.{0} = Encoding.Unicode.GetString(segment.Array, segment.Offset + count, {0}Len);
 count += {0}Len;";
 
-        // {0} 리스트 이름 [대문자] // 리스트의 경우 타입, 클래스의 경우 이름
+        // {0} 리스트 타입
         // {1} 리스트 이름 [소문자]
+        // {2} 변수 컨버팅 타입
         public static string listReadFormat =
+@"{1}s.Clear();
+ushort {1}Len = BitConverter.ToUInt16(segment.Array, segment.Offset + count);
+count += sizeof(ushort);
+for (int i = 0; i < {1}Len; i++)
+{{
+    int a = BitConverter.{2}(segment.Array, segment.Offset + count);
+    count += sizeof({0});
+    this.{1}s.Add(a);
+}}";
+
+        // {0} 리스트 이름 [대문자]
+        // {1} 리스트 이름 [소문자]
+        public static string clistReadFormat =
 @"{1}s.Clear();
 ushort {1}Len = BitConverter.ToUInt16(segment.Array, segment.Offset + count);
 count += sizeof(ushort);
@@ -228,9 +242,20 @@ Array.Copy(BitConverter.GetBytes({0}Len), 0, segment.Array, segment.Offset + cou
 count += sizeof(ushort);
 count += {0}Len;
 ";
-        // {0} 리스트 이름 [대문자] // 리스트의 경우 타입, 클래스의 경우 이름
+        // {0} 리스트 타입
         // {1} 리스트 이름 [소문자]
         public static string listWriteFormat =
+@"Array.Copy(BitConverter.GetBytes((ushort){1}s.Count), 0, segment.Array, segment.Offset + count, sizeof(ushort));
+count += sizeof(ushort);
+foreach({0} {1} in {1}s)
+{{
+    Array.Copy(BitConverter.GetBytes({1}), 0, segment.Array, segment.Offset + count, sizeof({0}));
+    count += sizeof({0});
+}}";
+
+        // {0} 리스트 이름 [대문자]
+        // {1} 리스트 이름 [소문자]
+        public static string clistWriteFormat =
 @"Array.Copy(BitConverter.GetBytes((ushort){1}s.Count), 0, segment.Array, segment.Offset + count, sizeof(ushort));
 count += sizeof(ushort);
 foreach({0} {1} in {1}s)

@@ -167,8 +167,8 @@ namespace PacketGenerator
             {
                 Tuple<string, string, string> t = ParseMembers(r);
                 memberCode = string.Format(PacketFormat.memberClassListFormat, FirstCharToUpper(listName), FirstCharToLower(listName), t.Item1, t.Item2, t.Item3);
-                readCode = string.Format(PacketFormat.listReadFormat, FirstCharToUpper(listName), FirstCharToLower(listName));
-                writeCode = string.Format(PacketFormat.listWriteFormat, FirstCharToUpper(listName), FirstCharToLower(listName));
+                readCode = string.Format(PacketFormat.clistReadFormat, FirstCharToUpper(listName), FirstCharToLower(listName));
+                writeCode = string.Format(PacketFormat.clistWriteFormat, FirstCharToUpper(listName), FirstCharToLower(listName));
             }
             else
             {
@@ -187,7 +187,7 @@ namespace PacketGenerator
                     typeName = r.Name.ToLower();
                 }
                 memberCode = string.Format(PacketFormat.memberListFormat, typeName, FirstCharToLower(listName));
-                readCode = string.Format(PacketFormat.listReadFormat, typeName, FirstCharToLower(listName));
+                readCode = string.Format(PacketFormat.listReadFormat, typeName, FirstCharToLower(listName), ToMemberType(typeName));
                 writeCode = string.Format(PacketFormat.listWriteFormat, typeName, FirstCharToLower(listName));
             }
 
