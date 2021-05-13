@@ -29,22 +29,34 @@ class PacketHandler
         room.Push(() => room.Move(clientSession, movePacket));
         //Console.WriteLine($"{clientSession.SessionId}: {clientSession.Xpos}, {clientSession.Ypos}");
     }*/
-    public static void C_EnterGameHandler(PacketSession arg1, IPacket arg2)    
+    public static void C_EnterGameHandler(PacketSession session, IPacket packet)
+    {
+        ClientSession clientSession = session as ClientSession;
+
+        if (clientSession.Room == null) return;
+        GameRoom room = clientSession.Room;
+
+        room.Push(() => room.Enter(clientSession));
+    }
+    public static void C_LeaveGameHandler(PacketSession session, IPacket packet)
+    {
+        ClientSession clientSession = session as ClientSession;
+
+        if (clientSession.Room == null) return;
+        GameRoom room = clientSession.Room;
+
+        room.Push(() => room.Leave(clientSession));
+    }
+    public static void C_MatchGameHandler(PacketSession session, IPacket packet)    
     { 
     }
-    public static void C_MatchGameHandler(PacketSession arg1, IPacket arg2)    
+    public static void C_ReadyGameHandler(PacketSession session, IPacket packet)    
     { 
     }
-    public static void C_ReadyGameHandler(PacketSession arg1, IPacket arg2)    
+    public static void C_RoundReadyEndHandler(PacketSession session, IPacket packet)    
     { 
     }
-    public static void C_LeaveGameHandler(PacketSession arg1, IPacket arg2)    
-    {  
-    }
-    public static void C_RoundReadyEndHandler(PacketSession arg1, IPacket arg2)    
-    { 
-    }
-    public static void C_PlayRoundReadyHandler(PacketSession arg1, IPacket arg2)    
+    public static void C_PlayRoundReadyHandler(PacketSession session, IPacket packet)    
     {   
     }
 }

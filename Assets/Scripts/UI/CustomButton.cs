@@ -7,7 +7,7 @@ using GameControl;
 
 public class CustomButton : MonoBehaviour
 {
-    public enum ButtonMethod { SceneMovement = 0, GameReady, GamePlayReady, GameExit};
+    public enum ButtonMethod { SceneMovement = 0, GameReady, GamePlayReady, GameExit, ConnectServer};
 
     [SerializeField] private string moveScene = "";
     [SerializeField] private UserType userType = UserType.Offender;
@@ -39,6 +39,10 @@ public class CustomButton : MonoBehaviour
             case ButtonMethod.GameExit:
                 button.onClick.AddListener(Application.Quit);
                 break;
+            case ButtonMethod.ConnectServer:
+                button.onClick.AddListener(ConnectServer);
+                button.onClick.AddListener(ChangeScene);
+                break;
         }
     }
 
@@ -52,6 +56,11 @@ public class CustomButton : MonoBehaviour
     void ChangeScene()
     {
         SceneController.Instance.ChangeScene(moveScene);
+    }
+
+    void ConnectServer()
+    {
+        NetworkManager.Instance.ConnectToServer();
     }
 
     void GamePlayReady()

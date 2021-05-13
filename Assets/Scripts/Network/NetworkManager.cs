@@ -31,10 +31,34 @@ public class NetworkManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
     }
 
+    public int totalUser { get; private set; } = 0;
+    public int playinguser { get; private set; } = 0;
+    public int waitDefenderUser { get; private set; } = 0;
+    public int waitOffenderUser { get; private set; } = 0;
+    private bool isConnected = false;
     // Start is called before the first frame update
     void Start()
     {
-        /*
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        if (isConnected)
+        {
+            // 게임 쓰레드에서 Pop하여 작동하는 부분.
+            List<IPacket> packets = PacketQueue.Instance.PopAll();
+            foreach (IPacket packet in packets)
+            {
+                PacketManager.Instance.HandlePacket(session, packet);
+            }
+            packets.Clear();
+        }
+    }
+
+    public void ConnectToServer()
+    {
+        Debug.Log("Connect");
         string host = Dns.GetHostName();
         IPHostEntry ipHost = Dns.GetHostEntry(host);
         IPAddress ipAddr = ipHost.AddressList[0];
@@ -43,25 +67,28 @@ public class NetworkManager : MonoBehaviour
         Connector connector = new Connector();
 
         connector.Connect(endPoint, () => { return session; }, 1);
-        */
-    }
 
-    // Update is called once per frame
-    void Update()
-    {
-        /*
-        // 게임 쓰레드에서 Pop하여 작동하는 부분.
-        List<IPacket> packets = PacketQueue.Instance.PopAll();
-        foreach (IPacket packet in packets)
-        {
-            PacketManager.Instance.HandlePacket(session, packet);
-        }
-        packets.Clear();
-        */
+        isConnected = true;
     }
 
     public void Send(ArraySegment<byte> segment)
     {
         session.Send(segment);
+    }
+
+    public void SetUserInfo(int totalUser, int playingUser, int waitDefUser, int waitOffUser)
+    {
+        this.totalUser = totalUser;
+        this.playinguser = playinguser;
+        this.waitDefenderUser = waitDefUser;
+        this.waitOffenderUser = waitOffUser;
+    }
+
+    private void OnApplicationQuit()
+    {
+        C_LeaveGame p = new C_LeaveGame();
+        p.playerId = 1;
+
+        session.Send(p.Write());
     }
 }

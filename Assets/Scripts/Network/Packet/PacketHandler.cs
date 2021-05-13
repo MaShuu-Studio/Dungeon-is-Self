@@ -47,19 +47,23 @@ class PacketHandler
         //Console.WriteLine(chatPacket.chat);
     }
     */
-    public static void S_BroadcastWaitUserHandler(PacketSession arg1, IPacket arg2)
+    public static void S_BroadcastConnectUserHandler(PacketSession session, IPacket packet)
+    {
+        S_BroadcastConnectUser p = packet as S_BroadcastConnectUser;
+        ServerSession serverSession = session as ServerSession;
+
+        NetworkManager.Instance.SetUserInfo(p.totalUser, p.playingUser, p.waitDefUser, p.waitOffUser);
+    }
+
+    public static void S_GameStateHandler(PacketSession session, IPacket packet)
     {
     }
 
-    public static void S_GameStateHandler(PacketSession arg1, IPacket arg2)
+    public static void S_ProgressTurnHandler(PacketSession session, IPacket packet)
     {
     }
 
-    public static void S_ProgressTurnHandler(PacketSession arg1, IPacket arg2)
-    {
-    }
-
-    public static void S_StartGameHandler(PacketSession arg1, IPacket arg2)
+    public static void S_StartGameHandler(PacketSession session, IPacket packet)
     {
     }
 }

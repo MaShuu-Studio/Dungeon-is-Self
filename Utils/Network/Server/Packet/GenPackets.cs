@@ -6,7 +6,7 @@ using ServerCore;
 
 public enum PacketID
 {
-    S_BroadcastWaitUser = 0,
+    S_BroadcastConnectUser = 0,
 	C_EnterGame = 1,
 	C_LeaveGame = 2,
 	C_MatchGame = 3,
@@ -26,12 +26,13 @@ public interface IPacket
 	ArraySegment<byte> Write();
 }
 
-public class S_BroadcastWaitUser : IPacket
+public class S_BroadcastConnectUser : IPacket
 {
     public int totalUser;
-	public int waitDefAmount;
-	public int waitOffAmount;
-    public ushort Protocol { get { return (ushort)PacketID.S_BroadcastWaitUser; } }
+	public int playingUser;
+	public int waitDefUser;
+	public int waitOffUser;
+    public ushort Protocol { get { return (ushort)PacketID.S_BroadcastConnectUser; } }
 
     public void Read(ArraySegment<byte> segment)
     {
@@ -42,9 +43,11 @@ public class S_BroadcastWaitUser : IPacket
         
         this.totalUser = BitConverter.ToInt32(segment.Array, segment.Offset + count);
 		count += sizeof(int);
-		this.waitDefAmount = BitConverter.ToInt32(segment.Array, segment.Offset + count);
+		this.playingUser = BitConverter.ToInt32(segment.Array, segment.Offset + count);
 		count += sizeof(int);
-		this.waitOffAmount = BitConverter.ToInt32(segment.Array, segment.Offset + count);
+		this.waitDefUser = BitConverter.ToInt32(segment.Array, segment.Offset + count);
+		count += sizeof(int);
+		this.waitOffUser = BitConverter.ToInt32(segment.Array, segment.Offset + count);
 		count += sizeof(int);
     }
 
@@ -54,16 +57,19 @@ public class S_BroadcastWaitUser : IPacket
         ushort count = 0;
 
         count += sizeof(ushort);
-        Array.Copy(BitConverter.GetBytes((ushort)PacketID.S_BroadcastWaitUser), 0, segment.Array, segment.Offset + count, sizeof(ushort));
+        Array.Copy(BitConverter.GetBytes((ushort)PacketID.S_BroadcastConnectUser), 0, segment.Array, segment.Offset + count, sizeof(ushort));
         count += sizeof(ushort);
         
         Array.Copy(BitConverter.GetBytes(this.totalUser), 0, segment.Array, segment.Offset + count, sizeof(int));
 		count += sizeof(int);
 		
-		Array.Copy(BitConverter.GetBytes(this.waitDefAmount), 0, segment.Array, segment.Offset + count, sizeof(int));
+		Array.Copy(BitConverter.GetBytes(this.playingUser), 0, segment.Array, segment.Offset + count, sizeof(int));
 		count += sizeof(int);
 		
-		Array.Copy(BitConverter.GetBytes(this.waitOffAmount), 0, segment.Array, segment.Offset + count, sizeof(int));
+		Array.Copy(BitConverter.GetBytes(this.waitDefUser), 0, segment.Array, segment.Offset + count, sizeof(int));
+		count += sizeof(int);
+		
+		Array.Copy(BitConverter.GetBytes(this.waitOffUser), 0, segment.Array, segment.Offset + count, sizeof(int));
 		count += sizeof(int);
 		
 

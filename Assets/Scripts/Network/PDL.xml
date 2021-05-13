@@ -1,9 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <PDL>
-	<packet name="S_BroadcastWaitUser">
+	<packet name="S_BroadcastConnectUser">
 		<int name="totalUser"/>
-		<int name="waitDefAmount"/>
-		<int name="waitOffAmount"/>
+		<int name="playingUser"/>
+		<int name="waitDefUser"/>
+		<int name="waitOffUser"/>
 	</packet>
 	<packet name="C_EnterGame">
 		<int name="playerId"/>

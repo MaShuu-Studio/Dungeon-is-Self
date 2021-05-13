@@ -11,6 +11,11 @@ namespace Server
         JobQueue _jobQueue = new JobQueue();
         List<ArraySegment<byte>> _pendingList = new List<ArraySegment<byte>>();
 
+        int _totalUser = 0;
+        int _playinguser = 0;
+        int _waitDefenderUser = 0;
+        int _waitOffenderUser = 0;
+
         public void Push(Action job)
         {
             _jobQueue.Push(job);
@@ -29,49 +34,39 @@ namespace Server
             if (_pendingList.Count != 0) Console.WriteLine($"Flushed {_pendingList.Count} items");
             _pendingList.Clear();
         }
-        /*
+
         public void Enter(ClientSession session)
         {
             // 플레이어 추가
             _sessions.Add(session);
+            _totalUser = _sessions.Count;
             session.Room = this;
 
-            // 입장 플레이어에게 모든 플레이어목록 전달
-            S_PlayerList playerList = new S_PlayerList();
-            foreach(ClientSession s in _sessions)
-            {
-                playerList.players.Add(new S_PlayerList.Player()
-                {
-                    isSelf = (s == session),
-                    playerId = s.SessionId,
-                    xPos = s.Xpos,
-                    yPos = s.Ypos,
-                    zPos = s.Zpos
-                });
-            }
-
-            session.Send(playerList.Write());
-
-            // 모든 플레이어에게 입장을 브로드캐스트
-            S_BroadcastEnterGame broadcastEnter = new S_BroadcastEnterGame();
-            broadcastEnter.playerId = session.SessionId;
-            broadcastEnter.xPos = 0;
-            broadcastEnter.yPos = 0;
-            broadcastEnter.zPos = 0;
-            Broadcast(broadcastEnter.Write());
-
+            UpdateUserInfo();
         }
 
         public void Leave(ClientSession session)
         {
             // 플레이어 나감
             _sessions.Remove(session);
+            _totalUser = _sessions.Count;
+            session.Disconnect();
             // 모든 플레이어에게 퇴장을 브로드캐스트
-            S_BroadcastLeaveGame broadcastLeave = new S_BroadcastLeaveGame();
-            broadcastLeave.playerId = session.SessionId;
-            Broadcast(broadcastLeave.Write());
+            UpdateUserInfo();
         }
-        
+
+        public void UpdateUserInfo()
+        {
+            // 모든 플레이어에게 입장을 브로드캐스트
+            S_BroadcastConnectUser broadcast = new S_BroadcastConnectUser();
+            broadcast.totalUser = _totalUser;
+            broadcast.playingUser = _playinguser;
+            broadcast.waitDefUser = _waitDefenderUser;
+            broadcast.waitOffUser = _waitOffenderUser;
+
+            Broadcast(broadcast.Write());
+        }
+        /*
         public void Move(ClientSession session, C_Move movePacket)
         {
             // 좌표 이동
