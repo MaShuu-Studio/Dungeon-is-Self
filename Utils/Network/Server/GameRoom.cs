@@ -29,7 +29,7 @@ namespace Server
             if (_pendingList.Count != 0) Console.WriteLine($"Flushed {_pendingList.Count} items");
             _pendingList.Clear();
         }
-
+        /*
         public void Enter(ClientSession session)
         {
             // 플레이어 추가
@@ -71,7 +71,7 @@ namespace Server
             broadcastLeave.playerId = session.SessionId;
             Broadcast(broadcastLeave.Write());
         }
-
+        
         public void Move(ClientSession session, C_Move movePacket)
         {
             // 좌표 이동
@@ -86,6 +86,6 @@ namespace Server
             broadcastMove.yPos = session.Ypos;
             broadcastMove.zPos = session.Zpos;
             Broadcast(broadcastMove.Write());
-        }
+        }*/
     }
 }

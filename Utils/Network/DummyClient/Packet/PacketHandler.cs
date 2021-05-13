@@ -8,6 +8,7 @@ using System.Text;
 // 클라 -> 서버, 서버 -> 클라 혹은 A서버 -> B서버 등등
 class PacketHandler
 {
+    /*
     public static void S_BroadcastEnterGameHandler(PacketSession session, IPacket packet)
     {
         ServerSession serverSession = session as ServerSession;
@@ -35,5 +36,21 @@ class PacketHandler
 
         //if (chatPacket.playerId == 1)
         //Console.WriteLine(chatPacket.chat);
+    }*/
+
+    public static void S_BroadcastWaitUserHandler(PacketSession arg1, IPacket arg2)
+    {
+    }
+
+    public static void S_GameStateHandler(PacketSession arg1, IPacket arg2)
+    {
+    }
+
+    public static void S_ProgressTurnHandler(PacketSession arg1, IPacket arg2)
+    {
+    }
+
+    public static void S_StartGameHandler(PacketSession arg1, IPacket arg2)
+    {
     }
 }

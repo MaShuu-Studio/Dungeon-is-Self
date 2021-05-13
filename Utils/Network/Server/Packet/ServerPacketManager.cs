@@ -17,10 +17,18 @@ public class PacketManager
     Dictionary<ushort, Action<PacketSession, IPacket>> handler = new Dictionary<ushort, Action<PacketSession, IPacket>>();
     public void Register()
     {
+        makeFunc.Add((ushort)PacketID.C_EnterGame, MakePacket<C_EnterGame>);
+        handler.Add((ushort)PacketID.C_EnterGame, PacketHandler.C_EnterGameHandler);
         makeFunc.Add((ushort)PacketID.C_LeaveGame, MakePacket<C_LeaveGame>);
         handler.Add((ushort)PacketID.C_LeaveGame, PacketHandler.C_LeaveGameHandler);
-        makeFunc.Add((ushort)PacketID.C_Move, MakePacket<C_Move>);
-        handler.Add((ushort)PacketID.C_Move, PacketHandler.C_MoveHandler);
+        makeFunc.Add((ushort)PacketID.C_MatchGame, MakePacket<C_MatchGame>);
+        handler.Add((ushort)PacketID.C_MatchGame, PacketHandler.C_MatchGameHandler);
+        makeFunc.Add((ushort)PacketID.C_ReadyGame, MakePacket<C_ReadyGame>);
+        handler.Add((ushort)PacketID.C_ReadyGame, PacketHandler.C_ReadyGameHandler);
+        makeFunc.Add((ushort)PacketID.C_RoundReadyEnd, MakePacket<C_RoundReadyEnd>);
+        handler.Add((ushort)PacketID.C_RoundReadyEnd, PacketHandler.C_RoundReadyEndHandler);
+        makeFunc.Add((ushort)PacketID.C_PlayRoundReady, MakePacket<C_PlayRoundReady>);
+        handler.Add((ushort)PacketID.C_PlayRoundReady, PacketHandler.C_PlayRoundReadyHandler);
 
     }
 

@@ -8,6 +8,7 @@ using System.Text;
 // 클라 -> 서버, 서버 -> 클라 혹은 A서버 -> B서버 등등
 class PacketHandler
 {
+    /*
     public static void C_LeaveGameHandler(PacketSession session, IPacket packet)
     {
         ClientSession clientSession = session as ClientSession;
@@ -27,5 +28,23 @@ class PacketHandler
 
         room.Push(() => room.Move(clientSession, movePacket));
         //Console.WriteLine($"{clientSession.SessionId}: {clientSession.Xpos}, {clientSession.Ypos}");
+    }*/
+    public static void C_EnterGameHandler(PacketSession arg1, IPacket arg2)    
+    { 
+    }
+    public static void C_MatchGameHandler(PacketSession arg1, IPacket arg2)    
+    { 
+    }
+    public static void C_ReadyGameHandler(PacketSession arg1, IPacket arg2)    
+    { 
+    }
+    public static void C_LeaveGameHandler(PacketSession arg1, IPacket arg2)    
+    {  
+    }
+    public static void C_RoundReadyEndHandler(PacketSession arg1, IPacket arg2)    
+    { 
+    }
+    public static void C_PlayRoundReadyHandler(PacketSession arg1, IPacket arg2)    
+    {   
     }
 }

@@ -17,14 +17,14 @@ public class PacketManager
     Dictionary<ushort, Action<PacketSession, IPacket>> handler = new Dictionary<ushort, Action<PacketSession, IPacket>>();
     public void Register()
     {
-        makeFunc.Add((ushort)PacketID.S_BroadcastEnterGame, MakePacket<S_BroadcastEnterGame>);
-        handler.Add((ushort)PacketID.S_BroadcastEnterGame, PacketHandler.S_BroadcastEnterGameHandler);
-        makeFunc.Add((ushort)PacketID.S_BroadcastLeaveGame, MakePacket<S_BroadcastLeaveGame>);
-        handler.Add((ushort)PacketID.S_BroadcastLeaveGame, PacketHandler.S_BroadcastLeaveGameHandler);
-        makeFunc.Add((ushort)PacketID.S_PlayerList, MakePacket<S_PlayerList>);
-        handler.Add((ushort)PacketID.S_PlayerList, PacketHandler.S_PlayerListHandler);
-        makeFunc.Add((ushort)PacketID.S_BroadcastMove, MakePacket<S_BroadcastMove>);
-        handler.Add((ushort)PacketID.S_BroadcastMove, PacketHandler.S_BroadcastMoveHandler);
+        makeFunc.Add((ushort)PacketID.S_BroadcastWaitUser, MakePacket<S_BroadcastWaitUser>);
+        handler.Add((ushort)PacketID.S_BroadcastWaitUser, PacketHandler.S_BroadcastWaitUserHandler);
+        makeFunc.Add((ushort)PacketID.S_StartGame, MakePacket<S_StartGame>);
+        handler.Add((ushort)PacketID.S_StartGame, PacketHandler.S_StartGameHandler);
+        makeFunc.Add((ushort)PacketID.S_GameState, MakePacket<S_GameState>);
+        handler.Add((ushort)PacketID.S_GameState, PacketHandler.S_GameStateHandler);
+        makeFunc.Add((ushort)PacketID.S_ProgressTurn, MakePacket<S_ProgressTurn>);
+        handler.Add((ushort)PacketID.S_ProgressTurn, PacketHandler.S_ProgressTurnHandler);
 
     }
 

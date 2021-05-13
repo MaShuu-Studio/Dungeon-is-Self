@@ -1,35 +1,68 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <PDL>
-	<packet name="S_BroadcastEnterGame">
+	<packet name="S_BroadcastWaitUser">
+		<int name="totalUser"/>
+		<int name="waitDefAmount"/>
+		<int name="waitOffAmount"/>
+	</packet>
+	<packet name="C_EnterGame">
 		<int name="playerId"/>
-		<float name="xPos"/>
-		<float name="yPos"/>
-		<float name="zPos"/>
 	</packet>
 	<packet name="C_LeaveGame">
 		<int name="playerId"/>
 	</packet>
-	<packet name="S_BroadcastLeaveGame">
+	<packet name="C_MatchGame">
 		<int name="playerId"/>
+		<ushort name="playerType"/>
 	</packet>
-	<packet name="S_PlayerList">
-		<list name="player"> 
-			<bool name="isSelf"/>
-			<int name="playerId"/>
-			<float name="xPos"/>  
-			<float name="yPos"/>
-			<float name="zPos"/>
+	<packet name="S_StartGame">
+		<int name="enemyPlayerId"/>
+		<ushort name="playerType"/>
+	</packet>
+	<packet name="C_ReadyGame">
+		<int name="playerId"/>
+		<ushort name="playerType"/>
+		<list name="candidate">
+			<int name="int"/>
 		</list>
 	</packet>
-	<packet name="C_Move">
-		<float name="xPos"/>
-		<float name="yPos"/>
-		<float name="zPos"/>
+	<packet name="S_GameState">
+		<ushort name="currentProgress"/>
+		<int name="round"/>
 	</packet>
-	<packet name="S_BroadcastMove">
-		<int name="playerId"/>
-		<float name="xPos"/>
-		<float name="yPos"/>
-		<float name="zPos"/>
+	<packet name="C_RoundReadyEnd">
+		<clist name="roster">
+			<int name="unitIndex"/>
+			<list name="skillRosters">
+				<int name="int"/>
+			</list>
+		</clist>
+	</packet>
+	<packet name="C_PlayRoundReady">
+		<clist name="roster">
+			<int name="unitIndex"/>
+			<list name="diceIndex">
+				<int name="int"/>
+			</list>
+		</clist>
+	</packet>
+	<packet name="S_ProgressTurn">
+		<bool name="isRoundEnd"/>
+		<bool name="isGameEnd"/>
+		<ushort name="winner"/>
+		<int name="turn"/>
+		<int name="monsterHp"/>
+		<int name="monsterTurn"/>
+		<clist name="result">
+			<int name="unitIndex"/>
+			<list name="diceIndex">
+				<int name="int"/>
+			</list>
+			<clist name="cc">
+				<int name="ccIndex"/>
+				<int name="ccTurn"/>
+				<int name="ccStack"/>
+			</clist>
+		</clist>
 	</packet>
 </PDL>

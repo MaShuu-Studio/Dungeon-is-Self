@@ -22,7 +22,7 @@ namespace DummyClient
                 return session;
             }
         }
-
+        /*
         public void SendForEach()
         {
             lock (_lock)
@@ -38,6 +38,6 @@ namespace DummyClient
                     session.Send(movePacket.Write());
                 }
             }
-        }
+        }*/
     }
 }
