@@ -130,10 +130,16 @@ namespace PacketGenerator
                         writeCode += string.Format(PacketFormat.stringWriteFormat, memberName, memberType);
                         break;
                     case "list":
-                        Tuple<string, string, string> t = ParseList(r);
-                        memberCode += t.Item1;
-                        readCode += t.Item2;
-                        writeCode += t.Item3;
+                        Tuple<string, string, string> lt = ParseList(r, false);
+                        memberCode += lt.Item1;
+                        readCode += lt.Item2;
+                        writeCode += lt.Item3;
+                        break;
+                    case "clist":
+                        Tuple<string, string, string> ct = ParseList(r, true);
+                        memberCode += ct.Item1;
+                        readCode += ct.Item2;
+                        writeCode += ct.Item3;
                         break;
                 }
             }
@@ -144,7 +150,7 @@ namespace PacketGenerator
             return new Tuple<string, string, string>(memberCode, readCode, writeCode);
         }
 
-        public static Tuple<string, string, string> ParseList(XmlReader r)
+        public static Tuple<string, string, string> ParseList(XmlReader r, bool isClassList)
         {
             string listName = r["name"];
 
@@ -153,15 +159,41 @@ namespace PacketGenerator
                 Console.WriteLine("Member without name");
                 return null;
             }
+            string memberCode = "";
+            string readCode = "";
+            string writeCode = "";
 
-            Tuple<string, string, string> t = ParseMembers(r);
+            if (isClassList)
+            {
+                Tuple<string, string, string> t = ParseMembers(r);
+                memberCode = string.Format(PacketFormat.memberClassListFormat, FirstCharToUpper(listName), FirstCharToLower(listName), t.Item1, t.Item2, t.Item3);
+                readCode = string.Format(PacketFormat.listReadFormat, FirstCharToUpper(listName), FirstCharToLower(listName));
+                writeCode = string.Format(PacketFormat.listWriteFormat, FirstCharToUpper(listName), FirstCharToLower(listName));
+            }
+            else
+            {
+                string typeName = "";
 
-            string memberCode = string.Format(PacketFormat.memberListFormat, FirstCharToUpper(listName), FirstCharToLower(listName), t.Item1, t.Item2, t.Item3);
-            string readCode = string.Format(PacketFormat.listReadFormat, FirstCharToUpper(listName), FirstCharToLower(listName));
-            string writeCode = string.Format(PacketFormat.listWriteFormat, FirstCharToUpper(listName), FirstCharToLower(listName));
+                int depth = r.Depth + 1;
+                while (r.Read())
+                {
+                    if (r.Depth != depth) break;
+                    string memberName = r["name"];
+                    if (string.IsNullOrEmpty(memberName))
+                    {
+                        Console.WriteLine("Member without name");
+                        return null;
+                    }
+                    typeName = r.Name.ToLower();
+                }
+                memberCode = string.Format(PacketFormat.memberListFormat, typeName, FirstCharToLower(listName));
+                readCode = string.Format(PacketFormat.listReadFormat, typeName, FirstCharToLower(listName));
+                writeCode = string.Format(PacketFormat.listWriteFormat, typeName, FirstCharToLower(listName));
+            }
 
             return new Tuple<string, string, string>(memberCode, readCode, writeCode);
         }
+
         public static string ToMemberType(string memberType)
         {
             switch (memberType)
