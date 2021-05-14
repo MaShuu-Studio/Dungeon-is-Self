@@ -119,7 +119,8 @@ namespace Server
                     playerType = (ushort)UserType.Offender
                 };
 
-                
+                _sessions[defenderId].Send(defPacket.Write());
+                _sessions[offenderId].Send(offPacket.Write());
             }
 
             UpdateUserInfo();

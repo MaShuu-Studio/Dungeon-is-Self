@@ -3,75 +3,83 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
+using GameControl;
 
 // 핸들러를 만들때에는 용도를 명확히 구분하는 것이 좋음.
 // 클라 -> 서버, 서버 -> 클라 혹은 A서버 -> B서버 등등
-class PacketHandler
+namespace Network
 {
-    /*
-    public static void S_BroadcastEnterGameHandler(PacketSession session, IPacket packet)
+    class PacketHandler
     {
-        S_BroadcastEnterGame p = packet as S_BroadcastEnterGame;
-        ServerSession serverSession = session as ServerSession;
+        /*
+        public static void S_BroadcastEnterGameHandler(PacketSession session, IPacket packet)
+        {
+            S_BroadcastEnterGame p = packet as S_BroadcastEnterGame;
+            ServerSession serverSession = session as ServerSession;
 
-        PlayerManager.Instance.EnterGame(p);
-        //if (chatPacket.playerId == 1)
-        //Console.WriteLine(chatPacket.chat);
-    }
-    public static void S_BroadcastLeaveGameHandler(PacketSession session, IPacket packet)
-    {
-        S_BroadcastLeaveGame p = packet as S_BroadcastLeaveGame;
-        ServerSession serverSession = session as ServerSession;
+            PlayerManager.Instance.EnterGame(p);
+            //if (chatPacket.playerId == 1)
+            //Console.WriteLine(chatPacket.chat);
+        }
+        public static void S_BroadcastLeaveGameHandler(PacketSession session, IPacket packet)
+        {
+            S_BroadcastLeaveGame p = packet as S_BroadcastLeaveGame;
+            ServerSession serverSession = session as ServerSession;
 
-        PlayerManager.Instance.LeaveGame(p);
-        //if (chatPacket.playerId == 1)
-        //Console.WriteLine(chatPacket.chat);
-    }
-    public static void S_PlayerListHandler(PacketSession session, IPacket packet)
-    {
-        S_PlayerList p = packet as S_PlayerList;
-        ServerSession serverSession = session as ServerSession;
+            PlayerManager.Instance.LeaveGame(p);
+            //if (chatPacket.playerId == 1)
+            //Console.WriteLine(chatPacket.chat);
+        }
+        public static void S_PlayerListHandler(PacketSession session, IPacket packet)
+        {
+            S_PlayerList p = packet as S_PlayerList;
+            ServerSession serverSession = session as ServerSession;
 
-        PlayerManager.Instance.Add(p);
+            PlayerManager.Instance.Add(p);
 
-        //if (chatPacket.playerId == 1)
-        //Console.WriteLine(chatPacket.chat);
-    }
-    public static void S_BroadcastMoveHandler(PacketSession session, IPacket packet)
-    {
-        S_BroadcastMove p = packet as S_BroadcastMove;
-        ServerSession serverSession = session as ServerSession;
+            //if (chatPacket.playerId == 1)
+            //Console.WriteLine(chatPacket.chat);
+        }
+        public static void S_BroadcastMoveHandler(PacketSession session, IPacket packet)
+        {
+            S_BroadcastMove p = packet as S_BroadcastMove;
+            ServerSession serverSession = session as ServerSession;
 
-        PlayerManager.Instance.Move(p);
-        //if (chatPacket.playerId == 1)
-        //Console.WriteLine(chatPacket.chat);
-    }
-    */
-    public static void S_BroadcastConnectUserHandler(PacketSession session, IPacket packet)
-    {
-        S_BroadcastConnectUser p = packet as S_BroadcastConnectUser;
-        ServerSession serverSession = session as ServerSession;
+            PlayerManager.Instance.Move(p);
+            //if (chatPacket.playerId == 1)
+            //Console.WriteLine(chatPacket.chat);
+        }
+        */
+        public static void S_BroadcastConnectUserHandler(PacketSession session, IPacket packet)
+        {
+            S_BroadcastConnectUser p = packet as S_BroadcastConnectUser;
+            ServerSession serverSession = session as ServerSession;
 
-        NetworkManager.Instance.SetUserInfo(p.totalUser, p.playingUser, p.waitDefUser, p.waitOffUser);
-    }
+            NetworkManager.Instance.SetUserInfo(p.totalUser, p.playingUser, p.waitDefUser, p.waitOffUser);
+        }
 
-    public static void S_GivePlayerIdHandler(PacketSession session, IPacket packet)
-    {
-        S_GivePlayerId p = packet as S_GivePlayerId;
-        ServerSession serverSession = session as ServerSession;
+        public static void S_GivePlayerIdHandler(PacketSession session, IPacket packet)
+        {
+            S_GivePlayerId p = packet as S_GivePlayerId;
+            ServerSession serverSession = session as ServerSession;
 
-        NetworkManager.Instance.SetPlayerId(p.playerId);
-    }
+            NetworkManager.Instance.SetPlayerId(p.playerId);
+        }
 
-    public static void S_GameStateHandler(PacketSession session, IPacket packet)
-    {
-    }
+        public static void S_StartGameHandler(PacketSession session, IPacket packet)
+        {
+            S_StartGame p = packet as S_StartGame;
+            ServerSession serverSession = session as ServerSession;
 
-    public static void S_ProgressTurnHandler(PacketSession session, IPacket packet)
-    {
-    }
+            NetworkGameController.Instance.StartGame(p.roomId, (UserType)p.playerType);
+        }
 
-    public static void S_StartGameHandler(PacketSession session, IPacket packet)
-    {
+        public static void S_GameStateHandler(PacketSession session, IPacket packet)
+        {
+        }
+
+        public static void S_ProgressTurnHandler(PacketSession session, IPacket packet)
+        {
+        }
     }
 }

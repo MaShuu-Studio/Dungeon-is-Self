@@ -4,25 +4,28 @@ using System.Net;
 using System.Text;
 using ServerCore;
 
-class ServerSession : PacketSession
+namespace Network
 {
-    public override void OnConnected(EndPoint endPoint)
+    class ServerSession : PacketSession
     {
-        Console.WriteLine($"[System] OnConnected : {endPoint}");
-    }
+        public override void OnConnected(EndPoint endPoint)
+        {
+            Console.WriteLine($"[System] OnConnected : {endPoint}");
+        }
 
-    public override void OnDisconnected(EndPoint endPoint)
-    {
-        Console.WriteLine($"[System] OnDisconnected : {endPoint}");
-    }
+        public override void OnDisconnected(EndPoint endPoint)
+        {
+            Console.WriteLine($"[System] OnDisconnected : {endPoint}");
+        }
 
-    public override void OnRecvPacket(ArraySegment<byte> buffer)
-    {
-        PacketManager.Instance.OnRecvPacket(this, buffer, (s, p) => PacketQueue.Instance.Push(p));
-    }
+        public override void OnRecvPacket(ArraySegment<byte> buffer)
+        {
+            PacketManager.Instance.OnRecvPacket(this, buffer, (s, p) => PacketQueue.Instance.Push(p));
+        }
 
-    public override void OnSend(int numOfBytes)
-    {
-        //Console.WriteLine($"[System] Transferred bytes: {numOfBytes}");
+        public override void OnSend(int numOfBytes)
+        {
+            //Console.WriteLine($"[System] Transferred bytes: {numOfBytes}");
+        }
     }
 }
