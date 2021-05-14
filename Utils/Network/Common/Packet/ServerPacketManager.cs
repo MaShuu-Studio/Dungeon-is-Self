@@ -21,8 +21,10 @@ public class PacketManager
         handler.Add((ushort)PacketID.C_EnterGame, PacketHandler.C_EnterGameHandler);
         makeFunc.Add((ushort)PacketID.C_LeaveGame, MakePacket<C_LeaveGame>);
         handler.Add((ushort)PacketID.C_LeaveGame, PacketHandler.C_LeaveGameHandler);
-        makeFunc.Add((ushort)PacketID.C_MatchGame, MakePacket<C_MatchGame>);
-        handler.Add((ushort)PacketID.C_MatchGame, PacketHandler.C_MatchGameHandler);
+        makeFunc.Add((ushort)PacketID.C_MatchRequest, MakePacket<C_MatchRequest>);
+        handler.Add((ushort)PacketID.C_MatchRequest, PacketHandler.C_MatchRequestHandler);
+        makeFunc.Add((ushort)PacketID.C_MatchRequestCancel, MakePacket<C_MatchRequestCancel>);
+        handler.Add((ushort)PacketID.C_MatchRequestCancel, PacketHandler.C_MatchRequestCancelHandler);
         makeFunc.Add((ushort)PacketID.C_ReadyGame, MakePacket<C_ReadyGame>);
         handler.Add((ushort)PacketID.C_ReadyGame, PacketHandler.C_ReadyGameHandler);
         makeFunc.Add((ushort)PacketID.C_RoundReadyEnd, MakePacket<C_RoundReadyEnd>);

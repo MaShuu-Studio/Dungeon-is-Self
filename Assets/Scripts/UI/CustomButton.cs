@@ -7,7 +7,7 @@ using GameControl;
 
 public class CustomButton : MonoBehaviour
 {
-    public enum ButtonMethod { SceneMovement = 0, GameReady, GamePlayReady, GameExit, ConnectServer};
+    public enum ButtonMethod { SceneMovement = 0, GameReady, GamePlayReady, GameExit, ConnectServer, MatchRequest, MatchGameReady, MatchRoundReady, MatchTurnReady};
 
     [SerializeField] private string moveScene = "";
     [SerializeField] private UserType userType = UserType.Offender;
@@ -43,6 +43,13 @@ public class CustomButton : MonoBehaviour
                 button.onClick.AddListener(ConnectServer);
                 button.onClick.AddListener(ChangeScene);
                 break;
+            case ButtonMethod.MatchRequest:
+                button.onClick.AddListener(MatchRequest);
+                break;
+            case ButtonMethod.MatchGameReady:
+                button.onClick.AddListener(ConnectServer);
+                button.onClick.AddListener(ChangeScene);
+                break;
         }
     }
 
@@ -58,11 +65,7 @@ public class CustomButton : MonoBehaviour
         SceneController.Instance.ChangeScene(moveScene);
     }
 
-    void ConnectServer()
-    {
-        NetworkManager.Instance.ConnectToServer();
-    }
-
+    #region Play Single
     void GamePlayReady()
     {
         GameProgress progress = GameController.Instance.currentProgress;
@@ -148,4 +151,17 @@ public class CustomButton : MonoBehaviour
 
         isOn = false;
     }
+    #endregion
+
+    #region Server
+    void ConnectServer()
+    {
+        NetworkManager.Instance.ConnectToServer();
+    }
+
+    void MatchRequest()
+    {
+        NetworkManager.Instance.MatchRequest(userType);
+    }
+    #endregion
 }

@@ -8,14 +8,16 @@ public enum PacketID
 {
     S_BroadcastConnectUser = 0,
 	C_EnterGame = 1,
-	C_LeaveGame = 2,
-	C_MatchGame = 3,
-	S_StartGame = 4,
-	C_ReadyGame = 5,
-	S_GameState = 6,
-	C_RoundReadyEnd = 7,
-	C_PlayRoundReady = 8,
-	S_ProgressTurn = 9,
+	S_GivePlayerId = 2,
+	C_LeaveGame = 3,
+	C_MatchRequest = 4,
+	C_MatchRequestCancel = 5,
+	S_StartGame = 6,
+	C_ReadyGame = 7,
+	S_GameState = 8,
+	C_RoundReadyEnd = 9,
+	C_PlayRoundReady = 10,
+	S_ProgressTurn = 11,
 	
 }
 
@@ -80,8 +82,39 @@ public class S_BroadcastConnectUser : IPacket
 }
 public class C_EnterGame : IPacket
 {
-    public int playerId;
+    
     public ushort Protocol { get { return (ushort)PacketID.C_EnterGame; } }
+
+    public void Read(ArraySegment<byte> segment)
+    {
+        ushort count = 0;
+
+        count += sizeof(ushort);
+        count += sizeof(ushort);
+        
+        
+    }
+
+    public ArraySegment<byte> Write()
+    { 
+        ArraySegment<byte> segment = SendBufferHelper.Open(4096);
+        ushort count = 0;
+
+        count += sizeof(ushort);
+        Array.Copy(BitConverter.GetBytes((ushort)PacketID.C_EnterGame), 0, segment.Array, segment.Offset + count, sizeof(ushort));
+        count += sizeof(ushort);
+        
+        
+
+        Array.Copy(BitConverter.GetBytes(count), 0, segment.Array, segment.Offset, sizeof(ushort));
+
+        return SendBufferHelper.Close(count);
+    }
+}
+public class S_GivePlayerId : IPacket
+{
+    public int playerId;
+    public ushort Protocol { get { return (ushort)PacketID.S_GivePlayerId; } }
 
     public void Read(ArraySegment<byte> segment)
     {
@@ -100,7 +133,7 @@ public class C_EnterGame : IPacket
         ushort count = 0;
 
         count += sizeof(ushort);
-        Array.Copy(BitConverter.GetBytes((ushort)PacketID.C_EnterGame), 0, segment.Array, segment.Offset + count, sizeof(ushort));
+        Array.Copy(BitConverter.GetBytes((ushort)PacketID.S_GivePlayerId), 0, segment.Array, segment.Offset + count, sizeof(ushort));
         count += sizeof(ushort);
         
         Array.Copy(BitConverter.GetBytes(this.playerId), 0, segment.Array, segment.Offset + count, sizeof(int));
@@ -146,11 +179,11 @@ public class C_LeaveGame : IPacket
         return SendBufferHelper.Close(count);
     }
 }
-public class C_MatchGame : IPacket
+public class C_MatchRequest : IPacket
 {
     public int playerId;
 	public ushort playerType;
-    public ushort Protocol { get { return (ushort)PacketID.C_MatchGame; } }
+    public ushort Protocol { get { return (ushort)PacketID.C_MatchRequest; } }
 
     public void Read(ArraySegment<byte> segment)
     {
@@ -171,7 +204,47 @@ public class C_MatchGame : IPacket
         ushort count = 0;
 
         count += sizeof(ushort);
-        Array.Copy(BitConverter.GetBytes((ushort)PacketID.C_MatchGame), 0, segment.Array, segment.Offset + count, sizeof(ushort));
+        Array.Copy(BitConverter.GetBytes((ushort)PacketID.C_MatchRequest), 0, segment.Array, segment.Offset + count, sizeof(ushort));
+        count += sizeof(ushort);
+        
+        Array.Copy(BitConverter.GetBytes(this.playerId), 0, segment.Array, segment.Offset + count, sizeof(int));
+		count += sizeof(int);
+		
+		Array.Copy(BitConverter.GetBytes(this.playerType), 0, segment.Array, segment.Offset + count, sizeof(ushort));
+		count += sizeof(ushort);
+		
+
+        Array.Copy(BitConverter.GetBytes(count), 0, segment.Array, segment.Offset, sizeof(ushort));
+
+        return SendBufferHelper.Close(count);
+    }
+}
+public class C_MatchRequestCancel : IPacket
+{
+    public int playerId;
+	public ushort playerType;
+    public ushort Protocol { get { return (ushort)PacketID.C_MatchRequestCancel; } }
+
+    public void Read(ArraySegment<byte> segment)
+    {
+        ushort count = 0;
+
+        count += sizeof(ushort);
+        count += sizeof(ushort);
+        
+        this.playerId = BitConverter.ToInt32(segment.Array, segment.Offset + count);
+		count += sizeof(int);
+		this.playerType = BitConverter.ToUInt16(segment.Array, segment.Offset + count);
+		count += sizeof(ushort);
+    }
+
+    public ArraySegment<byte> Write()
+    { 
+        ArraySegment<byte> segment = SendBufferHelper.Open(4096);
+        ushort count = 0;
+
+        count += sizeof(ushort);
+        Array.Copy(BitConverter.GetBytes((ushort)PacketID.C_MatchRequestCancel), 0, segment.Array, segment.Offset + count, sizeof(ushort));
         count += sizeof(ushort);
         
         Array.Copy(BitConverter.GetBytes(this.playerId), 0, segment.Array, segment.Offset + count, sizeof(int));
@@ -188,7 +261,8 @@ public class C_MatchGame : IPacket
 }
 public class S_StartGame : IPacket
 {
-    public int enemyPlayerId;
+    public int roomId;
+	public int enemyPlayerId;
 	public ushort playerType;
     public ushort Protocol { get { return (ushort)PacketID.S_StartGame; } }
 
@@ -199,7 +273,9 @@ public class S_StartGame : IPacket
         count += sizeof(ushort);
         count += sizeof(ushort);
         
-        this.enemyPlayerId = BitConverter.ToInt32(segment.Array, segment.Offset + count);
+        this.roomId = BitConverter.ToInt32(segment.Array, segment.Offset + count);
+		count += sizeof(int);
+		this.enemyPlayerId = BitConverter.ToInt32(segment.Array, segment.Offset + count);
 		count += sizeof(int);
 		this.playerType = BitConverter.ToUInt16(segment.Array, segment.Offset + count);
 		count += sizeof(ushort);
@@ -214,7 +290,10 @@ public class S_StartGame : IPacket
         Array.Copy(BitConverter.GetBytes((ushort)PacketID.S_StartGame), 0, segment.Array, segment.Offset + count, sizeof(ushort));
         count += sizeof(ushort);
         
-        Array.Copy(BitConverter.GetBytes(this.enemyPlayerId), 0, segment.Array, segment.Offset + count, sizeof(int));
+        Array.Copy(BitConverter.GetBytes(this.roomId), 0, segment.Array, segment.Offset + count, sizeof(int));
+		count += sizeof(int);
+		
+		Array.Copy(BitConverter.GetBytes(this.enemyPlayerId), 0, segment.Array, segment.Offset + count, sizeof(int));
 		count += sizeof(int);
 		
 		Array.Copy(BitConverter.GetBytes(this.playerType), 0, segment.Array, segment.Offset + count, sizeof(ushort));

@@ -5,6 +5,7 @@ using System.Threading;
 using System.Net;
 using ServerCore;
 using System;
+using GameControl;
 
 public class NetworkManager : MonoBehaviour
 {
@@ -31,6 +32,7 @@ public class NetworkManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
     }
 
+    private int playerId;
     public int totalUser { get; private set; } = 0;
     public int playinguser { get; private set; } = 0;
     public int waitDefenderUser { get; private set; } = 0;
@@ -76,19 +78,32 @@ public class NetworkManager : MonoBehaviour
         session.Send(segment);
     }
 
+    public void SetPlayerId(int id)
+    {
+        playerId = id;
+    }
+
     public void SetUserInfo(int totalUser, int playingUser, int waitDefUser, int waitOffUser)
     {
         this.totalUser = totalUser;
-        this.playinguser = playinguser;
+        this.playinguser = playingUser;
         this.waitDefenderUser = waitDefUser;
         this.waitOffenderUser = waitOffUser;
+    }
+
+    public void MatchRequest(UserType type)
+    {
+        C_MatchRequest matchPacket = new C_MatchRequest();
+        matchPacket.playerId = playerId;
+        matchPacket.playerType = (ushort)type;
+
+        Send(matchPacket.Write());
     }
 
     private void OnApplicationQuit()
     {
         C_LeaveGame p = new C_LeaveGame();
-        p.playerId = 1;
-
+        p.playerId = playerId;
         session.Send(p.Write());
     }
 }

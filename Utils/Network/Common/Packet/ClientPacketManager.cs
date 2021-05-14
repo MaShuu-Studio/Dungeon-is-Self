@@ -19,6 +19,8 @@ public class PacketManager
     {
         makeFunc.Add((ushort)PacketID.S_BroadcastConnectUser, MakePacket<S_BroadcastConnectUser>);
         handler.Add((ushort)PacketID.S_BroadcastConnectUser, PacketHandler.S_BroadcastConnectUserHandler);
+        makeFunc.Add((ushort)PacketID.S_GivePlayerId, MakePacket<S_GivePlayerId>);
+        handler.Add((ushort)PacketID.S_GivePlayerId, PacketHandler.S_GivePlayerIdHandler);
         makeFunc.Add((ushort)PacketID.S_StartGame, MakePacket<S_StartGame>);
         handler.Add((ushort)PacketID.S_StartGame, PacketHandler.S_StartGameHandler);
         makeFunc.Add((ushort)PacketID.S_GameState, MakePacket<S_GameState>);

@@ -40,15 +40,32 @@ class PacketHandler
     }
     public static void C_LeaveGameHandler(PacketSession session, IPacket packet)
     {
+        C_MatchRequest p = packet as C_MatchRequest;
         ClientSession clientSession = session as ClientSession;
 
         if (clientSession.Room == null) return;
         GameRoom room = clientSession.Room;
 
         room.Push(() => room.Leave(clientSession));
+        clientSession.Disconnect();
     }
-    public static void C_MatchGameHandler(PacketSession session, IPacket packet)    
-    { 
+    public static void C_MatchRequestHandler(PacketSession session, IPacket packet)    
+    {
+        C_MatchRequest p = packet as C_MatchRequest;
+        ClientSession clientSession = session as ClientSession;
+
+        if (clientSession.Room == null) return;
+        GameRoom room = clientSession.Room;
+        room.MatchRequest(p.playerId, (UserType)p.playerType);
+    }
+    public static void C_MatchRequestCancelHandler(PacketSession session, IPacket packet)
+    {
+        C_MatchRequest p = packet as C_MatchRequest;
+        ClientSession clientSession = session as ClientSession;
+
+        if (clientSession.Room == null) return;
+        GameRoom room = clientSession.Room;
+        room.MatchRequestCancel(p.playerId, (UserType)p.playerType);
     }
     public static void C_ReadyGameHandler(PacketSession session, IPacket packet)    
     { 

@@ -7,16 +7,23 @@
 		<int name="waitOffUser"/>
 	</packet>
 	<packet name="C_EnterGame">
+	</packet>
+	<packet name="S_GivePlayerId">
 		<int name="playerId"/>
 	</packet>
 	<packet name="C_LeaveGame">
 		<int name="playerId"/>
 	</packet>
-	<packet name="C_MatchGame">
+	<packet name="C_MatchRequest">
+		<int name="playerId"/>
+		<ushort name="playerType"/>
+	</packet>
+	<packet name="C_MatchRequestCancel">
 		<int name="playerId"/>
 		<ushort name="playerType"/>
 	</packet>
 	<packet name="S_StartGame">
+		<int name="roomId"/>
 		<int name="enemyPlayerId"/>
 		<ushort name="playerType"/>
 	</packet>

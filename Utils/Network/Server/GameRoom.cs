@@ -7,14 +7,16 @@ namespace Server
 {
     class GameRoom : IJobQueue
     {
-        List<ClientSession> _sessions = new List<ClientSession>();
         JobQueue _jobQueue = new JobQueue();
         List<ArraySegment<byte>> _pendingList = new List<ArraySegment<byte>>();
 
-        int _totalUser = 0;
-        int _playinguser = 0;
-        int _waitDefenderUser = 0;
-        int _waitOffenderUser = 0;
+        int _playerNumber = 1;
+        int _roomNumber = 1;
+
+        List<ClientSession> _sessions = new List<ClientSession>();
+        List<int> waitDefenderUserList = new List<int>();
+        List<int> waitOffenderUserList = new List<int>();
+        List<PlayRoom> playingRooms = new List<PlayRoom>();
 
         public void Push(Action job)
         {
@@ -37,9 +39,10 @@ namespace Server
 
         public void Enter(ClientSession session)
         {
+            int id = _playerNumber++;
+            session.Send(new S_GivePlayerId() { playerId = id }.Write());
             // 플레이어 추가
             _sessions.Add(session);
-            _totalUser = _sessions.Count;
             session.Room = this;
 
             UpdateUserInfo();
@@ -49,8 +52,6 @@ namespace Server
         {
             // 플레이어 나감
             _sessions.Remove(session);
-            _totalUser = _sessions.Count;
-            session.Disconnect();
             // 모든 플레이어에게 퇴장을 브로드캐스트
             UpdateUserInfo();
         }
@@ -59,12 +60,63 @@ namespace Server
         {
             // 모든 플레이어에게 입장을 브로드캐스트
             S_BroadcastConnectUser broadcast = new S_BroadcastConnectUser();
-            broadcast.totalUser = _totalUser;
-            broadcast.playingUser = _playinguser;
-            broadcast.waitDefUser = _waitDefenderUser;
-            broadcast.waitOffUser = _waitOffenderUser;
+            broadcast.totalUser = _sessions.Count;
+            broadcast.playingUser = playingRooms.Count * 2;
+            broadcast.waitDefUser = waitDefenderUserList.Count;
+            broadcast.waitOffUser = waitOffenderUserList.Count;
 
             Broadcast(broadcast.Write());
+        }
+
+        public void MatchRequest(int playerId, UserType type)
+        {
+            if (type == UserType.Defender)
+                waitDefenderUserList.Add(playerId);
+            else
+                waitOffenderUserList.Add(playerId);
+
+            if (waitDefenderUserList.Count > 0 && waitOffenderUserList.Count > 0)
+            {
+                int defenderId = waitDefenderUserList[0];
+                int offenderId = waitOffenderUserList[0];
+
+                waitDefenderUserList.RemoveAt(0);
+                waitOffenderUserList.RemoveAt(0);
+
+                PlayRoom playRoom = new PlayRoom(_roomNumber++, defenderId, offenderId);
+                playingRooms.Add(playRoom);
+                Console.WriteLine(playingRooms.Count.ToString());
+            }
+
+            UpdateUserInfo();
+        }
+
+        public void MatchRequestCancel(int playerId, UserType type)
+        {
+            if (type == UserType.Defender)
+            {
+                for (int i = 0; i < waitDefenderUserList.Count; i++)
+                {
+                    if (waitDefenderUserList[i] == playerId)
+                    {
+                        waitDefenderUserList.RemoveAt(i);
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                for (int i = 0; i < waitDefenderUserList.Count; i++)
+                {
+                    if (waitOffenderUserList[i] == playerId)
+                    {
+                        waitOffenderUserList.RemoveAt(i);
+                        break;
+                    }
+                }
+            }
+
+            UpdateUserInfo();
         }
         /*
         public void Move(ClientSession session, C_Move movePacket)
