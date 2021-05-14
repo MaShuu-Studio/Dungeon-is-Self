@@ -269,7 +269,7 @@ public class GamePlayUIController : MonoBehaviour
                 str = "몬스터의 주사위는 같은 스킬을 두 가지보다 많이 넣을 수 없습니다.";
                 break;
             case 22:
-                str = "몬스터의 주사위를 코스트보다 많이 넣을 수 없습니다.";
+                str = "몬스터의 스킬 로스터에 코스트보다 많이 넣을 수 없습니다.";
                 break;
             case 26:
                 str = "공격자의 주사위는 기본공격이 최소 2개는 있어야 합니다.";
@@ -475,7 +475,12 @@ public class GamePlayUIController : MonoBehaviour
             benchSelected.anchoredPosition = Vector2.zero;
         }
 
-        SetSkillTree();
+        if (type == UserType.Defender) DefenderController.Instance.SelectMonster(selectedCharacterIndex);
+        else OffenderController.Instance.SelectCharacter(selectedCharacterIndex);
+
+
+        if (GameController.Instance.currentProgress == GameProgress.ReadyRound) SetSkillTree();
+        else if (GameController.Instance.currentProgress == GameProgress.PlayRound) ShowCharacterSkillsInPanel();
     }
 
     private void SetSkillTree()
@@ -489,7 +494,6 @@ public class GamePlayUIController : MonoBehaviour
         int id;
         if (type == UserType.Defender)
         {
-            DefenderController.Instance.SelectMonster(selectedCharacterIndex);
             Monster monster = DefenderController.Instance.monsters[selectedCharacterIndex];
             id = monster.id;
             monsterNameText.text = monster.name;
@@ -537,7 +541,6 @@ public class GamePlayUIController : MonoBehaviour
         else
         {
             offenderSkillTree.gameObject.SetActive(true);
-            OffenderController.Instance.SelectCharacter(selectedCharacterIndex);
 
             id = OffenderController.Instance.characters[selectedCharacterIndex].id;
             offenderSkillTree.sprite = Resources.Load<Sprite>("Sprites/UI/Offender Skill Tree/" + id);
@@ -641,12 +644,64 @@ public class GamePlayUIController : MonoBehaviour
         // 여기서 띄워주기
         // 어떤 유닛이 선택됐는지는 selectedCharacterIndex에 저장되어있음
         int size = 0; // 가지고있는 스킬의 갯수
-        for (int i = 0; i < size; i++)
+        if (type == UserType.Offender)
         {
-            Skill skill = null; // n번째 스킬
+            size = OffenderController.Instance.GetSkillRosterSize();
+            for (int i = 0; i < size; i++)
+            {
+                Skill skill = OffenderController.Instance.GetSkillRoster(i); // n번째 스킬
 
-            AddSkillRoster(skill, true);
+                GameObject obj = Instantiate(usingSkillIconPrefab);
+                obj.transform.SetParent(skillRosterTransform);
+                obj.transform.localScale = new Vector3(1, 1, 1);
+                UsingSkillIcon usingSkillIcon = obj.GetComponent<UsingSkillIcon>();
+                usingSkillIcon.SetSkill(type, skill, true);
+
+                skillRosters.Add(usingSkillIcon);
+            }
+            size = OffenderController.Instance.GetDiceSize();
+            for (int i = 0; i < size; i++)
+            {
+                Skill skill = OffenderController.Instance.GetDiceSkill(i); // n번째 스킬
+
+                GameObject obj = Instantiate(usingSkillIconPrefab);
+                obj.transform.SetParent(diceTransform);
+                obj.transform.localScale = new Vector3(1, 1, 1);
+                UsingSkillIcon usingSkillIcon = obj.GetComponent<UsingSkillIcon>();
+                usingSkillIcon.SetSkill(type, skill, true);
+                
+                usingDices.Add(usingSkillIcon);
+            }
         }
+        else
+        {
+            size = DefenderController.Instance.GetSkillRosterSize();
+            for (int i = 0; i < size; i++)
+            {
+                Skill skill = DefenderController.Instance.GetSkillRoster(i);
+
+                GameObject obj = Instantiate(usingSkillIconPrefab);
+                obj.transform.SetParent(skillRosterTransform);
+                obj.transform.localScale = new Vector3(1, 1, 1);
+                UsingSkillIcon usingSkillIcon = obj.GetComponent<UsingSkillIcon>();
+                usingSkillIcon.SetSkill(type, skill, true);
+
+                skillRosters.Add(usingSkillIcon);
+            }
+            size = DefenderController.Instance.GetDiceSize();
+            for (int i = 0; i < size; i++)
+            {
+                Skill skill = DefenderController.Instance.GetSelectedDice(i);
+
+                GameObject obj = Instantiate(usingSkillIconPrefab);
+                obj.transform.SetParent(diceTransform);
+                obj.transform.localScale = new Vector3(1, 1, 1);
+                UsingSkillIcon usingSkillIcon = obj.GetComponent<UsingSkillIcon>();
+                usingSkillIcon.SetSkill(type, skill, true);
+
+                usingDices.Add(usingSkillIcon);
+            }
+        } 
     }
 
     public void AddSkillRoster(Skill skill, bool isOn)
@@ -674,14 +729,27 @@ public class GamePlayUIController : MonoBehaviour
         }
         else
         {
-            // 알림 설정
-            if (skillRosters.Count >= 8)
+            // 알림 설정 good!
+            // 실제 로스터에 추가 good!
+            if (type == UserType.Offender)
             {
-                Alert(30);
-                return;
+                int n = OffenderController.Instance.SetSkillRoster(skill as CharacterSkill);
+                if (n > 0) 
+                {
+                    Alert(n);
+                    return;
+                }
             }
-
-            // 실제 로스터에 추가
+            else
+            {
+                int n = DefenderController.Instance.SetSkillRoster(skill as MonsterSkill);
+                if (n > 0)
+                {
+                    Alert(n);
+                    return;
+                }
+            }
+            
 
             GameObject obj = Instantiate(usingSkillIconPrefab);
             obj.transform.SetParent(skillRosterTransform);
@@ -699,7 +767,15 @@ public class GamePlayUIController : MonoBehaviour
         {
             if (skillRosters[i] == icon)
             {
-                // 실제 로스터에서 삭제
+                // 실제 로스터에서 삭제 good!
+                if (type == UserType.Offender)
+                {
+                    OffenderController.Instance.RemoveSkillRoster(i);
+                }
+                else
+                {
+                    DefenderController.Instance.RemoveSkillRoster(i);
+                }
 
                 Destroy(skillRosters[i].gameObject);
                 skillRosters.RemoveAt(i);
@@ -715,6 +791,14 @@ public class GamePlayUIController : MonoBehaviour
             if (skillRosters[i] == icon)
             {
                 // 실제 로스터에서 주사위로
+                if (type == UserType.Offender)
+                {
+                    OffenderController.Instance.SetDice(true, i);
+                }
+                else
+                {
+                    DefenderController.Instance.SetDice(true, i);
+                }
 
                 skillRosters[i].transform.SetParent(diceTransform);
                 skillRosters.RemoveAt(i);
@@ -728,6 +812,14 @@ public class GamePlayUIController : MonoBehaviour
             if (usingDices[i] == icon)
             {
                 // 실제 주사위에서 로스터로
+                if (type == UserType.Offender)
+                {
+                    OffenderController.Instance.SetDice(false, i);
+                }
+                else
+                {
+                    DefenderController.Instance.SetDice(false, i);
+                }
 
                 usingDices[i].transform.SetParent(skillRosterTransform);
                 usingDices.RemoveAt(i);

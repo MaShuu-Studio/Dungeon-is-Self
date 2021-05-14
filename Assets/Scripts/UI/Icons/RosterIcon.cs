@@ -20,7 +20,8 @@ public class RosterIcon : UIIcon, IDropHandler
     }
     public override void OnPointerClick(PointerEventData eventData)
     {
-        if (GameController.Instance.currentProgress == GameProgress.ReadyRound)
+        if (GameController.Instance.currentProgress == GameProgress.ReadyRound
+        || GameController.Instance.currentProgress == GameProgress.PlayRound)
         {
             base.OnPointerClick(eventData);
             GamePlayUIController.Instance.SelectCharacter(index, characterId);
