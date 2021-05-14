@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using ServerCore;
 
@@ -13,7 +14,7 @@ namespace Server
         int _playerNumber = 1;
         int _roomNumber = 1;
 
-        List<ClientSession> _sessions = new List<ClientSession>();
+        Dictionary<int, ClientSession> _sessions = new Dictionary<int, ClientSession>();
         List<int> waitDefenderUserList = new List<int>();
         List<int> waitOffenderUserList = new List<int>();
         List<PlayRoom> playingRooms = new List<PlayRoom>();
@@ -30,7 +31,7 @@ namespace Server
 
         public void Flush()
         {
-            foreach (ClientSession s in _sessions)
+            foreach (ClientSession s in _sessions.Values)
                 s.Send(_pendingList);
 
             if (_pendingList.Count != 0) Console.WriteLine($"Flushed {_pendingList.Count} items");
@@ -42,16 +43,34 @@ namespace Server
             int id = _playerNumber++;
             session.Send(new S_GivePlayerId() { playerId = id }.Write());
             // 플레이어 추가
-            _sessions.Add(session);
+            _sessions.Add(id, session);
             session.Room = this;
 
+            UpdateUserInfo();
+        }
+        public void Leave(int id)
+        {
+            // 플레이어 나감
+            _sessions.Remove(id);
+            // 모든 플레이어에게 퇴장을 브로드캐스트
             UpdateUserInfo();
         }
 
         public void Leave(ClientSession session)
         {
             // 플레이어 나감
-            _sessions.Remove(session);
+            int findIndex = 0;
+            List<int> keys = _sessions.Keys.ToList();
+            List<ClientSession> values = _sessions.Values.ToList();
+
+            for (; findIndex < keys.Count; findIndex++)
+            {
+                if (values[findIndex] == session) break;
+            }
+
+            if (findIndex >= keys.Count) return;
+
+            _sessions.Remove(keys[findIndex]);
             // 모든 플레이어에게 퇴장을 브로드캐스트
             UpdateUserInfo();
         }
@@ -83,9 +102,24 @@ namespace Server
                 waitDefenderUserList.RemoveAt(0);
                 waitOffenderUserList.RemoveAt(0);
 
-                PlayRoom playRoom = new PlayRoom(_roomNumber++, defenderId, offenderId);
+                int roomId = _roomNumber++;
+                PlayRoom playRoom = new PlayRoom(roomId, defenderId, offenderId);
                 playingRooms.Add(playRoom);
-                Console.WriteLine(playingRooms.Count.ToString());
+
+                S_StartGame defPacket = new S_StartGame()
+                {
+                    roomId = roomId,
+                    enemyPlayerId = offenderId,
+                    playerType = (ushort)UserType.Defender
+                };
+                S_StartGame offPacket = new S_StartGame()
+                {
+                    roomId = roomId,
+                    enemyPlayerId = defenderId,
+                    playerType = (ushort)UserType.Offender
+                };
+
+                
             }
 
             UpdateUserInfo();

@@ -40,13 +40,13 @@ class PacketHandler
     }
     public static void C_LeaveGameHandler(PacketSession session, IPacket packet)
     {
-        C_MatchRequest p = packet as C_MatchRequest;
+        C_LeaveGame p = packet as C_LeaveGame;
         ClientSession clientSession = session as ClientSession;
 
         if (clientSession.Room == null) return;
         GameRoom room = clientSession.Room;
 
-        room.Push(() => room.Leave(clientSession));
+        room.Push(() => room.Leave(p.playerId));
         clientSession.Disconnect();
     }
     public static void C_MatchRequestHandler(PacketSession session, IPacket packet)    

@@ -34,7 +34,7 @@ public class NetworkManager : MonoBehaviour
 
     private int playerId;
     public int totalUser { get; private set; } = 0;
-    public int playinguser { get; private set; } = 0;
+    public int playingUser { get; private set; } = 0;
     public int waitDefenderUser { get; private set; } = 0;
     public int waitOffenderUser { get; private set; } = 0;
     private bool isConnected = false;
@@ -86,7 +86,7 @@ public class NetworkManager : MonoBehaviour
     public void SetUserInfo(int totalUser, int playingUser, int waitDefUser, int waitOffUser)
     {
         this.totalUser = totalUser;
-        this.playinguser = playingUser;
+        this.playingUser = playingUser;
         this.waitDefenderUser = waitDefUser;
         this.waitOffenderUser = waitOffUser;
     }

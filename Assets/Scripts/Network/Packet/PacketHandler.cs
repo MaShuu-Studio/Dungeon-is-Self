@@ -53,7 +53,6 @@ class PacketHandler
         ServerSession serverSession = session as ServerSession;
 
         NetworkManager.Instance.SetUserInfo(p.totalUser, p.playingUser, p.waitDefUser, p.waitOffUser);
-        Debug.Log(p.playingUser);
     }
 
     public static void S_GivePlayerIdHandler(PacketSession session, IPacket packet)
