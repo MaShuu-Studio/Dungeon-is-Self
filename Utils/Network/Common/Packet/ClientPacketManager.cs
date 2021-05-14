@@ -23,6 +23,8 @@ public class PacketManager
         handler.Add((ushort)PacketID.S_GivePlayerId, PacketHandler.S_GivePlayerIdHandler);
         makeFunc.Add((ushort)PacketID.S_StartGame, MakePacket<S_StartGame>);
         handler.Add((ushort)PacketID.S_StartGame, PacketHandler.S_StartGameHandler);
+        makeFunc.Add((ushort)PacketID.S_ReadyGameEnd, MakePacket<S_ReadyGameEnd>);
+        handler.Add((ushort)PacketID.S_ReadyGameEnd, PacketHandler.S_ReadyGameEndHandler);
         makeFunc.Add((ushort)PacketID.S_GameState, MakePacket<S_GameState>);
         handler.Add((ushort)PacketID.S_GameState, PacketHandler.S_GameStateHandler);
         makeFunc.Add((ushort)PacketID.S_ProgressTurn, MakePacket<S_ProgressTurn>);

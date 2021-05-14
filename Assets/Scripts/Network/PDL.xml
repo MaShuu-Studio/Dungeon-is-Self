@@ -14,6 +14,10 @@
 	<packet name="C_LeaveGame">
 		<int name="playerId"/>
 	</packet>
+	<packet name="C_SingleGameRequest">
+		<int name="playerId"/>
+		<ushort name="playerType"/>
+	</packet>
 	<packet name="C_MatchRequest">
 		<int name="playerId"/>
 		<ushort name="playerType"/>
@@ -28,9 +32,16 @@
 		<ushort name="playerType"/>
 	</packet>
 	<packet name="C_ReadyGame">
-		<int name="playerId"/>
+		<int name="roomId"/>
 		<ushort name="playerType"/>
 		<list name="candidate">
+			<int name="int"/>
+		</list>
+	</packet>
+	<packet name="S_ReadyGameEnd">
+		<ushort name="currentProgress"/>
+		<int name="round"/>
+		<list name="enemyCandidate">
 			<int name="int"/>
 		</list>
 	</packet>

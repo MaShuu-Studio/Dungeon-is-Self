@@ -5,10 +5,11 @@ using UnityEngine;
 using UnityEngine.UI;
 using GameControl;
 using Network;
+using System.Linq;
 
 public class CustomButton : MonoBehaviour
 {
-    public enum ButtonMethod { SceneMovement = 0, GameReady, GamePlayReady, GameExit, ConnectServer, MatchRequest, MatchGameReady, MatchRoundReady, MatchTurnReady};
+    public enum ButtonMethod { SceneMovement = 0, GameReady, GamePlayReady, GameExit, ConnectServer, MatchRequest};
 
     [SerializeField] private string moveScene = "";
     [SerializeField] private UserType userType = UserType.Offender;
@@ -31,7 +32,7 @@ public class CustomButton : MonoBehaviour
                 button.onClick.AddListener(ChangeScene);
                 break;
             case ButtonMethod.GameReady:
-                button.onClick.AddListener(SetUserType);
+                button.onClick.AddListener(SingleGameRequest);
                 button.onClick.AddListener(ChangeScene);
                 break;
             case ButtonMethod.GamePlayReady:
@@ -46,10 +47,6 @@ public class CustomButton : MonoBehaviour
                 break;
             case ButtonMethod.MatchRequest:
                 button.onClick.AddListener(MatchRequest);
-                break;
-            case ButtonMethod.MatchGameReady:
-                button.onClick.AddListener(ConnectServer);
-                button.onClick.AddListener(ChangeScene);
                 break;
         }
     }
@@ -86,24 +83,22 @@ public class CustomButton : MonoBehaviour
         }
     }
 
-    void SetUserType()
-    {
-        // 실제 게임에서는 서버에서 매칭 관련 정보를 넘겨주기 때문에 필요 X할듯
-        GameController.Instance.SetUserType(userType);
-    }
-
     void GameReadyEnd()
     {
-        GamePlayUIController gamePlayUI = GameObject.FindWithTag("UI").GetComponent<GamePlayUIController>();
         if (GameController.Instance.userType == UserType.Defender)
         {
             if (DefenderController.Instance.CheckCadndidate())
             {
+                C_ReadyGame packet = new C_ReadyGame();
+                packet.roomId = GameController.Instance.roomId;
+                packet.playerType = (ushort)GameController.Instance.userType;
+                packet.candidates = DefenderController.Instance.selectedMonsterCandidates.ToList();
 
+                NetworkManager.Instance.Send(packet.Write());
             }
             else
             {
-                gamePlayUI.Alert(10);
+                GamePlayUIController.Instance.Alert(10);
                 return;
             }
         }
@@ -111,18 +106,21 @@ public class CustomButton : MonoBehaviour
         {
             if (OffenderController.Instance.CheckCadndidate())
             {
+                C_ReadyGame packet = new C_ReadyGame();
+                packet.roomId = GameController.Instance.roomId;
+                packet.playerType = (ushort)GameController.Instance.userType;
+                packet.candidates = OffenderController.Instance.selectedCharacterCandidates.ToList();
 
+                NetworkManager.Instance.Send(packet.Write());
             }
             else
             {
-                gamePlayUI.Alert(10);
+                GamePlayUIController.Instance.Alert(10);
                 return;
             }
         }
-
-        // 후보 세팅이 끝났다고 패킷 전송
-        GameController.Instance.StartGame();
     }
+
     void RoundReadyEnd()
     {
         if (GameController.Instance.userType == UserType.Defender) DefenderController.Instance.SetRoster();
@@ -163,6 +161,10 @@ public class CustomButton : MonoBehaviour
     void MatchRequest()
     {
         NetworkManager.Instance.MatchRequest(userType);
+    }
+    void SingleGameRequest()
+    {
+        NetworkManager.Instance.SingleGameRequest(userType);
     }
     #endregion
 }

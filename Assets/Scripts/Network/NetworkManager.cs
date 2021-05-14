@@ -100,6 +100,15 @@ namespace Network
             Send(matchPacket.Write());
         }
 
+        public void SingleGameRequest(UserType type)
+        {
+            C_SingleGameRequest singleGamePacket = new C_SingleGameRequest();
+            singleGamePacket.playerId = playerId;
+            singleGamePacket.playerType = (ushort)type;
+
+            Send(singleGamePacket.Write());
+        }
+
         private void OnApplicationQuit()
         {
             C_LeaveGame p = new C_LeaveGame();

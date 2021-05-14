@@ -71,10 +71,7 @@
     <Compile Include="Assets\Scripts\Network\Core\RecvBuffer.cs" />
     <Compile Include="Assets\Scripts\Network\Core\SendBuffer.cs" />
     <Compile Include="Assets\Scripts\Network\Core\Session.cs" />
-    <Compile Include="Assets\Scripts\Network\NetworkDefenderController.cs" />
-    <Compile Include="Assets\Scripts\Network\NetworkGameController.cs" />
     <Compile Include="Assets\Scripts\Network\NetworkManager.cs" />
-    <Compile Include="Assets\Scripts\Network\NetworkOffenderController.cs" />
     <Compile Include="Assets\Scripts\Network\Packet\ClientPacketManager.cs" />
     <Compile Include="Assets\Scripts\Network\Packet\GenPackets.cs" />
     <Compile Include="Assets\Scripts\Network\Packet\PacketHandler.cs" />

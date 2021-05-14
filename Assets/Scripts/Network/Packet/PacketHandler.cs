@@ -71,11 +71,23 @@ namespace Network
             S_StartGame p = packet as S_StartGame;
             ServerSession serverSession = session as ServerSession;
 
-            NetworkGameController.Instance.StartGame(p.roomId, (UserType)p.playerType);
+            GameController.Instance.StartGame(p.roomId, (UserType)p.playerType);
+        }
+
+        public static void S_ReadyGameEndHandler(PacketSession session, IPacket packet)
+        {
+            S_ReadyGameEnd p = packet as S_ReadyGameEnd;
+            ServerSession serverSession = session as ServerSession;
+
+            GameController.Instance.ReadyGameEnd(p.round, p.enemyCandidates);
         }
 
         public static void S_GameStateHandler(PacketSession session, IPacket packet)
         {
+            S_GameState p = packet as S_GameState;
+            ServerSession serverSession = session as ServerSession;
+
+            //GameController.Instance.RoundReady(p.round);
         }
 
         public static void S_ProgressTurnHandler(PacketSession session, IPacket packet)

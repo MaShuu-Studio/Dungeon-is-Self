@@ -32,7 +32,8 @@ namespace GameControl
             DontDestroyOnLoad(gameObject);
         }
         #endregion
-        private bool isPlay;
+
+        public int roomId { get; private set; } = -1;
         public GameProgress currentProgress { get; private set; }
         public UserType userType { get; private set; }
         public int round { get; private set; }
@@ -51,14 +52,9 @@ namespace GameControl
 
         private bool isDiceRolled = false;
 
-        private readonly int[] skillPointPerRound = new int[3] { 1, 2, 2 };
+        private readonly int[] skillPointPerRound = new int[5] { 1, 2, 2, 0, 0 };
         private bool isRoundEnd = false;
 
-        // Start is called before the first frame update
-        void Start()
-        {
-            isPlay = false;
-        }
 
         // Update is called once per frame
         void Update()
@@ -73,25 +69,60 @@ namespace GameControl
             }
         }
 
-        public void SetUserType(UserType type)
+        #region Network
+        public void StartGame(int id, UserType type)
         {
+            roomId = id;
             userType = type;
             Debug.Log("You are: " + type.ToString());
+            SceneController.Instance.ChangeScene("GamePlay");
         }
+
+        public void ReadyGameEnd(int round, List<int> enemyCandidats)
+        {
+            if (userType == UserType.Defender)
+            {
+                for (int i = 0; i < enemyCandidats.Count; i++)
+                    OffenderController.Instance.SetCharacterCandidate(i, enemyCandidats[i]);
+            }
+            else
+            {
+                for (int i = 0; i < enemyCandidats.Count; i++)
+                    DefenderController.Instance.SetMonsterCandidate(i, enemyCandidats[i]);
+            }
+
+            DefenderController.Instance.Init();
+            OffenderController.Instance.Init();
+
+            ReadyRound(round);
+        }
+
+        public void ReadyRound(int round)
+        {
+            this.round = round;
+            animationEnd.Clear();
+
+            if (userType == UserType.Offender)
+                OffenderController.Instance.AddSkillPoint(skillPointPerRound[round]);
+            else
+                DefenderController.Instance.SetMonsterHp();
+
+            currentProgress = GameProgress.ReadyRound;
+        }
+        #endregion
 
         public void ReadyGame()
         {
+            GamePlayUIController.Instance.SetUserType();
+
             currentProgress = GameProgress.ReadyGame;
 
-            isPlay = true;
             round = 0;
 
             DefenderController.Instance.ResetCandidates();
             OffenderController.Instance.ResetCandidates();
 
-            GamePlayUIController.Instance.SetUserType();
             GamePlayUIController.Instance.ChangeView();
-
         }
 
         public void StartGame()
@@ -112,7 +143,7 @@ namespace GameControl
 
         public void ReadyRound(bool isOffenderDefeated = false)
         {
-            if (isPlay)
+            if (roomId != -1)
             {
                 if (isOffenderDefeated == false)
                 {

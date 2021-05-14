@@ -12,16 +12,23 @@ namespace Server
         List<ArraySegment<byte>> _pendingList = new List<ArraySegment<byte>>();
 
         int _playerNumber = 1;
+        int _singleRoomId = -2;
         int _roomNumber = 1;
 
         Dictionary<int, ClientSession> _sessions = new Dictionary<int, ClientSession>();
         List<int> waitDefenderUserList = new List<int>();
         List<int> waitOffenderUserList = new List<int>();
-        List<PlayRoom> playingRooms = new List<PlayRoom>();
+        Dictionary<int, PlayRoom> playingRooms = new Dictionary<int, PlayRoom>();
+        Dictionary<int, PlayRoom> playingSingleGameRooms = new Dictionary<int, PlayRoom>();
 
         public void Push(Action job)
         {
             _jobQueue.Push(job);
+        }
+
+        public void Send(int id, IPacket packet)
+        {
+            _sessions[id].Send(packet.Write());
         }
 
         public void Broadcast(ArraySegment<byte> segment)
@@ -103,8 +110,8 @@ namespace Server
                 waitOffenderUserList.RemoveAt(0);
 
                 int roomId = _roomNumber++;
-                PlayRoom playRoom = new PlayRoom(roomId, defenderId, offenderId);
-                playingRooms.Add(playRoom);
+                PlayRoom playRoom = new PlayRoom(roomId, defenderId, offenderId, this);
+                playingRooms.Add(roomId, playRoom);
 
                 S_StartGame defPacket = new S_StartGame()
                 {
@@ -122,6 +129,24 @@ namespace Server
                 _sessions[defenderId].Send(defPacket.Write());
                 _sessions[offenderId].Send(offPacket.Write());
             }
+
+            UpdateUserInfo();
+        }
+
+        public void SingleGameRequest(int playerId, UserType type)
+        {
+            int roomId = _singleRoomId--;
+            PlayRoom playRoom = new PlayRoom(roomId, playerId, type, this);
+            playingSingleGameRooms.Add(roomId, playRoom);
+
+            S_StartGame packet = new S_StartGame()
+            {
+                roomId = playRoom.RoomId,
+                enemyPlayerId = -1,
+                playerType = (ushort)type
+            };
+
+            _sessions[playerId].Send(packet.Write());
 
             UpdateUserInfo();
         }
@@ -153,21 +178,21 @@ namespace Server
 
             UpdateUserInfo();
         }
-        /*
-        public void Move(ClientSession session, C_Move movePacket)
-        {
-            // 좌표 이동
-            session.Xpos = movePacket.xPos;
-            session.Ypos = movePacket.yPos;
-            session.Zpos = movePacket.zPos;
 
-            // Broadcast
-            S_BroadcastMove broadcastMove = new S_BroadcastMove();
-            broadcastMove.playerId = session.SessionId;
-            broadcastMove.xPos = session.Xpos;
-            broadcastMove.yPos = session.Ypos;
-            broadcastMove.zPos = session.Zpos;
-            Broadcast(broadcastMove.Write());
-        }*/
+        public void ReadyGameEnd(int roomId, UserType type, List<int> candidates)
+        {
+            if (playingRooms.ContainsKey(roomId))
+            {
+                playingRooms[roomId].ReadyGameEnd(type, candidates);
+            }
+            else if (playingSingleGameRooms.ContainsKey(roomId))
+            {
+                playingSingleGameRooms[roomId].ReadyGameEnd(type, candidates);
+            }
+            else
+            {
+
+            }
+        }
     }
 }
