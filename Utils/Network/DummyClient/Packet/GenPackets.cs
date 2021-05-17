@@ -16,8 +16,8 @@ public enum PacketID
 	S_StartGame = 7,
 	C_ReadyGame = 8,
 	S_ReadyGameEnd = 9,
-	S_GameState = 10,
-	C_RoundReadyEnd = 11,
+	C_RoundReady = 10,
+	S_RoundReadyEnd = 11,
 	C_PlayRoundReady = 12,
 	S_ProgressTurn = 13,
 	
@@ -461,11 +461,136 @@ public class S_ReadyGameEnd : IPacket
         return SendBufferHelper.Close(count);
     }
 }
-public class S_GameState : IPacket
+public class C_RoundReady : IPacket
+{
+    public int roomId;
+	public ushort playerType;
+	public class Roster
+	{
+	    public int unitIndex;
+		public List<int> skillRosters = new List<int>();
+	
+	    public void Read(ArraySegment<byte> segment, ref ushort count)
+	    {
+	        this.unitIndex = BitConverter.ToInt32(segment.Array, segment.Offset + count);
+			count += sizeof(int);
+			skillRosters.Clear();
+			ushort skillRosterLen = BitConverter.ToUInt16(segment.Array, segment.Offset + count);
+			count += sizeof(ushort);
+			for (int i = 0; i < skillRosterLen; i++)
+			{
+			    int a = BitConverter.ToInt32(segment.Array, segment.Offset + count);
+			    count += sizeof(int);
+			    this.skillRosters.Add(a);
+			}
+	    }
+	    public bool Write(ArraySegment<byte> segment, ref ushort count)
+	    {
+	        bool success = true;
+	        Array.Copy(BitConverter.GetBytes(this.unitIndex), 0, segment.Array, segment.Offset + count, sizeof(int));
+			count += sizeof(int);
+			
+			Array.Copy(BitConverter.GetBytes((ushort)skillRosters.Count), 0, segment.Array, segment.Offset + count, sizeof(ushort));
+			count += sizeof(ushort);
+			foreach(int skillRoster in skillRosters)
+			{
+			    Array.Copy(BitConverter.GetBytes(skillRoster), 0, segment.Array, segment.Offset + count, sizeof(int));
+			    count += sizeof(int);
+			}
+	        return success;
+	    }
+	}
+	public List<Roster> rosters = new List<Roster>();
+    public ushort Protocol { get { return (ushort)PacketID.C_RoundReady; } }
+
+    public void Read(ArraySegment<byte> segment)
+    {
+        ushort count = 0;
+
+        count += sizeof(ushort);
+        count += sizeof(ushort);
+        
+        this.roomId = BitConverter.ToInt32(segment.Array, segment.Offset + count);
+		count += sizeof(int);
+		this.playerType = BitConverter.ToUInt16(segment.Array, segment.Offset + count);
+		count += sizeof(ushort);
+		rosters.Clear();
+		ushort rosterLen = BitConverter.ToUInt16(segment.Array, segment.Offset + count);
+		count += sizeof(ushort);
+		for (int i = 0; i < rosterLen; i++)
+		{
+		    Roster roster = new Roster();
+		    roster.Read(segment, ref count);
+		    this.rosters.Add(roster);
+		}
+    }
+
+    public ArraySegment<byte> Write()
+    { 
+        ArraySegment<byte> segment = SendBufferHelper.Open(4096);
+        ushort count = 0;
+
+        count += sizeof(ushort);
+        Array.Copy(BitConverter.GetBytes((ushort)PacketID.C_RoundReady), 0, segment.Array, segment.Offset + count, sizeof(ushort));
+        count += sizeof(ushort);
+        
+        Array.Copy(BitConverter.GetBytes(this.roomId), 0, segment.Array, segment.Offset + count, sizeof(int));
+		count += sizeof(int);
+		
+		Array.Copy(BitConverter.GetBytes(this.playerType), 0, segment.Array, segment.Offset + count, sizeof(ushort));
+		count += sizeof(ushort);
+		
+		Array.Copy(BitConverter.GetBytes((ushort)rosters.Count), 0, segment.Array, segment.Offset + count, sizeof(ushort));
+		count += sizeof(ushort);
+		foreach(Roster roster in rosters)
+		    roster.Write(segment, ref count);
+
+        Array.Copy(BitConverter.GetBytes(count), 0, segment.Array, segment.Offset, sizeof(ushort));
+
+        return SendBufferHelper.Close(count);
+    }
+}
+public class S_RoundReadyEnd : IPacket
 {
     public ushort currentProgress;
 	public int round;
-    public ushort Protocol { get { return (ushort)PacketID.S_GameState; } }
+	public class EnemyRoster
+	{
+	    public int unitIndex;
+		public List<int> skillRosters = new List<int>();
+	
+	    public void Read(ArraySegment<byte> segment, ref ushort count)
+	    {
+	        this.unitIndex = BitConverter.ToInt32(segment.Array, segment.Offset + count);
+			count += sizeof(int);
+			skillRosters.Clear();
+			ushort skillRosterLen = BitConverter.ToUInt16(segment.Array, segment.Offset + count);
+			count += sizeof(ushort);
+			for (int i = 0; i < skillRosterLen; i++)
+			{
+			    int a = BitConverter.ToInt32(segment.Array, segment.Offset + count);
+			    count += sizeof(int);
+			    this.skillRosters.Add(a);
+			}
+	    }
+	    public bool Write(ArraySegment<byte> segment, ref ushort count)
+	    {
+	        bool success = true;
+	        Array.Copy(BitConverter.GetBytes(this.unitIndex), 0, segment.Array, segment.Offset + count, sizeof(int));
+			count += sizeof(int);
+			
+			Array.Copy(BitConverter.GetBytes((ushort)skillRosters.Count), 0, segment.Array, segment.Offset + count, sizeof(ushort));
+			count += sizeof(ushort);
+			foreach(int skillRoster in skillRosters)
+			{
+			    Array.Copy(BitConverter.GetBytes(skillRoster), 0, segment.Array, segment.Offset + count, sizeof(int));
+			    count += sizeof(int);
+			}
+	        return success;
+	    }
+	}
+	public List<EnemyRoster> enemyRosters = new List<EnemyRoster>();
+    public ushort Protocol { get { return (ushort)PacketID.S_RoundReadyEnd; } }
 
     public void Read(ArraySegment<byte> segment)
     {
@@ -478,84 +603,14 @@ public class S_GameState : IPacket
 		count += sizeof(ushort);
 		this.round = BitConverter.ToInt32(segment.Array, segment.Offset + count);
 		count += sizeof(int);
-    }
-
-    public ArraySegment<byte> Write()
-    { 
-        ArraySegment<byte> segment = SendBufferHelper.Open(4096);
-        ushort count = 0;
-
-        count += sizeof(ushort);
-        Array.Copy(BitConverter.GetBytes((ushort)PacketID.S_GameState), 0, segment.Array, segment.Offset + count, sizeof(ushort));
-        count += sizeof(ushort);
-        
-        Array.Copy(BitConverter.GetBytes(this.currentProgress), 0, segment.Array, segment.Offset + count, sizeof(ushort));
+		enemyRosters.Clear();
+		ushort enemyRosterLen = BitConverter.ToUInt16(segment.Array, segment.Offset + count);
 		count += sizeof(ushort);
-		
-		Array.Copy(BitConverter.GetBytes(this.round), 0, segment.Array, segment.Offset + count, sizeof(int));
-		count += sizeof(int);
-		
-
-        Array.Copy(BitConverter.GetBytes(count), 0, segment.Array, segment.Offset, sizeof(ushort));
-
-        return SendBufferHelper.Close(count);
-    }
-}
-public class C_RoundReadyEnd : IPacket
-{
-    public class Roster
-	{
-	    public int unitIndex;
-		public List<int> skillRosterss = new List<int>();
-	
-	    public void Read(ArraySegment<byte> segment, ref ushort count)
-	    {
-	        this.unitIndex = BitConverter.ToInt32(segment.Array, segment.Offset + count);
-			count += sizeof(int);
-			skillRosterss.Clear();
-			ushort skillRostersLen = BitConverter.ToUInt16(segment.Array, segment.Offset + count);
-			count += sizeof(ushort);
-			for (int i = 0; i < skillRostersLen; i++)
-			{
-			    int a = BitConverter.ToInt32(segment.Array, segment.Offset + count);
-			    count += sizeof(int);
-			    this.skillRosterss.Add(a);
-			}
-	    }
-	    public bool Write(ArraySegment<byte> segment, ref ushort count)
-	    {
-	        bool success = true;
-	        Array.Copy(BitConverter.GetBytes(this.unitIndex), 0, segment.Array, segment.Offset + count, sizeof(int));
-			count += sizeof(int);
-			
-			Array.Copy(BitConverter.GetBytes((ushort)skillRosterss.Count), 0, segment.Array, segment.Offset + count, sizeof(ushort));
-			count += sizeof(ushort);
-			foreach(int skillRosters in skillRosterss)
-			{
-			    Array.Copy(BitConverter.GetBytes(skillRosters), 0, segment.Array, segment.Offset + count, sizeof(int));
-			    count += sizeof(int);
-			}
-	        return success;
-	    }
-	}
-	public List<Roster> rosters = new List<Roster>();
-    public ushort Protocol { get { return (ushort)PacketID.C_RoundReadyEnd; } }
-
-    public void Read(ArraySegment<byte> segment)
-    {
-        ushort count = 0;
-
-        count += sizeof(ushort);
-        count += sizeof(ushort);
-        
-        rosters.Clear();
-		ushort rosterLen = BitConverter.ToUInt16(segment.Array, segment.Offset + count);
-		count += sizeof(ushort);
-		for (int i = 0; i < rosterLen; i++)
+		for (int i = 0; i < enemyRosterLen; i++)
 		{
-		    Roster roster = new Roster();
-		    roster.Read(segment, ref count);
-		    this.rosters.Add(roster);
+		    EnemyRoster enemyRoster = new EnemyRoster();
+		    enemyRoster.Read(segment, ref count);
+		    this.enemyRosters.Add(enemyRoster);
 		}
     }
 
@@ -565,13 +620,19 @@ public class C_RoundReadyEnd : IPacket
         ushort count = 0;
 
         count += sizeof(ushort);
-        Array.Copy(BitConverter.GetBytes((ushort)PacketID.C_RoundReadyEnd), 0, segment.Array, segment.Offset + count, sizeof(ushort));
+        Array.Copy(BitConverter.GetBytes((ushort)PacketID.S_RoundReadyEnd), 0, segment.Array, segment.Offset + count, sizeof(ushort));
         count += sizeof(ushort);
         
-        Array.Copy(BitConverter.GetBytes((ushort)rosters.Count), 0, segment.Array, segment.Offset + count, sizeof(ushort));
+        Array.Copy(BitConverter.GetBytes(this.currentProgress), 0, segment.Array, segment.Offset + count, sizeof(ushort));
 		count += sizeof(ushort);
-		foreach(Roster roster in rosters)
-		    roster.Write(segment, ref count);
+		
+		Array.Copy(BitConverter.GetBytes(this.round), 0, segment.Array, segment.Offset + count, sizeof(int));
+		count += sizeof(int);
+		
+		Array.Copy(BitConverter.GetBytes((ushort)enemyRosters.Count), 0, segment.Array, segment.Offset + count, sizeof(ushort));
+		count += sizeof(ushort);
+		foreach(EnemyRoster enemyRoster in enemyRosters)
+		    enemyRoster.Write(segment, ref count);
 
         Array.Copy(BitConverter.GetBytes(count), 0, segment.Array, segment.Offset, sizeof(ushort));
 
@@ -580,42 +641,8 @@ public class C_RoundReadyEnd : IPacket
 }
 public class C_PlayRoundReady : IPacket
 {
-    public class Roster
-	{
-	    public int unitIndex;
-		public List<int> diceIndexs = new List<int>();
-	
-	    public void Read(ArraySegment<byte> segment, ref ushort count)
-	    {
-	        this.unitIndex = BitConverter.ToInt32(segment.Array, segment.Offset + count);
-			count += sizeof(int);
-			diceIndexs.Clear();
-			ushort diceIndexLen = BitConverter.ToUInt16(segment.Array, segment.Offset + count);
-			count += sizeof(ushort);
-			for (int i = 0; i < diceIndexLen; i++)
-			{
-			    int a = BitConverter.ToInt32(segment.Array, segment.Offset + count);
-			    count += sizeof(int);
-			    this.diceIndexs.Add(a);
-			}
-	    }
-	    public bool Write(ArraySegment<byte> segment, ref ushort count)
-	    {
-	        bool success = true;
-	        Array.Copy(BitConverter.GetBytes(this.unitIndex), 0, segment.Array, segment.Offset + count, sizeof(int));
-			count += sizeof(int);
-			
-			Array.Copy(BitConverter.GetBytes((ushort)diceIndexs.Count), 0, segment.Array, segment.Offset + count, sizeof(ushort));
-			count += sizeof(ushort);
-			foreach(int diceIndex in diceIndexs)
-			{
-			    Array.Copy(BitConverter.GetBytes(diceIndex), 0, segment.Array, segment.Offset + count, sizeof(int));
-			    count += sizeof(int);
-			}
-	        return success;
-	    }
-	}
-	public List<Roster> rosters = new List<Roster>();
+    public int roomId;
+	public ushort playerType;
     public ushort Protocol { get { return (ushort)PacketID.C_PlayRoundReady; } }
 
     public void Read(ArraySegment<byte> segment)
@@ -625,15 +652,10 @@ public class C_PlayRoundReady : IPacket
         count += sizeof(ushort);
         count += sizeof(ushort);
         
-        rosters.Clear();
-		ushort rosterLen = BitConverter.ToUInt16(segment.Array, segment.Offset + count);
+        this.roomId = BitConverter.ToInt32(segment.Array, segment.Offset + count);
+		count += sizeof(int);
+		this.playerType = BitConverter.ToUInt16(segment.Array, segment.Offset + count);
 		count += sizeof(ushort);
-		for (int i = 0; i < rosterLen; i++)
-		{
-		    Roster roster = new Roster();
-		    roster.Read(segment, ref count);
-		    this.rosters.Add(roster);
-		}
     }
 
     public ArraySegment<byte> Write()
@@ -645,10 +667,12 @@ public class C_PlayRoundReady : IPacket
         Array.Copy(BitConverter.GetBytes((ushort)PacketID.C_PlayRoundReady), 0, segment.Array, segment.Offset + count, sizeof(ushort));
         count += sizeof(ushort);
         
-        Array.Copy(BitConverter.GetBytes((ushort)rosters.Count), 0, segment.Array, segment.Offset + count, sizeof(ushort));
+        Array.Copy(BitConverter.GetBytes(this.roomId), 0, segment.Array, segment.Offset + count, sizeof(int));
+		count += sizeof(int);
+		
+		Array.Copy(BitConverter.GetBytes(this.playerType), 0, segment.Array, segment.Offset + count, sizeof(ushort));
 		count += sizeof(ushort);
-		foreach(Roster roster in rosters)
-		    roster.Write(segment, ref count);
+		
 
         Array.Copy(BitConverter.GetBytes(count), 0, segment.Array, segment.Offset, sizeof(ushort));
 

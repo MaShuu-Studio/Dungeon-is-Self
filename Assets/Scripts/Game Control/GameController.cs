@@ -109,6 +109,42 @@ namespace GameControl
 
             currentProgress = GameProgress.ReadyRound;
         }
+        public void StartRound(int round)
+        {
+            // 로스터 세팅
+            // 주사위 세팅
+
+            currentProgress = GameProgress.PlayRound;
+            turn = 0;
+            isRoundEnd = false;
+            progressRound = false;
+            animationEnd.Clear();
+            offenderUnitIsDead.Clear();
+            offednerReadyTurn.Clear();
+            ccList.Clear();
+
+            // 선공 확인해서 순서 조정
+            animationEnd.Add(defenderUnit, true);
+            ccList.Add(defenderUnit, new List<CrowdControl>());
+            foreach (int key in offenderUnits)
+            {
+                animationEnd.Add(key, true);
+                offenderUnitIsDead.Add(key, false);
+                offednerReadyTurn.Add(key, null);
+                ccList.Add(key, new List<CrowdControl>());
+            }
+
+            if (userType == UserType.Defender)
+            {
+                GamePlayUIController.Instance.ShowSelectedEnemy(offenderUnits);
+            }
+            else if (userType == UserType.Offender)
+            {
+                GamePlayUIController.Instance.ShowSelectedEnemy(new int[] { defenderUnit });
+            }
+
+            NextTurn();
+        }
         #endregion
 
         public void ReadyGame()
@@ -123,22 +159,6 @@ namespace GameControl
             OffenderController.Instance.ResetCandidates();
 
             GamePlayUIController.Instance.ChangeView();
-        }
-
-        public void StartGame()
-        {
-            // Defender, Offender의 Init (selected Candidates에서 목록 뽑아옴)
-            // Init 전에 Candidate 생성
-
-            AIBot.Instance.StartGame();
-
-            /*if (userType == UserType.Defender) DefenderController.Instance.Init();
-            else OffenderController.Instance.Init();*/
-
-            DefenderController.Instance.Init();
-            OffenderController.Instance.Init();
-
-            ReadyRound();
         }
 
         public void ReadyRound(bool isOffenderDefeated = false)
@@ -177,49 +197,7 @@ namespace GameControl
                     offenderUnits[i] = units[i] + 10;
                 }
             }
-        }
-
-        public void StartRound()
-        {
-            Debug.Log(OffenderController.Instance.roster[0]);
-            Debug.Log(OffenderController.Instance.roster[1]);
-            Debug.Log(OffenderController.Instance.roster[2]);
-            Debug.Log(DefenderController.Instance.monsterIndex);
-            // 로스터 세팅
-            // 주사위 세팅
-            AIBot.Instance.SetRoster();
-
-            currentProgress = GameProgress.PlayRound;
-            turn = 0;
-            isRoundEnd = false;
-            progressRound = false;
-            animationEnd.Clear();
-            offenderUnitIsDead.Clear();
-            offednerReadyTurn.Clear();
-            ccList.Clear();
-
-            // 선공 확인해서 순서 조정
-            animationEnd.Add(defenderUnit, true);
-            ccList.Add(defenderUnit, new List<CrowdControl>());
-            foreach (int key in offenderUnits)
-            {
-                animationEnd.Add(key, true);
-                offenderUnitIsDead.Add(key, false);
-                offednerReadyTurn.Add(key, null);
-                ccList.Add(key, new List<CrowdControl>());
-            }
-
-            if (userType == UserType.Defender)
-            {
-                GamePlayUIController.Instance.ShowSelectedEnemy(offenderUnits);
-            }
-            else if (userType == UserType.Offender)
-            {
-                GamePlayUIController.Instance.ShowSelectedEnemy(new int[] { defenderUnit });
-            }
-
-            NextTurn();
-        }
+        }                
 
         public void ReadyTurn(UserType type, bool ready) // 서버 입장에서는 type 필요
         {

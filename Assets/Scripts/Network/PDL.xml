@@ -45,25 +45,29 @@
 			<int name="int"/>
 		</list>
 	</packet>
-	<packet name="S_GameState">
-		<ushort name="currentProgress"/>
-		<int name="round"/>
-	</packet>
-	<packet name="C_RoundReadyEnd">
+	<packet name="C_RoundReady">
+		<int name="roomId"/>
+		<ushort name="playerType"/>
 		<clist name="roster">
 			<int name="unitIndex"/>
-			<list name="skillRosters">
+			<list name="skillRoster">
+				<int name="int"/>
+			</list>
+		</clist>
+	</packet>
+	<packet name="S_RoundReadyEnd">
+		<ushort name="currentProgress"/>
+		<int name="round"/>
+		<clist name="enemyRoster">
+			<int name="unitIndex"/>
+			<list name="skillRoster">
 				<int name="int"/>
 			</list>
 		</clist>
 	</packet>
 	<packet name="C_PlayRoundReady">
-		<clist name="roster">
-			<int name="unitIndex"/>
-			<list name="diceIndex">
-				<int name="int"/>
-			</list>
-		</clist>
+		<int name="roomId"/>
+		<ushort name="playerType"/>
 	</packet>
 	<packet name="S_ProgressTurn">
 		<bool name="isRoundEnd"/>

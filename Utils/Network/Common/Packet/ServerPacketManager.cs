@@ -29,8 +29,8 @@ public class PacketManager
         handler.Add((ushort)PacketID.C_MatchRequestCancel, PacketHandler.C_MatchRequestCancelHandler);
         makeFunc.Add((ushort)PacketID.C_ReadyGame, MakePacket<C_ReadyGame>);
         handler.Add((ushort)PacketID.C_ReadyGame, PacketHandler.C_ReadyGameHandler);
-        makeFunc.Add((ushort)PacketID.C_RoundReadyEnd, MakePacket<C_RoundReadyEnd>);
-        handler.Add((ushort)PacketID.C_RoundReadyEnd, PacketHandler.C_RoundReadyEndHandler);
+        makeFunc.Add((ushort)PacketID.C_RoundReady, MakePacket<C_RoundReady>);
+        handler.Add((ushort)PacketID.C_RoundReady, PacketHandler.C_RoundReadyHandler);
         makeFunc.Add((ushort)PacketID.C_PlayRoundReady, MakePacket<C_PlayRoundReady>);
         handler.Add((ushort)PacketID.C_PlayRoundReady, PacketHandler.C_PlayRoundReadyHandler);
 

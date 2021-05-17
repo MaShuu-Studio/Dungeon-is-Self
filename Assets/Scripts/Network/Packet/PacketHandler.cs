@@ -82,12 +82,12 @@ namespace Network
             GameController.Instance.ReadyGameEnd(p.round, p.enemyCandidates);
         }
 
-        public static void S_GameStateHandler(PacketSession session, IPacket packet)
+        public static void S_RoundReadyEndHandler(PacketSession session, IPacket packet)
         {
-            S_GameState p = packet as S_GameState;
+            S_RoundReadyEnd p = packet as S_RoundReadyEnd;
             ServerSession serverSession = session as ServerSession;
 
-            //GameController.Instance.RoundReady(p.round);
+            GameController.Instance.StartRound(p.round);
         }
 
         public static void S_ProgressTurnHandler(PacketSession session, IPacket packet)

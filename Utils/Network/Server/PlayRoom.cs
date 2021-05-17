@@ -93,5 +93,59 @@ namespace Server
                 defenderIsReady = false;
             }
         }
+        public void RoundReadyEnd(UserType type, List<C_RoundReady.Roster> rosters)
+        {
+            List<int> units = new List<int>();
+            List<List<int>> skills = new List<List<int>>();
+            for (int i = 0; i < rosters.Count; i++)
+            {
+                units.Add(rosters[i].unitIndex);
+                skills.Add(rosters[i].skillRosters);
+            }
+
+            if (type == UserType.Defender)
+            {
+                defender.SetRoster(units, skills);
+                defenderIsReady = true;
+            }
+            else
+            {
+                offender.SetRoster(units, skills);
+                offenderIsReady = true;
+            }
+
+            if (defenderIsReady && offenderIsReady)
+            {
+                currentProgress = GameProgress.PlayRound;
+                S_RoundReadyEnd p = new S_RoundReadyEnd();
+                p.currentProgress = (ushort)currentProgress;
+                p.round = round;
+
+                p.enemyRosters = new List<S_RoundReadyEnd.EnemyRoster>();
+                for (int i = 0; i < defender.Rosters.Count; i++)
+                {
+                    S_RoundReadyEnd.EnemyRoster enemy = new S_RoundReadyEnd.EnemyRoster();
+                    enemy.unitIndex += defender.Rosters[i];
+                    enemy.skillRosters = defender.SkillRosters[i];
+                    p.enemyRosters.Add(enemy);
+                }
+
+                _room.Send(_offenderId, p);
+
+                p.enemyRosters.Clear();
+                for (int i = 0; i < offender.Rosters.Count; i++)
+                {
+                    S_RoundReadyEnd.EnemyRoster enemy = new S_RoundReadyEnd.EnemyRoster();
+                    enemy.unitIndex += offender.Rosters[i];
+                    enemy.skillRosters = offender.SkillRosters[i];
+                    p.enemyRosters.Add(enemy);
+                }
+
+                _room.Send(_defenderId, p);
+
+                offenderIsReady = false;
+                defenderIsReady = false;
+            }
+        }
     }
 }

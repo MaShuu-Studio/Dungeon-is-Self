@@ -33,7 +33,6 @@ public class CustomButton : MonoBehaviour
                 break;
             case ButtonMethod.GameReady:
                 button.onClick.AddListener(SingleGameRequest);
-                button.onClick.AddListener(ChangeScene);
                 break;
             case ButtonMethod.GamePlayReady:
                 button.onClick.AddListener(GamePlayReady);
@@ -123,11 +122,38 @@ public class CustomButton : MonoBehaviour
 
     void RoundReadyEnd()
     {
-        if (GameController.Instance.userType == UserType.Defender) DefenderController.Instance.SetRoster();
-        else OffenderController.Instance.SetRoster();
-            
+        List<int> roster = new List<int>();
+        List<List<int>> skillRoster = new List<List<int>>();
+        // 로스터 추가
+
+        if (GameController.Instance.userType == UserType.Defender)
+        {
+            roster.Add(DefenderController.Instance.monsterIndex);
+            //skillRoster.Add(new List<int>(){});
+        }
+        else
+        {
+            for (int i = 0; i < OffenderController.Instance.roster.Length; i++)
+            {
+                roster.Add(OffenderController.Instance.roster[i]);
+                //skillRoster.Add(new List<int>(){});
+            }
+        }
+
+        C_RoundReady packet = new C_RoundReady();
+        packet.roomId = GameController.Instance.roomId;
+        packet.playerType = (ushort)GameController.Instance.userType;
+        for (int i = 0; i < roster.Count; i++)
+        {
+            packet.rosters.Add(
+                new C_RoundReady.Roster()
+                {
+                    unitIndex = roster[i]
+                });
+        }
+
         // 로스터 세팅이 끝났다고 패킷 전송
-        GameController.Instance.StartRound();
+        NetworkManager.Instance.Send(packet.Write());
     }
 
     void TurnReadyEnd()

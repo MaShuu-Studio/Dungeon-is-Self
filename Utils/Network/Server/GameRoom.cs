@@ -194,5 +194,21 @@ namespace Server
 
             }
         }
+
+        public void RoundReadyEnd(int roomId, UserType type, List<C_RoundReady.Roster> rosters)
+        {
+            if (playingRooms.ContainsKey(roomId))
+            {
+                playingRooms[roomId].RoundReadyEnd(type, rosters);
+            }
+            else if (playingSingleGameRooms.ContainsKey(roomId))
+            {
+                playingSingleGameRooms[roomId].RoundReadyEnd(type, rosters);
+            }
+            else
+            {
+
+            }
+        }
     }
 }
