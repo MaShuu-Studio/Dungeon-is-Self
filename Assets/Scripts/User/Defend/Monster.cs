@@ -49,7 +49,7 @@ namespace Data
             this.tier = monster.tier;
         }
 
-        public void SetBasicDice(ref MonsterSkill[] dice)
+        /*public void SetBasicDice(ref MonsterSkill[] dice)
         {
             List<MonsterSkill> tier1dices = new List<MonsterSkill>();
 
@@ -66,7 +66,7 @@ namespace Data
             {
                 dice[i] = tier1dices[i % (tier1dices.Count)];
             }
-        }
+        }*/
 
         public MonsterSkill GetBasicSkill()
         {

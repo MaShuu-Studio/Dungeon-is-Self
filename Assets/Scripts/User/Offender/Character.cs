@@ -25,7 +25,7 @@ namespace Data
             mySkills = new List<CharacterSkill>(SkillDatabase.Instance.GetCharacterAllSkills(id % 100));
         }
 
-        public void SetBasicDice(ref CharacterSkill[] dice)
+        /*public void SetBasicDice(ref CharacterSkill[] dice)
         {
             List<CharacterSkill> tier0dices = new List<CharacterSkill>();
             List<CharacterSkill> tier1dices = new List<CharacterSkill>();
@@ -43,7 +43,7 @@ namespace Data
             {
                 dice[i] = tier1dices[i % (tier1dices.Count)];
             }
-        }
+        }*/
 
         public int GetMaxTier()
         {

@@ -108,7 +108,7 @@ namespace GameControl
                 int maxTier = GameController.Instance.round;
                 List<MonsterSkill> usableSkill = DefenderController.Instance.GetUsableSkill(GameController.Instance.round);
 
-                for (int j = 0; j < 6; j++)
+                for (int j = 0; j < 8; j++)
                 {
 
                     // maxTier 1개, 다 포함해서 나머지
@@ -122,7 +122,7 @@ namespace GameControl
                             n = UnityEngine.Random.Range(0, maxSkills.Count);
 
                         } while (maxSkills[n].id == 200110);
-                        DefenderController.Instance.SetDice(j, maxSkills[n]);
+                        DefenderController.Instance.SetSkillRoster(maxSkills[n]);
                     }
                     else
                     {
@@ -130,17 +130,25 @@ namespace GameControl
                         while (true)
                         {
                             int n = UnityEngine.Random.Range(1, usableSkill.Count);
-                            if (DefenderController.Instance.SetDice(j, usableSkill[n]) == 0) break;
+                            if (DefenderController.Instance.SetSkillRoster(usableSkill[n]) == 0) break;
                             if (count <= 0)
                             {
-                                DefenderController.Instance.SetDice(j, usableSkill[0]);
+                                DefenderController.Instance.SetSkillRoster(usableSkill[0]);
                                 break;
                             }
                             count--;
                         }
                     }
                 }
-
+                for (int j = 0; j < 6; j++)
+                {
+                    if (j == 0) DefenderController.Instance.SetDice(true, j);
+                    else
+                    {
+                        int n = Random.Range(0, 8-j);
+                        DefenderController.Instance.SetDice(true, n);
+                    }
+                }
                 int attackSkillIndex = Random.Range(0, m.attackSkills.Count);
                 MonsterSkill atkSkill = SkillDatabase.Instance.GetMonsterSkill(m.attackSkills[attackSkillIndex]);
                 DefenderController.Instance.SetAttackSkill(atkSkill);
@@ -167,13 +175,13 @@ namespace GameControl
                 List<int> maxSkills = usableSkill.FindAll(index => c.mySkills[index].tier == maxTier);
                 List<int> goodSkills = usableSkill.FindAll(index => c.mySkills[index].tier == (maxTier - 1));
 
-                for (int j = 0; j < 6; j++)
+                for (int j = 0; j < 8; j++)
                 {
-                    if (j < 2) OffenderController.Instance.SetDice(j, c.mySkills[usableSkill[0]]);
+                    if (j < 2) OffenderController.Instance.SetSkillRoster(c.mySkills[usableSkill[0]]);
                     else
                     {
                         int n = 0;
-                        if (j < 4)
+                        if (j < 5)
                         {
                             int m = UnityEngine.Random.Range(0, maxSkills.Count);
                             n = maxSkills[m];
@@ -183,7 +191,16 @@ namespace GameControl
                             int m = UnityEngine.Random.Range(0, goodSkills.Count);
                             n = goodSkills[m];
                         }
-                        OffenderController.Instance.SetDice(j, c.mySkills[n]);
+                        OffenderController.Instance.SetSkillRoster(c.mySkills[n]);
+                    }
+                }
+                for (int j = 0; j < 6; j++)
+                {
+                    if (j < 2) OffenderController.Instance.SetDice(true, j);
+                    else
+                    {
+                        if (j < 4) OffenderController.Instance.SetDice(true, j);
+                        else if (j >= 4) OffenderController.Instance.SetDice(true, j+1);
                     }
                 }
             }

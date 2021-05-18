@@ -36,7 +36,8 @@ namespace GameControl
         public List<bool> isDead { get; private set; } = new List<bool>();
         private List<List<bool>> gottenSkills = new List<List<bool>>();
         public List<int> skillPoints { get; private set; } = new List<int>();
-        private List<CharacterSkill[]> dices = new List<CharacterSkill[]>();
+        private List<List<CharacterSkill>> dices = new List<List<CharacterSkill>>();
+        private List<List<CharacterSkill>> skillRoster = new List<List<CharacterSkill>>();
         private int characterIndex = 0;
         public int[] roster { get; private set; } = new int[3];
 
@@ -70,12 +71,14 @@ namespace GameControl
             }
 
             dices.Clear();
+            skillRoster.Clear();
 
             for (int i = 0; i < characters.Count; i++)
             {
-                CharacterSkill[] dice = new CharacterSkill[6];
-                characters[i].SetBasicDice(ref dice);
+                List<CharacterSkill> dice = new List<CharacterSkill>();
+                List<CharacterSkill> skillCand = new List<CharacterSkill>();
 
+                skillRoster.Add(skillCand);
                 dices.Add(dice);
             }
         }
@@ -215,24 +218,71 @@ namespace GameControl
                 }
             }
 
-            return tier;            
+            return tier;
         }
 
-        public int SetDice(int index, CharacterSkill skill)
+        public int SetDice(bool index, int skillIdx)
         {
+            if (index == true)//roster to dice
+            {
+                int basicSkill = 0;
+                for (int i = 0; i < dices[characterIndex].Count; i++)
+                {
+                    if (dices[characterIndex][i].id % 100 == 0) { basicSkill++; continue; }
+                }
+                if ((basicSkill < 1 && skillRoster[characterIndex][skillIdx].id % 100 != 0 && dices[characterIndex].Count >= 4) || (basicSkill < 2 && skillRoster[characterIndex][skillIdx].id % 100 != 0 && dices[characterIndex].Count >= 5)) return 26;
+
+                dices[characterIndex].Add(skillRoster[characterIndex][skillIdx]);
+                skillRoster[characterIndex].RemoveAt(skillIdx);
+
+                return 0;
+            }
+            else//dice to roster
+            {
+                skillRoster[characterIndex].Add(dices[characterIndex][skillIdx]);
+                dices[characterIndex].RemoveAt(skillIdx);
+
+                return 0;
+            }
+            
+        }
+
+        public int SetSkillRoster(CharacterSkill skill)
+        {
+            if (skillRoster[characterIndex].Count > 8) return 30;
             int overlabCount = 0;
             int basicSkill = 0;
-            for (int i = 0; i < dices[characterIndex].Length; i++)
+            for (int i = 0; i < skillRoster[characterIndex].Count; i++)
             {
-                if (dices[characterIndex][i].id % 100 == 0) { basicSkill++; continue; }
-                if (dices[characterIndex][i].id == skill.id && i != index) overlabCount++;
-
+                if (skillRoster[characterIndex][i].id == skill.id) overlabCount++;
+                if (skillRoster[characterIndex][i].id % 100 == 0) { basicSkill++; continue;}
             }
-            if ((basicSkill <= 1 && skill.id % 100 != 0) || (basicSkill == 2 && dices[characterIndex][index].id % 100 == 0 && skill.id % 100 != 0)) return 1;
-            if (overlabCount > 2) return 2;
+            if ((basicSkill == 0 && skill.id % 100 != 0 && skillRoster[characterIndex].Count >= 6) || (basicSkill == 1 && skill.id % 100 != 0 && skillRoster[characterIndex].Count >= 7)) return 26;
+            if (overlabCount > 2) return 27;
 
-            dices[characterIndex][index] = skill;
+            skillRoster[characterIndex].Add(skill);
             return 0;
+        }
+
+        public CharacterSkill GetSkillRoster(int i)
+        {
+            return skillRoster[characterIndex][i];
+        }
+
+        public int GetSkillRosterSize()
+        {
+            return skillRoster[characterIndex].Count;
+        }
+
+        public int GetDiceSize()
+        {
+            return dices[characterIndex].Count;
+        }
+
+        public void RemoveSkillRoster(int index) 
+        {
+            if (skillRoster[characterIndex].Count <= index + 2) return;
+            skillRoster[characterIndex].RemoveAt(index);
         }
 
         public void SetRoster()
@@ -248,27 +298,82 @@ namespace GameControl
             return dices[characterIndex][index];
         }
 
+        public CharacterSkill GetDiceSkill(int index)
+        {
+            return dices[characterIndex][index];
+        }
+
         public CharacterSkill DiceRoll(int roster, bool isParalysis)
         {
-            int diceIndex = Random.Range(0, dices[roster % 10].Length);
             
-            if (isParalysis)
+            int[] result = new int[6]{0, 0, 0, 0, 0, 0};
+            int diceIndex = new int();
+            
+            for (int k = 0; k < 5; k++)
             {
-                int blindAmount = 3;
-                List<int> blind = new List<int>();
-                for (int i = 0; i < blindAmount; i++)
+                diceIndex = Random.Range(0, dices[roster % 10].Count);
+                if (isParalysis)
+                {
+                    int blindAmount = 3;
+                    List<int> blind = new List<int>();
+                    for (int i = 0; i < blindAmount; i++)
+                        while (true)
+                        {
+                            int index = Random.Range(0, dices[roster % 10].Count);
+                            if (blind.FindIndex(n => n == index) == -1) break;
+                        }
                     while (true)
                     {
-                        int index = Random.Range(0, dices[roster % 10].Length);
-                        if (blind.FindIndex(n => n == index) == -1) break;
+                        diceIndex = Random.Range(0, dices[roster % 10].Count);
+                        if (blind.FindIndex(n => n == diceIndex) == -1) break;
                     }
-                while (true)
+                }
+                int check = 0;
+                for (int i = 0; i < 6; i++)
                 {
-                    diceIndex = Random.Range(0, dices[roster % 10].Length);
-                    if (blind.FindIndex(n => n == diceIndex) == -1) break;
+                    if(result[i] > 0 && (dices[roster % 10][i].id == dices[roster % 10][diceIndex].id)) { check = 1; result[i] += 1; break;}
+                }
+                if (check == 0) result[diceIndex] += 1;
+
+                if (k >= 4)
+                {
+                    int max = result[0];
+                    for (int i = 1; i < 6; i++)
+                    {
+                        if (result[i] > max) max = result[i];
+                    }
+                    if (max >= 3)
+                    {
+                        for (int i = 0; i < 6; i++)
+                        {
+                            if (result[i] == max) { diceIndex = i; break; }
+                        }
+                    }
+                    else if (max == 2)
+                    {
+                        int[] tmp = new int[2]{-1, -1};
+                        for (int i = 0; i < 6; i++)
+                        {
+                            if (tmp[0] == -1 && result[i] == max) tmp[0] = i;
+                            else if (tmp[0] > -1 && result[i] == max) tmp[1] = i;
+                        }
+                        if (tmp[1] == -1) diceIndex = tmp[0];
+                        else
+                        {
+                            int t = Random.Range(0, 2);
+                            diceIndex = tmp[t];
+                        }
+                    }
+                    else if (max == 1)
+                    {
+                        while(true)
+                        {
+                            int t = Random.Range(0, 6);
+                            if (result[t] == 1) { diceIndex = t; break;}
+                        }
+                    }
                 }
             }
-
             return dices[roster % 10][diceIndex];
         }
 
