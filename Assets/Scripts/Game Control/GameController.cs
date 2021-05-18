@@ -109,10 +109,20 @@ namespace GameControl
 
             currentProgress = GameProgress.ReadyRound;
         }
-        public void StartRound(int round)
+        public void StartRound(int round, List<S_RoundReadyEnd.EnemyRoster> enemys)
         {
-            // 로스터 세팅
-            // 주사위 세팅
+            if (userType == UserType.Defender)
+            {
+                OffenderController.Instance.SetSkillRoster(enemys);
+            }
+            else
+            {
+                DefenderController.Instance.SetSkillRoster(enemys);
+            }
+            OffenderController.Instance.SetRoster();
+            DefenderController.Instance.SetRoster();
+
+            this.round = round;
 
             currentProgress = GameProgress.PlayRound;
             turn = 0;

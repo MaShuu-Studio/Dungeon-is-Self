@@ -7978,8 +7978,8 @@ MonoBehaviour:
   costText: {fileID: 1295216159}
   turnText: {fileID: 1172451145}
   playRoundView: {fileID: 1194427881}
-  mapTransform: {fileID: 0}
-  characterTransform: {fileID: 0}
+  mapTransform: {fileID: 1976853552}
+  characterTransform: {fileID: 1526933225}
   dicePrefab: {fileID: 955032521116557861, guid: d17aa628213b8774e80e98cc863033b7,
     type: 3}
   crowdControlIconPrefab: {fileID: 4520148493781022452, guid: e0dd3cbde37bcd048a16a3948933340f,

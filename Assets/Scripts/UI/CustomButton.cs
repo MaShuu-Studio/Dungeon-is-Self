@@ -129,14 +129,20 @@ public class CustomButton : MonoBehaviour
         if (GameController.Instance.userType == UserType.Defender)
         {
             roster.Add(DefenderController.Instance.monsterIndex);
-            //skillRoster.Add(new List<int>(){});
+            for (int i = 0; i < roster.Count; i++)
+            {
+                skillRoster.Add(DefenderController.Instance.GetSkillRosterWithUnit(roster[i]));
+            }
         }
         else
         {
             for (int i = 0; i < OffenderController.Instance.roster.Length; i++)
             {
                 roster.Add(OffenderController.Instance.roster[i]);
-                //skillRoster.Add(new List<int>(){});
+            }
+            for (int i = 0; i < roster.Count; i++)
+            {
+                skillRoster.Add(OffenderController.Instance.GetSkillRosterWithUnit(roster[i]));
             }
         }
 
@@ -148,7 +154,8 @@ public class CustomButton : MonoBehaviour
             packet.rosters.Add(
                 new C_RoundReady.Roster()
                 {
-                    unitIndex = roster[i]
+                    unitIndex = roster[i],
+                    skillRosters = skillRoster[i]
                 });
         }
 

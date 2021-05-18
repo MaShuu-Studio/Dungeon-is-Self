@@ -87,7 +87,7 @@ namespace Network
             S_RoundReadyEnd p = packet as S_RoundReadyEnd;
             ServerSession serverSession = session as ServerSession;
 
-            GameController.Instance.StartRound(p.round);
+            GameController.Instance.StartRound(p.round, p.enemyRosters);
         }
 
         public static void S_ProgressTurnHandler(PacketSession session, IPacket packet)

@@ -164,6 +164,16 @@ namespace GameControl
             return 0;
         }
 
+        public List<int> GetSkillRosterWithUnit(int unitIndex)
+        {
+            List<int> skills = new List<int>();
+            foreach (MonsterSkill skill in skillRoster[unitIndex])
+            {
+                skills.Add(skill.id);
+            }
+            return skills;
+        }
+
         public MonsterSkill GetSkillRoster(int i)
         {
             return skillRoster[monsterIndex][i];
@@ -183,6 +193,18 @@ namespace GameControl
         {
             if (skillRoster[monsterIndex].Count <= index + 2) return;
             skillRoster[monsterIndex].RemoveAt(index);
+        }
+        public void SetSkillRoster(List<S_RoundReadyEnd.EnemyRoster> infos)
+        {
+            for (int i = 0; i < infos.Count; i++)
+            {
+                monsterIndex = infos[i].unitIndex % 10;
+                skillRoster[i].Clear();
+                for (int j = 0; j < infos[i].skillRosters.Count; j++)
+                {
+                    skillRoster[monsterIndex].Add(SkillDatabase.Instance.GetMonsterSkill(infos[i].skillRosters[j]));
+                }
+            }
         }
 
         public int GetDiceCost()

@@ -264,6 +264,17 @@ namespace GameControl
             return 0;
         }
 
+        public List<int> GetSkillRosterWithUnit(int unitIndex)
+        {
+            List<int> skills = new List<int>();
+            foreach (CharacterSkill skill in skillRoster[unitIndex])
+            {
+                skills.Add(skill.id);
+            }
+            return skills;
+        }
+
+
         public CharacterSkill GetSkillRoster(int i)
         {
             return skillRoster[characterIndex][i];
@@ -283,6 +294,19 @@ namespace GameControl
         {
             if (skillRoster[characterIndex].Count <= index + 2) return;
             skillRoster[characterIndex].RemoveAt(index);
+        }
+
+        public void SetSkillRoster(List<S_RoundReadyEnd.EnemyRoster> infos)
+        {
+            for (int i = 0; i < infos.Count; i++)
+            {
+                roster[i] = infos[i].unitIndex % 10;
+                skillRoster[i].Clear();
+                for (int j = 0; j < infos[i].skillRosters.Count; j++)
+                {
+                    skillRoster[roster[i]].Add(SkillDatabase.Instance.GetCharacterSkill(infos[i].skillRosters[j]));
+                }
+            }
         }
 
         public void SetRoster()

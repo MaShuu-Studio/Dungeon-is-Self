@@ -116,6 +116,7 @@ namespace Server
 
             if (defenderIsReady && offenderIsReady)
             {
+                Console.WriteLine("Send Round Ready End");
                 currentProgress = GameProgress.PlayRound;
                 S_RoundReadyEnd p = new S_RoundReadyEnd();
                 p.currentProgress = (ushort)currentProgress;
@@ -125,22 +126,23 @@ namespace Server
                 for (int i = 0; i < defender.Rosters.Count; i++)
                 {
                     S_RoundReadyEnd.EnemyRoster enemy = new S_RoundReadyEnd.EnemyRoster();
-                    enemy.unitIndex += defender.Rosters[i];
+                    enemy.unitIndex = defender.Rosters[i];
                     enemy.skillRosters = defender.SkillRosters[i];
                     p.enemyRosters.Add(enemy);
                 }
-
+                Console.WriteLine($"Defender {p.enemyRosters.Count}");
                 _room.Send(_offenderId, p);
 
                 p.enemyRosters.Clear();
                 for (int i = 0; i < offender.Rosters.Count; i++)
                 {
                     S_RoundReadyEnd.EnemyRoster enemy = new S_RoundReadyEnd.EnemyRoster();
-                    enemy.unitIndex += offender.Rosters[i];
+                    enemy.unitIndex = offender.Rosters[i];
                     enemy.skillRosters = offender.SkillRosters[i];
                     p.enemyRosters.Add(enemy);
                 }
 
+                Console.WriteLine($"Defender {p.enemyRosters.Count}");
                 _room.Send(_defenderId, p);
 
                 offenderIsReady = false;
