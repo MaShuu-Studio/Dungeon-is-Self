@@ -68,6 +68,12 @@
 	<packet name="C_PlayRoundReady">
 		<int name="roomId"/>
 		<ushort name="playerType"/>
+		<clist name="roster">
+			<int name="unitIndex"/>
+			<list name="diceIndex">
+				<int name="int"/>
+			</list>
+		</clist>
 	</packet>
 	<packet name="S_ProgressTurn">
 		<bool name="isRoundEnd"/>

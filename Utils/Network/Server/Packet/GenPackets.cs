@@ -643,6 +643,42 @@ public class C_PlayRoundReady : IPacket
 {
     public int roomId;
 	public ushort playerType;
+	public class Roster
+	{
+	    public int unitIndex;
+		public List<int> diceIndexs = new List<int>();
+	
+	    public void Read(ArraySegment<byte> segment, ref ushort count)
+	    {
+	        this.unitIndex = BitConverter.ToInt32(segment.Array, segment.Offset + count);
+			count += sizeof(int);
+			diceIndexs.Clear();
+			ushort diceIndexLen = BitConverter.ToUInt16(segment.Array, segment.Offset + count);
+			count += sizeof(ushort);
+			for (int i = 0; i < diceIndexLen; i++)
+			{
+			    int a = BitConverter.ToInt32(segment.Array, segment.Offset + count);
+			    count += sizeof(int);
+			    this.diceIndexs.Add(a);
+			}
+	    }
+	    public bool Write(ArraySegment<byte> segment, ref ushort count)
+	    {
+	        bool success = true;
+	        Array.Copy(BitConverter.GetBytes(this.unitIndex), 0, segment.Array, segment.Offset + count, sizeof(int));
+			count += sizeof(int);
+			
+			Array.Copy(BitConverter.GetBytes((ushort)diceIndexs.Count), 0, segment.Array, segment.Offset + count, sizeof(ushort));
+			count += sizeof(ushort);
+			foreach(int diceIndex in diceIndexs)
+			{
+			    Array.Copy(BitConverter.GetBytes(diceIndex), 0, segment.Array, segment.Offset + count, sizeof(int));
+			    count += sizeof(int);
+			}
+	        return success;
+	    }
+	}
+	public List<Roster> rosters = new List<Roster>();
     public ushort Protocol { get { return (ushort)PacketID.C_PlayRoundReady; } }
 
     public void Read(ArraySegment<byte> segment)
@@ -656,6 +692,15 @@ public class C_PlayRoundReady : IPacket
 		count += sizeof(int);
 		this.playerType = BitConverter.ToUInt16(segment.Array, segment.Offset + count);
 		count += sizeof(ushort);
+		rosters.Clear();
+		ushort rosterLen = BitConverter.ToUInt16(segment.Array, segment.Offset + count);
+		count += sizeof(ushort);
+		for (int i = 0; i < rosterLen; i++)
+		{
+		    Roster roster = new Roster();
+		    roster.Read(segment, ref count);
+		    this.rosters.Add(roster);
+		}
     }
 
     public ArraySegment<byte> Write()
@@ -673,6 +718,10 @@ public class C_PlayRoundReady : IPacket
 		Array.Copy(BitConverter.GetBytes(this.playerType), 0, segment.Array, segment.Offset + count, sizeof(ushort));
 		count += sizeof(ushort);
 		
+		Array.Copy(BitConverter.GetBytes((ushort)rosters.Count), 0, segment.Array, segment.Offset + count, sizeof(ushort));
+		count += sizeof(ushort);
+		foreach(Roster roster in rosters)
+		    roster.Write(segment, ref count);
 
         Array.Copy(BitConverter.GetBytes(count), 0, segment.Array, segment.Offset, sizeof(ushort));
 

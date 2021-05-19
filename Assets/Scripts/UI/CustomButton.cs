@@ -128,7 +128,7 @@ public class CustomButton : MonoBehaviour
 
         if (GameController.Instance.userType == UserType.Defender)
         {
-            roster.Add(DefenderController.Instance.monsterIndex);
+            roster.Add(DefenderController.Instance.monsterRoster);
             for (int i = 0; i < roster.Count; i++)
             {
                 skillRoster.Add(DefenderController.Instance.GetSkillRosterWithUnit(roster[i]));
@@ -149,6 +149,7 @@ public class CustomButton : MonoBehaviour
         C_RoundReady packet = new C_RoundReady();
         packet.roomId = GameController.Instance.roomId;
         packet.playerType = (ushort)GameController.Instance.userType;
+        packet.rosters = new List<C_RoundReady.Roster>();
         for (int i = 0; i < roster.Count; i++)
         {
             packet.rosters.Add(
@@ -164,7 +165,38 @@ public class CustomButton : MonoBehaviour
     }
 
     void TurnReadyEnd()
-    {
+    {        
+        List<List<int>> dices = new List<List<int>>();
+        // 로스터 추가
+
+        if (GameController.Instance.userType == UserType.Defender)
+        {
+            dices.Add(DefenderController.Instance.GetDicesWithUnit(DefenderController.Instance.monsterRoster));
+        }
+        else
+        {
+            for (int i = 0; i < OffenderController.Instance.roster.Length; i++)
+            {
+                dices.Add(OffenderController.Instance.GetDicesWithUnit(OffenderController.Instance.roster[i]));
+            }
+        }
+
+        C_PlayRoundReady packet = new C_PlayRoundReady();
+        packet.roomId = GameController.Instance.roomId;
+        packet.playerType = (ushort)GameController.Instance.userType;
+        packet.rosters = new List<C_PlayRoundReady.Roster>();
+        for (int i = 0; i < dices.Count; i++)
+        {
+            packet.rosters.Add(
+                new C_PlayRoundReady.Roster()
+                {
+                    unitIndex = i,
+                    diceIndexs = dices[i]
+                });
+        }
+
+        NetworkManager.Instance.Send(packet.Write());
+        /*
         if (coroutine != null) StopCoroutine(coroutine);
 
         if (GameController.Instance.progressRound == false)
@@ -173,7 +205,7 @@ public class CustomButton : MonoBehaviour
             GameController.Instance.ReadyTurn(GameController.Instance.userType, isOn);
             coroutine = TurnProgress();
             StartCoroutine(coroutine);
-        }
+        }*/
     }
 
     IEnumerator TurnProgress()

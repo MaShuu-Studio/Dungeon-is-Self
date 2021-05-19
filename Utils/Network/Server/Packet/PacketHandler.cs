@@ -97,6 +97,13 @@ class PacketHandler
         room.RoundReadyEnd(p.roomId, (UserType)p.playerType, p.rosters);
     }
     public static void C_PlayRoundReadyHandler(PacketSession session, IPacket packet)    
-    {   
+    {
+        C_PlayRoundReady p = packet as C_PlayRoundReady;
+        ClientSession clientSession = session as ClientSession;
+
+        if (clientSession.Room == null) return;
+        GameRoom room = clientSession.Room;
+
+        room.PlayRoundReadyEnd(p.roomId, (UserType)p.playerType, p.rosters);
     }
 }

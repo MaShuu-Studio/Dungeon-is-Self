@@ -75,11 +75,11 @@ namespace GameControl
 
             for (int i = 0; i < characters.Count; i++)
             {
-                List<CharacterSkill> dice = new List<CharacterSkill>();
                 List<CharacterSkill> skillCand = new List<CharacterSkill>();
+                List<int> diceCand = new List<int>();
 
                 skillRoster.Add(skillCand);
-                dices.Add(dice);
+                dices.Add(diceCand);
             }
         }
 

@@ -149,5 +149,31 @@ namespace Server
                 defenderIsReady = false;
             }
         }
+
+        public void PlayRoundReadyEnd(UserType type, List<C_PlayRoundReady.Roster> rosters)
+        {
+            if (type == UserType.Defender)
+            {
+                // 다이스 세팅
+                defenderIsReady = true;
+            }
+            else
+            {
+                // 다이스 세팅
+                offenderIsReady = true;
+            }
+            if (defenderIsReady && offenderIsReady)
+            {
+                // 다이스 굴리기
+                // 결과 조정
+                // 결과 전송
+                S_ProgressTurn p = new S_ProgressTurn();
+                _room.Send(_offenderId, p);
+                _room.Send(_defenderId, p);
+
+                offenderIsReady = false;
+                defenderIsReady = false;
+            }
+        }
     }
 }
