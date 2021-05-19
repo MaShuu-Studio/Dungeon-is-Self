@@ -50,6 +50,7 @@
 		<ushort name="playerType"/>
 		<clist name="roster">
 			<int name="unitIndex"/>
+			<int name="attackSkill"/>
 			<list name="skillRoster">
 				<int name="int"/>
 			</list>
@@ -79,19 +80,18 @@
 		<bool name="isRoundEnd"/>
 		<bool name="isGameEnd"/>
 		<ushort name="winner"/>
+		<int name="round"/>
 		<int name="turn"/>
-		<int name="monsterHp"/>
+		<list name="monsterHp">
+			<int name="int"/>
+		</list>
 		<int name="monsterTurn"/>
 		<clist name="result">
 			<int name="unitIndex"/>
+			<int name="diceResult"/>
 			<list name="diceIndex">
 				<int name="int"/>
 			</list>
-			<clist name="cc">
-				<int name="ccIndex"/>
-				<int name="ccTurn"/>
-				<int name="ccStack"/>
-			</clist>
 		</clist>
 	</packet>
 </PDL>

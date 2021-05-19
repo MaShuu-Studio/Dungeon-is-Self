@@ -235,6 +235,7 @@ namespace GameControl
                 {
                     //if (dices[characterIndex][i].id % 100 == 0) { basicSkill++; continue; }
                 }
+                basicSkill = 2;
                 if ((basicSkill < 1 && skillRoster[characterIndex][skillIdx].id % 100 != 0 && dices[characterIndex].Count >= 4) 
                     || (basicSkill < 2 && skillRoster[characterIndex][skillIdx].id % 100 != 0 && dices[characterIndex].Count >= 5)) return 26;
 
@@ -331,7 +332,7 @@ namespace GameControl
             return dices[characterIndex][index];
         }
 
-        /*
+        /*        
         public CharacterSkill DiceRoll(int roster, bool isParalysis)
         {
             
@@ -360,7 +361,13 @@ namespace GameControl
                 int check = 0;
                 for (int i = 0; i < 6; i++)
                 {
-                    if(result[i] > 0 && (dices[roster % 10][i].id == dices[roster % 10][diceIndex].id)) { check = 1; result[i] += 1; break;}
+                    if (result[i] > 0 && 
+                        (dices[roster % 10][i].id == dices[roster % 10][diceIndex].id))
+                    {
+                        check = 1;
+                        result[i] += 1;
+                        break;
+                    }
                 }
                 if (check == 0) result[diceIndex] += 1;
 
@@ -403,9 +410,10 @@ namespace GameControl
                     }
                 }
             }
-            return dices[roster % 10][diceIndex];
+            return skillRoster[0][0];
         }
         */
+        
 
         public List<int> GetCharacterRoster()
         {

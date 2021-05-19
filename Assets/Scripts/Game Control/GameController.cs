@@ -56,6 +56,7 @@ namespace GameControl
         private bool isRoundEnd = false;
 
 
+        /*
         // Update is called once per frame
         void Update()
         {
@@ -68,6 +69,7 @@ namespace GameControl
                 }
             }
         }
+        */
 
         #region Network
         public void StartGame(int id, UserType type)
@@ -103,7 +105,7 @@ namespace GameControl
             animationEnd.Clear();
 
             if (userType == UserType.Offender)
-                OffenderController.Instance.AddSkillPoint(skillPointPerRound[round]);
+                OffenderController.Instance.AddSkillPoint(skillPointPerRound[round-1]);
             else
                 DefenderController.Instance.SetMonsterHp();
 
@@ -155,6 +157,77 @@ namespace GameControl
 
             NextTurn();
         }
+
+        public void ProgressTurn(int round, int turn, S_ProgressTurn packet)
+        {
+            progressRound = true;
+            Dictionary<int, int> selectedSkills = new Dictionary<int, int>();
+            List<bool> isAttack = new List<bool>();
+            List<bool> isWait = new List<bool>();
+
+            foreach (S_ProgressTurn.Result item in packet.results)
+            {
+                selectedSkills.Add(item.unitIndex, item.diceResult);
+                if (item.diceResult == -1)
+                {
+                    animationEnd[item.unitIndex] = true;
+                    isAttack.Add(false);
+                }
+                else
+                {
+                    animationEnd[item.unitIndex] = false;
+                    isAttack.Add(true);
+                }
+                isWait.Add(false);
+            }
+
+            DiceRolled();
+            foreach (bool b in isAttack)
+            {
+                if (b)
+                {
+                    isDiceRolled = true;
+                    break;
+                }
+            }
+
+            GamePlayUIController.Instance.DiceRoll(isAttack, isWait);
+
+            StartCoroutine(BattleAnimation(turn, selectedSkills, packet.monsterHps));
+        }
+        IEnumerator BattleAnimation(int turn, Dictionary<int, int> diceSkills, List<int> monsterHps)
+        {
+            while (isDiceRolled) yield return null;
+
+            List<int> keys = animationEnd.Keys.ToList<int>();
+            for (int i = 0; i < animationEnd.Count; i++)
+            {
+                if (diceSkills[keys[i]] < 0) continue;
+
+                GamePlayUIController.Instance.PlayAnimation(keys[i], "Attack");
+                while (animationEnd[keys[i]] == false) yield return null;
+
+                DefenderController.Instance.SetMonsterHp(monsterHps[i]);
+
+                GamePlayUIController.Instance.UpdateCharacters();
+            }
+
+            float time = 0.3f;
+            while (time > 0)
+            {
+                time -= Time.deltaTime;
+                yield return null;
+            }
+            progressRound = false;
+            NextTurnInNetwork(turn);
+        }
+
+        public void NextTurnInNetwork(int turn)
+        {
+            if (isRoundEnd) return;
+            progressRound = false;
+            GamePlayUIController.Instance.SetTurn(turn);
+        }
         #endregion
 
         public void ReadyGame()
@@ -177,7 +250,7 @@ namespace GameControl
             {
                 if (isOffenderDefeated == false)
                 {
-                    OffenderController.Instance.AddSkillPoint(skillPointPerRound[round]);
+                    OffenderController.Instance.AddSkillPoint(skillPointPerRound[round-1]);
                     round++;
                 }
                 DefenderController.Instance.SetMonsterHp();
@@ -772,7 +845,6 @@ namespace GameControl
             if (userType == UserType.Defender) ReadyTurn(UserType.Offender, true);
             else if (userType == UserType.Offender) ReadyTurn(UserType.Defender, true);
         }
-
         private void DefenderDefeated()
         {
             isRoundEnd = true;

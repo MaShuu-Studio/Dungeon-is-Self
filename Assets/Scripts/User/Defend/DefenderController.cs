@@ -242,6 +242,10 @@ namespace GameControl
         {
             return attackSkills[monsterIndex];
         }
+        public MonsterSkill GetAttackSkillWithUnit(int unitIndex)
+        {
+            return attackSkills[unitIndex];
+        }
 
         public void SetRoster()
         {
@@ -266,6 +270,11 @@ namespace GameControl
         #endregion
 
         #region Play Round
+
+        public void SetMonsterHp(int hp)
+        {
+            monsters[monsterRoster].SetHP(hp);
+        }
         public int GetSelectedDice(int index)
         {
             if (dices.Count <= monsterIndex) return 0;
@@ -335,7 +344,7 @@ namespace GameControl
 
         public Monster GetMonsterRoster()
         {
-            return monsters[monsterIndex];
+            return monsters[monsterRoster];
         }
 
         public int MonsterDamaged(int index, int damage)
@@ -346,7 +355,7 @@ namespace GameControl
 
         public void GetMonsterInfo(ref int hp, ref int turn)
         {
-            hp = monsters[monsterIndex].hp;
+            hp = monsters[monsterRoster].hp;
             turn = attackSkillTurn;
         }
 
@@ -363,7 +372,7 @@ namespace GameControl
 
         public void ResetAttackSkill()
         {
-            attackSkillTurn = attackSkills[monsterIndex].turn;
+            attackSkillTurn = attackSkills[monsterRoster].turn;
         }
 
         public void Dead(int index)

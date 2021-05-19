@@ -74,6 +74,11 @@ namespace Data
             return skill;
         }
 
+        public void SetHP(int hp)
+        {
+            this.hp = hp;
+        }
+
         public void Damaged(int damage)
         {
             hp -= damage;

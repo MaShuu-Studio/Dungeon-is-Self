@@ -92,6 +92,10 @@ namespace Network
 
         public static void S_ProgressTurnHandler(PacketSession session, IPacket packet)
         {
+            S_ProgressTurn p = packet as S_ProgressTurn;
+            ServerSession serverSession = session as ServerSession;
+
+            GameController.Instance.ProgressTurn(p.round, p.turn, p);
         }
     }
 }

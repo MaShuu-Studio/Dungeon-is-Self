@@ -124,6 +124,7 @@ public class CustomButton : MonoBehaviour
     {
         List<int> roster = new List<int>();
         List<List<int>> skillRoster = new List<List<int>>();
+        int attackSkill = 0;
         // 로스터 추가
 
         if (GameController.Instance.userType == UserType.Defender)
@@ -132,6 +133,7 @@ public class CustomButton : MonoBehaviour
             for (int i = 0; i < roster.Count; i++)
             {
                 skillRoster.Add(DefenderController.Instance.GetSkillRosterWithUnit(roster[i]));
+                attackSkill = DefenderController.Instance.GetAttackSkillWithUnit(roster[i]).id;
             }
         }
         else
@@ -156,6 +158,7 @@ public class CustomButton : MonoBehaviour
                 new C_RoundReady.Roster()
                 {
                     unitIndex = roster[i],
+                    attackSkill = attackSkill,
                     skillRosters = skillRoster[i]
                 });
         }
@@ -196,7 +199,10 @@ public class CustomButton : MonoBehaviour
         }
 
         NetworkManager.Instance.Send(packet.Write());
+        SetButtonInteract(false);
         /*
+        isOn = false;
+            
         if (coroutine != null) StopCoroutine(coroutine);
 
         if (GameController.Instance.progressRound == false)

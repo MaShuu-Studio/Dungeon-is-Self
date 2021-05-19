@@ -468,11 +468,14 @@ public class C_RoundReady : IPacket
 	public class Roster
 	{
 	    public int unitIndex;
+		public int attackSkill;
 		public List<int> skillRosters = new List<int>();
 	
 	    public void Read(ArraySegment<byte> segment, ref ushort count)
 	    {
 	        this.unitIndex = BitConverter.ToInt32(segment.Array, segment.Offset + count);
+			count += sizeof(int);
+			this.attackSkill = BitConverter.ToInt32(segment.Array, segment.Offset + count);
 			count += sizeof(int);
 			skillRosters.Clear();
 			ushort skillRosterLen = BitConverter.ToUInt16(segment.Array, segment.Offset + count);
@@ -488,6 +491,9 @@ public class C_RoundReady : IPacket
 	    {
 	        bool success = true;
 	        Array.Copy(BitConverter.GetBytes(this.unitIndex), 0, segment.Array, segment.Offset + count, sizeof(int));
+			count += sizeof(int);
+			
+			Array.Copy(BitConverter.GetBytes(this.attackSkill), 0, segment.Array, segment.Offset + count, sizeof(int));
 			count += sizeof(int);
 			
 			Array.Copy(BitConverter.GetBytes((ushort)skillRosters.Count), 0, segment.Array, segment.Offset + count, sizeof(ushort));
@@ -733,48 +739,21 @@ public class S_ProgressTurn : IPacket
     public bool isRoundEnd;
 	public bool isGameEnd;
 	public ushort winner;
+	public int round;
 	public int turn;
-	public int monsterHp;
+	public List<int> monsterHps = new List<int>();
 	public int monsterTurn;
 	public class Result
 	{
 	    public int unitIndex;
+		public int diceResult;
 		public List<int> diceIndexs = new List<int>();
-		public class Cc
-		{
-		    public int ccIndex;
-			public int ccTurn;
-			public int ccStack;
-		
-		    public void Read(ArraySegment<byte> segment, ref ushort count)
-		    {
-		        this.ccIndex = BitConverter.ToInt32(segment.Array, segment.Offset + count);
-				count += sizeof(int);
-				this.ccTurn = BitConverter.ToInt32(segment.Array, segment.Offset + count);
-				count += sizeof(int);
-				this.ccStack = BitConverter.ToInt32(segment.Array, segment.Offset + count);
-				count += sizeof(int);
-		    }
-		    public bool Write(ArraySegment<byte> segment, ref ushort count)
-		    {
-		        bool success = true;
-		        Array.Copy(BitConverter.GetBytes(this.ccIndex), 0, segment.Array, segment.Offset + count, sizeof(int));
-				count += sizeof(int);
-				
-				Array.Copy(BitConverter.GetBytes(this.ccTurn), 0, segment.Array, segment.Offset + count, sizeof(int));
-				count += sizeof(int);
-				
-				Array.Copy(BitConverter.GetBytes(this.ccStack), 0, segment.Array, segment.Offset + count, sizeof(int));
-				count += sizeof(int);
-				
-		        return success;
-		    }
-		}
-		public List<Cc> ccs = new List<Cc>();
 	
 	    public void Read(ArraySegment<byte> segment, ref ushort count)
 	    {
 	        this.unitIndex = BitConverter.ToInt32(segment.Array, segment.Offset + count);
+			count += sizeof(int);
+			this.diceResult = BitConverter.ToInt32(segment.Array, segment.Offset + count);
 			count += sizeof(int);
 			diceIndexs.Clear();
 			ushort diceIndexLen = BitConverter.ToUInt16(segment.Array, segment.Offset + count);
@@ -785,20 +764,14 @@ public class S_ProgressTurn : IPacket
 			    count += sizeof(int);
 			    this.diceIndexs.Add(a);
 			}
-			ccs.Clear();
-			ushort ccLen = BitConverter.ToUInt16(segment.Array, segment.Offset + count);
-			count += sizeof(ushort);
-			for (int i = 0; i < ccLen; i++)
-			{
-			    Cc cc = new Cc();
-			    cc.Read(segment, ref count);
-			    this.ccs.Add(cc);
-			}
 	    }
 	    public bool Write(ArraySegment<byte> segment, ref ushort count)
 	    {
 	        bool success = true;
 	        Array.Copy(BitConverter.GetBytes(this.unitIndex), 0, segment.Array, segment.Offset + count, sizeof(int));
+			count += sizeof(int);
+			
+			Array.Copy(BitConverter.GetBytes(this.diceResult), 0, segment.Array, segment.Offset + count, sizeof(int));
 			count += sizeof(int);
 			
 			Array.Copy(BitConverter.GetBytes((ushort)diceIndexs.Count), 0, segment.Array, segment.Offset + count, sizeof(ushort));
@@ -808,10 +781,6 @@ public class S_ProgressTurn : IPacket
 			    Array.Copy(BitConverter.GetBytes(diceIndex), 0, segment.Array, segment.Offset + count, sizeof(int));
 			    count += sizeof(int);
 			}
-			Array.Copy(BitConverter.GetBytes((ushort)ccs.Count), 0, segment.Array, segment.Offset + count, sizeof(ushort));
-			count += sizeof(ushort);
-			foreach(Cc cc in ccs)
-			    cc.Write(segment, ref count);
 	        return success;
 	    }
 	}
@@ -831,10 +800,19 @@ public class S_ProgressTurn : IPacket
 		count += sizeof(bool);
 		this.winner = BitConverter.ToUInt16(segment.Array, segment.Offset + count);
 		count += sizeof(ushort);
+		this.round = BitConverter.ToInt32(segment.Array, segment.Offset + count);
+		count += sizeof(int);
 		this.turn = BitConverter.ToInt32(segment.Array, segment.Offset + count);
 		count += sizeof(int);
-		this.monsterHp = BitConverter.ToInt32(segment.Array, segment.Offset + count);
-		count += sizeof(int);
+		monsterHps.Clear();
+		ushort monsterHpLen = BitConverter.ToUInt16(segment.Array, segment.Offset + count);
+		count += sizeof(ushort);
+		for (int i = 0; i < monsterHpLen; i++)
+		{
+		    int a = BitConverter.ToInt32(segment.Array, segment.Offset + count);
+		    count += sizeof(int);
+		    this.monsterHps.Add(a);
+		}
 		this.monsterTurn = BitConverter.ToInt32(segment.Array, segment.Offset + count);
 		count += sizeof(int);
 		results.Clear();
@@ -866,12 +844,19 @@ public class S_ProgressTurn : IPacket
 		Array.Copy(BitConverter.GetBytes(this.winner), 0, segment.Array, segment.Offset + count, sizeof(ushort));
 		count += sizeof(ushort);
 		
+		Array.Copy(BitConverter.GetBytes(this.round), 0, segment.Array, segment.Offset + count, sizeof(int));
+		count += sizeof(int);
+		
 		Array.Copy(BitConverter.GetBytes(this.turn), 0, segment.Array, segment.Offset + count, sizeof(int));
 		count += sizeof(int);
 		
-		Array.Copy(BitConverter.GetBytes(this.monsterHp), 0, segment.Array, segment.Offset + count, sizeof(int));
-		count += sizeof(int);
-		
+		Array.Copy(BitConverter.GetBytes((ushort)monsterHps.Count), 0, segment.Array, segment.Offset + count, sizeof(ushort));
+		count += sizeof(ushort);
+		foreach(int monsterHp in monsterHps)
+		{
+		    Array.Copy(BitConverter.GetBytes(monsterHp), 0, segment.Array, segment.Offset + count, sizeof(int));
+		    count += sizeof(int);
+		}
 		Array.Copy(BitConverter.GetBytes(this.monsterTurn), 0, segment.Array, segment.Offset + count, sizeof(int));
 		count += sizeof(int);
 		

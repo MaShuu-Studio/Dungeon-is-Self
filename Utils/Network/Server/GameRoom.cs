@@ -10,6 +10,7 @@ namespace Server
     {
         JobQueue _jobQueue = new JobQueue();
         List<ArraySegment<byte>> _pendingList = new List<ArraySegment<byte>>();
+        List<Tuple<int, ArraySegment<byte>>> _packetList = new List<Tuple<int, ArraySegment<byte>>>();
 
         int _playerNumber = 1;
         int _singleRoomId = -2;
@@ -28,7 +29,7 @@ namespace Server
 
         public void Send(int id, IPacket packet)
         {
-            _sessions[id].Send(packet.Write());
+            _packetList.Add(new Tuple<int, ArraySegment<byte>>(id, packet.Write()));
         }
 
         public void Broadcast(ArraySegment<byte> segment)
@@ -38,11 +39,15 @@ namespace Server
 
         public void Flush()
         {
+            foreach(Tuple<int, ArraySegment<byte>> packet in _packetList)
+                _sessions[packet.Item1].Send(packet.Item2);
+
             foreach (ClientSession s in _sessions.Values)
                 s.Send(_pendingList);
 
-            if (_pendingList.Count != 0) Console.WriteLine($"Flushed {_pendingList.Count} items");
+            if (_pendingList.Count + _packetList.Count != 0) Console.WriteLine($"Flushed {_pendingList.Count + _packetList.Count} items");
             _pendingList.Clear();
+            _packetList.Clear();
         }
 
         public void Enter(ClientSession session)
@@ -225,5 +230,6 @@ namespace Server
 
             }
         }
+
     }
 }

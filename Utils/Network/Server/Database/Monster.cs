@@ -81,6 +81,7 @@ namespace Data
         public void Heal(int round)
         {
             tier = round - 1;
+            if (round < 0) tier = 0;
             if (tier >= 3) tier = 2;
             hp = tierHp[tier];
         }
