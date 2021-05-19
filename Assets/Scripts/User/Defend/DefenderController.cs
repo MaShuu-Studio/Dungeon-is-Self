@@ -34,11 +34,12 @@ namespace GameControl
         public List<bool> isDead { get; private set; } = new List<bool>();
         public List<Monster> monsters { get; private set; } = new List<Monster>();
 
-        private List<List<MonsterSkill>> dices = new List<List<MonsterSkill>>();
+        private List<List<int>> dices = new List<List<int>>();
         private List<List<MonsterSkill>> skillRoster = new List<List<MonsterSkill>>();
         private List<MonsterSkill> attackSkills = new List<MonsterSkill>();
         private int attackSkillTurn;
-        public int monsterIndex { get; private set; } = 0;
+        private int monsterIndex;
+        public int monsterRoster { get; private set; } = 0;
         public const int MAX_COST = 10;
 
         // 게임이 시작될 때 Defender에 대한 초기화 진행
@@ -61,13 +62,13 @@ namespace GameControl
 
             for (int i = 0; i < monsters.Count; i++)
             {
-                List<MonsterSkill> dice = new List<MonsterSkill>();
                 List<MonsterSkill> skillCand = new List<MonsterSkill>();
+                List<int> diceCand = new List<int>();
                 MonsterSkill attackSkill;
                 attackSkill = monsters[i].GetBasicSkill();
 
                 skillRoster.Add(skillCand);
-                dices.Add(dice);
+                dices.Add(diceCand);
                 attackSkills.Add(attackSkill);
             }
         }
@@ -114,7 +115,7 @@ namespace GameControl
         public List<int> GetAliveMonsterList()
         {
             List<int> alives = new List<int>();
-            for (int i = 0 ; i < monsters.Count; i++)
+            for (int i = 0; i < monsters.Count; i++)
             {
                 if (isDead[i] == false) alives.Add(i);
             }
@@ -128,16 +129,25 @@ namespace GameControl
             monsterIndex = index;
         }
 
-        public int SetDice(bool index, int skillIdx)
+        public void SelectRoster(int index)
         {
-            if (index == true)
+            if (isDead[index]) return;
+            monsterRoster = index;
+        }
+
+        public bool HasDice(int i)
+        {
+            return (dices[monsterIndex].FindIndex(index => index == i) != -1);
+        }
+
+        public int SetDice(bool isRosterToDice, int skillIdx)
+        {
+            if (isRosterToDice)
             {
-                dices[monsterIndex].Add(skillRoster[monsterIndex][skillIdx]);
-                skillRoster[monsterIndex].RemoveAt(skillIdx);
+                dices[monsterIndex].Add(skillIdx);
             }
             else
             {
-                skillRoster[monsterIndex].Add(dices[monsterIndex][skillIdx]);
                 dices[monsterIndex].RemoveAt(skillIdx);
             }
             return 0;
@@ -147,7 +157,7 @@ namespace GameControl
         {
             if (skillRoster[monsterIndex].Count > 8) return 30;
             int count = 0;
-            
+
             for (int i = 0; i < skillRoster[monsterIndex].Count; i++)
             {
                 if (skillRoster[monsterIndex][i].id == 200110) continue;
@@ -184,6 +194,11 @@ namespace GameControl
             return skillRoster[monsterIndex].Count;
         }
 
+        public List<int> GetDicesWithUnit(int unitIndex)
+        {
+            return dices[unitIndex];
+        }
+
         public int GetDiceSize()
         {
             return dices[monsterIndex].Count;
@@ -210,9 +225,9 @@ namespace GameControl
         public int GetDiceCost()
         {
             int cost = 0;
-            foreach (MonsterSkill skill in dices[monsterIndex])
+            foreach (int rosterIndex in dices[monsterIndex])
             {
-                cost += skill.cost;
+                cost += skillRoster[monsterIndex][rosterIndex].cost;
             }
 
             return cost;
@@ -251,19 +266,19 @@ namespace GameControl
         #endregion
 
         #region Play Round
-        public MonsterSkill GetSelectedDice(int index)
+        public int GetSelectedDice(int index)
         {
-            if (dices.Count <= monsterIndex) return null;
+            if (dices.Count <= monsterIndex) return 0;
             return dices[monsterIndex][index];
         }
-
+        /*
         public MonsterSkill DiceRoll(int roster, bool isParalysis)
         {
-            int[] result = new int[6]{0, 0, 0, 0, 0, 0};
-            int diceIndex = new int(); 
+            int[] result = new int[6] { 0, 0, 0, 0, 0, 0 };
+            int diceIndex = new int();
             for (int i = 0; i < 3; i++)
             {
-                diceIndex =  Random.Range(0, dices[roster % 10].Count);
+                diceIndex = Random.Range(0, dices[roster % 10].Count);
                 if (isParalysis)
                 {
                     int blindAmount = 3;
@@ -283,7 +298,7 @@ namespace GameControl
                 int check = 0;
                 for (int j = 0; j < 6; j++)
                 {
-                    if(result[j] > 0 && (dices[roster % 10][j].id == dices[roster % 10][diceIndex].id)) { check = 1; result[j] += 1; break;}
+                    if (result[j] > 0 && (dices[roster % 10][j].id == dices[roster % 10][diceIndex].id)) { check = 1; result[j] += 1; break; }
                 }
                 if (check == 0) result[diceIndex] += 1;
 
@@ -313,10 +328,10 @@ namespace GameControl
                     }
                 }
             }
-            
 
-            return dices[roster % 10][diceIndex];
-        }
+
+            return skillRoster[roster % 10][dices[roster % 10][diceIndex]];
+        }*/
 
         public Monster GetMonsterRoster()
         {
@@ -372,7 +387,7 @@ namespace GameControl
         {
             List<MonsterSkill> usableSkill = new List<MonsterSkill>();
             usableSkill = SkillDatabase.Instance.GetMonsterDices(monsters[monsterIndex].id);
-            
+
             for (int i = 0; i < usableSkill.Count; i++)
             {
                 if (usableSkill[i].tier > round)

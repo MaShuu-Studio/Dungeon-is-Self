@@ -36,7 +36,7 @@ namespace GameControl
         public List<bool> isDead { get; private set; } = new List<bool>();
         private List<List<bool>> gottenSkills = new List<List<bool>>();
         public List<int> skillPoints { get; private set; } = new List<int>();
-        private List<List<CharacterSkill>> dices = new List<List<CharacterSkill>>();
+        private List<List<int>> dices = new List<List<int>>();
         private List<List<CharacterSkill>> skillRoster = new List<List<CharacterSkill>>();
         private int characterIndex = 0;
         public int[] roster { get; private set; } = new int[3];
@@ -221,25 +221,29 @@ namespace GameControl
             return tier;
         }
 
-        public int SetDice(bool index, int skillIdx)
+        public bool HasDice(int i)
         {
-            if (index == true)//roster to dice
+            return (dices[characterIndex].FindIndex(index => index == i) != -1);
+        }
+
+        public int SetDice(bool isRosterToDice, int skillIdx)
+        {
+            if (isRosterToDice == true)//roster to dice
             {
                 int basicSkill = 0;
                 for (int i = 0; i < dices[characterIndex].Count; i++)
                 {
-                    if (dices[characterIndex][i].id % 100 == 0) { basicSkill++; continue; }
+                    //if (dices[characterIndex][i].id % 100 == 0) { basicSkill++; continue; }
                 }
-                if ((basicSkill < 1 && skillRoster[characterIndex][skillIdx].id % 100 != 0 && dices[characterIndex].Count >= 4) || (basicSkill < 2 && skillRoster[characterIndex][skillIdx].id % 100 != 0 && dices[characterIndex].Count >= 5)) return 26;
+                if ((basicSkill < 1 && skillRoster[characterIndex][skillIdx].id % 100 != 0 && dices[characterIndex].Count >= 4) 
+                    || (basicSkill < 2 && skillRoster[characterIndex][skillIdx].id % 100 != 0 && dices[characterIndex].Count >= 5)) return 26;
 
-                dices[characterIndex].Add(skillRoster[characterIndex][skillIdx]);
-                skillRoster[characterIndex].RemoveAt(skillIdx);
+                dices[characterIndex].Add(skillIdx);
 
                 return 0;
             }
             else//dice to roster
             {
-                skillRoster[characterIndex].Add(dices[characterIndex][skillIdx]);
                 dices[characterIndex].RemoveAt(skillIdx);
 
                 return 0;
@@ -285,6 +289,11 @@ namespace GameControl
             return skillRoster[characterIndex].Count;
         }
 
+        public List<int> GetDicesWithUnit(int unitIndex)
+        {
+            return dices[unitIndex];
+        }
+
         public int GetDiceSize()
         {
             return dices[characterIndex].Count;
@@ -316,17 +325,13 @@ namespace GameControl
         #endregion
 
         #region Play Round
-        public CharacterSkill GetSelectedDice(int index)
+        public int GetSelectedDice(int index)
         {
-            if (dices.Count <= characterIndex) return null;
+            if (dices.Count <= characterIndex) return 0;
             return dices[characterIndex][index];
         }
 
-        public CharacterSkill GetDiceSkill(int index)
-        {
-            return dices[characterIndex][index];
-        }
-
+        /*
         public CharacterSkill DiceRoll(int roster, bool isParalysis)
         {
             
@@ -400,6 +405,7 @@ namespace GameControl
             }
             return dices[roster % 10][diceIndex];
         }
+        */
 
         public List<int> GetCharacterRoster()
         {

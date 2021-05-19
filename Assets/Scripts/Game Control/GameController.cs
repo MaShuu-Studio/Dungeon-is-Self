@@ -221,9 +221,10 @@ namespace GameControl
             List<MonsterSkill> monSkills = new List<MonsterSkill>();
             bool monIsParalysis = HasCrowdControl(defenderUnit, CCType.BLIND);
 
+            /*
             for (int j = 0; j < 2; j++)
                 monSkills.Add(DefenderController.Instance.DiceRoll(defenderUnit % 10, monIsParalysis));
-
+            */
 
             List<bool> isAttack = new List<bool>();
             List<bool> isWait = new List<bool>();
@@ -242,7 +243,7 @@ namespace GameControl
                 }
                 else
                 {
-                    charSkills.Add(offenderUnits[j], OffenderController.Instance.DiceRoll(offenderUnits[j], HasCrowdControl(defenderUnit, CCType.BLIND)));
+                    //charSkills.Add(offenderUnits[j], OffenderController.Instance.DiceRoll(offenderUnits[j], HasCrowdControl(defenderUnit, CCType.BLIND)));
                     isWait.Add(false);
                 }
             }
