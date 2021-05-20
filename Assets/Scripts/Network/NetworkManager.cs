@@ -13,6 +13,7 @@ namespace Network
     {
         const int PORT_NUMBER = 7777;
         static ServerSession session = new ServerSession();
+        private int serverCount = 0;
 
         #region Instance
         private static NetworkManager instance;
@@ -66,6 +67,7 @@ namespace Network
             Connector connector = new Connector();
 
             connector.Connect(endPoint, () => { return session; }, 1);
+
         }
 
         public void Send(ArraySegment<byte> segment)
@@ -78,6 +80,7 @@ namespace Network
             Debug.Log("Connect Complete");
             playerId = id;
             SceneController.Instance.ChangeScene("Main");
+            serverCount = 0;
             if (checkCoroutine != null)
             {
                 StopCoroutine(checkCoroutine);
@@ -91,8 +94,28 @@ namespace Network
             while (true)
             {
                 Send(new C_CheckConnect() { playerId = playerId }.Write());
+                serverCount++;
+                if (serverCount > 5) break;
                 yield return new WaitForSeconds(1f);
             }
+
+            try
+            {
+                session.Disconnect();
+            }
+            catch (Exception e)
+            {
+                Debug.Log("Exception " + e);
+            }
+            finally
+            {
+                SceneController.Instance.ChangeScene("Title");
+            }
+        }
+
+        public void UpdateServer()
+        {
+            serverCount = 0;
         }
 
         public void SetUserInfo(int totalUser, int playingUser, int waitDefUser, int waitOffUser)

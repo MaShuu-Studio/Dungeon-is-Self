@@ -35,19 +35,17 @@ namespace Server
 
         public void CheckSession()
         {
-            Console.WriteLine($"Check Session State");
             List<int> keys = _sessionCount.Keys.ToList<int>();
             for (int i = 0; i < keys.Count; i++)
             {
                 _sessionCount[keys[i]]++;
-                if (_sessionCount[keys[i]] > 10) Leave(keys[i]);
+                if (_sessionCount[keys[i]] > 5) Leave(keys[i]);
             }
         }
 
         public void UpdateSession(int id)
         {
             if (_sessionCount.ContainsKey(id)) _sessionCount[id] = 0;
-            Console.WriteLine($"Update Session {id}");
         }
 
         public void Broadcast(ArraySegment<byte> segment)
@@ -70,6 +68,7 @@ namespace Server
 
         public void Enter(ClientSession session)
         {
+            Console.WriteLine("Enter User");
             int id = _playerNumber++;
             session.Send(new S_GivePlayerId() { playerId = id }.Write());
 
@@ -82,10 +81,19 @@ namespace Server
         }
         public void Leave(int id)
         {
-            _sessions[id].Disconnect();
+            Console.WriteLine($"Leave User {_sessions.ContainsKey(id)}");
+            if (_sessions.ContainsKey(id))
+            {
+                Console.WriteLine("Remove session");
+                _sessions[id].Disconnect();
+                _sessions.Remove(id);
+            }
+            if (_sessionCount.ContainsKey(id))
+            {
+                Console.WriteLine("Remove session");
+                _sessionCount.Remove(id);
+            }
             // 플레이어 나감
-            _sessions.Remove(id);
-            _sessionCount.Remove(id);
             // 모든 플레이어에게 퇴장을 브로드캐스트
             UpdateUserInfo();
         }
@@ -105,6 +113,7 @@ namespace Server
             if (findIndex >= keys.Count) return;
 
             _sessions.Remove(keys[findIndex]);
+            _sessionCount.Remove(keys[findIndex]);
             // 모든 플레이어에게 퇴장을 브로드캐스트
             UpdateUserInfo();
         }

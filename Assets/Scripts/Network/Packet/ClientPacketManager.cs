@@ -18,6 +18,8 @@ public class PacketManager
     Dictionary<ushort, Action<PacketSession, IPacket>> handler = new Dictionary<ushort, Action<PacketSession, IPacket>>();
     public void Register()
     {
+        makeFunc.Add((ushort)PacketID.S_CheckConnect, MakePacket<S_CheckConnect>);
+        handler.Add((ushort)PacketID.S_CheckConnect, PacketHandler.S_CheckConnectHandler);
         makeFunc.Add((ushort)PacketID.S_BroadcastConnectUser, MakePacket<S_BroadcastConnectUser>);
         handler.Add((ushort)PacketID.S_BroadcastConnectUser, PacketHandler.S_BroadcastConnectUserHandler);
         makeFunc.Add((ushort)PacketID.S_GivePlayerId, MakePacket<S_GivePlayerId>);

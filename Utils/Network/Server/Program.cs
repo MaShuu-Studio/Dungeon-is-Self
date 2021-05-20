@@ -24,7 +24,8 @@ namespace Server
         static void UpdateClient()
         {
             Room.Push(() => Room.CheckSession());
-            JobTimer.Instance.Push(UpdateClient, 500);
+            Room.Push(() => Room.Broadcast(new S_CheckConnect().Write()));
+            JobTimer.Instance.Push(UpdateClient, 1000);
         }
 
         static void Main(string[] args)
