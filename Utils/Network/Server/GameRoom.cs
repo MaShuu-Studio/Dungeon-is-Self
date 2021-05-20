@@ -54,6 +54,7 @@ namespace Server
         {
             int id = _playerNumber++;
             session.Send(new S_GivePlayerId() { playerId = id }.Write());
+
             // 플레이어 추가
             _sessions.Add(id, session);
             session.Room = this;

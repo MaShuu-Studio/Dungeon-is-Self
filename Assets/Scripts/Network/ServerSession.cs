@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Text;
 using ServerCore;
+using UnityEngine;
 
 namespace Network
 {
@@ -10,12 +11,12 @@ namespace Network
     {
         public override void OnConnected(EndPoint endPoint)
         {
-            Console.WriteLine($"[System] OnConnected : {endPoint}");
+            Debug.Log($"[System] OnConnected : {endPoint}");
         }
 
         public override void OnDisconnected(EndPoint endPoint)
         {
-            Console.WriteLine($"[System] OnDisconnected : {endPoint}");
+            Debug.Log($"[System] OnDisconnected : {endPoint}");
         }
 
         public override void OnRecvPacket(ArraySegment<byte> buffer)

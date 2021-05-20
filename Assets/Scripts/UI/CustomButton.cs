@@ -42,7 +42,6 @@ public class CustomButton : MonoBehaviour
                 break;
             case ButtonMethod.ConnectServer:
                 button.onClick.AddListener(ConnectServer);
-                button.onClick.AddListener(ChangeScene);
                 break;
             case ButtonMethod.MatchRequest:
                 button.onClick.AddListener(MatchRequest);
@@ -230,6 +229,21 @@ public class CustomButton : MonoBehaviour
     void ConnectServer()
     {
         NetworkManager.Instance.ConnectToServer();
+        SetButtonInteract(false);
+        StartCoroutine(Connecting());
+    }
+
+    IEnumerator Connecting()
+    {
+        float time = 2.0f;
+
+        while(time > 0)
+        {
+            time -= Time.deltaTime;
+            yield return null;
+        }
+
+        SetButtonInteract(true);
     }
 
     void MatchRequest()

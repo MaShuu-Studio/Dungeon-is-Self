@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <PDL>
+	<packet name="C_CheckConnect">
+		<int name="playerId"/>
+	</packet>
 	<packet name="S_BroadcastConnectUser">
 		<int name="totalUser"/>
 		<int name="playingUser"/>

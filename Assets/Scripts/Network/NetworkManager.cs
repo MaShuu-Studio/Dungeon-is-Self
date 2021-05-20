@@ -46,21 +46,18 @@ namespace Network
         // Update is called once per frame
         void Update()
         {
-            if (isConnected)
+            // 게임 쓰레드에서 Pop하여 작동하는 부분.
+            List<IPacket> packets = PacketQueue.Instance.PopAll();
+            foreach (IPacket packet in packets)
             {
-                // 게임 쓰레드에서 Pop하여 작동하는 부분.
-                List<IPacket> packets = PacketQueue.Instance.PopAll();
-                foreach (IPacket packet in packets)
-                {
-                    PacketManager.Instance.HandlePacket(session, packet);
-                }
-                packets.Clear();
+                PacketManager.Instance.HandlePacket(session, packet);
             }
+            packets.Clear();
         }
 
         public void ConnectToServer()
         {
-            Debug.Log("Connect");
+            Debug.Log("Try Connect to server");
             string host = Dns.GetHostName();
             IPHostEntry ipHost = Dns.GetHostEntry(host);
             IPAddress ipAddr = ipHost.AddressList[0];
@@ -69,8 +66,6 @@ namespace Network
             Connector connector = new Connector();
 
             connector.Connect(endPoint, () => { return session; }, 1);
-
-            isConnected = true;
         }
 
         public void Send(ArraySegment<byte> segment)
@@ -80,7 +75,10 @@ namespace Network
 
         public void SetPlayerId(int id)
         {
+            Debug.Log("Connect Complete");
             playerId = id;
+            isConnected = true;
+            SceneController.Instance.ChangeScene("Main");
         }
 
         public void SetUserInfo(int totalUser, int playingUser, int waitDefUser, int waitOffUser)
