@@ -16,8 +16,8 @@ public class CustomButton : MonoBehaviour
     [SerializeField] private ButtonMethod method;
     private Button button;
     private Image image;
-    private bool isOn = false;
-    private IEnumerator coroutine = null;
+    //private IEnumerator coroutine = null;
+    //private bool isOn = false;
 
     // Start is called before the first frame update
     void Start()
@@ -215,14 +215,14 @@ public class CustomButton : MonoBehaviour
             StartCoroutine(coroutine);
         }*/
     }
-
+    /*
     IEnumerator TurnProgress()
     {
         while (GameController.Instance.progressRound == false) yield return null;
         while (GameController.Instance.progressRound) yield return null;
 
         isOn = false;
-    }
+    }*/
     #endregion
 
     #region Network

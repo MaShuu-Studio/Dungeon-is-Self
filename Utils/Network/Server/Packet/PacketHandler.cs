@@ -29,6 +29,16 @@ class PacketHandler
         room.Push(() => room.Move(clientSession, movePacket));
         //Console.WriteLine($"{clientSession.SessionId}: {clientSession.Xpos}, {clientSession.Ypos}");
     }*/
+    public static void C_CheckConnectHandler(PacketSession session, IPacket packet)
+    {
+        C_CheckConnect p = packet as C_CheckConnect;
+        ClientSession clientSession = session as ClientSession;
+
+        if (clientSession.Room == null) return;
+        GameRoom room = clientSession.Room;
+
+        room.Push(() => room.UpdateSession(p.playerId));
+    }
     public static void C_EnterGameHandler(PacketSession session, IPacket packet)
     {
         ClientSession clientSession = session as ClientSession;

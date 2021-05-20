@@ -17,6 +17,8 @@ public class PacketManager
     Dictionary<ushort, Action<PacketSession, IPacket>> handler = new Dictionary<ushort, Action<PacketSession, IPacket>>();
     public void Register()
     {
+        makeFunc.Add((ushort)PacketID.C_CheckConnect, MakePacket<C_CheckConnect>);
+        handler.Add((ushort)PacketID.C_CheckConnect, PacketHandler.C_CheckConnectHandler);
         makeFunc.Add((ushort)PacketID.C_EnterGame, MakePacket<C_EnterGame>);
         handler.Add((ushort)PacketID.C_EnterGame, PacketHandler.C_EnterGameHandler);
         makeFunc.Add((ushort)PacketID.C_LeaveGame, MakePacket<C_LeaveGame>);

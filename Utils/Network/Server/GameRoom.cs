@@ -17,6 +17,7 @@ namespace Server
         int _roomNumber = 1;
 
         Dictionary<int, ClientSession> _sessions = new Dictionary<int, ClientSession>();
+        Dictionary<int, int> _sessionCount = new Dictionary<int, int>();
         List<int> waitDefenderUserList = new List<int>();
         List<int> waitOffenderUserList = new List<int>();
         Dictionary<int, PlayRoom> playingRooms = new Dictionary<int, PlayRoom>();
@@ -30,6 +31,23 @@ namespace Server
         public void Send(int id, IPacket packet)
         {
             _packetList.Add(new Tuple<int, ArraySegment<byte>>(id, packet.Write()));
+        }
+
+        public void CheckSession()
+        {
+            Console.WriteLine($"Check Session State");
+            List<int> keys = _sessionCount.Keys.ToList<int>();
+            for (int i = 0; i < keys.Count; i++)
+            {
+                _sessionCount[keys[i]]++;
+                if (_sessionCount[keys[i]] > 10) Leave(keys[i]);
+            }
+        }
+
+        public void UpdateSession(int id)
+        {
+            if (_sessionCount.ContainsKey(id)) _sessionCount[id] = 0;
+            Console.WriteLine($"Update Session {id}");
         }
 
         public void Broadcast(ArraySegment<byte> segment)
@@ -56,6 +74,7 @@ namespace Server
             session.Send(new S_GivePlayerId() { playerId = id }.Write());
 
             // 플레이어 추가
+            _sessionCount.Add(id, 0);
             _sessions.Add(id, session);
             session.Room = this;
 
@@ -63,8 +82,10 @@ namespace Server
         }
         public void Leave(int id)
         {
+            _sessions[id].Disconnect();
             // 플레이어 나감
             _sessions.Remove(id);
+            _sessionCount.Remove(id);
             // 모든 플레이어에게 퇴장을 브로드캐스트
             UpdateUserInfo();
         }

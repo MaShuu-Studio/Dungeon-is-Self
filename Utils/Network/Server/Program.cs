@@ -21,6 +21,12 @@ namespace Server
             JobTimer.Instance.Push(FlushRoom, 100);
         }
 
+        static void UpdateClient()
+        {
+            Room.Push(() => Room.CheckSession());
+            JobTimer.Instance.Push(UpdateClient, 500);
+        }
+
         static void Main(string[] args)
         {
             // DNS 활용
@@ -33,6 +39,7 @@ namespace Server
             Console.WriteLine("Listening...");
 
             FlushRoom();
+            UpdateClient();
             while (true)
             {
                 JobTimer.Instance.Flush();

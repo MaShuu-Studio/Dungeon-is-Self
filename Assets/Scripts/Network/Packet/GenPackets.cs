@@ -6,20 +6,21 @@ using ServerCore;
 
 public enum PacketID
 {
-    S_BroadcastConnectUser = 0,
-	C_EnterGame = 1,
-	S_GivePlayerId = 2,
-	C_LeaveGame = 3,
-	C_SingleGameRequest = 4,
-	C_MatchRequest = 5,
-	C_MatchRequestCancel = 6,
-	S_StartGame = 7,
-	C_ReadyGame = 8,
-	S_ReadyGameEnd = 9,
-	C_RoundReady = 10,
-	S_RoundReadyEnd = 11,
-	C_PlayRoundReady = 12,
-	S_ProgressTurn = 13,
+    C_CheckConnect = 0,
+	S_BroadcastConnectUser = 1,
+	C_EnterGame = 2,
+	S_GivePlayerId = 3,
+	C_LeaveGame = 4,
+	C_SingleGameRequest = 5,
+	C_MatchRequest = 6,
+	C_MatchRequestCancel = 7,
+	S_StartGame = 8,
+	C_ReadyGame = 9,
+	S_ReadyGameEnd = 10,
+	C_RoundReady = 11,
+	S_RoundReadyEnd = 12,
+	C_PlayRoundReady = 13,
+	S_ProgressTurn = 14,
 	
 }
 
@@ -30,6 +31,40 @@ public interface IPacket
 	ArraySegment<byte> Write();
 }
 
+public class C_CheckConnect : IPacket
+{
+    public int playerId;
+    public ushort Protocol { get { return (ushort)PacketID.C_CheckConnect; } }
+
+    public void Read(ArraySegment<byte> segment)
+    {
+        ushort count = 0;
+
+        count += sizeof(ushort);
+        count += sizeof(ushort);
+        
+        this.playerId = BitConverter.ToInt32(segment.Array, segment.Offset + count);
+		count += sizeof(int);
+    }
+
+    public ArraySegment<byte> Write()
+    { 
+        ArraySegment<byte> segment = SendBufferHelper.Open(4096);
+        ushort count = 0;
+
+        count += sizeof(ushort);
+        Array.Copy(BitConverter.GetBytes((ushort)PacketID.C_CheckConnect), 0, segment.Array, segment.Offset + count, sizeof(ushort));
+        count += sizeof(ushort);
+        
+        Array.Copy(BitConverter.GetBytes(this.playerId), 0, segment.Array, segment.Offset + count, sizeof(int));
+		count += sizeof(int);
+		
+
+        Array.Copy(BitConverter.GetBytes(count), 0, segment.Array, segment.Offset, sizeof(ushort));
+
+        return SendBufferHelper.Close(count);
+    }
+}
 public class S_BroadcastConnectUser : IPacket
 {
     public int totalUser;

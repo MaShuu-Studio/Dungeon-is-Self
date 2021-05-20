@@ -41,7 +41,7 @@ namespace Network
         public int playingUser { get; private set; } = 0;
         public int waitDefenderUser { get; private set; } = 0;
         public int waitOffenderUser { get; private set; } = 0;
-        private bool isConnected = false;
+        IEnumerator checkCoroutine = null;
 
         // Update is called once per frame
         void Update()
@@ -77,8 +77,22 @@ namespace Network
         {
             Debug.Log("Connect Complete");
             playerId = id;
-            isConnected = true;
             SceneController.Instance.ChangeScene("Main");
+            if (checkCoroutine != null)
+            {
+                StopCoroutine(checkCoroutine);
+            }
+            checkCoroutine = CheckPacket();
+            StartCoroutine(checkCoroutine);
+        }
+
+        IEnumerator CheckPacket()
+        {
+            while (true)
+            {
+                Send(new C_CheckConnect() { playerId = playerId }.Write());
+                yield return new WaitForSeconds(1f);
+            }
         }
 
         public void SetUserInfo(int totalUser, int playingUser, int waitDefUser, int waitOffUser)
