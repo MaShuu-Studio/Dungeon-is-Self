@@ -109,6 +109,15 @@ namespace Network
             Send(singleGamePacket.Write());
         }
 
+        public void MatchRequestCancel(UserType type)
+        {
+            C_MatchRequestCancel matchCancelPacket = new C_MatchRequestCancel();
+            matchCancelPacket.playerId = playerId;
+            matchCancelPacket.playerType = (ushort)type;
+
+            Send(matchCancelPacket.Write());
+        }
+
         private void OnApplicationQuit()
         {
             C_LeaveGame p = new C_LeaveGame();

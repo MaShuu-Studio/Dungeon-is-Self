@@ -72,6 +72,10 @@ namespace GameControl
         */
 
         #region Network
+        public void SetUserType(UserType type)
+        {
+            userType = type;
+        }
         public void StartGame(int id, UserType type)
         {
             roomId = id;

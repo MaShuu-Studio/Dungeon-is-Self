@@ -69,7 +69,7 @@ class PacketHandler
     }
     public static void C_MatchRequestCancelHandler(PacketSession session, IPacket packet)
     {
-        C_MatchRequest p = packet as C_MatchRequest;
+        C_MatchRequestCancel p = packet as C_MatchRequestCancel;
         ClientSession clientSession = session as ClientSession;
 
         if (clientSession.Room == null) return;

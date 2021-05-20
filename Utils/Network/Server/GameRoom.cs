@@ -171,7 +171,7 @@ namespace Server
             }
             else
             {
-                for (int i = 0; i < waitDefenderUserList.Count; i++)
+                for (int i = 0; i < waitOffenderUserList.Count; i++)
                 {
                     if (waitOffenderUserList[i] == playerId)
                     {
