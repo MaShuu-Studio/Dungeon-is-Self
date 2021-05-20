@@ -250,7 +250,7 @@ namespace GameControl
         public void SetRoster()
         {
             int[] unit = new int[1];
-            unit[0] = monsterIndex;
+            unit[0] = monsterRoster;
             ResetAttackSkill();
             GameController.Instance.SelectUnit(UserType.Defender, unit);
         }

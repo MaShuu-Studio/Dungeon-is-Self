@@ -123,6 +123,7 @@ namespace GameControl
             }
             OffenderController.Instance.SetRoster();
             DefenderController.Instance.SetRoster();
+            DefenderController.Instance.HealBattleMonster(defenderUnit);
 
             this.round = round;
 
@@ -155,7 +156,7 @@ namespace GameControl
                 GamePlayUIController.Instance.ShowSelectedEnemy(new int[] { defenderUnit });
             }
 
-            NextTurn();
+            GamePlayUIController.Instance.UpdateCharacters();
         }
 
         public void ProgressTurn(int round, int turn, S_ProgressTurn packet)

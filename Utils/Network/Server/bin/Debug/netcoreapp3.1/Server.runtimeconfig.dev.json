@@ -2,8 +2,7 @@
   "runtimeOptions": {
     "additionalProbingPaths": [
       "C:\\Users\\ghwls\\.dotnet\\store\\|arch|\\|tfm|",
-      "C:\\Users\\ghwls\\.nuget\\packages",
-      "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+      "C:\\Users\\ghwls\\.nuget\\packages"
     ]
   }
 }

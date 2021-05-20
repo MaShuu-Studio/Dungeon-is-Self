@@ -954,6 +954,7 @@ public class GamePlayUIController : MonoBehaviour
     {
         int monHp = 0, monTurn = 0;
         DefenderController.Instance.GetMonsterInfo(ref monHp, ref monTurn);
+        Debug.Log("Update");
         if (type == UserType.Defender)
         {
             for (int i = 0; i < charObjects.Count; i++)
