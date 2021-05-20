@@ -793,7 +793,14 @@ public class GamePlayUIController : MonoBehaviour
                 // 실제 로스터에서 주사위로
                 if (type == UserType.Offender)
                 {
-                    OffenderController.Instance.SetDice(true, i);
+                    if (OffenderController.Instance.GetDiceSize() < 2)
+                    {
+                        for (int j = OffenderController.Instance.GetDiceSize(); j < 2; j++)
+                        {
+                            OffenderController.Instance.SetDice(true, 9);
+                        }
+                    }
+                    else OffenderController.Instance.SetDice(true, i);
                 }
                 else
                 {
@@ -807,7 +814,7 @@ public class GamePlayUIController : MonoBehaviour
             }
         }
 
-        for (int i = 0; i < usingDices.Count; i++)
+        for (int i = 2; i < usingDices.Count; i++)
         {
             if (usingDices[i] == icon)
             {

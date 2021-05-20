@@ -132,11 +132,13 @@ namespace GameControl
         {
             if (index == true)
             {
+                if (GetDiceSize() >= 6) return 1;
                 dices[monsterIndex].Add(skillRoster[monsterIndex][skillIdx]);
                 skillRoster[monsterIndex].RemoveAt(skillIdx);
             }
             else
             {
+                if (GetDiceSize() <= 0) return 1;
                 skillRoster[monsterIndex].Add(dices[monsterIndex][skillIdx]);
                 dices[monsterIndex].RemoveAt(skillIdx);
             }
@@ -162,6 +164,43 @@ namespace GameControl
 
             skillRoster[monsterIndex].Add(skill);
             return 0;
+        }
+
+        public void RosterTimeOut()
+        {
+            for (int i = 0; i < 6; i++)
+            {
+                if (isDead[i] == true) continue;
+                else { SelectMonster(i); break; }
+            }
+
+            for (int i = GetSkillRosterSize(); i < 8; i++)
+            {
+                List<MonsterSkill> usableSkill = GetUsableSkill(GameController.Instance.round);
+                while (true)
+                {
+                    int n = UnityEngine.Random.Range(0, usableSkill.Count);
+                    if (SetSkillRoster(usableSkill[n]) == 0) break;
+                }
+            }
+        }
+
+        public void DiceTimeOut()
+        {
+            for (int i = 0; i < 6; i++)
+            {
+                if (isDead[i] == true) continue;
+                else { SelectMonster(i); break; }
+            }
+
+            for (int i = GetDiceSize(); i < 6; i++)
+            {
+                while (true)
+                {
+                    int n = UnityEngine.Random.Range(0, GetSkillRosterSize());
+                    if (SetDice(true, n) == 0) break;
+                }
+            }
         }
 
         public MonsterSkill GetSkillRoster(int i)
