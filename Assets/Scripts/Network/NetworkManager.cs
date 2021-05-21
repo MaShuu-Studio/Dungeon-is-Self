@@ -110,6 +110,7 @@ namespace Network
             finally
             {
                 SceneController.Instance.ChangeScene("Title");
+                session = new ServerSession();
             }
         }
 

@@ -97,6 +97,11 @@
 			<list name="diceIndex">
 				<int name="int"/>
 			</list>
+			<clist name="cc">
+				<int name="cctype"/>
+				<int name="ccturn"/>
+				<int name="ccstack"/>
+			</clist>
 		</clist>
 	</packet>
 </PDL>
