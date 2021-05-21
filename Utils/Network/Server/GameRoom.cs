@@ -55,9 +55,18 @@ namespace Server
 
         public void Flush()
         {
-            foreach(Tuple<int, ArraySegment<byte>> packet in _packetList)
-                _sessions[packet.Item1].Send(packet.Item2);
+            foreach (Tuple<int, ArraySegment<byte>> packet in _packetList)
+                if (_sessions.ContainsKey(packet.Item1))
+                {
+                    _sessions[packet.Item1].Send(packet.Item2);
+                    Console.WriteLine($"Send Packet to {packet.Item1}");
+                }
+                else
+                {
+                    Console.WriteLine($"Fail Sending Packet to {packet.Item1}");
+                }
 
+            if (_sessions.Count == 0) _pendingList.Clear();
             foreach (ClientSession s in _sessions.Values)
                 s.Send(_pendingList);
 
@@ -68,8 +77,8 @@ namespace Server
 
         public void Enter(ClientSession session)
         {
-            Console.WriteLine("Enter User");
             int id = _playerNumber++;
+            Console.WriteLine($"Enter User : {id}");
             session.Send(new S_GivePlayerId() { playerId = id }.Write());
 
             // 플레이어 추가
@@ -79,20 +88,22 @@ namespace Server
 
             UpdateUserInfo();
         }
+
         public void Leave(int id)
         {
-            Console.WriteLine($"Leave User {_sessions.ContainsKey(id)}");
+            Console.WriteLine($"Leave User {id}");
+
             if (_sessions.ContainsKey(id))
             {
-                Console.WriteLine("Remove session");
                 _sessions[id].Disconnect();
                 _sessions.Remove(id);
             }
             if (_sessionCount.ContainsKey(id))
             {
-                Console.WriteLine("Remove session");
                 _sessionCount.Remove(id);
             }
+
+            PlayingRoomAbnormalExit(id);
             // 플레이어 나감
             // 모든 플레이어에게 퇴장을 브로드캐스트
             UpdateUserInfo();
@@ -139,31 +150,28 @@ namespace Server
 
             if (waitDefenderUserList.Count > 0 && waitOffenderUserList.Count > 0)
             {
-                int defenderId = waitDefenderUserList[0];
-                int offenderId = waitOffenderUserList[0];
+                int[] playerIds = new int[2];
+                playerIds[(ushort)UserType.Defender] = waitDefenderUserList[0];
+                playerIds[(ushort)UserType.Offender] = waitOffenderUserList[0];
 
                 waitDefenderUserList.RemoveAt(0);
                 waitOffenderUserList.RemoveAt(0);
 
                 int roomId = _roomNumber++;
-                PlayRoom playRoom = new PlayRoom(roomId, defenderId, offenderId, this);
+                PlayRoom playRoom = new PlayRoom(roomId, playerIds, this);
                 playingRooms.Add(roomId, playRoom);
 
-                S_StartGame defPacket = new S_StartGame()
+                for (ushort i = 0; i < 2; i++)
                 {
-                    roomId = roomId,
-                    enemyPlayerId = offenderId,
-                    playerType = (ushort)UserType.Defender
-                };
-                S_StartGame offPacket = new S_StartGame()
-                {
-                    roomId = roomId,
-                    enemyPlayerId = defenderId,
-                    playerType = (ushort)UserType.Offender
-                };
-
-                _sessions[defenderId].Send(defPacket.Write());
-                _sessions[offenderId].Send(offPacket.Write());
+                    Send(playerIds[i],
+                        new S_StartGame()
+                        {
+                            roomId = roomId,
+                            enemyPlayerId = playerIds[i],
+                            playerType = i
+                        }
+                        );
+                }
             }
 
             UpdateUserInfo();
@@ -182,7 +190,7 @@ namespace Server
                 playerType = (ushort)type
             };
 
-            _sessions[playerId].Send(packet.Write());
+            Send(playerId, packet);
 
             UpdateUserInfo();
         }
@@ -262,5 +270,30 @@ namespace Server
             }
         }
 
+        private void PlayingRoomAbnormalExit(int id)
+        {
+            List<int> keys = playingRooms.Keys.ToList();
+            for (int i = 0; i < playingRooms.Count; i++)
+            {
+                int findPlayer = playingRooms[keys[i]].PlayerInRoom(id);
+                if (findPlayer != -1)
+                {
+                    UserType winner = ((UserType)findPlayer == UserType.Defender) ? UserType.Offender : UserType.Offender;
+                    int winnerId = playingRooms[keys[i]].GetPlayerId(winner);
+
+                    S_GameEnd packet = new S_GameEnd();
+                    packet.winner = (ushort)winner;
+                    packet.winnerId = winnerId;
+
+                    Send(winnerId, packet);
+                    playingRooms.Remove(keys[i]);
+                    break;
+                }
+            }
+        }
+
+        public void GameEnd(UserType winner, int id, int roomId)
+        {
+        }
     }
 }

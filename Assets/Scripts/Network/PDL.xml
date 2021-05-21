@@ -83,7 +83,6 @@
 	</packet>
 	<packet name="S_ProgressTurn">
 		<bool name="isRoundEnd"/>
-		<bool name="isGameEnd"/>
 		<ushort name="winner"/>
 		<int name="round"/>
 		<int name="turn"/>
@@ -103,5 +102,9 @@
 				<int name="ccstack"/>
 			</clist>
 		</clist>
+	</packet>
+	<packet name="S_GameEnd">
+		<ushort name="winner"/>
+		<int name="winnerId"/>
 	</packet>
 </PDL>

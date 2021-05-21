@@ -239,6 +239,32 @@ namespace GameControl
             progressRound = false;
             GamePlayUIController.Instance.SetTurn(turn);
         }
+
+        public void GameEnd(UserType winner)
+        {
+            StartCoroutine(ShowResult(winner, true));
+        }
+
+        IEnumerator ShowResult(UserType winner, bool gameEnd)
+        {
+            int alertIndex = 40;
+            if (winner == UserType.Defender) alertIndex = 41;
+
+            GamePlayUIController.Instance.Alert(alertIndex);
+
+            float time = 1.5f;
+            while (time > 0)
+            {
+                time -= Time.deltaTime;
+                yield return null;
+            }
+            if (gameEnd) SceneController.Instance.ChangeScene("Main"); // 씬 이동 임시
+            /*
+            else if (winner == UserType.Defender) ReadyRound(true);
+            else ReadyRound(false);
+            */
+        }
+
         #endregion
 
         public void ReadyGame()
@@ -943,22 +969,5 @@ namespace GameControl
             StartCoroutine(ShowResult(UserType.Defender, roundEnd));
         }
 
-        IEnumerator ShowResult(UserType winner, bool gameEnd)
-        {
-            int alertIndex = 40;
-            if (winner == UserType.Defender) alertIndex = 41;
-
-            GamePlayUIController.Instance.Alert(alertIndex);
-
-            float time = 1.5f;
-            while (time > 0)
-            {
-                time -= Time.deltaTime;
-                yield return null;
-            }
-            if (gameEnd) SceneController.Instance.ChangeScene("Main"); // 씬 이동 임시
-            else if (winner == UserType.Defender) ReadyRound(true);
-            else ReadyRound(false);
-        }
     }
 }
