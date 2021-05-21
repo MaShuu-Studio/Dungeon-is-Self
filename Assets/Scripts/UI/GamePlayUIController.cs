@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using GameControl;
 using Data;
+using System.Linq;
 
 public class GamePlayUIController : MonoBehaviour
 {
@@ -91,6 +92,7 @@ public class GamePlayUIController : MonoBehaviour
 
     [SerializeField] private GameObject dicePrefab;
     [SerializeField] private CrowdControlIcon crowdControlIconPrefab;
+    [SerializeField] private RolledDiceIcon rolledDiceIconPrefab;
     #endregion
 
     #region Instance
@@ -895,7 +897,7 @@ public class GamePlayUIController : MonoBehaviour
                 prefab = Resources.Load(enemyPath + characterIds[i]);
                 obj = Instantiate(prefab) as GameObject;
                 obj.transform.SetParent(characterTransform);
-                obj.transform.position = new Vector3(obj.transform.position.x + 2f * i, obj.transform.position.y, 0);
+                obj.transform.position = new Vector3(obj.transform.position.x + 2.5f * i, obj.transform.position.y, 0);
                 CharacterObject character = obj.GetComponent<CharacterObject>();
                 character.SetCharacterIndex(GameController.Instance.offenderUnits[i]);
                 enemyObjects.Add(character);
@@ -920,7 +922,7 @@ public class GamePlayUIController : MonoBehaviour
                 prefab = Resources.Load(charPath + characterNames[i]);
                 obj = Instantiate(prefab) as GameObject;
                 obj.transform.SetParent(characterTransform);
-                obj.transform.position = new Vector3((obj.transform.position.x + 2f * i) * -1, obj.transform.position.y, 0);
+                obj.transform.position = new Vector3((obj.transform.position.x + 2.5f * i) * -1, obj.transform.position.y, 0);
                 CharacterObject character = obj.GetComponent<CharacterObject>();
                 character.SetCharacterIndex(GameController.Instance.offenderUnits[i]);
                 charObjects.Add(character);
@@ -954,7 +956,7 @@ public class GamePlayUIController : MonoBehaviour
     {
         int monHp = 0, monTurn = 0;
         DefenderController.Instance.GetMonsterInfo(ref monHp, ref monTurn);
-        Debug.Log("Update");
+
         if (type == UserType.Defender)
         {
             for (int i = 0; i < charObjects.Count; i++)
@@ -1101,6 +1103,45 @@ public class GamePlayUIController : MonoBehaviour
 
         foreach (Dice dice in diceObjects)
             if (dice != null) dice.Roll();
+    }
+
+    public void ShowDices(Dictionary<int, List<int>> dices)
+    {
+        List<int> dicesChars = dices.Keys.ToList();
+        for (int i = 0; i < dicesChars.Count; i++)
+        {
+            for (int j = 0; j < charObjects.Count; j++) {
+                if (charObjects[j] != null && dicesChars[i] == charObjects[j].GetIndex())
+                {
+                    charObjects[j].UpdateDiceList(dices[dicesChars[i]], rolledDiceIconPrefab);
+                    break;
+                }
+            }
+            for (int j = 0; j < enemyObjects.Count; j++)
+            {
+                if ( enemyObjects[j] != null && dicesChars[i] == enemyObjects[j].GetIndex())
+                {
+                    enemyObjects[j].UpdateDiceList(dices[dicesChars[i]], rolledDiceIconPrefab);
+                    break;
+                }
+            }
+        }
+
+    }
+
+    public void RemoveDices()
+    {
+        for (int i = 0; i < charObjects.Count; i++)
+        {
+            if (charObjects[i] != null)
+                charObjects[i].RemoveDices();
+        }
+
+        for (int i = 0; i < enemyObjects.Count; i++)
+        {
+            if (enemyObjects[i] != null)
+                enemyObjects[i].RemoveDices();
+        }
     }
 
     public void SetDiceSkill(int index, int id)

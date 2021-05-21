@@ -249,7 +249,7 @@ namespace Server
             }
             else
             {
-                // 오펜더가 졌을 경우
+                // 오펜더가 졌을 경우 else if문
             }
             return false;
         }

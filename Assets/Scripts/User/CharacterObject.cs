@@ -13,12 +13,14 @@ public class CharacterObject : MonoBehaviour
     [SerializeField] private Text turnText;
     [SerializeField] private Text hpText;
     [SerializeField] private Transform CCList;
+    [SerializeField] private Transform diceList;
 
     private SpriteRenderer _sprite;
     private Animator _animator;
     private int index;
 
     private List<CrowdControlIcon> ccIcons = new List<CrowdControlIcon>();
+    private List<GameObject> rolledDices = new List<GameObject>();
 
     private IEnumerator coroutine;
 
@@ -85,6 +87,28 @@ public class CharacterObject : MonoBehaviour
 
             ccIcons.Add(crowdControlIcon);
         }
+    }
+
+    public void UpdateDiceList(List<int> dices, RolledDiceIcon prefab)
+    {
+        for (int i = 0; i < dices.Count; i++)
+        {
+            GameObject obj = Instantiate(prefab.gameObject);
+            obj.transform.SetParent(diceList);
+
+            RolledDiceIcon dice = obj.GetComponent<RolledDiceIcon>();
+            dice.SetImage(dices[i]);
+
+            rolledDices.Add(obj);
+        }
+    }
+
+    public void RemoveDices()
+    {
+        for (int i = 0; i < rolledDices.Count; i++)
+            Destroy(rolledDices[i]);
+
+        rolledDices.Clear();
     }
 
     public void SetCharacterIndex(int n)

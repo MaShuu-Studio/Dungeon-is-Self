@@ -88,6 +88,7 @@
     <Compile Include="Assets\Scripts\UI\Icons\CharSelectIcon.cs" />
     <Compile Include="Assets\Scripts\UI\Icons\CrowdControlIcon.cs" />
     <Compile Include="Assets\Scripts\UI\Icons\DragAndDropIcon.cs" />
+    <Compile Include="Assets\Scripts\UI\Icons\RolledDiceIcon.cs" />
     <Compile Include="Assets\Scripts\UI\Icons\RosterIcon.cs" />
     <Compile Include="Assets\Scripts\UI\Icons\SkillIcon.cs" />
     <Compile Include="Assets\Scripts\UI\Icons\UIIcon.cs" />

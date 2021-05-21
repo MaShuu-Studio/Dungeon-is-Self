@@ -72,6 +72,7 @@ namespace GameControl
         */
 
         #region Network
+
         public void SetUserType(UserType type)
         {
             userType = type;
@@ -115,6 +116,7 @@ namespace GameControl
 
             currentProgress = GameProgress.ReadyRound;
         }
+
         public void StartRound(int round, List<S_RoundReadyEnd.EnemyRoster> enemys)
         {
             if (userType == UserType.Defender)
@@ -125,6 +127,7 @@ namespace GameControl
             {
                 DefenderController.Instance.SetSkillRoster(enemys);
             }
+
             OffenderController.Instance.SetRoster();
             DefenderController.Instance.SetRoster();
             DefenderController.Instance.HealBattleMonster(defenderUnit);
@@ -166,6 +169,7 @@ namespace GameControl
         public void ProgressTurn(int round, int turn, S_ProgressTurn packet)
         {
             progressRound = true;
+            Dictionary<int, List<int>> dices = new Dictionary<int, List<int>>();
             Dictionary<int, int> selectedSkills = new Dictionary<int, int>();
             List<bool> isAttack = new List<bool>();
             List<bool> isWait = new List<bool>();
@@ -173,6 +177,7 @@ namespace GameControl
             foreach (S_ProgressTurn.Result item in packet.results)
             {
                 selectedSkills.Add(item.unitIndex, item.diceResult);
+                dices.Add(item.unitIndex, item.diceIndexs);
                 if (item.diceResult == -1)
                 {
                     animationEnd[item.unitIndex] = true;
@@ -186,6 +191,7 @@ namespace GameControl
                 isWait.Add(false);
             }
 
+            GamePlayUIController.Instance.DiceRoll(isAttack, isWait);
             DiceRolled();
             foreach (bool b in isAttack)
             {
@@ -196,13 +202,12 @@ namespace GameControl
                 }
             }
 
-            GamePlayUIController.Instance.DiceRoll(isAttack, isWait);
-
-            StartCoroutine(BattleAnimation(turn, selectedSkills, packet.monsterHps));
+            StartCoroutine(BattleAnimation(turn, dices, selectedSkills, packet.monsterHps));
         }
-        IEnumerator BattleAnimation(int turn, Dictionary<int, int> diceSkills, List<int> monsterHps)
+        IEnumerator BattleAnimation(int turn, Dictionary<int, List<int>> dices, Dictionary<int, int> diceSkills, List<int> monsterHps)
         {
             while (isDiceRolled) yield return null;
+            GamePlayUIController.Instance.ShowDices(dices);
 
             List<int> keys = animationEnd.Keys.ToList<int>();
             for (int i = 0; i < animationEnd.Count; i++)
@@ -224,6 +229,7 @@ namespace GameControl
                 yield return null;
             }
             progressRound = false;
+            GamePlayUIController.Instance.RemoveDices();
             NextTurnInNetwork(turn);
         }
 

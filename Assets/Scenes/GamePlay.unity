@@ -7984,6 +7984,8 @@ MonoBehaviour:
     type: 3}
   crowdControlIconPrefab: {fileID: 4520148493781022452, guid: e0dd3cbde37bcd048a16a3948933340f,
     type: 3}
+  rolledDiceIconPrefab: {fileID: 1488529796530292464, guid: 8965b849402d3f646ba8668d64e1f766,
+    type: 3}
 --- !u!4 &1303942448
 Transform:
   m_ObjectHideFlags: 0
