@@ -474,6 +474,29 @@ namespace Data
         {
             return monSkillDB.Find(skill => skill.id == id);
         }
+
+        public CharacterSkill GetCharacterBasicSkill(int charId)
+        {
+            return charSkillDB.Find(skill =>
+            (skill.id / 100 == (charId % 100 + 100))
+            && (skill.id % 10 == 0));
+        }
+
+        public MonsterSkill GetMonsterBasicSkill(int monId)
+        {
+            return monSkillDB.Find(skill =>
+            (skill.id / 1000 == (monId))
+            && (skill.id % 10 == 0));
+        }
+
+        public List<CharacterSkill> GetCharacterAllSkills(int charNumber)
+        {
+            // charNumber 
+            // 1: Knight, 2: Marksman, 3: Mage
+            charNumber += 100;
+            return charSkillDB.FindAll(skill => skill.id/100 == charNumber);
+        }
+
         public List<int> GetMonsterAllSkills(int monsterNumber)
         {
             // charNumber 
@@ -486,14 +509,6 @@ namespace Data
             foreach (MonsterSkill skill in skills) dices.Add(skill.id);
 
             return dices;
-        }
-
-        public List<CharacterSkill> GetCharacterAllSkills(int charNumber)
-        {
-            // charNumber 
-            // 1: Knight, 2: Marksman, 3: Mage
-            charNumber += 100;
-            return charSkillDB.FindAll(skill => skill.id/100 == charNumber);
         }
 
         public List<CharacterSkill> GetCharacterDices(int id)

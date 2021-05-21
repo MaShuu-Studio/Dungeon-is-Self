@@ -16,8 +16,8 @@ namespace Server
 
         readonly int[] _playerId = new int[2];
 
-        readonly Offender offender;
-        readonly Defender defender;
+        Offender offender;
+        Defender defender;
 
         GameProgress currentProgress;
 
@@ -80,10 +80,14 @@ namespace Server
             if (type == UserType.Defender)
             {
                 defender.SetCandidate(candidates);
+                if (_playerId[(ushort)UserType.Offender] == -1)
+                    Bot.SetCandidate(ref offender);
             }
             else
             {
                 offender.SetCandidate(candidates);
+                if (_playerId[(ushort)UserType.Defender] == -1)
+                    Bot.SetCandidate(ref defender);
             }
 
             if (_playerReady[(ushort)UserType.Defender] && _playerReady[(ushort)UserType.Offender])
@@ -94,10 +98,13 @@ namespace Server
                 packet.round = ++round;
                 packet.enemyCandidates = defender.Candidates;
 
-                _room.Send(_playerId[(ushort)UserType.Offender], packet);
+                if (_playerId[(ushort)UserType.Offender] != -1)
+                    _room.Send(_playerId[(ushort)UserType.Offender], packet);
 
                 packet.enemyCandidates = offender.Candidates;
-                _room.Send(_playerId[(ushort)UserType.Defender], packet);
+
+                if (_playerId[(ushort)UserType.Defender] != -1)
+                    _room.Send(_playerId[(ushort)UserType.Defender], packet);
 
                 for (int i = 0; i < _playerReady.Length; i++)
                     if (_playerId[i] == -1) _playerReady[i] = true;
@@ -120,10 +127,14 @@ namespace Server
             if (type == UserType.Defender)
             {
                 defender.SetRoster(units, skills, attackSkills, round);
+                if (_playerId[(ushort)UserType.Offender] == -1)
+                    Bot.SetRoster(ref offender);
             }
             else
             {
                 offender.SetRoster(units, skills);
+                if (_playerId[(ushort)UserType.Defender] == -1)
+                    Bot.SetRoster(ref defender, round);
             }
 
             if (_playerReady[(ushort)UserType.Defender] && _playerReady[(ushort)UserType.Offender])
@@ -135,27 +146,35 @@ namespace Server
                 p.round = round;
 
                 p.enemyRosters = new List<S_RoundReadyEnd.EnemyRoster>();
-                for (int i = 0; i < defender.Rosters.Count; i++)
+
+                if (_playerId[(ushort)UserType.Offender] != -1)
                 {
-                    S_RoundReadyEnd.EnemyRoster enemy = new S_RoundReadyEnd.EnemyRoster();
-                    enemy.unitIndex = defender.Rosters[i];
-                    enemy.skillRosters = defender.SkillRosters[i];
-                    p.enemyRosters.Add(enemy);
+                    for (int i = 0; i < defender.Rosters.Count; i++)
+                    {
+                        S_RoundReadyEnd.EnemyRoster enemy = new S_RoundReadyEnd.EnemyRoster();
+                        enemy.unitIndex = defender.Rosters[i];
+                        enemy.skillRosters = defender.SkillRosters[i];
+                        p.enemyRosters.Add(enemy);
+                    }
+                    Console.WriteLine($"Defender {p.enemyRosters.Count}");
+
+                    _room.Send(_playerId[(ushort)UserType.Offender], p);
                 }
-                Console.WriteLine($"Defender {p.enemyRosters.Count}");
-                _room.Send(_playerId[(ushort)UserType.Offender], p);
 
                 p.enemyRosters.Clear();
-                for (int i = 0; i < offender.Rosters.Count; i++)
+                if (_playerId[(ushort)UserType.Defender] != -1)
                 {
-                    S_RoundReadyEnd.EnemyRoster enemy = new S_RoundReadyEnd.EnemyRoster();
-                    enemy.unitIndex = offender.Rosters[i];
-                    enemy.skillRosters = offender.SkillRosters[i];
-                    p.enemyRosters.Add(enemy);
-                }
+                    for (int i = 0; i < offender.Rosters.Count; i++)
+                    {
+                        S_RoundReadyEnd.EnemyRoster enemy = new S_RoundReadyEnd.EnemyRoster();
+                        enemy.unitIndex = offender.Rosters[i];
+                        enemy.skillRosters = offender.SkillRosters[i];
+                        p.enemyRosters.Add(enemy);
+                    }
 
-                Console.WriteLine($"Defender {p.enemyRosters.Count}");
-                _room.Send(_playerId[(ushort)UserType.Defender], p);
+                    Console.WriteLine($"Defender {p.enemyRosters.Count}");
+                    _room.Send(_playerId[(ushort)UserType.Defender], p);
+                }
 
                 for (int i = 0; i < _playerReady.Length; i++)
                     if (_playerId[i] == -1) _playerReady[i] = true;
@@ -220,7 +239,8 @@ namespace Server
                     });
                 }
 
-                for (int i = 0; i < _playerId.Length; i++) _room.Send(_playerId[i], p);
+                for (int i = 0; i < _playerId.Length; i++) 
+                    if (_playerId[i] != -1) _room.Send(_playerId[i], p);
 
                 for (int i = 0; i < _playerReady.Length; i++)
                     if (_playerId[i] == -1) _playerReady[i] = true;
