@@ -96,10 +96,13 @@
 			<list name="diceIndex">
 				<int name="int"/>
 			</list>
-			<clist name="cc">
-				<int name="cctype"/>
-				<int name="ccturn"/>
-				<int name="ccstack"/>
+			<clist name="ccWithTurn">
+				<clist name="cc">
+					<int name="ccid"/>
+					<int name="ccturn"/>
+					<int name="ccstack"/>
+					<bool name="ccOn"/>
+				</clist>
 			</clist>
 		</clist>
 	</packet>

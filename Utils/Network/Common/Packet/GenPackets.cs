@@ -815,37 +815,63 @@ public class S_ProgressTurn : IPacket
 	    public int unitIndex;
 		public int diceResult;
 		public List<int> diceIndexs = new List<int>();
-		public class Cc
+		public class CcWithTurn
 		{
-		    public int cctype;
-			public int ccturn;
-			public int ccstack;
+		    public class Cc
+			{
+			    public int ccid;
+				public int ccturn;
+				public int ccstack;
+			
+			    public void Read(ArraySegment<byte> segment, ref ushort count)
+			    {
+			        this.ccid = BitConverter.ToInt32(segment.Array, segment.Offset + count);
+					count += sizeof(int);
+					this.ccturn = BitConverter.ToInt32(segment.Array, segment.Offset + count);
+					count += sizeof(int);
+					this.ccstack = BitConverter.ToInt32(segment.Array, segment.Offset + count);
+					count += sizeof(int);
+			    }
+			    public bool Write(ArraySegment<byte> segment, ref ushort count)
+			    {
+			        bool success = true;
+			        Array.Copy(BitConverter.GetBytes(this.ccid), 0, segment.Array, segment.Offset + count, sizeof(int));
+					count += sizeof(int);
+					
+					Array.Copy(BitConverter.GetBytes(this.ccturn), 0, segment.Array, segment.Offset + count, sizeof(int));
+					count += sizeof(int);
+					
+					Array.Copy(BitConverter.GetBytes(this.ccstack), 0, segment.Array, segment.Offset + count, sizeof(int));
+					count += sizeof(int);
+					
+			        return success;
+			    }
+			}
+			public List<Cc> ccs = new List<Cc>();
 		
 		    public void Read(ArraySegment<byte> segment, ref ushort count)
 		    {
-		        this.cctype = BitConverter.ToInt32(segment.Array, segment.Offset + count);
-				count += sizeof(int);
-				this.ccturn = BitConverter.ToInt32(segment.Array, segment.Offset + count);
-				count += sizeof(int);
-				this.ccstack = BitConverter.ToInt32(segment.Array, segment.Offset + count);
-				count += sizeof(int);
+		        ccs.Clear();
+				ushort ccLen = BitConverter.ToUInt16(segment.Array, segment.Offset + count);
+				count += sizeof(ushort);
+				for (int i = 0; i < ccLen; i++)
+				{
+				    Cc cc = new Cc();
+				    cc.Read(segment, ref count);
+				    this.ccs.Add(cc);
+				}
 		    }
 		    public bool Write(ArraySegment<byte> segment, ref ushort count)
 		    {
 		        bool success = true;
-		        Array.Copy(BitConverter.GetBytes(this.cctype), 0, segment.Array, segment.Offset + count, sizeof(int));
-				count += sizeof(int);
-				
-				Array.Copy(BitConverter.GetBytes(this.ccturn), 0, segment.Array, segment.Offset + count, sizeof(int));
-				count += sizeof(int);
-				
-				Array.Copy(BitConverter.GetBytes(this.ccstack), 0, segment.Array, segment.Offset + count, sizeof(int));
-				count += sizeof(int);
-				
+		        Array.Copy(BitConverter.GetBytes((ushort)ccs.Count), 0, segment.Array, segment.Offset + count, sizeof(ushort));
+				count += sizeof(ushort);
+				foreach(Cc cc in ccs)
+				    cc.Write(segment, ref count);
 		        return success;
 		    }
 		}
-		public List<Cc> ccs = new List<Cc>();
+		public List<CcWithTurn> ccWithTurns = new List<CcWithTurn>();
 	
 	    public void Read(ArraySegment<byte> segment, ref ushort count)
 	    {
@@ -862,14 +888,14 @@ public class S_ProgressTurn : IPacket
 			    count += sizeof(int);
 			    this.diceIndexs.Add(a);
 			}
-			ccs.Clear();
-			ushort ccLen = BitConverter.ToUInt16(segment.Array, segment.Offset + count);
+			ccWithTurns.Clear();
+			ushort ccWithTurnLen = BitConverter.ToUInt16(segment.Array, segment.Offset + count);
 			count += sizeof(ushort);
-			for (int i = 0; i < ccLen; i++)
+			for (int i = 0; i < ccWithTurnLen; i++)
 			{
-			    Cc cc = new Cc();
-			    cc.Read(segment, ref count);
-			    this.ccs.Add(cc);
+			    CcWithTurn ccWithTurn = new CcWithTurn();
+			    ccWithTurn.Read(segment, ref count);
+			    this.ccWithTurns.Add(ccWithTurn);
 			}
 	    }
 	    public bool Write(ArraySegment<byte> segment, ref ushort count)
@@ -888,10 +914,10 @@ public class S_ProgressTurn : IPacket
 			    Array.Copy(BitConverter.GetBytes(diceIndex), 0, segment.Array, segment.Offset + count, sizeof(int));
 			    count += sizeof(int);
 			}
-			Array.Copy(BitConverter.GetBytes((ushort)ccs.Count), 0, segment.Array, segment.Offset + count, sizeof(ushort));
+			Array.Copy(BitConverter.GetBytes((ushort)ccWithTurns.Count), 0, segment.Array, segment.Offset + count, sizeof(ushort));
 			count += sizeof(ushort);
-			foreach(Cc cc in ccs)
-			    cc.Write(segment, ref count);
+			foreach(CcWithTurn ccWithTurn in ccWithTurns)
+			    ccWithTurn.Write(segment, ref count);
 	        return success;
 	    }
 	}

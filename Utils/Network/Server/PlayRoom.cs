@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Data;
 
@@ -139,7 +140,6 @@ namespace Server
 
             if (_playerReady[(ushort)UserType.Defender] && _playerReady[(ushort)UserType.Offender])
             {
-                Console.WriteLine("Send Round Ready End");
                 currentProgress = GameProgress.PlayRound;
                 S_RoundReadyEnd p = new S_RoundReadyEnd();
                 p.currentProgress = (ushort)currentProgress;
@@ -156,7 +156,6 @@ namespace Server
                         enemy.skillRosters = defender.SkillRosters[i];
                         p.enemyRosters.Add(enemy);
                     }
-                    Console.WriteLine($"Defender {p.enemyRosters.Count}");
 
                     _room.Send(_playerId[(ushort)UserType.Offender], p);
                 }
@@ -172,7 +171,6 @@ namespace Server
                         p.enemyRosters.Add(enemy);
                     }
 
-                    Console.WriteLine($"Defender {p.enemyRosters.Count}");
                     _room.Send(_playerId[(ushort)UserType.Defender], p);
                 }
 
@@ -217,8 +215,10 @@ namespace Server
 
                 List<int> monsterHps = new List<int>();
                 Dictionary<int, int> diceResults = new Dictionary<int, int>();
+                List<Dictionary<int, List<CrowdControl>>> ccResultWithTurn
+                    = new List<Dictionary<int, List<CrowdControl>>>();
 
-                bool isRoundEnd = Battle(diceLists, ref monsterHps, ref diceResults);
+                bool isRoundEnd = Battle(diceLists, ref monsterHps, ref diceResults, ref ccResultWithTurn);
                 int isGameEnd = IsGameEnd();
 
                 S_ProgressTurn p = new S_ProgressTurn();
@@ -227,19 +227,45 @@ namespace Server
                 p.round = round;
                 p.turn = turn;
                 p.monsterHps = monsterHps;
+                p.monsterTurn = defender.MonsterAttackTurn;
 
                 p.results = new List<S_ProgressTurn.Result>();
                 foreach (int key in diceResults.Keys)
                 {
-                    p.results.Add(new S_ProgressTurn.Result()
+                    List<S_ProgressTurn.Result.CcWithTurn> ccsWithTurn = new List<S_ProgressTurn.Result.CcWithTurn>();
+
+                    for (int i = 0; i < ccResultWithTurn.Count; i++)
+                    {
+                        List<S_ProgressTurn.Result.CcWithTurn.Cc> ccs = new List<S_ProgressTurn.Result.CcWithTurn.Cc>();
+
+                        for (int j = 0; j < ccResultWithTurn[i][key].Count; j++)
+                        {
+                            ccs.Add(new S_ProgressTurn.Result.CcWithTurn.Cc()
+                            {
+                                ccid = ccResultWithTurn[i][key][j].id,
+                                ccstack = ccResultWithTurn[i][key][j].stack,
+                                ccturn = ccResultWithTurn[i][key][j].turn
+                            });
+                        }
+
+                        ccsWithTurn.Add(new S_ProgressTurn.Result.CcWithTurn()
+                        {
+                            ccs = ccs
+                        });
+                    }
+
+                    S_ProgressTurn.Result result = new S_ProgressTurn.Result()
                     {
                         unitIndex = key,
                         diceResult = diceResults[key],
                         diceIndexs = diceLists[key],
-                    });
+                        ccWithTurns = ccsWithTurn
+                    };
+
+                    p.results.Add(result);
                 }
 
-                for (int i = 0; i < _playerId.Length; i++) 
+                for (int i = 0; i < _playerId.Length; i++)
                     if (_playerId[i] != -1) _room.Send(_playerId[i], p);
 
                 for (int i = 0; i < _playerReady.Length; i++)
@@ -248,26 +274,89 @@ namespace Server
             }
         }
 
-        private bool Battle(Dictionary<int, List<int>> dices, ref List<int> monsterHps, ref Dictionary<int, int> diceResults)
+        private bool Battle(Dictionary<int, List<int>> dices,
+            ref List<int> monsterHps, ref Dictionary<int, int> diceResults,
+            ref List<Dictionary<int, List<CrowdControl>>> ccResultsWithTurn)
         {
             turn++;
 
             monsterHps.Clear();
-            foreach (int key in dices.Keys)
+            List<int> units = dices.Keys.ToList();
+
+            for (int i = 0; i <= units.Count; i++)
             {
-                int selectedDice = SelectDice(dices[key]);
-                if (key / 10 == 2)
+                if (i < units.Count)
                 {
-                    // Defender
+                    int selectedDice = SelectDice(dices[units[i]]);
+                    int target;
+                    int usingUnit = units[i];
+                    if (units[i] / 10 == 2)
+                    {
+                        // Defender
+                        MonsterSkill skill = SkillDatabase.Instance.GetMonsterSkill(selectedDice);
+
+                        List<int> alives = offender.GetAlives();
+
+                        Random rand = new Random();
+                        int index = rand.Next(0, alives.Count);
+
+                        target = alives[index];
+
+                        foreach (int unit in offender.Rosters)
+                        {
+                            if (offender.HasCrowdControl(unit, CCType.TAUNT)) target = unit;
+                        }
+
+                        AddCrowdControl(skill, usingUnit, target);
+                    }
+                    else
+                    {
+                        // Offender
+                        CharacterSkill skill = SkillDatabase.Instance.GetCharacterSkill(selectedDice);
+
+                        int damage = skill.damage;
+                        target = defender.Rosters[0];
+
+                        if (offender.HasCrowdControl(units[i], CCType.ATTACKSTAT, CCTarget.SELF)) damage = (int)(damage * 1.5f);
+                        if (offender.HasCrowdControl(units[i], CCType.MIRRORIMAGE)) damage = (int)(damage * 1.5f);
+                        if (offender.HasCrowdControl(units[i], CCType.ATTACKSTAT, CCTarget.ENEMY)) damage = (int)(damage * 0.7f);
+
+                        if (offender.HasCrowdControl(units[i], CCType.CONFUSION))
+                        {
+                            List<int> alives = offender.GetAlives();
+
+                            Random rand = new Random();
+                            int index = rand.Next(0, alives.Count + 1);
+                            if (index != alives.Count)
+                            {
+                                foreach (int unit in offender.Rosters)
+                                {
+                                    if (offender.HasCrowdControl(unit, CCType.TAUNT)) target = unit;
+                                }
+                            }
+                        }
+
+                        if (target / 10 == 2) defender.Damaged(damage);
+
+                        AddCrowdControl(skill, usingUnit, target);
+                    }
+                    diceResults.Add(units[i], selectedDice);
                 }
                 else
                 {
-                    // Offender
-                    defender.Damaged(SkillDatabase.Instance.GetCharacterSkill(selectedDice).damage);
+                    defender.ProgressTurn();
+                    offender.ProgressTurn();
                 }
+
                 monsterHps.Add(defender.MonsterHp);
-                diceResults.Add(key, selectedDice);
+                ccResultsWithTurn.Add(new Dictionary<int, List<CrowdControl>>());
+                for (int j = 0; j < units.Count; j++)
+                {
+                    if (units[j] / 10 == 1) ccResultsWithTurn[i].Add(units[j], offender.GetCCList(units[j]));
+                    else ccResultsWithTurn[i].Add(units[j], defender.GetCCList(units[j]));
+                }
             }
+
             if (defender.MonsterHp <= 0)
             {
                 round++;
@@ -328,6 +417,54 @@ namespace Server
             return diceId;
         }
 
+        private void AddCrowdControl(Skill skill, int usingUnit, int target)
+        {
+            if (skill.ccList.Count != 0)
+            {
+                foreach (CrowdControl cc in skill.ccList.Keys)
+                {
+                    // Offender CC 발동
+                    if (usingUnit / 10 == 1)
+                    {
+                        int ccMultiplier = (offender.HasCrowdControl(usingUnit, CCType.MIRRORIMAGE)) ? 2 : 1;
+                        if (cc.target == CCTarget.ENEMY)
+                        {
+                            // 몬스터에 쓰는 스킬이 타겟이 바뀜
+                            if (target / 10 != 2)
+                            {
+                                offender.AddCrowdControl(target, cc, skill.ccList[cc], usingUnit, ccMultiplier, defender);
+                            }
+                            else
+                            {
+                                defender.AddCrowdControl(cc, skill.ccList[cc], usingUnit, ccMultiplier, offender);
+                            }
+
+                        }
+                        else if (cc.target == CCTarget.SELF)
+                            offender.AddCrowdControl(usingUnit, cc, skill.ccList[cc], usingUnit, ccMultiplier, defender);
+                        else
+                            offender.AddCrowdControl(usingUnit, cc, skill.ccList[cc], usingUnit, ccMultiplier, defender, true);
+                    }
+                    else
+                    {
+                        int ccMultiplier = (defender.HasCrowdControl(usingUnit, CCType.MIRRORIMAGE)) ? 2 : 1;
+                        if (cc.target == CCTarget.ENEMY)
+                        {
+                            // 몬스터에 쓰는 스킬이 타겟이 바뀜
+                            if (target / 10 != 2)
+                            {
+                                offender.AddCrowdControl(target, cc, skill.ccList[cc], usingUnit, ccMultiplier, defender);
+                            }
+                        }
+                        else if (cc.target == CCTarget.SELF)
+                            defender.AddCrowdControl(cc, skill.ccList[cc], usingUnit, ccMultiplier, offender);
+                        else
+                            offender.AddCrowdControl(target, cc, skill.ccList[cc], usingUnit, ccMultiplier, defender, true);
+                    }
+                }
+            }
+        }
+
         private int IsGameEnd()
         {
             int defWinCount = 0;
@@ -341,6 +478,7 @@ namespace Server
 
             if (defWinCount >= 3) return (ushort)UserType.Defender;
             if (offWinCount >= 3) return (ushort)UserType.Offender;
+
             return 0;
         }
 

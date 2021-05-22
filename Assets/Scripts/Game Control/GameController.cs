@@ -110,7 +110,7 @@ namespace GameControl
             animationEnd.Clear();
 
             if (userType == UserType.Offender)
-                OffenderController.Instance.AddSkillPoint(skillPointPerRound[round-1]);
+                OffenderController.Instance.AddSkillPoint(skillPointPerRound[round - 1]);
             else
                 DefenderController.Instance.SetMonsterHp();
 
@@ -174,10 +174,13 @@ namespace GameControl
             List<bool> isAttack = new List<bool>();
             List<bool> isWait = new List<bool>();
 
+            Dictionary<int, List<List<CrowdControl>>> ccs = new Dictionary<int, List<List<CrowdControl>>>();
+
             foreach (S_ProgressTurn.Result item in packet.results)
             {
                 selectedSkills.Add(item.unitIndex, item.diceResult);
                 dices.Add(item.unitIndex, item.diceIndexs);
+                
                 if (item.diceResult == -1)
                 {
                     animationEnd[item.unitIndex] = true;
@@ -189,6 +192,21 @@ namespace GameControl
                     isAttack.Add(true);
                 }
                 isWait.Add(false);
+
+                List<List<CrowdControl>> ccsWithTurn = new List<List<CrowdControl>>();
+                foreach (S_ProgressTurn.Result.CcWithTurn ccitem in item.ccWithTurns)
+                {
+                    List<CrowdControl> tmp = new List<CrowdControl>();
+                    foreach (S_ProgressTurn.Result.CcWithTurn.Cc ccInfo in ccitem.ccs)
+                    {
+                        CrowdControl cc = SkillDatabase.Instance.GetCrowdControl(ccInfo.ccid);
+                        cc.SetTurn(ccInfo.ccturn);
+                        cc.SetStack(ccInfo.ccstack);
+                        tmp.Add(cc);
+                    }
+                    ccsWithTurn.Add(tmp);
+                }
+                ccs.Add(item.unitIndex, ccsWithTurn);
             }
 
             GamePlayUIController.Instance.DiceRoll(isAttack, isWait);
@@ -202,15 +220,16 @@ namespace GameControl
                 }
             }
 
-            StartCoroutine(BattleAnimation(turn, dices, selectedSkills, packet.monsterHps));
+            StartCoroutine(BattleAnimation(turn, dices, selectedSkills, packet.monsterHps, ccs));
         }
-        IEnumerator BattleAnimation(int turn, Dictionary<int, List<int>> dices, Dictionary<int, int> diceSkills, List<int> monsterHps)
+        IEnumerator BattleAnimation(int turn, Dictionary<int, List<int>> dices, Dictionary<int, int> diceSkills, List<int> monsterHps, Dictionary<int, List<List<CrowdControl>>> ccs)
         {
             while (isDiceRolled) yield return null;
             GamePlayUIController.Instance.ShowDices(dices);
 
             List<int> keys = animationEnd.Keys.ToList<int>();
-            for (int i = 0; i < animationEnd.Count; i++)
+            int i = 0;
+            for (; i < animationEnd.Count; i++)
             {
                 if (diceSkills[keys[i]] < 0) continue;
 
@@ -219,18 +238,48 @@ namespace GameControl
 
                 DefenderController.Instance.SetMonsterHp(monsterHps[i]);
 
+                for (int j = 0; j < ccs.Count; j++)
+                {
+                    ShowCrowdControls(keys[j], ccs[keys[j]][i]);
+                }
                 GamePlayUIController.Instance.UpdateCharacters();
             }
 
-            float time = 0.3f;
+            float time = 0.5f;
             while (time > 0)
             {
                 time -= Time.deltaTime;
                 yield return null;
             }
+
+            DefenderController.Instance.SetMonsterHp(monsterHps[i]);
+            for (int j = 0; j < ccs.Count; j++)
+            {
+                ShowCrowdControls(keys[j], ccs[keys[j]][i]);
+            }
+
+            time = 0.5f;
+            while (time > 0)
+            {
+                time -= Time.deltaTime;
+                yield return null;
+            }
+
             progressRound = false;
             GamePlayUIController.Instance.RemoveDices();
             NextTurnInNetwork(turn);
+        }
+
+        public void ShowCrowdControls(int unitIndex, List<CrowdControl> ccs)
+        {
+            for(int i = 0; i < ccs.Count; i++)
+            {
+                bool isStackSkill = ccs[i].IsStackCC();
+
+                if (isStackSkill && ccs[i].stack > 0)
+                    GamePlayUIController.Instance.UpdateCrowdControl(unitIndex, ccs[i].id, -1, ccs[i].stack);
+                else GamePlayUIController.Instance.UpdateCrowdControl(unitIndex, ccs[i].id, ccs[i].turn, ccs[i].stack);
+            }
         }
 
         public void NextTurnInNetwork(int turn)
@@ -287,7 +336,7 @@ namespace GameControl
             {
                 if (isOffenderDefeated == false)
                 {
-                    OffenderController.Instance.AddSkillPoint(skillPointPerRound[round-1]);
+                    OffenderController.Instance.AddSkillPoint(skillPointPerRound[round - 1]);
                     round++;
                 }
                 DefenderController.Instance.SetMonsterHp();
@@ -317,7 +366,7 @@ namespace GameControl
                     offenderUnits[i] = units[i] + 10;
                 }
             }
-        }                
+        }
 
         public void ReadyTurn(UserType type, bool ready) // 서버 입장에서는 type 필요
         {
@@ -707,7 +756,8 @@ namespace GameControl
                         {
                             // 만약에 지웠는데 스택이 남았었다면 턴 초기화 후 그대로 다시 추가
                             curCC.SetTurn(curCC.GetCCBasicTurn());
-                            ccList[key].Add(curCC); GamePlayUIController.Instance.UpdateCrowdControl(key, curCC.id, -1, curCC.stack, true);
+                            ccList[key].Add(curCC);
+                            GamePlayUIController.Instance.UpdateCrowdControl(key, curCC.id, -1, curCC.stack, true);
                         }
                     }
                 }

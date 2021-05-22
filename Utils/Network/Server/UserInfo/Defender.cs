@@ -14,6 +14,8 @@ namespace Server
         List<List<int>> _dices = new List<List<int>>();
         List<int> _isDead = new List<int>();
 
+        Dictionary<int, List<CrowdControl>> _ccList = new Dictionary<int, List<CrowdControl>>();
+
         Monster _monster = null;
         MonsterSkill _attackSkill = null;
         int _attackSkillTurn;
@@ -23,7 +25,9 @@ namespace Server
         public List<List<int>> SkillRosters { get { return _skillRosters; } }
         public List<List<int>> Dices { get { return _dices; } }
         public MonsterSkill AttackSkill { get { return _attackSkill; } }
+        public Dictionary<int, List<CrowdControl>> CCList { get { return _ccList; } }
         public int MonsterHp { get { return _monster.hp; } }
+        public int MonsterAttackTurn { get { return _attackSkillTurn; } }
 
         public void SetCandidate(List<int> cs)
         {
@@ -38,10 +42,13 @@ namespace Server
         {
             _rosters.Clear();
             _skillRosters.Clear();
+            _ccList.Clear();
+
             for (int i = 0; i < rosters.Count; i++)
             {
                 _rosters.Add(rosters[i] + 20);
-                _monster = MonsterDatabase.Instance.GetMonster(_candidates[_rosters[i]/10]);
+                _ccList.Add(rosters[i] + 20, new List<CrowdControl>());
+                _monster = MonsterDatabase.Instance.GetMonster(_candidates[_rosters[i] / 10]);
                 _skillRosters.Add(skillRosters[i]);
                 _attackSkill = SkillDatabase.Instance.GetMonsterSkill(attackSkill[i]);
                 _attackSkillTurn = _attackSkill.turn;
@@ -77,14 +84,201 @@ namespace Server
             return diceResults;
         }
 
-        public void Damaged(int damage)
+        public int Damaged(int damage)
         {
             _monster.Damaged(damage);
+            return _monster.hp;
         }
 
         public void ProgressTurn()
         {
             _attackSkillTurn--;
+            CrowdControlProgressTurn();
         }
+
+        private void HealUnit(int amount)
+        {
+            _monster.Cure(amount);
+        }
+
+        #region Crowd Control
+
+        public List<CrowdControl> GetCCList(int unit)
+        {
+            List<CrowdControl> ccs = new List<CrowdControl>();
+
+            for (int i = 0; i < _ccList[unit].Count; i++)
+            {
+                ccs.Add(new CrowdControl(_ccList[unit][i]));
+            }
+
+            return ccs;
+        }
+
+        public void AddCrowdControl(CrowdControl cc, int ccStack, int usingUnit, int ccMultiplier, Offender offender)
+        {
+            int ccTurn = cc.turn;
+
+            if (ccMultiplier != 1)
+            {
+                ccStack *= ccMultiplier;
+                ccTurn = cc.turn + 1;
+            }
+
+            if (cc.cc == CCType.PURITY || cc.cc == CCType.INVINCIBLE)
+            {
+                PurifyCrowdControl(_rosters[0], true);
+                if (cc.cc == CCType.PURITY) return;
+            }
+            else if (cc.cc == CCType.REMOVE)
+            {
+                PurifyCrowdControl(_rosters[0], false);
+                return;
+            }
+            else if (cc.cc == CCType.DRAIN)
+            {
+                HealUnit(ccStack);
+                return;
+            }
+
+            if (HasCrowdControl(_rosters[0], CCType.BARRIER) || HasCrowdControl(_rosters[0], CCType.INVINCIBLE))
+            {
+                return;
+            }
+            else if (HasCrowdControl(_rosters[0], CCType.REFLECT))
+            {
+                if (offender.HasCrowdControl(usingUnit, CCType.REFLECT) == false)
+                    offender.AddCrowdControl(usingUnit, cc, ccStack, _rosters[0], 1, this, false);
+                return;
+            }
+
+            int ccIndex = _ccList[_rosters[0]].FindIndex(charCC => charCC.name == cc.name);
+
+            if (ccIndex == -1)
+            {
+                _ccList[_rosters[0]].Add(SkillDatabase.Instance.GetCrowdControl(cc.id));
+                _ccList[_rosters[0]][_ccList[_rosters[0]].Count - 1].SetTurn(ccTurn);
+
+                if (cc.cc == CCType.DOTDAMAGE)
+                    _ccList[_rosters[0]][_ccList[_rosters[0]].Count - 1].SetDotDamage(ccStack);
+
+                bool isStackSkill = _ccList[_rosters[0]][_ccList[_rosters[0]].Count - 1].ControlCC(ccStack);
+            }
+            else
+            {
+                CrowdControl curCC = _ccList[_rosters[0]][ccIndex];
+
+                if (curCC.cc == CCType.DOTDAMAGE && curCC.id == cc.id && curCC.dotDamage < ccStack)
+                {
+                    curCC.SetDotDamage(ccStack);
+                }
+
+                bool isStackSkill = curCC.ControlCC(ccStack); // 스택 자동으로 쌓음
+
+                if (isStackSkill == false)
+                {
+                    if (curCC.turn < ccTurn) curCC.SetTurn(ccTurn);
+                }
+                else
+                {
+                    int curStack = curCC.stack;
+                    // CC 발동 시점
+                    if (curStack == 0)
+                    {
+                        // CC 발동
+                        curCC.SetTurn(ccTurn);
+                    }
+                    // CC 스택 쌓는 시점
+                    else if (curStack > 0)
+                    {
+                    }
+                    // CC 발동 후 이번 턴에 발동된 CC가 아니라면 스택 리셋 후 해당수치만큼 감소
+                    else if (curCC.turn != curCC.GetCCBasicTurn())
+                    {
+                        curCC.ResetCCStack();
+                        curCC.ControlCC(ccStack);
+                    }
+                }
+            }
+        }
+
+        private bool CrowdControlProgressTurn()
+        {
+            foreach (int key in _ccList.Keys)
+            {
+                for (int i = 0; i < _ccList[key].Count; i++)
+                {
+                    CrowdControl curCC = _ccList[key][i];
+                    bool isStackSkill = curCC.ControlCC(0);
+
+                    if (isStackSkill && curCC.stack > 0 && curCC.turn == curCC.GetCCBasicTurn()) continue;
+
+                    bool b = curCC.ProgressTurn();
+                    if (curCC.cc == CCType.DOTDAMAGE)
+                    {
+                        int restHp = Damaged(curCC.dotDamage);
+                        if (restHp < 0)
+                        {
+                            return true;
+                        }
+                    }
+
+                    if (b)
+                    {
+                        _ccList[key].RemoveAt(i);
+                        i--;
+                        if (isStackSkill && curCC.stack > 0)
+                        {
+                            // 만약에 지웠는데 스택이 남았었다면 턴 초기화 후 그대로 다시 추가
+                            curCC.SetTurn(curCC.GetCCBasicTurn());
+                            _ccList[key].Add(curCC);
+                        }
+                    }
+                }
+            }
+            return false;
+        }
+
+        public bool HasCrowdControl(int index, CCType ccType, CCTarget target = CCTarget.ENEMY)
+        {
+            CrowdControl tmp = _ccList[index].Find(cc => cc.cc == ccType);
+
+            bool b = tmp != null;
+            if (b)
+            {
+                if (ccType == CCType.ATTACKSTAT) b = (tmp.target == target);
+                if (tmp.ControlCC(0))
+                {
+                    if (tmp.stack <= 0) b = true;
+                    else b = false;
+                }
+            }
+
+            return b;
+        }
+
+        private void PurifyCrowdControl(int index, bool isGood)
+        {
+            for (int i = 0; i < _ccList[index].Count; i++)
+            {
+                if (isGood)
+                {
+                    if (_ccList[index][i].target == CCTarget.ENEMY)
+                    {
+                        _ccList[index].RemoveAt(i);
+                        i--;
+                    }
+                }
+                else
+                {
+                    if (_ccList[index][i].target == CCTarget.ALL || _ccList[index][i].target == CCTarget.SELF)
+                    {
+                        _ccList[index].RemoveAt(i);
+                        i--;
+                    }
+                }
+            }
+        }
+        #endregion
     }
 }

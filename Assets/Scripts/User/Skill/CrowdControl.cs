@@ -35,8 +35,8 @@ namespace Data
             this.stack = crowdControl.stack;
             this.name = crowdControl.name;
             this.target = crowdControl.target;
-            this.turn = GetCCBasicTurn();
-            this.dotDamage = 0;
+            this.turn = crowdControl.turn;
+            this.dotDamage = crowdControl.dotDamage;
         }
 
         public bool ProgressTurn()
@@ -68,6 +68,26 @@ namespace Data
         public void SetTurn(int turn)
         {
             this.turn = turn;
+        }
+
+        public void SetStack(int stack)
+        {
+            this.stack = stack;
+        }
+
+        public bool IsStackCC()
+        {
+            bool isStackSkill = false;
+
+            switch (cc)
+            {
+                case CCType.BLIND:
+                case CCType.STUN:
+                    isStackSkill = true;
+                    break;
+            }
+
+            return isStackSkill;
         }
 
         public int GetCCBasicTurn()

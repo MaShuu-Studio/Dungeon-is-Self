@@ -33,8 +33,8 @@ namespace Data
             this.stack = crowdControl.stack;
             this.name = crowdControl.name;
             this.target = crowdControl.target;
-            this.turn = GetCCBasicTurn();
-            this.dotDamage = 0;
+            this.turn = crowdControl.turn;
+            this.dotDamage = crowdControl.dotDamage;
         }
 
         public bool ProgressTurn()

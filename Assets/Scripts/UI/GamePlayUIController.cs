@@ -1029,6 +1029,13 @@ public class GamePlayUIController : MonoBehaviour
     public void DiceRoll(List<bool> isRolled, List<bool> isReady)
     {
         diceObjects.Clear();
+
+        GameObject diceObj = Instantiate(dicePrefab);
+        diceObj.transform.position = new Vector3(0, diceObj.transform.position.y, 0);
+        Dice dice = diceObj.GetComponent<Dice>();
+        diceObjects.Add(dice);
+
+        /*
         if (type == UserType.Defender)
         {
             if (isRolled[0])
@@ -1100,9 +1107,8 @@ public class GamePlayUIController : MonoBehaviour
                     diceObjects.Add(null);
             }
         }
-
-        foreach (Dice dice in diceObjects)
-            if (dice != null) dice.Roll();
+        */
+        dice.Roll();
     }
 
     public void ShowDices(Dictionary<int, List<int>> dices)

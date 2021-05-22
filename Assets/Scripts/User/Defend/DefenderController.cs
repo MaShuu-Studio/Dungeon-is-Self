@@ -213,11 +213,11 @@ namespace GameControl
         {
             for (int i = 0; i < infos.Count; i++)
             {
-                monsterIndex = infos[i].unitIndex % 10;
+                monsterRoster = infos[i].unitIndex % 10;
                 skillRoster[i].Clear();
                 for (int j = 0; j < infos[i].skillRosters.Count; j++)
                 {
-                    skillRoster[monsterIndex].Add(SkillDatabase.Instance.GetMonsterSkill(infos[i].skillRosters[j]));
+                    skillRoster[monsterRoster].Add(SkillDatabase.Instance.GetMonsterSkill(infos[i].skillRosters[j]));
                 }
             }
         }
