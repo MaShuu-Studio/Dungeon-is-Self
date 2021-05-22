@@ -369,6 +369,10 @@ namespace GameControl
             }
             return false;
         }
+        public void SetAttackSkillTurn(int turn)
+        {
+            attackSkillTurn = turn;
+        }
 
         public void ResetAttackSkill()
         {

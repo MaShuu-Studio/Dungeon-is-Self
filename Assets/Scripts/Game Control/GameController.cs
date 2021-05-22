@@ -220,9 +220,10 @@ namespace GameControl
                 }
             }
 
-            StartCoroutine(BattleAnimation(turn, dices, selectedSkills, packet.monsterHps, ccs));
+            StartCoroutine(BattleAnimation(turn, packet.monsterTurn, dices, selectedSkills, packet.monsterHps, ccs));
         }
-        IEnumerator BattleAnimation(int turn, Dictionary<int, List<int>> dices, Dictionary<int, int> diceSkills, List<int> monsterHps, Dictionary<int, List<List<CrowdControl>>> ccs)
+
+        IEnumerator BattleAnimation(int turn, int attackTurn, Dictionary<int, List<int>> dices, Dictionary<int, int> diceSkills, List<int> monsterHps, Dictionary<int, List<List<CrowdControl>>> ccs)
         {
             while (isDiceRolled) yield return null;
             GamePlayUIController.Instance.ShowDices(dices);
@@ -252,11 +253,13 @@ namespace GameControl
                 yield return null;
             }
 
+            DefenderController.Instance.SetAttackSkillTurn(attackTurn);
             DefenderController.Instance.SetMonsterHp(monsterHps[i]);
             for (int j = 0; j < ccs.Count; j++)
             {
                 ShowCrowdControls(keys[j], ccs[keys[j]][i]);
             }
+            GamePlayUIController.Instance.UpdateCharacters();
 
             time = 0.5f;
             while (time > 0)
@@ -266,19 +269,33 @@ namespace GameControl
             }
 
             progressRound = false;
+
             GamePlayUIController.Instance.RemoveDices();
             NextTurnInNetwork(turn);
         }
 
         public void ShowCrowdControls(int unitIndex, List<CrowdControl> ccs)
         {
-            for(int i = 0; i < ccs.Count; i++)
+            // 전부 지우고
+            foreach (CrowdControl cc in ccList[unitIndex])
             {
-                bool isStackSkill = ccs[i].IsStackCC();
+                if (ccs.Find(c => c.id == cc.id) == null)
+                    GamePlayUIController.Instance.UpdateCrowdControl(unitIndex, cc.id, -1, cc.stack, true);
+            }
 
-                if (isStackSkill && ccs[i].stack > 0)
-                    GamePlayUIController.Instance.UpdateCrowdControl(unitIndex, ccs[i].id, -1, ccs[i].stack);
-                else GamePlayUIController.Instance.UpdateCrowdControl(unitIndex, ccs[i].id, ccs[i].turn, ccs[i].stack);
+            // 다시 만듦
+            ccList[unitIndex].Clear();
+            ccList[unitIndex] = ccs;
+            for (int i = 0; i < ccList[unitIndex].Count; i++)
+            {
+                bool isStackSkill = ccList[unitIndex][i].IsStackCC();
+                int ccId = ccList[unitIndex][i].id;
+                int ccStack = ccList[unitIndex][i].stack;
+                int ccTurn = ccList[unitIndex][i].turn;
+
+                if (isStackSkill && ccList[unitIndex][i].stack > 0)
+                    GamePlayUIController.Instance.UpdateCrowdControl(unitIndex, ccId, -1, ccStack);
+                else GamePlayUIController.Instance.UpdateCrowdControl(unitIndex, ccId, ccTurn, ccStack);
             }
         }
 
