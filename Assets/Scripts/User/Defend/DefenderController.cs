@@ -56,7 +56,6 @@ namespace GameControl
                 isDead.Add(false);
             }
 
-
             dices.Clear();
             attackSkills.Clear();
 
@@ -144,10 +143,15 @@ namespace GameControl
         {
             if (isRosterToDice)
             {
-                dices[monsterIndex].Add(skillIdx);
+                if (GetDiceSize() >= 6) return 1;
+                dices[monsterIndex].Add(skillRoster[monsterIndex][skillIdx]);
+                skillRoster[monsterIndex].RemoveAt(skillIdx);
             }
             else
             {
+                if (GetDiceSize() <= 0) return 1;
+                if (GetDiceSize() < skillIdx + 1) return 1;
+                skillRoster[monsterIndex].Add(dices[monsterIndex][skillIdx]);
                 dices[monsterIndex].RemoveAt(skillIdx);
             }
             return 0;
@@ -155,7 +159,7 @@ namespace GameControl
 
         public int SetSkillRoster(MonsterSkill skill)
         {
-            if (skillRoster[monsterIndex].Count > 8) return 30;
+            if (skillRoster[monsterIndex].Count >= 8) return 30;
             int count = 0;
 
             for (int i = 0; i < skillRoster[monsterIndex].Count; i++)
@@ -184,6 +188,43 @@ namespace GameControl
             return skills;
         }
 
+        public void RosterTimeOut()
+        {
+            for (int i = 0; i < 6; i++)
+            {
+                if (isDead[i] == true) continue;
+                else { SelectMonster(i); break; }
+            }
+
+            for (int i = GetSkillRosterSize(); i < 8; i++)
+            {
+                List<MonsterSkill> usableSkill = GetUsableSkill(GameController.Instance.round);
+                while (true)
+                {
+                    int n = UnityEngine.Random.Range(0, usableSkill.Count);
+                    if (SetSkillRoster(usableSkill[n]) == 0) break;
+                }
+            }
+        }
+
+        public void DiceTimeOut()
+        {
+            for (int i = 0; i < 6; i++)
+            {
+                if (isDead[i] == true) continue;
+                else { SelectMonster(i); break; }
+            }
+
+            for (int i = GetDiceSize(); i < 6; i++)
+            {
+                while (true)
+                {
+                    int n = UnityEngine.Random.Range(0, GetSkillRosterSize());
+                    if (SetDice(true, n) == 0) break;
+                }
+            }
+        }
+
         public MonsterSkill GetSkillRoster(int i)
         {
             return skillRoster[monsterIndex][i];
@@ -206,7 +247,7 @@ namespace GameControl
 
         public void RemoveSkillRoster(int index)
         {
-            if (skillRoster[monsterIndex].Count <= index + 2) return;
+            if (GetSkillRosterSize() < index + 1) return;
             skillRoster[monsterIndex].RemoveAt(index);
         }
         public void SetSkillRoster(List<S_RoundReadyEnd.EnemyRoster> infos)

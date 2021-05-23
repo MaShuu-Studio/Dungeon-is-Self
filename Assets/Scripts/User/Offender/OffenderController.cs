@@ -80,6 +80,9 @@ namespace GameControl
 
                 skillRoster.Add(skillCand);
                 dices.Add(diceCand);
+                
+                dices[i].Add(-1);
+                dices[i].Add(-1);
             }
         }
 
@@ -230,21 +233,23 @@ namespace GameControl
         {
             if (isRosterToDice == true)//roster to dice
             {
-                int basicSkill = 0;
-                for (int i = 0; i < dices[characterIndex].Count; i++)
+                if (GetDiceSize() >= 6) return 1;
+                if (skillIdx == 9)
                 {
-                    //if (dices[characterIndex][i].id % 100 == 0) { basicSkill++; continue; }
+                    dices[characterIndex].Add(characters[characterIndex].mySkills[0]);
+                    return 0;
                 }
-                basicSkill = 2;
-                if ((basicSkill < 1 && skillRoster[characterIndex][skillIdx].id % 100 != 0 && dices[characterIndex].Count >= 4) 
-                    || (basicSkill < 2 && skillRoster[characterIndex][skillIdx].id % 100 != 0 && dices[characterIndex].Count >= 5)) return 26;
-
-                dices[characterIndex].Add(skillIdx);
+                
+                dices[characterIndex].Add(skillRoster[characterIndex][skillIdx]);
+                skillRoster[characterIndex].RemoveAt(skillIdx);
 
                 return 0;
             }
             else//dice to roster
             {
+                if (GetDiceSize() <= 0) return 1;
+                if (GetDiceSize() < skillIdx + 1) return 1;
+                skillRoster[characterIndex].Add(dices[characterIndex][skillIdx]);
                 dices[characterIndex].RemoveAt(skillIdx);
 
                 return 0;
@@ -254,15 +259,13 @@ namespace GameControl
 
         public int SetSkillRoster(CharacterSkill skill)
         {
-            if (skillRoster[characterIndex].Count > 8) return 30;
+            if (skillRoster[characterIndex].Count >= 8) return 30;
+
             int overlabCount = 0;
-            int basicSkill = 0;
             for (int i = 0; i < skillRoster[characterIndex].Count; i++)
             {
-                if (skillRoster[characterIndex][i].id == skill.id) overlabCount++;
-                if (skillRoster[characterIndex][i].id % 100 == 0) { basicSkill++; continue;}
+                if (skillRoster[characterIndex][i].id == skill.id && skill.id % 100 != 0) overlabCount++;
             }
-            if ((basicSkill == 0 && skill.id % 100 != 0 && skillRoster[characterIndex].Count >= 6) || (basicSkill == 1 && skill.id % 100 != 0 && skillRoster[characterIndex].Count >= 7)) return 26;
             if (overlabCount > 2) return 27;
 
             skillRoster[characterIndex].Add(skill);
@@ -279,6 +282,52 @@ namespace GameControl
             return skills;
         }
 
+        public void RosterTimeOut()
+        {
+            for (int i = 0; i < 3; i++)
+            {
+                SelectCharacter(roster[i]);
+                Character c = characters[roster[i]];
+                List<int> usableSkill = new List<int>();
+
+                for (int j = 0; j < c.mySkills.Count; j++)
+                {
+                    if (IsSkillGotten(j))
+                    {
+                        usableSkill.Add(j);
+                        Debug.Log(c.mySkills[j].id);
+                    }
+                }
+
+                for (int j = GetSkillRosterSize(); j < 8; j++)
+                {
+
+                    while (true)
+                    {
+                        int n = UnityEngine.Random.Range(0, usableSkill.Count);
+                        if (SetSkillRoster(c.mySkills[usableSkill[n]]) == 0) break;
+                    }
+                }
+            }
+        }
+
+        public void DiceTimeOut()
+        {
+            for (int i = 0; i < 3; i++)
+            {
+                SelectCharacter(roster[i]);
+                Character c = characters[roster[i]];
+
+                for (int j = GetDiceSize(); j < 6; j++)
+                {
+                    while (true)
+                    {
+                        int n = UnityEngine.Random.Range(0, GetSkillRosterSize());
+                        if (SetDice(true, n) == 0) break;
+                    }
+                }
+            }
+        }
 
         public CharacterSkill GetSkillRoster(int i)
         {
@@ -302,7 +351,7 @@ namespace GameControl
 
         public void RemoveSkillRoster(int index) 
         {
-            if (skillRoster[characterIndex].Count <= index + 2) return;
+            if (GetSkillRosterSize() < index + 1) return;
             skillRoster[characterIndex].RemoveAt(index);
         }
 
