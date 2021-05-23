@@ -143,7 +143,7 @@ namespace GameControl
             this.round = round;
 
             currentProgress = GameProgress.PlayRound;
-            turn = 0;
+            turn = 1;
             isRoundEnd = false;
             progressRound = false;
             animationEnd.Clear();
@@ -175,6 +175,7 @@ namespace GameControl
             }
 
             GamePlayUIController.Instance.UpdateCharacters();
+            GamePlayUIController.Instance.SetTurn(turn);
         }
 
         public void ProgressTurn(int round, int turn, S_ProgressTurn packet)

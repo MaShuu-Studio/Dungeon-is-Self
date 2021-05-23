@@ -70,7 +70,7 @@ namespace Server
             foreach (ClientSession s in _sessions.Values)
                 s.Send(_pendingList);
 
-            if (_pendingList.Count + _packetList.Count != 0) Console.WriteLine($"Flushed {_pendingList.Count + _packetList.Count} items");
+            //if (_pendingList.Count + _packetList.Count != 0) Console.WriteLine($"Flushed {_pendingList.Count + _packetList.Count} items");
             _pendingList.Clear();
             _packetList.Clear();
         }

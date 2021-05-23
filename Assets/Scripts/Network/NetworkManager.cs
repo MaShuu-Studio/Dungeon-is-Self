@@ -59,14 +59,35 @@ namespace Network
         public void ConnectToServer()
         {
             Debug.Log("Try Connect to server");
-            string host = Dns.GetHostName();
-            IPHostEntry ipHost = Dns.GetHostEntry(host);
-            IPAddress ipAddr = ipHost.AddressList[0];
-            IPEndPoint endPoint = new IPEndPoint(ipAddr, PORT_NUMBER);
+            string host;
+            IPHostEntry ipHost;
+            IPAddress ipAddr;
+            IPEndPoint endPoint;
 
-            Connector connector = new Connector();
+            Connector connector;
+            /*
+            #region Local Test
+            host = Dns.GetHostName();
+            ipHost = Dns.GetHostEntry(host);
+            ipAddr = ipHost.AddressList[0];
+            endPoint = new IPEndPoint(ipAddr, PORT_NUMBER);
+
+            connector = new Connector();
 
             connector.Connect(endPoint, () => { return session; }, 1);
+            #endregion
+            */
+
+            #region Live
+            host = "ec2-3-36-132-112.ap-northeast-2.compute.amazonaws.com";
+            ipHost = Dns.GetHostEntry(host);
+            ipAddr = ipHost.AddressList[0];
+            endPoint = new IPEndPoint(ipAddr, PORT_NUMBER);
+
+            connector = new Connector();
+
+            connector.Connect(endPoint, () => { return session; }, 1);
+            #endregion
 
         }
 
