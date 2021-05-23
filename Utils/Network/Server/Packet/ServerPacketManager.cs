@@ -36,6 +36,8 @@ public class PacketManager
         handler.Add((ushort)PacketID.C_RoundReady, PacketHandler.C_RoundReadyHandler);
         makeFunc.Add((ushort)PacketID.C_PlayRoundReady, MakePacket<C_PlayRoundReady>);
         handler.Add((ushort)PacketID.C_PlayRoundReady, PacketHandler.C_PlayRoundReadyHandler);
+        makeFunc.Add((ushort)PacketID.C_RoundEnd, MakePacket<C_RoundEnd>);
+        handler.Add((ushort)PacketID.C_RoundEnd, PacketHandler.C_RoundEndHandler);
 
     }
 

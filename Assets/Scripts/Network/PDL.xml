@@ -110,6 +110,18 @@
 			</clist>
 		</clist>
 	</packet>
+	<packet name="C_RoundEnd">
+		<int name="roomId"/>
+		<int name="playerId"/>
+	</packet>
+	<packet name="S_NewRound">
+		<int name="round"/>
+		<clist name="userInfo">
+			<list name="deadUnit">
+				<int name="int"/>
+			</list>
+		</clist>
+	</packet>
 	<packet name="S_GameEnd">
 		<ushort name="winner"/>
 		<int name="winnerId"/>

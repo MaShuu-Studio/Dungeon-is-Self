@@ -112,6 +112,7 @@ namespace Server
                     else _playerReady[i] = false;
             }
         }
+
         public void RoundReadyEnd(UserType type, List<C_RoundReady.Roster> rosters)
         {
             List<int> units = new List<int>();
@@ -539,6 +540,7 @@ namespace Server
                 // 방어자 패배
                 _winCount[round - 1] = (ushort)UserType.Offender;
                 round++;
+                currentProgress = GameProgress.ReadyRound;
                 return true;
             }
             else if (offender.GetAlives().Count == 0)
@@ -546,6 +548,7 @@ namespace Server
                 // 공격자 패배
                 _winCount[round - 1] = (ushort)UserType.Defender;
                 round++;
+                currentProgress = GameProgress.ReadyRound;
                 return true;
             }
 

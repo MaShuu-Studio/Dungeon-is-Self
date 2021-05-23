@@ -105,6 +105,13 @@ namespace GameControl
             ReadyRound(round);
         }
 
+        public void ReadyNewRound(int round, List<S_NewRound.UserInfo> userInfos)
+        {
+            // 죽은유닛 설정
+
+            ReadyRound(round);
+        }
+
         public void ReadyRound(int round)
         {
             this.round = round;
@@ -339,6 +346,11 @@ namespace GameControl
             GamePlayUIController.Instance.SetTurn(turn);
         }
 
+        public void RoundEnd(UserType winner)
+        {
+            StartCoroutine(ShowResult(winner, false));
+        }
+
         public void GameEnd(UserType winner)
         {
             StartCoroutine(ShowResult(winner, true));
@@ -358,7 +370,10 @@ namespace GameControl
                 yield return null;
             }
             if (gameEnd) SceneController.Instance.ChangeScene("Main"); // 씬 이동 임시
-
+            else
+            {
+                Network.NetworkManager.Instance.RoundEnd(roomId);
+            }
             /*
             else if (winner == UserType.Defender) ReadyRound(true);
             else ReadyRound(false);

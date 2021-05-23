@@ -154,6 +154,15 @@ namespace Network
             Send(matchCancelPacket.Write());
         }
 
+        public void RoundEnd(int roomId)
+        {
+            C_RoundEnd packet = new C_RoundEnd();
+            packet.playerId = playerId;
+            packet.roomId = roomId;
+
+            Send(packet.Write());
+        }
+
         private void OnApplicationQuit()
         {
             C_LeaveGame p = new C_LeaveGame();

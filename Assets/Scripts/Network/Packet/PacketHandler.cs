@@ -102,13 +102,19 @@ namespace Network
             GameController.Instance.ProgressTurn(p.round, p.turn, p);
         }
 
-        public static void S_GameEndHandler(PacketSession session, IPacket packet)
+        public static void S_NewRoundHandler(PacketSession session, IPacket packet)
+        {
+            S_NewRound p = packet as S_NewRound;
+            ServerSession serverSession = session as ServerSession;
+
+            GameController.Instance.ReadyNewRound(p.round, p.userInfos);
+
+        }public static void S_GameEndHandler(PacketSession session, IPacket packet)
         {
             S_GameEnd p = packet as S_GameEnd;
             ServerSession serverSession = session as ServerSession;
 
             GameController.Instance.GameEnd((UserType)p.winner);
-
         }
     }
 }

@@ -118,5 +118,14 @@ namespace Network
 
             room.PlayRoundReadyEnd(p.roomId, (UserType)p.playerType, p.rosters);
         }
+        public static void C_RoundEndHandler(PacketSession session, IPacket packet)
+        {
+            C_RoundEnd p = packet as C_RoundEnd;
+            ClientSession clientSession = session as ClientSession;
+
+            if (clientSession.Room == null) return;
+            GameRoom room = clientSession.Room;
+            
+        }
     }
 }
