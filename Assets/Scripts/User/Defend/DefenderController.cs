@@ -139,6 +139,7 @@ namespace GameControl
             else
             {
                 if (GetDiceSize() <= 0) return 1;
+                if (GetDiceSize() < skillIdx + 1) return 1;
                 skillRoster[monsterIndex].Add(dices[monsterIndex][skillIdx]);
                 dices[monsterIndex].RemoveAt(skillIdx);
             }
@@ -147,7 +148,7 @@ namespace GameControl
 
         public int SetSkillRoster(MonsterSkill skill)
         {
-            if (skillRoster[monsterIndex].Count > 8) return 30;
+            if (skillRoster[monsterIndex].Count >= 8) return 30;
             int count = 0;
             
             for (int i = 0; i < skillRoster[monsterIndex].Count; i++)
@@ -220,7 +221,7 @@ namespace GameControl
 
         public void RemoveSkillRoster(int index)
         {
-            if (skillRoster[monsterIndex].Count <= index + 2) return;
+            if (GetSkillRosterSize() < index + 1) return;
             skillRoster[monsterIndex].RemoveAt(index);
         }
 

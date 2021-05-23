@@ -770,7 +770,9 @@ public class GamePlayUIController : MonoBehaviour
                 // 실제 로스터에서 삭제 good!
                 if (type == UserType.Offender)
                 {
+                    Debug.Log(i);
                     OffenderController.Instance.RemoveSkillRoster(i);
+                    Debug.Log(OffenderController.Instance.GetSkillRosterSize());
                 }
                 else
                 {

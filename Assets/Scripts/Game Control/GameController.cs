@@ -132,10 +132,10 @@ namespace GameControl
                 else AIBot.Instance.DefenderSetDice();
             }
 
-            StartCoroutine(TimeOutTest());
+            //StartCoroutine(TimeOutTest());
         }
 
-        IEnumerator TimeOutTest()
+        /*IEnumerator TimeOutTest()
         {
             yield return new WaitForSeconds(5.0f);
 
@@ -148,7 +148,7 @@ namespace GameControl
 
             DefenderController.Instance.DiceTimeOut();
             OffenderController.Instance.DiceTimeOut();
-        }
+        }*/
 
         public void SelectUnit(UserType type, int[] units) // 서버 입장에서는 type 필요
         {
@@ -205,7 +205,7 @@ namespace GameControl
             }
 
             NextTurn();
-            StartCoroutine(TimeOutDiceTest());
+            //StartCoroutine(TimeOutDiceTest());
         }
 
         public void ReadyTurn(UserType type, bool ready) // 서버 입장에서는 type 필요
