@@ -70,16 +70,18 @@ namespace Server
             Dictionary<int, List<int>> diceResults = new Dictionary<int, List<int>>();
             for (int i = 0; i < _rosters.Count; i++)
             {
-
                 List<int> dices = new List<int>();
                 Random rand = new Random();
                 if (IsDead() == false)
                 {
                     for (int j = 0; j < 3; j++)
                     {
+                        int diceId;
                         int diceIndex = rand.Next(0, _dices[i].Count);
+                        if (_dices[i][j] == -1) diceId = SkillDatabase.Instance.GetCharacterBasicSkill(Candidates[_rosters[i] % 10]).id;
+                        else diceId = SkillRosters[i][diceIndex];
 
-                        dices.Add(SkillRosters[i][diceIndex]);
+                        dices.Add(diceId);
                     }
                 }
                 diceResults.Add(_rosters[i], dices);

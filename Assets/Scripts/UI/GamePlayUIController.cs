@@ -406,7 +406,7 @@ public class GamePlayUIController : MonoBehaviour
             }
         }
 
-        for (int i = 0; i <  userRosters.Count; i++)
+        for (int i = 0; i < userRosters.Count; i++)
         {
             if (userRosters[i] == roster)
             {
@@ -673,7 +673,7 @@ public class GamePlayUIController : MonoBehaviour
                 UsingSkillIcon usingSkillIcon = obj.GetComponent<UsingSkillIcon>();
                 usingSkillIcon.SetRosterIndex(skillIndex);
                 usingSkillIcon.SetSkill(type, skill, true);
-                
+
                 usingDices.Add(usingSkillIcon);
             }
         }
@@ -707,7 +707,7 @@ public class GamePlayUIController : MonoBehaviour
 
                 usingDices.Add(usingSkillIcon);
             }
-        } 
+        }
     }
 
     public void AddSkillRoster(Skill skill, bool isOn)
@@ -740,7 +740,7 @@ public class GamePlayUIController : MonoBehaviour
             if (type == UserType.Offender)
             {
                 int n = OffenderController.Instance.SetSkillRoster(skill as CharacterSkill);
-                if (n > 0) 
+                if (n > 0)
                 {
                     Alert(n);
                     return;
@@ -755,7 +755,7 @@ public class GamePlayUIController : MonoBehaviour
                     return;
                 }
             }
-            
+
 
             GameObject obj = Instantiate(usingSkillIconPrefab);
             obj.transform.SetParent(skillRosterTransform);
@@ -789,7 +789,7 @@ public class GamePlayUIController : MonoBehaviour
                 skillRosters.RemoveAt(i);
                 break;
             }
-        }    
+        }
     }
 
     public void AddOrRemoveDice(UsingSkillIcon icon, Skill skill)
@@ -819,26 +819,31 @@ public class GamePlayUIController : MonoBehaviour
         {
             if (skillRosters[i] == icon)
             {
+                bool addDice = true;
                 // 실제 로스터에서 주사위로
                 if (type == UserType.Offender)
                 {
-                    OffenderController.Instance.SetDice(true, i);
+                    addDice = OffenderController.Instance.SetDice(true, i);
                 }
                 else
                 {
-                    DefenderController.Instance.SetDice(true, i);
+                    addDice = DefenderController.Instance.SetDice(true, i);
                 }
-                skillRosters[i].SetOnOff(false);
 
-                GameObject obj = Instantiate(usingSkillIconPrefab);
-                obj.transform.SetParent(diceTransform);
-                obj.transform.localScale = new Vector3(1, 1, 1);
-                UsingSkillIcon usingSkillIcon = obj.GetComponent<UsingSkillIcon>();
-                usingSkillIcon.SetRosterIndex(i);
-                usingSkillIcon.SetSkill(type, skill, true);
+                if (addDice)
+                {
+                    skillRosters[i].SetOnOff(false);
 
-                usingDices.Add(usingSkillIcon);
-                return;
+                    GameObject obj = Instantiate(usingSkillIconPrefab);
+                    obj.transform.SetParent(diceTransform);
+                    obj.transform.localScale = new Vector3(1, 1, 1);
+                    UsingSkillIcon usingSkillIcon = obj.GetComponent<UsingSkillIcon>();
+                    usingSkillIcon.SetRosterIndex(i);
+                    usingSkillIcon.SetSkill(type, skill, true);
+
+                    usingDices.Add(usingSkillIcon);
+                    return;
+                }
             }
         }
     }
@@ -967,7 +972,7 @@ public class GamePlayUIController : MonoBehaviour
         else
         {
             for (int i = 0; i < enemyObjects.Count; i++)
-                if (enemyObjects[i] != null) enemyObjects[i].UpdateCharacterInfo(monHp, monTurn);            
+                if (enemyObjects[i] != null) enemyObjects[i].UpdateCharacterInfo(monHp, monTurn);
         }
     }
 
@@ -1118,7 +1123,8 @@ public class GamePlayUIController : MonoBehaviour
         List<int> dicesChars = dices.Keys.ToList();
         for (int i = 0; i < dicesChars.Count; i++)
         {
-            for (int j = 0; j < charObjects.Count; j++) {
+            for (int j = 0; j < charObjects.Count; j++)
+            {
                 if (charObjects[j] != null && dicesChars[i] == charObjects[j].GetIndex())
                 {
                     charObjects[j].UpdateDiceList(dices[dicesChars[i]], rolledDiceIconPrefab);
@@ -1127,7 +1133,7 @@ public class GamePlayUIController : MonoBehaviour
             }
             for (int j = 0; j < enemyObjects.Count; j++)
             {
-                if ( enemyObjects[j] != null && dicesChars[i] == enemyObjects[j].GetIndex())
+                if (enemyObjects[j] != null && dicesChars[i] == enemyObjects[j].GetIndex())
                 {
                     enemyObjects[j].UpdateDiceList(dices[dicesChars[i]], rolledDiceIconPrefab);
                     break;

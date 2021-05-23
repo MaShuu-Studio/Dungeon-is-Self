@@ -63,9 +63,12 @@ namespace Server
                 {
                     for (int j = 0; j < 5; j++)
                     {
+                        int diceId;
                         int diceIndex = rand.Next(0, _dices[i].Count);
+                        if (_dices[i][j] == -1) diceId = SkillDatabase.Instance.GetCharacterBasicSkill(Candidates[_rosters[i] % 10]).id;
+                        else diceId = SkillRosters[i][diceIndex];
 
-                        dices.Add(SkillRosters[i][diceIndex]);
+                        dices.Add(diceId);
                     }
                 }
 

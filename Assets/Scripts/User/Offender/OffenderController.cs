@@ -229,32 +229,25 @@ namespace GameControl
             return (dices[characterIndex].FindIndex(index => index == i) != -1);
         }
 
-        public int SetDice(bool isRosterToDice, int skillIdx)
+        public bool SetDice(bool isRosterToDice, int skillIdx)
         {
             if (isRosterToDice == true)//roster to dice
             {
-                if (GetDiceSize() >= 6) return 1;
-                if (skillIdx == 9)
-                {
-                    dices[characterIndex].Add(characters[characterIndex].mySkills[0]);
-                    return 0;
-                }
-                
-                dices[characterIndex].Add(skillRoster[characterIndex][skillIdx]);
-                skillRoster[characterIndex].RemoveAt(skillIdx);
+                if (GetDiceSize() >= 6) return false;
 
-                return 0;
+                dices[characterIndex].Add(skillIdx);
+
+                return true;
             }
             else//dice to roster
             {
-                if (GetDiceSize() <= 0) return 1;
-                if (GetDiceSize() < skillIdx + 1) return 1;
-                skillRoster[characterIndex].Add(dices[characterIndex][skillIdx]);
+                if (GetDiceSize() <= 0) return false;
+                if (GetDiceSize() < skillIdx + 1) return false;
+                if (skillIdx < 2) return false;
                 dices[characterIndex].RemoveAt(skillIdx);
 
-                return 0;
-            }
-            
+                return true;
+            }            
         }
 
         public int SetSkillRoster(CharacterSkill skill)
@@ -323,7 +316,7 @@ namespace GameControl
                     while (true)
                     {
                         int n = UnityEngine.Random.Range(0, GetSkillRosterSize());
-                        if (SetDice(true, n) == 0) break;
+                        if (SetDice(true, n)) break;
                     }
                 }
             }
@@ -331,6 +324,7 @@ namespace GameControl
 
         public CharacterSkill GetSkillRoster(int i)
         {
+            if (i < 0) return SkillDatabase.Instance.GetCharacterBasicSkill(selectedCharacterCandidates[characterIndex]);
             return skillRoster[characterIndex][i];
         }
 

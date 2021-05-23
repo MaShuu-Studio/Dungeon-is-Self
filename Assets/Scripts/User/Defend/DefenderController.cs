@@ -139,22 +139,21 @@ namespace GameControl
             return (dices[monsterIndex].FindIndex(index => index == i) != -1);
         }
 
-        public int SetDice(bool isRosterToDice, int skillIdx)
+        public bool SetDice(bool isRosterToDice, int skillIdx)
         {
             if (isRosterToDice)
             {
-                if (GetDiceSize() >= 6) return 1;
-                dices[monsterIndex].Add(skillRoster[monsterIndex][skillIdx]);
-                skillRoster[monsterIndex].RemoveAt(skillIdx);
+                if (GetDiceSize() >= 6) return false;
+                dices[monsterIndex].Add(skillIdx);
             }
             else
             {
-                if (GetDiceSize() <= 0) return 1;
-                if (GetDiceSize() < skillIdx + 1) return 1;
-                skillRoster[monsterIndex].Add(dices[monsterIndex][skillIdx]);
+                if (GetDiceSize() <= 0) return false;
+                if (GetDiceSize() < skillIdx + 1) return false;
+                //if (skillIdx < 2) return false;
                 dices[monsterIndex].RemoveAt(skillIdx);
             }
-            return 0;
+            return true;
         }
 
         public int SetSkillRoster(MonsterSkill skill)
@@ -220,7 +219,7 @@ namespace GameControl
                 while (true)
                 {
                     int n = UnityEngine.Random.Range(0, GetSkillRosterSize());
-                    if (SetDice(true, n) == 0) break;
+                    if (SetDice(true, n)) break;
                 }
             }
         }

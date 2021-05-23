@@ -143,6 +143,7 @@ namespace GameControl
             offenderUnitIsDead.Clear();
             offednerReadyTurn.Clear();
             ccList.Clear();
+            isDead.Clear();
 
             // 선공 확인해서 순서 조정
             animationEnd.Add(defenderUnit, true);
