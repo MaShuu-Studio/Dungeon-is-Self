@@ -219,6 +219,8 @@ namespace GameControl
                 {
                     skillRoster[monsterRoster].Add(SkillDatabase.Instance.GetMonsterSkill(infos[i].skillRosters[j]));
                 }
+
+                attackSkills[monsterRoster] = SkillDatabase.Instance.GetMonsterSkill(infos[i].attackSkill);
             }
         }
 

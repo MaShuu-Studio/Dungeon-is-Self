@@ -278,13 +278,14 @@ namespace Server
                 int findPlayer = playingRooms[keys[i]].PlayerInRoom(id);
                 if (findPlayer != -1)
                 {
-                    UserType winner = ((UserType)findPlayer == UserType.Defender) ? UserType.Offender : UserType.Offender;
+                    UserType winner = ((UserType)findPlayer == UserType.Defender) ? UserType.Offender : UserType.Defender;
                     int winnerId = playingRooms[keys[i]].GetPlayerId(winner);
 
                     S_GameEnd packet = new S_GameEnd();
                     packet.winner = (ushort)winner;
                     packet.winnerId = winnerId;
 
+                    Send(id, packet);
                     Send(winnerId, packet);
                     playingRooms.Remove(keys[i]);
                     break;

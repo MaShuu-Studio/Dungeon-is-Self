@@ -70,13 +70,17 @@ namespace Server
             Dictionary<int, List<int>> diceResults = new Dictionary<int, List<int>>();
             for (int i = 0; i < _rosters.Count; i++)
             {
+
                 List<int> dices = new List<int>();
                 Random rand = new Random();
-                for (int j = 0; j < 3; j++)
+                if (IsDead() == false)
                 {
-                    int diceIndex = rand.Next(0, _dices[i].Count);
+                    for (int j = 0; j < 3; j++)
+                    {
+                        int diceIndex = rand.Next(0, _dices[i].Count);
 
-                    dices.Add(SkillRosters[i][diceIndex]);
+                        dices.Add(SkillRosters[i][diceIndex]);
+                    }
                 }
                 diceResults.Add(_rosters[i], dices);
             }
@@ -90,10 +94,20 @@ namespace Server
             return _monster.hp;
         }
 
+        public bool IsDead()
+        {
+            return _monster.hp <= 0;
+        }
+
         public void ProgressTurn()
         {
             _attackSkillTurn--;
             CrowdControlProgressTurn();
+        }
+
+        public void ResetAttackTurn()
+        {
+            _attackSkillTurn = _attackSkill.turn;
         }
 
         private void HealUnit(int amount)

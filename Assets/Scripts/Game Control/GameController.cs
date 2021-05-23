@@ -45,6 +45,7 @@ namespace GameControl
         public int[] offenderUnits { get; private set; } = new int[3];
 
         private Dictionary<int, List<CrowdControl>> ccList = new Dictionary<int, List<CrowdControl>>();
+        private Dictionary<int, bool> isDead = new Dictionary<int, bool>();
 
         private Dictionary<int, System.Tuple<CharacterSkill, int>> offednerReadyTurn = new Dictionary<int, System.Tuple<CharacterSkill, int>>();
         private Dictionary<int, bool> offenderUnitIsDead = new Dictionary<int, bool>();
@@ -146,12 +147,14 @@ namespace GameControl
             // 선공 확인해서 순서 조정
             animationEnd.Add(defenderUnit, true);
             ccList.Add(defenderUnit, new List<CrowdControl>());
+            isDead.Add(defenderUnit, false);
             foreach (int key in offenderUnits)
             {
                 animationEnd.Add(key, true);
                 offenderUnitIsDead.Add(key, false);
                 offednerReadyTurn.Add(key, null);
                 ccList.Add(key, new List<CrowdControl>());
+                isDead.Add(key, false);
             }
 
             if (userType == UserType.Defender)
@@ -173,6 +176,7 @@ namespace GameControl
             Dictionary<int, int> selectedSkills = new Dictionary<int, int>();
             List<bool> isAttack = new List<bool>();
             List<bool> isWait = new List<bool>();
+            Dictionary<int, System.Tuple<bool, int>> deadUnit = new Dictionary<int, System.Tuple<bool, int>>();
 
             Dictionary<int, List<List<CrowdControl>>> ccs = new Dictionary<int, List<List<CrowdControl>>>();
 
@@ -180,7 +184,8 @@ namespace GameControl
             {
                 selectedSkills.Add(item.unitIndex, item.diceResult);
                 dices.Add(item.unitIndex, item.diceIndexs);
-                
+                deadUnit.Add(item.unitIndex, new System.Tuple<bool, int>(item.isDead, item.deadTurn));
+
                 if (item.diceResult == -1)
                 {
                     animationEnd[item.unitIndex] = true;
@@ -220,10 +225,11 @@ namespace GameControl
                 }
             }
 
-            StartCoroutine(BattleAnimation(turn, packet.monsterTurn, dices, selectedSkills, packet.monsterHps, ccs));
+            StartCoroutine(BattleAnimation(turn, packet.monsterTurn, packet.resetTurn, dices, selectedSkills, packet.monsterHps, ccs, deadUnit));
         }
 
-        IEnumerator BattleAnimation(int turn, int attackTurn, Dictionary<int, List<int>> dices, Dictionary<int, int> diceSkills, List<int> monsterHps, Dictionary<int, List<List<CrowdControl>>> ccs)
+        IEnumerator BattleAnimation(int turn, int attackTurn, int resetTurn, Dictionary<int, List<int>> dices, Dictionary<int, int> diceSkills,
+            List<int> monsterHps, Dictionary<int, List<List<CrowdControl>>> ccs, Dictionary<int, System.Tuple<bool, int>> deadUnit)
         {
             while (isDiceRolled) yield return null;
             GamePlayUIController.Instance.ShowDices(dices);
@@ -233,9 +239,21 @@ namespace GameControl
             for (; i < animationEnd.Count; i++)
             {
                 if (diceSkills[keys[i]] < 0) continue;
+                if (isDead[keys[i]] == false)
+                {
+                    GamePlayUIController.Instance.PlayAnimation(keys[i], "Attack");
+                    while (animationEnd[keys[i]] == false) yield return null;
+                }
+                else
+                {
+                    animationEnd[keys[i]] = true;
+                }
 
-                GamePlayUIController.Instance.PlayAnimation(keys[i], "Attack");
-                while (animationEnd[keys[i]] == false) yield return null;
+                for (int j = 0; j < keys.Count; j++)
+                {
+                    if (deadUnit[keys[j]].Item1 && deadUnit[keys[j]].Item2 == i)
+                        isDead[keys[j]] = true;
+                }
 
                 DefenderController.Instance.SetMonsterHp(monsterHps[i]);
 
@@ -255,10 +273,18 @@ namespace GameControl
 
             DefenderController.Instance.SetAttackSkillTurn(attackTurn);
             DefenderController.Instance.SetMonsterHp(monsterHps[i]);
+
             for (int j = 0; j < ccs.Count; j++)
             {
                 ShowCrowdControls(keys[j], ccs[keys[j]][i]);
             }
+
+            for (int j = 0; j < keys.Count; j++)
+            {
+                if (deadUnit[keys[j]].Item1 && deadUnit[keys[j]].Item2 == i)
+                    isDead[keys[j]] = true;
+            }
+
             GamePlayUIController.Instance.UpdateCharacters();
 
             time = 0.5f;
@@ -266,6 +292,12 @@ namespace GameControl
             {
                 time -= Time.deltaTime;
                 yield return null;
+            }
+
+            if (attackTurn <= 0)
+            {
+                DefenderController.Instance.SetAttackSkillTurn(resetTurn);
+                GamePlayUIController.Instance.UpdateCharacters();
             }
 
             progressRound = false;
@@ -325,6 +357,7 @@ namespace GameControl
                 yield return null;
             }
             if (gameEnd) SceneController.Instance.ChangeScene("Main"); // 씬 이동 임시
+
             /*
             else if (winner == UserType.Defender) ReadyRound(true);
             else ReadyRound(false);

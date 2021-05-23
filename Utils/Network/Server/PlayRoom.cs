@@ -154,6 +154,7 @@ namespace Server
                         S_RoundReadyEnd.EnemyRoster enemy = new S_RoundReadyEnd.EnemyRoster();
                         enemy.unitIndex = defender.Rosters[i];
                         enemy.skillRosters = defender.SkillRosters[i];
+                        enemy.attackSkill = defender.AttackSkill.id;
                         p.enemyRosters.Add(enemy);
                     }
 
@@ -217,8 +218,16 @@ namespace Server
                 Dictionary<int, int> diceResults = new Dictionary<int, int>();
                 List<Dictionary<int, List<CrowdControl>>> ccResultWithTurn
                     = new List<Dictionary<int, List<CrowdControl>>>();
+                Dictionary<int, Tuple<bool, int>> deadUnit = new Dictionary<int, Tuple<bool, int>>();
 
-                bool isRoundEnd = Battle(diceLists, ref monsterHps, ref diceResults, ref ccResultWithTurn);
+                foreach (int unit in diceLists.Keys)
+                {
+                    if (unit / 10 == 1) deadUnit.Add(unit, new Tuple<bool, int>(offender.IsDead(unit), 0));
+                    else deadUnit.Add(unit, new Tuple<bool, int>(false, 0));
+                }
+
+
+                bool isRoundEnd = Battle(diceLists, ref monsterHps, ref diceResults, ref ccResultWithTurn, ref deadUnit);
                 int isGameEnd = IsGameEnd();
 
                 S_ProgressTurn p = new S_ProgressTurn();
@@ -228,7 +237,9 @@ namespace Server
                 p.turn = turn;
                 p.monsterHps = monsterHps;
                 p.monsterTurn = defender.MonsterAttackTurn;
+                if (defender.MonsterAttackTurn <= 0) defender.ResetAttackTurn();
 
+                p.resetTurn = defender.MonsterAttackTurn;
                 p.results = new List<S_ProgressTurn.Result>();
                 foreach (int key in diceResults.Keys)
                 {
@@ -257,6 +268,8 @@ namespace Server
                     S_ProgressTurn.Result result = new S_ProgressTurn.Result()
                     {
                         unitIndex = key,
+                        isDead = deadUnit[key].Item1,
+                        deadTurn = deadUnit[key].Item2,
                         diceResult = diceResults[key],
                         diceIndexs = diceLists[key],
                         ccWithTurns = ccsWithTurn
@@ -276,7 +289,8 @@ namespace Server
 
         private bool Battle(Dictionary<int, List<int>> dices,
             ref List<int> monsterHps, ref Dictionary<int, int> diceResults,
-            ref List<Dictionary<int, List<CrowdControl>>> ccResultsWithTurn)
+            ref List<Dictionary<int, List<CrowdControl>>> ccResultsWithTurn,
+            ref Dictionary<int, Tuple<bool, int>> deadUnit)
         {
             turn++;
 
@@ -287,65 +301,111 @@ namespace Server
             {
                 if (i < units.Count)
                 {
-                    int selectedDice = SelectDice(dices[units[i]]);
-                    int target;
-                    int usingUnit = units[i];
-                    if (units[i] / 10 == 2)
+                    if (deadUnit[units[i]].Item1 == false)
                     {
-                        // Defender
-                        MonsterSkill skill = SkillDatabase.Instance.GetMonsterSkill(selectedDice);
-
-                        List<int> alives = offender.GetAlives();
-
-                        Random rand = new Random();
-                        int index = rand.Next(0, alives.Count);
-
-                        target = alives[index];
-
-                        foreach (int unit in offender.Rosters)
+                        int selectedDice = SelectDice(dices[units[i]]);
+                        int target;
+                        int usingUnit = units[i];
+                        if (units[i] / 10 == 2)
                         {
-                            if (offender.HasCrowdControl(unit, CCType.TAUNT)) target = unit;
-                        }
+                            // Defender
+                            MonsterSkill skill = SkillDatabase.Instance.GetMonsterSkill(selectedDice);
 
-                        AddCrowdControl(skill, usingUnit, target);
-                    }
-                    else
-                    {
-                        // Offender
-                        CharacterSkill skill = SkillDatabase.Instance.GetCharacterSkill(selectedDice);
-
-                        int damage = skill.damage;
-                        target = defender.Rosters[0];
-
-                        if (offender.HasCrowdControl(units[i], CCType.ATTACKSTAT, CCTarget.SELF)) damage = (int)(damage * 1.5f);
-                        if (offender.HasCrowdControl(units[i], CCType.MIRRORIMAGE)) damage = (int)(damage * 1.5f);
-                        if (offender.HasCrowdControl(units[i], CCType.ATTACKSTAT, CCTarget.ENEMY)) damage = (int)(damage * 0.7f);
-
-                        if (offender.HasCrowdControl(units[i], CCType.CONFUSION))
-                        {
                             List<int> alives = offender.GetAlives();
 
                             Random rand = new Random();
-                            int index = rand.Next(0, alives.Count + 1);
-                            if (index != alives.Count)
+                            int index = rand.Next(0, alives.Count);
+
+                            target = alives[index];
+
+                            foreach (int unit in offender.Rosters)
                             {
-                                foreach (int unit in offender.Rosters)
+                                if (offender.HasCrowdControl(unit, CCType.TAUNT)) target = unit;
+                            }
+
+                            AddCrowdControl(skill, usingUnit, target);
+                        }
+                        else
+                        {
+                            // Offender
+                            CharacterSkill skill = SkillDatabase.Instance.GetCharacterSkill(selectedDice);
+
+                            int damage = skill.damage;
+                            target = defender.Rosters[0];
+
+                            if (offender.HasCrowdControl(units[i], CCType.ATTACKSTAT, CCTarget.SELF)) damage = (int)(damage * 1.5f);
+                            if (offender.HasCrowdControl(units[i], CCType.MIRRORIMAGE)) damage = (int)(damage * 1.5f);
+                            if (offender.HasCrowdControl(units[i], CCType.ATTACKSTAT, CCTarget.ENEMY)) damage = (int)(damage * 0.7f);
+
+                            if (offender.HasCrowdControl(units[i], CCType.CONFUSION))
+                            {
+                                List<int> alives = offender.GetAlives();
+
+                                Random rand = new Random();
+                                int index = rand.Next(0, alives.Count + 1);
+                                if (index != alives.Count)
                                 {
-                                    if (offender.HasCrowdControl(unit, CCType.TAUNT)) target = unit;
+                                    foreach (int unit in offender.Rosters)
+                                    {
+                                        if (offender.HasCrowdControl(unit, CCType.TAUNT)) target = unit;
+                                    }
                                 }
                             }
+
+                            if (target / 10 == 2) defender.Damaged(damage);
+
+                            AddCrowdControl(skill, usingUnit, target);
                         }
-
-                        if (target / 10 == 2) defender.Damaged(damage);
-
-                        AddCrowdControl(skill, usingUnit, target);
+                        diceResults.Add(units[i], selectedDice);
                     }
-                    diceResults.Add(units[i], selectedDice);
+                    else diceResults.Add(units[i], -1);
                 }
                 else
                 {
                     defender.ProgressTurn();
                     offender.ProgressTurn();
+                }
+
+                if (defender.MonsterAttackTurn <= 0)
+                {
+                    // 죽을 유닛 선정
+                    List<int> alives = offender.GetAlives();
+                    Random rand = new Random();
+                    int target = rand.Next(0, alives.Count);
+
+                    for (int j = 0; j < alives.Count; j++)
+                    {
+                        if (offender.HasCrowdControl(alives[j], CCType.TAUNT))
+                            target = j;
+                    }
+
+                    switch (defender.AttackSkill.type)
+                    {
+                        case MonsterSkill.SkillType.AttackAll:
+                            for (int j = 0; j < alives.Count; j++)
+                                offender.KillUnit(alives[j]);
+                            break;
+
+                        case MonsterSkill.SkillType.AttackOne:
+                            offender.KillUnit(alives[target]);
+                            break;
+                        case MonsterSkill.SkillType.AttackOneStun:
+                            offender.KillUnit(alives[target]);
+                            alives = offender.GetAlives();
+
+                            target = rand.Next(0, alives.Count);
+
+                            for (int j = 0; j < alives.Count; j++)
+                            {
+                                if (offender.HasCrowdControl(alives[j], CCType.TAUNT))
+                                    target = j;
+                            }
+
+                            List<CrowdControl> ccs = defender.AttackSkill.ccList.Keys.ToList();
+                            offender.AddCrowdControl(alives[target], ccs[0], defender.AttackSkill.ccList[ccs[0]], defender.Rosters[0], 1, defender);
+
+                            break;
+                    }
                 }
 
                 monsterHps.Add(defender.MonsterHp);
@@ -355,17 +415,24 @@ namespace Server
                     if (units[j] / 10 == 1) ccResultsWithTurn[i].Add(units[j], offender.GetCCList(units[j]));
                     else ccResultsWithTurn[i].Add(units[j], defender.GetCCList(units[j]));
                 }
+
+                for (int j = 0; j < units.Count; j++)
+                {
+                    if (units[j] / 10 == 1)
+                    {
+                        if (deadUnit[units[j]].Item1 == false && offender.IsDead(units[j]))
+                            deadUnit[units[j]] = new Tuple<bool, int>(true, i);
+                    }
+                    else
+                    {
+                        if (deadUnit[units[j]].Item1 == false && defender.IsDead())
+                            deadUnit[units[j]] = new Tuple<bool, int>(true, i);
+                    }
+                }
+
+                if (RoundEnd()) return true;
             }
 
-            if (defender.MonsterHp <= 0)
-            {
-                round++;
-                return true;
-            }
-            else
-            {
-                // 오펜더가 졌을 경우 else if문
-            }
             return false;
         }
 
@@ -463,6 +530,26 @@ namespace Server
                     }
                 }
             }
+        }
+
+        private bool RoundEnd()
+        {
+            if (defender.MonsterHp <= 0)
+            {
+                // 방어자 패배
+                _winCount[round - 1] = (ushort)UserType.Offender;
+                round++;
+                return true;
+            }
+            else if (offender.GetAlives().Count == 0)
+            {
+                // 공격자 패배
+                _winCount[round - 1] = (ushort)UserType.Defender;
+                round++;
+                return true;
+            }
+
+            return false;
         }
 
         private int IsGameEnd()

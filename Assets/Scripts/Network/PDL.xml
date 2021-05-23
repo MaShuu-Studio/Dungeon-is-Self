@@ -69,6 +69,7 @@
 			<list name="skillRoster">
 				<int name="int"/>
 			</list>
+			<int name="attackSkill"/>
 		</clist>
 	</packet>
 	<packet name="C_PlayRoundReady">
@@ -86,11 +87,14 @@
 		<ushort name="winner"/>
 		<int name="round"/>
 		<int name="turn"/>
+		<int name="resetTurn"/>
 		<list name="monsterHp">
 			<int name="int"/>
 		</list>
 		<int name="monsterTurn"/>
 		<clist name="result">
+			<bool name="isDead"/>
+			<int name="deadTurn"/>
 			<int name="unitIndex"/>
 			<int name="diceResult"/>
 			<list name="diceIndex">

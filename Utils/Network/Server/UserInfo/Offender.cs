@@ -58,12 +58,17 @@ namespace Server
             {
                 List<int> dices = new List<int>();
                 Random rand = new Random();
-                for (int j = 0; j < 5; j++)
-                {
-                    int diceIndex = rand.Next(0, _dices[i].Count);
 
-                    dices.Add(SkillRosters[i][diceIndex]);
+                if (IsDead(_rosters[i]) == false)
+                {
+                    for (int j = 0; j < 5; j++)
+                    {
+                        int diceIndex = rand.Next(0, _dices[i].Count);
+
+                        dices.Add(SkillRosters[i][diceIndex]);
+                    }
                 }
+
                 diceResults.Add(_rosters[i], dices);
             }
 
@@ -90,6 +95,11 @@ namespace Server
             }
 
             return alives;
+        }
+
+        public bool IsDead(int unit)
+        {
+            return _isDead.FindIndex(index => index == unit) != -1;
         }
 
         public List<CrowdControl> GetCCList(int unit)
