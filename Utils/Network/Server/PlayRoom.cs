@@ -145,6 +145,7 @@ namespace Server
                 S_RoundReadyEnd p = new S_RoundReadyEnd();
                 p.currentProgress = (ushort)currentProgress;
                 p.round = round;
+                turn = 1;
 
                 p.enemyRosters = new List<S_RoundReadyEnd.EnemyRoster>();
 
