@@ -288,7 +288,6 @@ namespace GameControl
                     if (IsSkillGotten(j))
                     {
                         usableSkill.Add(j);
-                        Debug.Log(c.mySkills[j].id);
                     }
                 }
 
@@ -316,6 +315,7 @@ namespace GameControl
                     while (true)
                     {
                         int n = UnityEngine.Random.Range(0, GetSkillRosterSize());
+                        if (dices[roster[i]].Contains(n)) continue; 
                         if (SetDice(true, n)) break;
                     }
                 }

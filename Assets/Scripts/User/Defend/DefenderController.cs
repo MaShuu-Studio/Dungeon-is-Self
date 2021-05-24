@@ -189,11 +189,7 @@ namespace GameControl
 
         public void RosterTimeOut()
         {
-            for (int i = 0; i < 6; i++)
-            {
-                if (isDead[i] == true) continue;
-                else { SelectMonster(i); break; }
-            }
+            SelectMonster(monsterRoster);
 
             for (int i = GetSkillRosterSize(); i < 8; i++)
             {
@@ -219,6 +215,7 @@ namespace GameControl
                 while (true)
                 {
                     int n = UnityEngine.Random.Range(0, GetSkillRosterSize());
+                    if (dices[monsterRoster].Contains(n)) continue;
                     if (SetDice(true, n)) break;
                 }
             }

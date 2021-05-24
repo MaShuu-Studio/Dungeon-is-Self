@@ -131,6 +131,7 @@ public class CustomButton : MonoBehaviour
 
         if (GameController.Instance.userType == UserType.Defender)
         {
+            DefenderController.Instance.RosterTimeOut();
             roster.Add(DefenderController.Instance.monsterRoster);
             for (int i = 0; i < roster.Count; i++)
             {
@@ -140,6 +141,7 @@ public class CustomButton : MonoBehaviour
         }
         else
         {
+            OffenderController.Instance.RosterTimeOut();
             for (int i = 0; i < OffenderController.Instance.roster.Length; i++)
             {
                 roster.Add(OffenderController.Instance.roster[i]);
@@ -149,6 +151,8 @@ public class CustomButton : MonoBehaviour
                 skillRoster.Add(OffenderController.Instance.GetSkillRosterWithUnit(roster[i]));
             }
         }
+
+        GamePlayUIController.Instance.ShowCharacterSkillsInPanel();
 
         C_RoundReady packet = new C_RoundReady();
         packet.roomId = GameController.Instance.roomId;
@@ -176,15 +180,18 @@ public class CustomButton : MonoBehaviour
 
         if (GameController.Instance.userType == UserType.Defender)
         {
+            DefenderController.Instance.DiceTimeOut();
             dices.Add(DefenderController.Instance.GetDicesWithUnit(DefenderController.Instance.monsterRoster));
         }
         else
         {
+            OffenderController.Instance.DiceTimeOut();
             for (int i = 0; i < OffenderController.Instance.roster.Length; i++)
             {
                 dices.Add(OffenderController.Instance.GetDicesWithUnit(OffenderController.Instance.roster[i]));
             }
         }
+        GamePlayUIController.Instance.ShowCharacterSkillsInPanel();
 
         C_PlayRoundReady packet = new C_PlayRoundReady();
         packet.roomId = GameController.Instance.roomId;

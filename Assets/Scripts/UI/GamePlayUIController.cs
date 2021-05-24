@@ -796,7 +796,7 @@ public class GamePlayUIController : MonoBehaviour
 
     public void AddOrRemoveDice(UsingSkillIcon icon, Skill skill)
     {
-        for (int i = 0; i < usingDices.Count; i++)
+        for (int i = 2; i < usingDices.Count; i++)
         {
             if (usingDices[i] == icon)
             {
