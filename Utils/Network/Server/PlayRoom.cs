@@ -75,35 +75,65 @@ namespace Server
             return _playerId[(ushort)type];
         }
 
-        public void ReadyGameEnd(UserType type, List<int> candidates)
+        public void ReadyRoundState(UserType type, List<int> candidates = null)
         {
             _playerReady[(ushort)type] = true;
-            if (type == UserType.Defender)
+            if (candidates != null)
             {
-                defender.SetCandidate(candidates);
-                if (_playerId[(ushort)UserType.Offender] == -1)
-                    Bot.SetCandidate(ref offender);
-            }
-            else
-            {
-                offender.SetCandidate(candidates);
-                if (_playerId[(ushort)UserType.Defender] == -1)
-                    Bot.SetCandidate(ref defender);
-            }
+                if (currentProgress != GameProgress.ReadyGame) return;
 
-            if (_playerReady[(ushort)UserType.Defender] && _playerReady[(ushort)UserType.Offender])
+                if (type == UserType.Defender)
+                {
+                    defender.SetCandidate(candidates);
+                    if (_playerId[(ushort)UserType.Offender] == -1)
+                        Bot.SetCandidate(ref offender);
+                }
+                else
+                {
+                    offender.SetCandidate(candidates);
+                    if (_playerId[(ushort)UserType.Defender] == -1)
+                        Bot.SetCandidate(ref defender);
+                }
+
+                if (_playerReady[(ushort)UserType.Defender] && _playerReady[(ushort)UserType.Offender])
+                {
+                    currentProgress = GameProgress.ReadyRound;
+                    S_ReadyGameEnd packet = new S_ReadyGameEnd();
+                    packet.currentProgress = (ushort)currentProgress;
+                    packet.round = ++round;
+                    packet.enemyCandidates = defender.Candidates;
+
+                    if (_playerId[(ushort)UserType.Offender] != -1)
+                        _room.Send(_playerId[(ushort)UserType.Offender], packet);
+
+                    packet.enemyCandidates = offender.Candidates;
+
+                    if (_playerId[(ushort)UserType.Defender] != -1)
+                        _room.Send(_playerId[(ushort)UserType.Defender], packet);
+
+                    for (int i = 0; i < _playerReady.Length; i++)
+                        if (_playerId[i] == -1) _playerReady[i] = true;
+                        else _playerReady[i] = false;
+                }
+            }
+            else if (_playerReady[(ushort)UserType.Defender] && _playerReady[(ushort)UserType.Offender])
             {
                 currentProgress = GameProgress.ReadyRound;
-                S_ReadyGameEnd packet = new S_ReadyGameEnd();
-                packet.currentProgress = (ushort)currentProgress;
+                S_NewRound packet = new S_NewRound();
                 packet.round = ++round;
-                packet.enemyCandidates = defender.Candidates;
+                packet.userInfos = new List<S_NewRound.UserInfo>();
+                
+                for (int i = 0; i < _playerId.Count(); i++)
+                {
+                    packet.userInfos.Add(new S_NewRound.UserInfo()
+                    {
+                        type = (ushort)i,
+                        deadUnits = (i == (int)UserType.Defender) ? defender.DeadUnits : offender.DeadUnits,
+                    });
+                }
 
                 if (_playerId[(ushort)UserType.Offender] != -1)
                     _room.Send(_playerId[(ushort)UserType.Offender], packet);
-
-                packet.enemyCandidates = offender.Candidates;
-
                 if (_playerId[(ushort)UserType.Defender] != -1)
                     _room.Send(_playerId[(ushort)UserType.Defender], packet);
 
@@ -115,6 +145,8 @@ namespace Server
 
         public void RoundReadyEnd(UserType type, List<C_RoundReady.Roster> rosters)
         {
+            if (currentProgress != GameProgress.ReadyRound) return;
+
             List<int> units = new List<int>();
             List<List<int>> skills = new List<List<int>>();
             List<int> attackSkills = new List<int>();
@@ -184,6 +216,8 @@ namespace Server
         }
         public void PlayRoundReadyEnd(UserType type, List<C_PlayRoundReady.Roster> rosters)
         {
+            if (currentProgress != GameProgress.PlayRound) return;
+
             List<List<int>> dices = new List<List<int>>();
             for (int i = 0; i < rosters.Count; i++)
             {
@@ -229,12 +263,12 @@ namespace Server
                 }
 
 
-                bool isRoundEnd = Battle(diceLists, ref monsterHps, ref diceResults, ref ccResultWithTurn, ref deadUnit);
+                int endTurn = Battle(diceLists, ref monsterHps, ref diceResults, ref ccResultWithTurn, ref deadUnit);
                 int isGameEnd = IsGameEnd();
 
                 S_ProgressTurn p = new S_ProgressTurn();
-                p.isRoundEnd = isRoundEnd;
                 p.winner = _winCount[round - 1];
+                p.endTurn = endTurn;
                 p.round = round;
                 p.turn = turn;
                 p.monsterHps = monsterHps;
@@ -289,7 +323,7 @@ namespace Server
             }
         }
 
-        private bool Battle(Dictionary<int, List<int>> dices,
+        private int Battle(Dictionary<int, List<int>> dices,
             ref List<int> monsterHps, ref Dictionary<int, int> diceResults,
             ref List<Dictionary<int, List<CrowdControl>>> ccResultsWithTurn,
             ref Dictionary<int, Tuple<bool, int>> deadUnit)
@@ -299,7 +333,8 @@ namespace Server
             monsterHps.Clear();
             List<int> units = dices.Keys.ToList();
 
-            for (int i = 0; i <= units.Count; i++)
+            int i = 0;
+            for (; i <= units.Count; i++)
             {
                 if (i < units.Count)
                 {
@@ -432,10 +467,10 @@ namespace Server
                     }
                 }
 
-                if (RoundEnd()) return true;
+                if (RoundEnd()) break;
             }
 
-            return false;
+            return i;
         }
 
         private int SelectDice(List<int> dices)
@@ -540,16 +575,12 @@ namespace Server
             {
                 // 방어자 패배
                 _winCount[round - 1] = (ushort)UserType.Offender;
-                round++;
-                currentProgress = GameProgress.ReadyRound;
                 return true;
             }
             else if (offender.GetAlives().Count == 0)
             {
                 // 공격자 패배
                 _winCount[round - 1] = (ushort)UserType.Defender;
-                round++;
-                currentProgress = GameProgress.ReadyRound;
                 return true;
             }
 

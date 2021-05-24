@@ -12,7 +12,7 @@ namespace Server
 
         List<List<int>> _skillRosters = new List<List<int>>();
         List<List<int>> _dices = new List<List<int>>();
-        List<int> _isDead = new List<int>();
+        List<int> _deadUnits = new List<int>();
 
         Dictionary<int, List<CrowdControl>> _ccList = new Dictionary<int, List<CrowdControl>>();
 
@@ -26,6 +26,7 @@ namespace Server
         public List<List<int>> Dices { get { return _dices; } }
         public MonsterSkill AttackSkill { get { return _attackSkill; } }
         public Dictionary<int, List<CrowdControl>> CCList { get { return _ccList; } }
+        public List<int> DeadUnits { get { return _deadUnits; } }
         public int MonsterHp { get { return _monster.hp; } }
         public int MonsterAttackTurn { get { return _attackSkillTurn; } }
 
@@ -98,7 +99,12 @@ namespace Server
 
         public bool IsDead()
         {
-            return _monster.hp <= 0;
+            if (_monster.hp <= 0)
+            {
+                DeadUnits.Add(_rosters[0]);
+                return true;
+            }
+            return false;
         }
 
         public void ProgressTurn()

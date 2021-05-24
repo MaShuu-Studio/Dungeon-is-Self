@@ -812,8 +812,8 @@ public class C_PlayRoundReady : IPacket
 }
 public class S_ProgressTurn : IPacket
 {
-    public bool isRoundEnd;
-	public ushort winner;
+    public ushort winner;
+	public int endTurn;
 	public int round;
 	public int turn;
 	public int resetTurn;
@@ -958,10 +958,10 @@ public class S_ProgressTurn : IPacket
         count += sizeof(ushort);
         count += sizeof(ushort);
         
-        this.isRoundEnd = BitConverter.ToBoolean(segment.Array, segment.Offset + count);
-		count += sizeof(bool);
-		this.winner = BitConverter.ToUInt16(segment.Array, segment.Offset + count);
+        this.winner = BitConverter.ToUInt16(segment.Array, segment.Offset + count);
 		count += sizeof(ushort);
+		this.endTurn = BitConverter.ToInt32(segment.Array, segment.Offset + count);
+		count += sizeof(int);
 		this.round = BitConverter.ToInt32(segment.Array, segment.Offset + count);
 		count += sizeof(int);
 		this.turn = BitConverter.ToInt32(segment.Array, segment.Offset + count);
@@ -999,11 +999,11 @@ public class S_ProgressTurn : IPacket
         Array.Copy(BitConverter.GetBytes((ushort)PacketID.S_ProgressTurn), 0, segment.Array, segment.Offset + count, sizeof(ushort));
         count += sizeof(ushort);
         
-        Array.Copy(BitConverter.GetBytes(this.isRoundEnd), 0, segment.Array, segment.Offset + count, sizeof(bool));
-		count += sizeof(bool);
-		
-		Array.Copy(BitConverter.GetBytes(this.winner), 0, segment.Array, segment.Offset + count, sizeof(ushort));
+        Array.Copy(BitConverter.GetBytes(this.winner), 0, segment.Array, segment.Offset + count, sizeof(ushort));
 		count += sizeof(ushort);
+		
+		Array.Copy(BitConverter.GetBytes(this.endTurn), 0, segment.Array, segment.Offset + count, sizeof(int));
+		count += sizeof(int);
 		
 		Array.Copy(BitConverter.GetBytes(this.round), 0, segment.Array, segment.Offset + count, sizeof(int));
 		count += sizeof(int);
@@ -1037,7 +1037,7 @@ public class S_ProgressTurn : IPacket
 public class C_RoundEnd : IPacket
 {
     public int roomId;
-	public int playerId;
+	public ushort type;
     public ushort Protocol { get { return (ushort)PacketID.C_RoundEnd; } }
 
     public void Read(ArraySegment<byte> segment)
@@ -1049,8 +1049,8 @@ public class C_RoundEnd : IPacket
         
         this.roomId = BitConverter.ToInt32(segment.Array, segment.Offset + count);
 		count += sizeof(int);
-		this.playerId = BitConverter.ToInt32(segment.Array, segment.Offset + count);
-		count += sizeof(int);
+		this.type = BitConverter.ToUInt16(segment.Array, segment.Offset + count);
+		count += sizeof(ushort);
     }
 
     public ArraySegment<byte> Write()
@@ -1065,8 +1065,8 @@ public class C_RoundEnd : IPacket
         Array.Copy(BitConverter.GetBytes(this.roomId), 0, segment.Array, segment.Offset + count, sizeof(int));
 		count += sizeof(int);
 		
-		Array.Copy(BitConverter.GetBytes(this.playerId), 0, segment.Array, segment.Offset + count, sizeof(int));
-		count += sizeof(int);
+		Array.Copy(BitConverter.GetBytes(this.type), 0, segment.Array, segment.Offset + count, sizeof(ushort));
+		count += sizeof(ushort);
 		
 
         Array.Copy(BitConverter.GetBytes(count), 0, segment.Array, segment.Offset, sizeof(ushort));
@@ -1079,11 +1079,14 @@ public class S_NewRound : IPacket
     public int round;
 	public class UserInfo
 	{
-	    public List<int> deadUnits = new List<int>();
+	    public ushort type;
+		public List<int> deadUnits = new List<int>();
 	
 	    public void Read(ArraySegment<byte> segment, ref ushort count)
 	    {
-	        deadUnits.Clear();
+	        this.type = BitConverter.ToUInt16(segment.Array, segment.Offset + count);
+			count += sizeof(ushort);
+			deadUnits.Clear();
 			ushort deadUnitLen = BitConverter.ToUInt16(segment.Array, segment.Offset + count);
 			count += sizeof(ushort);
 			for (int i = 0; i < deadUnitLen; i++)
@@ -1096,7 +1099,10 @@ public class S_NewRound : IPacket
 	    public bool Write(ArraySegment<byte> segment, ref ushort count)
 	    {
 	        bool success = true;
-	        Array.Copy(BitConverter.GetBytes((ushort)deadUnits.Count), 0, segment.Array, segment.Offset + count, sizeof(ushort));
+	        Array.Copy(BitConverter.GetBytes(this.type), 0, segment.Array, segment.Offset + count, sizeof(ushort));
+			count += sizeof(ushort);
+			
+			Array.Copy(BitConverter.GetBytes((ushort)deadUnits.Count), 0, segment.Array, segment.Offset + count, sizeof(ushort));
 			count += sizeof(ushort);
 			foreach(int deadUnit in deadUnits)
 			{

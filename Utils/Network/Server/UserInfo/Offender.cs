@@ -11,7 +11,7 @@ namespace Server
         List<int> _rosters = new List<int>();
         List<List<int>> _skillRosters = new List<List<int>>();
         List<List<int>> _dices = new List<List<int>>();
-        List<int> _isDead = new List<int>();
+        List<int> _deadUnits = new List<int>();
         Dictionary<int, List<CrowdControl>> _ccList = new Dictionary<int, List<CrowdControl>>();
 
         public List<int> Candidates { get { return _candidates; } }
@@ -19,6 +19,7 @@ namespace Server
         public List<List<int>> SkillRosters { get { return _skillRosters; } }
         public List<List<int>> Dices { get { return _dices; } }
         public Dictionary<int, List<CrowdControl>> CCList { get { return _ccList; } }
+        public List<int> DeadUnits { get { return _deadUnits; } }
 
         public void SetCandidate(List<int> cs)
         {
@@ -85,16 +86,16 @@ namespace Server
 
         public void KillUnit(int unit)
         {
-            _isDead.Add(unit);
+            _deadUnits.Add(unit);
         }
 
         public List<int> GetAlives()
         {
             List<int> alives = new List<int>(Rosters);
 
-            for (int i = 0; i < _isDead.Count; i++)
+            for (int i = 0; i < _deadUnits.Count; i++)
             {
-                alives.Remove(_isDead[i]);
+                alives.Remove(_deadUnits[i]);
             }
 
             return alives;
@@ -102,7 +103,7 @@ namespace Server
 
         public bool IsDead(int unit)
         {
-            return _isDead.FindIndex(index => index == unit) != -1;
+            return _deadUnits.FindIndex(index => index == unit) != -1;
         }
 
         public List<CrowdControl> GetCCList(int unit)
@@ -133,7 +134,7 @@ namespace Server
             {
                 foreach (int key in _rosters)
                 {
-                    if (_isDead.FindIndex(index => index == key) != -1) targets.Add(key);
+                    if (_deadUnits.FindIndex(index => index == key) != -1) targets.Add(key);
                 }
             }
             else targets.Add(target);
@@ -213,7 +214,7 @@ namespace Server
         {
             foreach (int key in _ccList.Keys)
             {
-                if (_isDead.FindIndex(index => index == key) == -1) _ccList[key].Clear();
+                if (_deadUnits.FindIndex(index => index == key) == -1) _ccList[key].Clear();
 
                 for (int i = 0; i < _ccList[key].Count; i++)
                 {

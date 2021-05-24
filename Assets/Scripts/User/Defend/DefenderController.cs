@@ -420,6 +420,13 @@ namespace GameControl
         {
             attackSkillTurn = attackSkills[monsterRoster].turn;
         }
+        public void KillUnits(List<int> deadUnits)
+        {
+            for (int i = 0; i < deadUnits.Count; i++)
+            {
+                isDead[deadUnits[i] % 10] = true;
+            }
+        }
 
         public void Dead(int index)
         {

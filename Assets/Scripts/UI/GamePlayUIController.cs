@@ -205,7 +205,6 @@ public class GamePlayUIController : MonoBehaviour
             case GameProgress.ReadyRound:
                 benchSelected.gameObject.SetActive(false);
                 rosterSelected.gameObject.SetActive(false);
-                ShowCharacterRoster();
                 roundText.gameObject.SetActive(true);
                 roundText.text = "ROUND " + GameController.Instance.round.ToString();
                 BlindSelectedRoster();
@@ -217,8 +216,9 @@ public class GamePlayUIController : MonoBehaviour
                     defenderSpecialView.SetActive(true);
                     // 유닛 선택시 Defender에서 몬스터가 죽었는지 체크해야함.
                     // 기존에 선택했던 유닛부터 다시 세팅할 수 있게 해줘야 함.
-                    //int index = DefenderController.Instance.GetFirstAliveMonster();
-                    userRosters[0].SetRosterNumber(DefenderController.Instance.monsterRoster);
+                    int alive = DefenderController.Instance.GetFirstAliveMonster();
+                    SelectCharacter(alive, userBenchs[alive].characterId);
+                    userRosters[0].SetRosterNumber(alive);
                 }
                 else
                 {
@@ -226,25 +226,23 @@ public class GamePlayUIController : MonoBehaviour
                     offenderSkillTree.gameObject.SetActive(false);
                     defenderSpecialView.SetActive(false);
 
-                    for (int i = 0; i < userRosters.Count; i++)
-                    {
-                        userRosters[i].SetRosterNumber(OffenderController.Instance.roster[i]);
-                    }
-                    /*
+                    
                     // 유닛 선택시 Offender에서 유닛이 죽었는지 체크해야 함.
                     // 기존에 선택했던 유닛부터 다시 세팅할 수 있게 해줘야 함.
                     int index = OffenderController.Instance.GetFirstAliveCharacter();
 
                     List<int> aliveList = OffenderController.Instance.GetAliveCharacterList();
-                    // 죽은애 알아서 잘 찾아갈 수 있게 조정
-                    for (int i = 0; i < aliveList.Count && i < 3; i++)
+                    SelectCharacter(aliveList[0], userBenchs[aliveList[0]].characterId);
+                    OffenderController.Instance.SelectCharacter(aliveList[0]);
+
+                    for (int i = 0; i < userRosters.Count; i++)
                     {
-                        OffenderController.Instance.SelectCharacter(aliveList[i]);
+                        Debug.Log(aliveList[i]);
+                        userRosters[i].SetRosterNumber(aliveList[i]);
                     }
-                    OffenderController.Instance.SelectCharacter(0);
-                    */
                 }
 
+                ShowCharacterRoster();
                 ShowCharacterSkillsInPanel();
                 break;
 
@@ -255,6 +253,7 @@ public class GamePlayUIController : MonoBehaviour
                 gameViews[2].SetActive(true);
                 playRoundView.SetActive(true);
                 SetCharacters();
+                SelectCharacter(userRosters[0].index, userRosters[0].characterId);
                 break;
         }
     }
@@ -383,9 +382,10 @@ public class GamePlayUIController : MonoBehaviour
     {
         for (int i = 0; i < userBenchs.Count; i++)
         {
-            if (IsRoster(i))
+            RosterIcon roster = userRosters.Find(icon => icon.index == i);
+            if (roster != null)
             {
-                userRosters[i].SetImage(type, userBenchs[i].characterId);
+                roster.SetImage(type, userBenchs[i].characterId);
                 userBenchs[i].SelectUnit(true);
             }
             else userBenchs[i].SelectUnit(false);
@@ -445,6 +445,9 @@ public class GamePlayUIController : MonoBehaviour
     public void SelectCharacter(int index, int id)
     {
         if (index >= userBenchs.Count) return;
+        if (GameController.Instance.currentProgress == GameProgress.PlayRound &&
+            userRosters.Find(icon => icon.index == index) == null) return;
+
         selectedCharacterIndex = index;
         string path = (type == UserType.Defender) ? MonsterDatabase.facePath : CharacterDatabase.facePath;
         string name = (type == UserType.Defender) ? MonsterDatabase.Instance.GetMonster(id).name : CharacterDatabase.Instance.GetCharacter(id)._role;
@@ -776,9 +779,7 @@ public class GamePlayUIController : MonoBehaviour
                 // 실제 로스터에서 삭제 good!
                 if (type == UserType.Offender)
                 {
-                    Debug.Log(i);
                     OffenderController.Instance.RemoveSkillRoster(i);
-                    Debug.Log(OffenderController.Instance.GetSkillRosterSize());
                 }
                 else
                 {

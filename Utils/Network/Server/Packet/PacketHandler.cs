@@ -125,7 +125,8 @@ namespace Network
 
             if (clientSession.Room == null) return;
             GameRoom room = clientSession.Room;
-            
+
+            room.RoundEnd(p.roomId, (UserType)p.type);            
         }
     }
 }

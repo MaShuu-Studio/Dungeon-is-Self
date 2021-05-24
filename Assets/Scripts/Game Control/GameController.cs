@@ -108,12 +108,20 @@ namespace GameControl
         public void ReadyNewRound(int round, List<S_NewRound.UserInfo> userInfos)
         {
             // 죽은유닛 설정
+            for (int i = 0; i < userInfos.Count; i++)
+            {
+                if (userInfos[i].type == (ushort)UserType.Defender)
+                    DefenderController.Instance.KillUnits(userInfos[i].deadUnits);
+                else
+                    OffenderController.Instance.KillUnits(userInfos[i].deadUnits);
+            }
 
             ReadyRound(round);
         }
 
         public void ReadyRound(int round)
         {
+            progressRound = false;
             this.round = round;
             animationEnd.Clear();
 
@@ -186,6 +194,9 @@ namespace GameControl
             List<bool> isAttack = new List<bool>();
             List<bool> isWait = new List<bool>();
             Dictionary<int, System.Tuple<bool, int>> deadUnit = new Dictionary<int, System.Tuple<bool, int>>();
+            int winner = packet.winner;
+            int endTurn = packet.endTurn;
+            Debug.Log(endTurn);
 
             Dictionary<int, List<List<CrowdControl>>> ccs = new Dictionary<int, List<List<CrowdControl>>>();
 
@@ -234,11 +245,11 @@ namespace GameControl
                 }
             }
 
-            StartCoroutine(BattleAnimation(turn, packet.monsterTurn, packet.resetTurn, dices, selectedSkills, packet.monsterHps, ccs, deadUnit));
+            StartCoroutine(BattleAnimation(turn, packet.monsterTurn, packet.resetTurn, dices, selectedSkills, packet.monsterHps, ccs, deadUnit, winner, endTurn));
         }
 
         IEnumerator BattleAnimation(int turn, int attackTurn, int resetTurn, Dictionary<int, List<int>> dices, Dictionary<int, int> diceSkills,
-            List<int> monsterHps, Dictionary<int, List<List<CrowdControl>>> ccs, Dictionary<int, System.Tuple<bool, int>> deadUnit)
+            List<int> monsterHps, Dictionary<int, List<List<CrowdControl>>> ccs, Dictionary<int, System.Tuple<bool, int>> deadUnit, int winner, int endTurn)
         {
             while (isDiceRolled) yield return null;
             GamePlayUIController.Instance.ShowDices(dices);
@@ -247,6 +258,7 @@ namespace GameControl
             int i = 0;
             for (; i < animationEnd.Count; i++)
             {
+                Debug.Log($"curTurn : {i}");
                 if (diceSkills[keys[i]] < 0) continue;
                 if (isDead[keys[i]] == false)
                 {
@@ -271,48 +283,65 @@ namespace GameControl
                     ShowCrowdControls(keys[j], ccs[keys[j]][i]);
                 }
                 GamePlayUIController.Instance.UpdateCharacters();
+
+                if (winner != 0 && i == endTurn)
+                {
+                    RoundEnd((UserType)winner);
+                    break;
+                }
             }
+            Debug.Log($"curTurn : {i}");
 
-            float time = 0.5f;
-            while (time > 0)
+            if (i >= animationEnd.Count)
             {
-                time -= Time.deltaTime;
-                yield return null;
-            }
+                // 턴 하나 진행
+                float time = 0.5f;
+                while (time > 0)
+                {
+                    time -= Time.deltaTime;
+                    yield return null;
+                }
 
-            DefenderController.Instance.SetAttackSkillTurn(attackTurn);
-            DefenderController.Instance.SetMonsterHp(monsterHps[i]);
+                DefenderController.Instance.SetAttackSkillTurn(attackTurn);
+                DefenderController.Instance.SetMonsterHp(monsterHps[i]);
 
-            for (int j = 0; j < ccs.Count; j++)
-            {
-                ShowCrowdControls(keys[j], ccs[keys[j]][i]);
-            }
+                for (int j = 0; j < ccs.Count; j++)
+                {
+                    ShowCrowdControls(keys[j], ccs[keys[j]][i]);
+                }
 
-            for (int j = 0; j < keys.Count; j++)
-            {
-                if (deadUnit[keys[j]].Item1 && deadUnit[keys[j]].Item2 == i)
-                    isDead[keys[j]] = true;
-            }
+                for (int j = 0; j < keys.Count; j++)
+                {
+                    if (deadUnit[keys[j]].Item1 && deadUnit[keys[j]].Item2 == i)
+                        isDead[keys[j]] = true;
+                }
 
-            GamePlayUIController.Instance.UpdateCharacters();
-
-            time = 0.5f;
-            while (time > 0)
-            {
-                time -= Time.deltaTime;
-                yield return null;
-            }
-
-            if (attackTurn <= 0)
-            {
-                DefenderController.Instance.SetAttackSkillTurn(resetTurn);
                 GamePlayUIController.Instance.UpdateCharacters();
+
+                if (attackTurn <= 0)
+                {
+                    // 몬스터 공격 애니메이션
+                    time = 0.5f;
+                    while (time > 0)
+                    {
+                        time -= Time.deltaTime;
+                        yield return null;
+                    }
+                    DefenderController.Instance.SetAttackSkillTurn(resetTurn);
+                    GamePlayUIController.Instance.UpdateCharacters();
+                }
+
+                if (winner != 0 && i >= endTurn)
+                {
+                    RoundEnd((UserType)winner);
+                }
+                else
+                {
+                    progressRound = false;
+                    GamePlayUIController.Instance.RemoveDices();
+                    NextTurnInNetwork(turn);
+                }
             }
-
-            progressRound = false;
-
-            GamePlayUIController.Instance.RemoveDices();
-            NextTurnInNetwork(turn);
         }
 
         public void ShowCrowdControls(int unitIndex, List<CrowdControl> ccs)

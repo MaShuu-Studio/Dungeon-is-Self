@@ -450,7 +450,7 @@ namespace Data
             #endregion
 
             #region Attack
-            monSkillDB.Add(new MonsterSkill(200211, "전체공격", 10, cost: 0,
+            monSkillDB.Add(new MonsterSkill(200211, "전체공격", 2, cost: 0,
                 description: "모든 적을 공격한다."));
             monSkillDB.Add(new MonsterSkill(200311, "단일공격", 4, cost: 0,
                 description: "하나의 적을 공격한다."));

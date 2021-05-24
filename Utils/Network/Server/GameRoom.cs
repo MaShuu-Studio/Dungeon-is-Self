@@ -227,11 +227,26 @@ namespace Server
         {
             if (playingRooms.ContainsKey(roomId))
             {
-                playingRooms[roomId].ReadyGameEnd(type, candidates);
+                playingRooms[roomId].ReadyRoundState(type, candidates);
             }
             else if (playingSingleGameRooms.ContainsKey(roomId))
             {
-                playingSingleGameRooms[roomId].ReadyGameEnd(type, candidates);
+                playingSingleGameRooms[roomId].ReadyRoundState(type, candidates);
+            }
+            else
+            {
+
+            }
+        }
+        public void RoundEnd(int roomId, UserType type)
+        {
+            if (playingRooms.ContainsKey(roomId))
+            {
+                playingRooms[roomId].ReadyRoundState(type);
+            }
+            else if (playingSingleGameRooms.ContainsKey(roomId))
+            {
+                playingSingleGameRooms[roomId].ReadyRoundState(type);
             }
             else
             {

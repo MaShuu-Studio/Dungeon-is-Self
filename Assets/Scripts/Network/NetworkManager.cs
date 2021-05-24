@@ -65,7 +65,7 @@ namespace Network
             IPEndPoint endPoint;
 
             Connector connector;
-            /*
+
             #region Local Test
             host = Dns.GetHostName();
             ipHost = Dns.GetHostEntry(host);
@@ -76,8 +76,9 @@ namespace Network
 
             connector.Connect(endPoint, () => { return session; }, 1);
             #endregion
-            */
 
+            
+            /*
             #region Live
             host = "ec2-3-36-132-112.ap-northeast-2.compute.amazonaws.com";
             ipHost = Dns.GetHostEntry(host);
@@ -88,6 +89,7 @@ namespace Network
 
             connector.Connect(endPoint, () => { return session; }, 1);
             #endregion
+            */
 
         }
 
@@ -178,7 +180,7 @@ namespace Network
         public void RoundEnd(int roomId)
         {
             C_RoundEnd packet = new C_RoundEnd();
-            packet.playerId = playerId;
+            packet.type = (ushort)GameController.Instance.userType;
             packet.roomId = roomId;
 
             Send(packet.Write());
