@@ -126,7 +126,17 @@ namespace Network
             if (clientSession.Room == null) return;
             GameRoom room = clientSession.Room;
 
-            room.RoundEnd(p.roomId, (UserType)p.type);            
+            room.RoundEnd(p.roomId, (UserType)p.type);
+        }
+        public static void C_GameEndHandler(PacketSession session, IPacket packet)
+        {
+            C_GameEnd p = packet as C_GameEnd;
+            ClientSession clientSession = session as ClientSession;
+
+            if (clientSession.Room == null) return;
+            GameRoom room = clientSession.Room;
+
+            room.GameEnd(p.roomId, (UserType)p.type);
         }
     }
 }

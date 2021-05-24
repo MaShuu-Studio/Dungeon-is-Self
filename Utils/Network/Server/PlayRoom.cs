@@ -267,6 +267,7 @@ namespace Server
                 int isGameEnd = IsGameEnd();
 
                 S_ProgressTurn p = new S_ProgressTurn();
+                p.isGameEnd = (isGameEnd != 0);
                 p.winner = _winCount[round - 1];
                 p.endTurn = endTurn;
                 p.round = round;
@@ -575,12 +576,14 @@ namespace Server
             {
                 // 방어자 패배
                 _winCount[round - 1] = (ushort)UserType.Offender;
+                offender.NextRound(true);
                 return true;
             }
             else if (offender.GetAlives().Count == 0)
             {
                 // 공격자 패배
                 _winCount[round - 1] = (ushort)UserType.Defender;
+                offender.NextRound(false);
                 return true;
             }
 

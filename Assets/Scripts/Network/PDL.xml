@@ -83,6 +83,7 @@
 		</clist>
 	</packet>
 	<packet name="S_ProgressTurn">
+		<bool name="isGameEnd"/>
 		<ushort name="winner"/>
 		<int name="endTurn"/>
 		<int name="round"/>
@@ -122,6 +123,10 @@
 				<int name="int"/>
 			</list>
 		</clist>
+	</packet>
+	<packet name="C_GameEnd">
+		<int name="roomId"/>
+		<ushort name="type"/>
 	</packet>
 	<packet name="S_GameEnd">
 		<ushort name="winner"/>

@@ -104,6 +104,7 @@ namespace Server
             }
 
             PlayingRoomAbnormalExit(id);
+            MatchRequestCancel(id);
             // 플레이어 나감
             // 모든 플레이어에게 퇴장을 브로드캐스트
             UpdateUserInfo();
@@ -223,6 +224,28 @@ namespace Server
             UpdateUserInfo();
         }
 
+        public void MatchRequestCancel(int playerId)
+        {
+            for (int i = 0; i < waitDefenderUserList.Count; i++)
+            {
+                if (waitDefenderUserList[i] == playerId)
+                {
+                    waitDefenderUserList.RemoveAt(i);
+                    break;
+                }
+            }
+            for (int i = 0; i < waitOffenderUserList.Count; i++)
+            {
+                if (waitOffenderUserList[i] == playerId)
+                {
+                    waitOffenderUserList.RemoveAt(i);
+                    break;
+                }
+            }
+
+            UpdateUserInfo();
+        }
+
         public void ReadyGameEnd(int roomId, UserType type, List<int> candidates)
         {
             if (playingRooms.ContainsKey(roomId))
@@ -238,6 +261,7 @@ namespace Server
 
             }
         }
+
         public void RoundEnd(int roomId, UserType type)
         {
             if (playingRooms.ContainsKey(roomId))
@@ -285,6 +309,24 @@ namespace Server
             }
         }
 
+        public void GameEnd(int roomId, UserType type)
+        {
+            if (playingRooms.ContainsKey(roomId))
+            {
+                playingRooms.Remove(roomId);
+            }
+            else if (playingSingleGameRooms.ContainsKey(roomId))
+            {
+                playingSingleGameRooms.Remove(roomId);
+            }
+            else
+            {
+
+            }
+
+            UpdateUserInfo();
+        }
+
         private void PlayingRoomAbnormalExit(int id)
         {
             List<int> keys = playingRooms.Keys.ToList();
@@ -306,10 +348,6 @@ namespace Server
                     break;
                 }
             }
-        }
-
-        public void GameEnd(UserType winner, int id, int roomId)
-        {
         }
     }
 }

@@ -95,10 +95,42 @@ namespace Server
 
             for (int i = 0; i < _deadUnits.Count; i++)
             {
-                alives.Remove(_deadUnits[i]);
+                if (alives.Contains(_deadUnits[i]))
+                    alives.Remove(_deadUnits[i]);
             }
 
             return alives;
+        }
+
+        public void NextRound(bool isWin)
+        {
+            if (isWin)
+            {
+                for (int i = 0; i < _rosters.Count; i++)
+                {
+                    if (_deadUnits.Contains(_rosters[i]))
+                        _deadUnits.Remove(_rosters[i]);
+                }
+            }
+            else
+            {
+                Random rand = new Random();
+                if (_deadUnits.Count == 3)
+                {
+                    // 2명 살려줌
+                    for (int i = 0; i < 2; i++)
+                    {
+                        int index = rand.Next(0, _deadUnits.Count);
+                        _deadUnits.RemoveAt(index);
+                    }
+                }
+                else if (_deadUnits.Count == 4)
+                {
+                    // 1명 살려줌
+                    int index = rand.Next(0, _deadUnits.Count);
+                    _deadUnits.RemoveAt(index);
+                }
+            }
         }
 
         public bool IsDead(int unit)

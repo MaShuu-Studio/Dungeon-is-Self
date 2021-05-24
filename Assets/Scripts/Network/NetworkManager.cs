@@ -176,12 +176,26 @@ namespace Network
 
             Send(matchCancelPacket.Write());
         }
+        public void GameEnd(int roomId)
+        {
+            C_GameEnd packet = new C_GameEnd
+            {
+                type = (ushort)GameController.Instance.userType,
+                roomId = roomId
+            };
+
+            Send(packet.Write());
+
+            SceneController.Instance.ChangeScene("Main");
+        }
 
         public void RoundEnd(int roomId)
         {
-            C_RoundEnd packet = new C_RoundEnd();
-            packet.type = (ushort)GameController.Instance.userType;
-            packet.roomId = roomId;
+            C_RoundEnd packet = new C_RoundEnd
+            {
+                type = (ushort)GameController.Instance.userType,
+                roomId = roomId
+            };
 
             Send(packet.Write());
         }

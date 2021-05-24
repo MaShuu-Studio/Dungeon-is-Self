@@ -114,7 +114,7 @@ namespace Network
             S_GameEnd p = packet as S_GameEnd;
             ServerSession serverSession = session as ServerSession;
 
-            GameController.Instance.GameEnd((UserType)p.winner);
+            GameController.Instance.GameEnd(p.winner);
         }
     }
 }

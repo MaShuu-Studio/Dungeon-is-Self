@@ -196,7 +196,7 @@ namespace GameControl
             Dictionary<int, System.Tuple<bool, int>> deadUnit = new Dictionary<int, System.Tuple<bool, int>>();
             int winner = packet.winner;
             int endTurn = packet.endTurn;
-            Debug.Log(endTurn);
+            bool isGameEnd = packet.isGameEnd;
 
             Dictionary<int, List<List<CrowdControl>>> ccs = new Dictionary<int, List<List<CrowdControl>>>();
 
@@ -245,11 +245,11 @@ namespace GameControl
                 }
             }
 
-            StartCoroutine(BattleAnimation(turn, packet.monsterTurn, packet.resetTurn, dices, selectedSkills, packet.monsterHps, ccs, deadUnit, winner, endTurn));
+            StartCoroutine(BattleAnimation(turn, packet.monsterTurn, packet.resetTurn, dices, selectedSkills, packet.monsterHps, ccs, deadUnit, winner, endTurn, isGameEnd));
         }
 
         IEnumerator BattleAnimation(int turn, int attackTurn, int resetTurn, Dictionary<int, List<int>> dices, Dictionary<int, int> diceSkills,
-            List<int> monsterHps, Dictionary<int, List<List<CrowdControl>>> ccs, Dictionary<int, System.Tuple<bool, int>> deadUnit, int winner, int endTurn)
+            List<int> monsterHps, Dictionary<int, List<List<CrowdControl>>> ccs, Dictionary<int, System.Tuple<bool, int>> deadUnit, int winner, int endTurn, bool isGameEnd)
         {
             while (isDiceRolled) yield return null;
             GamePlayUIController.Instance.ShowDices(dices);
@@ -258,7 +258,6 @@ namespace GameControl
             int i = 0;
             for (; i < animationEnd.Count; i++)
             {
-                Debug.Log($"curTurn : {i}");
                 if (diceSkills[keys[i]] < 0) continue;
                 if (isDead[keys[i]] == false)
                 {
@@ -286,11 +285,10 @@ namespace GameControl
 
                 if (winner != 0 && i == endTurn)
                 {
-                    RoundEnd((UserType)winner);
+                    StartCoroutine(ShowResult((UserType)winner, isGameEnd));
                     break;
                 }
             }
-            Debug.Log($"curTurn : {i}");
 
             if (i >= animationEnd.Count)
             {
@@ -333,7 +331,7 @@ namespace GameControl
 
                 if (winner != 0 && i >= endTurn)
                 {
-                    RoundEnd((UserType)winner);
+                    StartCoroutine(ShowResult((UserType)winner, isGameEnd));
                 }
                 else
                 {
@@ -376,14 +374,9 @@ namespace GameControl
             GamePlayUIController.Instance.SetTurn(turn);
         }
 
-        public void RoundEnd(UserType winner)
+        public void GameEnd(ushort winner)
         {
-            StartCoroutine(ShowResult(winner, false));
-        }
-
-        public void GameEnd(UserType winner)
-        {
-            StartCoroutine(ShowResult(winner, true));
+            StartCoroutine(ShowResult((UserType)winner, true));
         }
 
         IEnumerator ShowResult(UserType winner, bool gameEnd)
@@ -399,11 +392,10 @@ namespace GameControl
                 time -= Time.deltaTime;
                 yield return null;
             }
-            if (gameEnd) SceneController.Instance.ChangeScene("Main"); // 씬 이동 임시
+            if (gameEnd)
+                Network.NetworkManager.Instance.GameEnd(roomId);
             else
-            {
                 Network.NetworkManager.Instance.RoundEnd(roomId);
-            }
             /*
             else if (winner == UserType.Defender) ReadyRound(true);
             else ReadyRound(false);
