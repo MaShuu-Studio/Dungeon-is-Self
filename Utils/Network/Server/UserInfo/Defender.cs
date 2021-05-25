@@ -79,8 +79,8 @@ namespace Server
                     {
                         int diceId;
                         int diceIndex = rand.Next(0, _dices[i].Count);
-                        if (_dices[i][j] == -1) diceId = SkillDatabase.Instance.GetCharacterBasicSkill(Candidates[_rosters[i] % 10]).id;
-                        else diceId = SkillRosters[i][diceIndex];
+                        if (_dices[i][diceIndex] == -1) diceId = SkillDatabase.Instance.GetCharacterBasicSkill(Candidates[_rosters[i] % 10]).id;
+                        else diceId = SkillRosters[i][_dices[i][diceIndex]];
 
                         dices.Add(diceId);
                     }

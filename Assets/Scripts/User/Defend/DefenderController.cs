@@ -199,6 +199,7 @@ namespace GameControl
 
         public void RosterTimeOut()
         {
+            int selectedUnit = monsterIndex;
             SelectMonster(monsterRoster);
 
             for (int i = GetSkillRosterSize(); i < 8; i++)
@@ -210,10 +211,12 @@ namespace GameControl
                     if (SetSkillRoster(usableSkill[n]) == 0) break;
                 }
             }
+            monsterIndex = selectedUnit;
         }
 
         public void DiceTimeOut()
         {
+            int selectedUnit = monsterIndex;
             for (int i = 0; i < 6; i++)
             {
                 if (isDead[i] == true) continue;
@@ -229,6 +232,7 @@ namespace GameControl
                     if (SetDice(true, n)) break;
                 }
             }
+            monsterIndex = selectedUnit;
         }
 
         public MonsterSkill GetSkillRoster(int i)

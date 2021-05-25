@@ -288,6 +288,7 @@ namespace GameControl
 
         public void RosterTimeOut()
         {
+            int selectedUnit = characterIndex;
             for (int i = 0; i < 3; i++)
             {
                 SelectCharacter(roster[i]);
@@ -312,10 +313,13 @@ namespace GameControl
                     }
                 }
             }
+
+            characterIndex = selectedUnit;
         }
 
         public void DiceTimeOut()
         {
+            int selectedUnit = characterIndex;
             for (int i = 0; i < 3; i++)
             {
                 SelectCharacter(roster[i]);
@@ -331,6 +335,7 @@ namespace GameControl
                     }
                 }
             }
+            characterIndex = selectedUnit;
         }
 
         public CharacterSkill GetSkillRoster(int i)
