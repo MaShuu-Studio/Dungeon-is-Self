@@ -234,6 +234,15 @@ namespace GameControl
             }
             monsterIndex = selectedUnit;
         }
+        public void ResetDices()
+        {
+            for (int i = 0; i < monsters.Count; i++)
+            {
+                dices[i].Clear();
+                dices[i].Add(-1);
+                dices[i].Add(-1);
+            }
+        }
 
         public MonsterSkill GetSkillRoster(int i)
         {

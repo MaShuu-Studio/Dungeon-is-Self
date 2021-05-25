@@ -395,6 +395,8 @@ namespace GameControl
                 time -= Time.deltaTime;
                 yield return null;
             }
+            OffenderController.Instance.ResetDices();
+            DefenderController.Instance.ResetDices();
             if (gameEnd)
                 Network.NetworkManager.Instance.GameEnd(roomId);
             else

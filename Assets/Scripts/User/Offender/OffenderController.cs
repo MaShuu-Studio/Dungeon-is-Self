@@ -338,6 +338,16 @@ namespace GameControl
             characterIndex = selectedUnit;
         }
 
+        public void ResetDices()
+        {
+            for (int i = 0; i < characters.Count; i++)
+            {
+                dices[i].Clear();
+                dices[i].Add(-1);
+                dices[i].Add(-1);
+            }
+        }
+
         public CharacterSkill GetSkillRoster(int i)
         {
             if (i < 0) return SkillDatabase.Instance.GetCharacterBasicSkill(selectedCharacterCandidates[characterIndex]);
