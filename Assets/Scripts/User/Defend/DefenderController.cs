@@ -42,6 +42,16 @@ namespace GameControl
         public int monsterRoster { get; private set; } = 0;
         public const int MAX_COST = 10;
 
+        public void Reset()
+        {
+            monsterIndex = 0;
+
+            monsters.Clear();
+            isDead.Clear();
+            dices.Clear();
+            attackSkills.Clear();
+        }
+
         // 게임이 시작될 때 Defender에 대한 초기화 진행
         public void Init()
         {

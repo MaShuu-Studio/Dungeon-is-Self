@@ -57,6 +57,7 @@ public class CharIcon : UIIcon, IPointerDownHandler, IPointerClickHandler, IBegi
     public override void OnPointerEnter(PointerEventData pointerEventData)
     {
         if (isEnemy) return;
+        if (isDead) return;
 
         if (isCandidate) base.OnPointerEnter(pointerEventData);
     }
@@ -64,6 +65,7 @@ public class CharIcon : UIIcon, IPointerDownHandler, IPointerClickHandler, IBegi
     public override void OnPointerDown(PointerEventData eventData)
     {
         if (isEnemy) return;
+        if (isDead) return;
 
         if (isCandidate) base.OnPointerDown(eventData);
     }
@@ -71,6 +73,7 @@ public class CharIcon : UIIcon, IPointerDownHandler, IPointerClickHandler, IBegi
     public override void OnPointerClick(PointerEventData eventData)
     {
         if (isEnemy) return;
+        if (isDead) return;
 
         if (isCandidate)
         {
@@ -88,6 +91,11 @@ public class CharIcon : UIIcon, IPointerDownHandler, IPointerClickHandler, IBegi
         if (isEnemy) return;
 
         if (isCandidate) SelectUnit(isRoster);
+    }
+
+    public void Reset()
+    {
+        characterId = -1;
     }
 
     public override void SetImage(UserType type, int id)

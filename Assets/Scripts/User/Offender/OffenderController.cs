@@ -41,6 +41,17 @@ namespace GameControl
         private int characterIndex = 0;
         public int[] roster { get; private set; } = new int[3];
 
+        public void Reset()
+        {
+            characterIndex = 0;
+
+            characters.Clear();
+            skillPoints.Clear();
+            gottenSkills.Clear();
+
+            dices.Clear();
+            skillRoster.Clear();
+        }
         public void Init()
         {
             characterIndex = 0;

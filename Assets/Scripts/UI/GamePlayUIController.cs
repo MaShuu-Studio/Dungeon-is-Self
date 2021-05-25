@@ -151,22 +151,52 @@ public class GamePlayUIController : MonoBehaviour
 
     private void UpdateRosterStatus()
     {
-        for (int i = 0; i < userBenchs.Count; i++)
+        if (progress != GameProgress.ReadyGame)
         {
-            int id = (type == UserType.Defender) ? DefenderController.Instance.selectedMonsterCandidates[i] : OffenderController.Instance.selectedCharacterCandidates[i];
-            int enemyId = (type == UserType.Defender) ? OffenderController.Instance.selectedCharacterCandidates[i] : DefenderController.Instance.selectedMonsterCandidates[i];
-
-            userBenchs[i].SetImage(type, id);
-            enemyRosters[i].SetImage(enemyType, enemyId);
-
-            if (progress != GameProgress.ReadyGame)
+            for (int i = 0; i < userRosters.Count; i++)
             {
+                if (type == UserType.Defender && i > 0) break;
+                userRosters[i].gameObject.SetActive(true);
+            }
+
+            for (int i = 0; i < userBenchs.Count; i++)
+            {
+                userBenchs[i].gameObject.SetActive(true);
+                enemyRosters[i].gameObject.SetActive(true);
+            }
+
+            for (int i = 0; i < userBenchs.Count; i++)
+            {
+                int id = (type == UserType.Defender) ? DefenderController.Instance.selectedMonsterCandidates[i] : OffenderController.Instance.selectedCharacterCandidates[i];
+                int enemyId = (type == UserType.Defender) ? OffenderController.Instance.selectedCharacterCandidates[i] : DefenderController.Instance.selectedMonsterCandidates[i];
+
+                userBenchs[i].SetImage(type, id);
+                enemyRosters[i].SetImage(enemyType, enemyId);
+
                 bool isCharDead = (type == UserType.Defender) ? DefenderController.Instance.isDead[i] : OffenderController.Instance.isDead[i];
                 bool isEnemyDead = (type == UserType.Defender) ? OffenderController.Instance.isDead[i] : DefenderController.Instance.isDead[i];
                 userBenchs[i].SetIsDead(isCharDead);
                 enemyRosters[i].SetIsDead(isEnemyDead);
             }
         }
+        else
+        {
+            for (int i = 0; i < userRosters.Count; i++)
+            {
+                userRosters[i].gameObject.SetActive(false);
+            }
+
+            for (int i = 0; i < userBenchs.Count; i++)
+            {
+                userBenchs[i].gameObject.SetActive(false);
+                enemyRosters[i].gameObject.SetActive(false);
+            }
+        }
+    }
+
+    private void Reset()
+    {
+        
     }
 
     public void ChangeView()
@@ -183,23 +213,9 @@ public class GamePlayUIController : MonoBehaviour
         switch (GameController.Instance.currentProgress)
         {
             case GameProgress.ReadyGame:
-                for (int i = 0; i < userRosters.Count; i++)
-                {
-                    userRosters[i].SetImage(type, -1);
-                }
                 BlindSelectedRoster();
                 gameViews[0].SetActive(true);
                 ShowAllCandidates();
-                if (type == UserType.Defender)
-                {
-                    userRosters[1].gameObject.SetActive(false);
-                    userRosters[2].gameObject.SetActive(false);
-                }
-                else
-                {
-                    userRosters[1].gameObject.SetActive(true);
-                    userRosters[2].gameObject.SetActive(true);
-                }
                 break;
 
             case GameProgress.ReadyRound:

@@ -83,6 +83,9 @@ namespace GameControl
             roomId = id;
             userType = type;
             Debug.Log("You are: " + type.ToString());
+            DefenderController.Instance.Reset();
+            OffenderController.Instance.Reset();
+            currentProgress = GameProgress.ReadyGame;
             SceneController.Instance.ChangeScene("GamePlay");
         }
 
