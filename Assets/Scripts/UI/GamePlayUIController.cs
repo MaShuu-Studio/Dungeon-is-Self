@@ -126,12 +126,7 @@ public class GamePlayUIController : MonoBehaviour
         if (progress != GameController.Instance.currentProgress)
         {
             ChangeView();
-        }
-
-        if (progress == GameProgress.PlayRound)
-        {
-            if (GameController.Instance.progressRound) readyButton.SetButtonInteract(false);
-            else readyButton.SetButtonInteract(true);
+            readyButton.ResetCancel();
         }
     }
 
@@ -1256,6 +1251,19 @@ public class GamePlayUIController : MonoBehaviour
         }
         for (; i < enemyRosterSelected.Count; i++)
             enemyRosterSelected[i].gameObject.SetActive(false);
+    }
+
+    public void SetButtonInteract(bool isProgressed)
+    {
+        if (isProgressed)
+        {
+            readyButton.SetButtonInteract(false);
+        }
+        else
+        {
+            readyButton.SetButtonInteract(true);
+            readyButton.ResetCancel();
+        }
     }
     #endregion
 }

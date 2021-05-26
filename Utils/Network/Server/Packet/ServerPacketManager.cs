@@ -38,6 +38,8 @@ public class PacketManager
         handler.Add((ushort)PacketID.C_PlayRoundReady, PacketHandler.C_PlayRoundReadyHandler);
         makeFunc.Add((ushort)PacketID.C_RoundEnd, MakePacket<C_RoundEnd>);
         handler.Add((ushort)PacketID.C_RoundEnd, PacketHandler.C_RoundEndHandler);
+        makeFunc.Add((ushort)PacketID.C_ReadyCancel, MakePacket<C_ReadyCancel>);
+        handler.Add((ushort)PacketID.C_ReadyCancel, PacketHandler.C_ReadyCancelHandler);
         makeFunc.Add((ushort)PacketID.C_GameEnd, MakePacket<C_GameEnd>);
         handler.Add((ushort)PacketID.C_GameEnd, PacketHandler.C_GameEndHandler);
 

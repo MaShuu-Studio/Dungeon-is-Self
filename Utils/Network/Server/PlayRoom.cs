@@ -324,6 +324,11 @@ namespace Server
             }
         }
 
+        public void ReadyCancel(UserType type)
+        {
+            _playerReady[(ushort)type] = false;
+        }
+
         private int Battle(Dictionary<int, List<int>> dices,
             ref List<int> monsterHps, ref Dictionary<int, int> diceResults,
             ref List<Dictionary<int, List<CrowdControl>>> ccResultsWithTurn,

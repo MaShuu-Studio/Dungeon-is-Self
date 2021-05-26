@@ -138,5 +138,16 @@ namespace Network
 
             room.GameEnd(p.roomId, (UserType)p.type);
         }
+
+        public static void C_ReadyCancelHandler(PacketSession session, IPacket packet)
+        {
+            C_ReadyCancel p = packet as C_ReadyCancel;
+            ClientSession clientSession = session as ClientSession;
+
+            if (clientSession.Room == null) return;
+            GameRoom room = clientSession.Room;
+
+            room.ReadyCancel(p.roomId, (UserType)p.userType);
+        }
     }
 }

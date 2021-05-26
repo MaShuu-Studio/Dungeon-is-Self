@@ -17,11 +17,12 @@ public class CustomButton : MonoBehaviour
     private Button button;
     private Image image;
     //private IEnumerator coroutine = null;
-    //private bool isOn = false;
+    private bool isReady = false;
 
     // Start is called before the first frame update
     void Start()
     {
+        isReady = false;
         button = GetComponent<Button>();
         image = GetComponent<Image>();
         if (button == null) return;
@@ -52,6 +53,12 @@ public class CustomButton : MonoBehaviour
         }
     }
 
+    private void Update()
+    {
+        if (isReady) image.color = Color.gray;
+        else image.color = Color.white;
+    }
+
     public void SetButtonInteract(bool b)
     {
         button.interactable = b;
@@ -67,21 +74,29 @@ public class CustomButton : MonoBehaviour
     #region Play Single
     void GamePlayReady()
     {
-        GameProgress progress = GameController.Instance.currentProgress;
-        switch (progress)
+        if (isReady == false)
         {
-            case GameProgress.ReadyGame:
-                GameReadyEnd();
-                break;
+            GameProgress progress = GameController.Instance.currentProgress;
+            switch (progress)
+            {
+                case GameProgress.ReadyGame:
+                    GameReadyEnd();
+                    break;
 
-            case GameProgress.ReadyRound:
-                RoundReadyEnd();
-                break;
+                case GameProgress.ReadyRound:
+                    RoundReadyEnd();
+                    break;
 
-            case GameProgress.PlayRound:
-                TurnReadyEnd();
-                break;
+                case GameProgress.PlayRound:
+                    TurnReadyEnd();
+                    break;
+            }
         }
+        else
+        {
+            ReadyCancel();
+        }
+        isReady = !isReady;
     }
 
     void GameReadyEnd()
@@ -100,6 +115,7 @@ public class CustomButton : MonoBehaviour
             else
             {
                 GamePlayUIController.Instance.Alert(10);
+                isReady = true;
                 return;
             }
         }
@@ -117,6 +133,7 @@ public class CustomButton : MonoBehaviour
             else
             {
                 GamePlayUIController.Instance.Alert(10);
+                isReady = true;
                 return;
             }
         }
@@ -208,7 +225,7 @@ public class CustomButton : MonoBehaviour
         }
 
         NetworkManager.Instance.Send(packet.Write());
-        SetButtonInteract(false);
+
         /*
         isOn = false;
             
@@ -222,6 +239,20 @@ public class CustomButton : MonoBehaviour
             StartCoroutine(coroutine);
         }*/
     }
+
+    public void ResetCancel()
+    {
+        isReady = false;
+    }
+
+    void ReadyCancel()
+    {
+        C_ReadyCancel packet = new C_ReadyCancel();
+        packet.roomId = GameController.Instance.roomId;
+        packet.userType = (ushort) GameController.Instance.userType;
+        NetworkManager.Instance.Send(packet.Write());
+    }
+   
     /*
     IEnumerator TurnProgress()
     {

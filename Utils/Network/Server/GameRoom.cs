@@ -309,6 +309,22 @@ namespace Server
             }
         }
 
+        public void ReadyCancel(int roomId, UserType type)
+        {
+            if (playingRooms.ContainsKey(roomId))
+            {
+                playingRooms[roomId].ReadyCancel(type);
+            }
+            else if (playingSingleGameRooms.ContainsKey(roomId))
+            {
+                playingSingleGameRooms[roomId].ReadyCancel(type);
+            }
+            else
+            {
+
+            }
+        }
+
         public void GameEnd(int roomId, UserType type)
         {
             if (playingRooms.ContainsKey(roomId))

@@ -192,6 +192,7 @@ namespace GameControl
         public void ProgressTurn(int round, int turn, S_ProgressTurn packet)
         {
             progressRound = true;
+            GamePlayUIController.Instance.SetButtonInteract(progressRound);
             Dictionary<int, List<int>> dices = new Dictionary<int, List<int>>();
             Dictionary<int, int> selectedSkills = new Dictionary<int, int>();
             List<bool> isAttack = new List<bool>();
@@ -339,6 +340,7 @@ namespace GameControl
                 else
                 {
                     progressRound = false;
+                    GamePlayUIController.Instance.SetButtonInteract(progressRound);
                     GamePlayUIController.Instance.RemoveDices();
                     NextTurnInNetwork(turn);
                 }
@@ -401,6 +403,9 @@ namespace GameControl
                 Network.NetworkManager.Instance.GameEnd(roomId);
             else
                 Network.NetworkManager.Instance.RoundEnd(roomId);
+
+            progressRound = false;
+            GamePlayUIController.Instance.SetButtonInteract(progressRound);
             /*
             else if (winner == UserType.Defender) ReadyRound(true);
             else ReadyRound(false);
