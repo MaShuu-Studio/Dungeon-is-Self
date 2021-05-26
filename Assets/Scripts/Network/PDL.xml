@@ -124,6 +124,10 @@
 			</list>
 		</clist>
 	</packet>
+	<packet name="S_Timeout">
+		<int name="time"/>
+		<ushort name="currentProgress"/>
+	</packet>
 	<packet name="C_ReadyCancel">
 		<int name="roomId"/>
 		<ushort name="userType"/>

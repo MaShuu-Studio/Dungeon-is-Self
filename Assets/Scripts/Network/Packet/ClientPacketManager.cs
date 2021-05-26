@@ -34,6 +34,8 @@ public class PacketManager
         handler.Add((ushort)PacketID.S_ProgressTurn, PacketHandler.S_ProgressTurnHandler);
         makeFunc.Add((ushort)PacketID.S_NewRound, MakePacket<S_NewRound>);
         handler.Add((ushort)PacketID.S_NewRound, PacketHandler.S_NewRoundHandler);
+        makeFunc.Add((ushort)PacketID.S_Timeout, MakePacket<S_Timeout>);
+        handler.Add((ushort)PacketID.S_Timeout, PacketHandler.S_TimeoutHandler);
         makeFunc.Add((ushort)PacketID.S_GameEnd, MakePacket<S_GameEnd>);
         handler.Add((ushort)PacketID.S_GameEnd, PacketHandler.S_GameEndHandler);
 

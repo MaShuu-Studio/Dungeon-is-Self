@@ -15,6 +15,7 @@ public class GamePlayUIController : MonoBehaviour
 
     [Header("COMMONS")]
     [SerializeField] private List<GameObject> gameViews;
+    [SerializeField] private Text timeText;
     [SerializeField] private CustomButton readyButton;
     [SerializeField] private AlertObject alert;
 
@@ -189,9 +190,9 @@ public class GamePlayUIController : MonoBehaviour
         }
     }
 
-    private void Reset()
+    public void SetTimer(int time)
     {
-        
+        timeText.text = time.ToString();
     }
 
     public void ChangeView()

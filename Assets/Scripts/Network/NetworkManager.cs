@@ -6,6 +6,7 @@ using System.Net;
 using ServerCore;
 using System;
 using GameControl;
+using System.Linq;
 
 namespace Network
 {
@@ -176,17 +177,124 @@ namespace Network
 
             Send(matchCancelPacket.Write());
         }
-        public void GameEnd(int roomId)
+
+        public void GameReadyEnd(ref bool isReady)
         {
-            C_GameEnd packet = new C_GameEnd
+            bool isReadyEnd = (GameController.Instance.userType == UserType.Defender) ? (DefenderController.Instance.CheckCadndidate()) : (OffenderController.Instance.CheckCadndidate());
+
+            if (isReadyEnd)
             {
-                type = (ushort)GameController.Instance.userType,
-                roomId = roomId
-            };
+                C_ReadyGame packet = new C_ReadyGame();
+                packet.roomId = GameController.Instance.roomId;
+                packet.playerType = (ushort)GameController.Instance.userType;
+
+                if (GameController.Instance.userType == UserType.Defender)
+                    packet.candidates = DefenderController.Instance.selectedMonsterCandidates.ToList();
+                else
+                    packet.candidates = OffenderController.Instance.selectedCharacterCandidates.ToList();
+
+                Send(packet.Write());
+            }
+            else
+            {
+                GamePlayUIController.Instance.Alert(10);
+                isReady = true;
+            }
+        }
+
+        public void RoundReadyEnd()
+        {
+            List<int> roster = new List<int>();
+            List<List<int>> skillRoster = new List<List<int>>();
+            int attackSkill = 0;
+            // 로스터 추가
+
+            if (GameController.Instance.userType == UserType.Defender)
+            {
+                DefenderController.Instance.RosterTimeOut();
+                roster.Add(DefenderController.Instance.monsterRoster);
+                for (int i = 0; i < roster.Count; i++)
+                {
+                    skillRoster.Add(DefenderController.Instance.GetSkillRosterWithUnit(roster[i]));
+                    attackSkill = DefenderController.Instance.GetAttackSkillWithUnit(roster[i]).id;
+                }
+            }
+            else
+            {
+                OffenderController.Instance.RosterTimeOut();
+                for (int i = 0; i < OffenderController.Instance.roster.Length; i++)
+                {
+                    roster.Add(OffenderController.Instance.roster[i]);
+                }
+                for (int i = 0; i < roster.Count; i++)
+                {
+                    skillRoster.Add(OffenderController.Instance.GetSkillRosterWithUnit(roster[i]));
+                }
+            }
+
+            GamePlayUIController.Instance.ShowCharacterSkillsInPanel();
+            C_RoundReady packet = new C_RoundReady();
+            packet.roomId = GameController.Instance.roomId;
+            packet.playerType = (ushort)GameController.Instance.userType;
+            packet.rosters = new List<C_RoundReady.Roster>();
+            for (int i = 0; i < roster.Count; i++)
+            {
+                packet.rosters.Add(
+                    new C_RoundReady.Roster()
+                    {
+                        unitIndex = roster[i],
+                        attackSkill = attackSkill,
+                        skillRosters = skillRoster[i]
+                    });
+            }
+
+            // 로스터 세팅이 끝났다고 패킷 전송
+            Send(packet.Write());
+        }
+
+        public void TurnReadyEnd()
+        {
+            List<List<int>> dices = new List<List<int>>();
+            // 로스터 추가
+
+            if (GameController.Instance.userType == UserType.Defender)
+            {
+                DefenderController.Instance.DiceTimeOut();
+                dices.Add(DefenderController.Instance.GetDicesWithUnit(DefenderController.Instance.monsterRoster));
+            }
+            else
+            {
+                OffenderController.Instance.DiceTimeOut();
+                for (int i = 0; i < OffenderController.Instance.roster.Length; i++)
+                {
+                    dices.Add(OffenderController.Instance.GetDicesWithUnit(OffenderController.Instance.roster[i]));
+                }
+            }
+            GamePlayUIController.Instance.ShowCharacterSkillsInPanel();
+
+            C_PlayRoundReady packet = new C_PlayRoundReady();
+            packet.roomId = GameController.Instance.roomId;
+            packet.playerType = (ushort)GameController.Instance.userType;
+            packet.rosters = new List<C_PlayRoundReady.Roster>();
+            for (int i = 0; i < dices.Count; i++)
+            {
+                packet.rosters.Add(
+                    new C_PlayRoundReady.Roster()
+                    {
+                        unitIndex = i,
+                        diceIndexs = dices[i]
+                    });
+            }
 
             Send(packet.Write());
+        }
 
-            SceneController.Instance.ChangeScene("Main");
+        public void ReadyCancel()
+        {
+            C_ReadyCancel packet = new C_ReadyCancel();
+            packet.roomId = GameController.Instance.roomId;
+            packet.userType = (ushort)GameController.Instance.userType;
+            Send(packet.Write());
         }
 
         public void RoundEnd(int roomId)
@@ -199,7 +307,18 @@ namespace Network
 
             Send(packet.Write());
         }
+        public void GameEnd(int roomId)
+        {
+            C_GameEnd packet = new C_GameEnd
+            {
+                type = (ushort)GameController.Instance.userType,
+                roomId = roomId
+            };
 
+            Send(packet.Write());
+
+            SceneController.Instance.ChangeScene("Main");
+        }
         private void OnApplicationQuit()
         {
             C_LeaveGame p = new C_LeaveGame();

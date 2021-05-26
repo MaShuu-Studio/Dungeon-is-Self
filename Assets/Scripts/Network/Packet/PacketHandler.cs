@@ -109,12 +109,38 @@ namespace Network
 
             GameController.Instance.ReadyNewRound(p.round, p.userInfos);
 
-        }public static void S_GameEndHandler(PacketSession session, IPacket packet)
+        }
+        public static void S_GameEndHandler(PacketSession session, IPacket packet)
         {
             S_GameEnd p = packet as S_GameEnd;
             ServerSession serverSession = session as ServerSession;
 
             GameController.Instance.GameEnd(p.winner);
+        }
+        public static void S_TimeoutHandler(PacketSession session, IPacket packet)
+        {
+            S_Timeout p = packet as S_Timeout;
+            ServerSession serverSession = session as ServerSession;
+
+            GamePlayUIController.Instance.SetTimer(p.time);
+
+            if (p.time <= 0)
+            {
+                switch((GameProgress)p.currentProgress)
+                {
+                    case GameProgress.ReadyGame:
+                        bool b = false;
+                        NetworkManager.Instance.GameReadyEnd(ref b);
+                        break;
+                    case GameProgress.ReadyRound:
+                        NetworkManager.Instance.RoundReadyEnd();
+                        break;
+                    case GameProgress.PlayRound:
+                        NetworkManager.Instance.TurnReadyEnd();
+                        break;
+                }
+                GamePlayUIController.Instance.SetButtonInteract(false);
+            }
         }
     }
 }

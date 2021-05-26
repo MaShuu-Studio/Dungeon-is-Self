@@ -78,6 +78,7 @@ namespace GameControl
         {
             userType = type;
         }
+
         public void StartGame(int id, UserType type)
         {
             roomId = id;

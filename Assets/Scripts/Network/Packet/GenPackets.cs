@@ -24,9 +24,10 @@ public enum PacketID
 	S_ProgressTurn = 15,
 	C_RoundEnd = 16,
 	S_NewRound = 17,
-	C_ReadyCancel = 18,
-	C_GameEnd = 19,
-	S_GameEnd = 20,
+	S_Timeout = 18,
+	C_ReadyCancel = 19,
+	C_GameEnd = 20,
+	S_GameEnd = 21,
 	
 }
 
@@ -1159,6 +1160,46 @@ public class S_NewRound : IPacket
 		count += sizeof(ushort);
 		foreach(UserInfo userInfo in userInfos)
 		    userInfo.Write(segment, ref count);
+
+        Array.Copy(BitConverter.GetBytes(count), 0, segment.Array, segment.Offset, sizeof(ushort));
+
+        return SendBufferHelper.Close(count);
+    }
+}
+public class S_Timeout : IPacket
+{
+    public int time;
+	public ushort currentProgress;
+    public ushort Protocol { get { return (ushort)PacketID.S_Timeout; } }
+
+    public void Read(ArraySegment<byte> segment)
+    {
+        ushort count = 0;
+
+        count += sizeof(ushort);
+        count += sizeof(ushort);
+        
+        this.time = BitConverter.ToInt32(segment.Array, segment.Offset + count);
+		count += sizeof(int);
+		this.currentProgress = BitConverter.ToUInt16(segment.Array, segment.Offset + count);
+		count += sizeof(ushort);
+    }
+
+    public ArraySegment<byte> Write()
+    { 
+        ArraySegment<byte> segment = SendBufferHelper.Open(4096);
+        ushort count = 0;
+
+        count += sizeof(ushort);
+        Array.Copy(BitConverter.GetBytes((ushort)PacketID.S_Timeout), 0, segment.Array, segment.Offset + count, sizeof(ushort));
+        count += sizeof(ushort);
+        
+        Array.Copy(BitConverter.GetBytes(this.time), 0, segment.Array, segment.Offset + count, sizeof(int));
+		count += sizeof(int);
+		
+		Array.Copy(BitConverter.GetBytes(this.currentProgress), 0, segment.Array, segment.Offset + count, sizeof(ushort));
+		count += sizeof(ushort);
+		
 
         Array.Copy(BitConverter.GetBytes(count), 0, segment.Array, segment.Offset, sizeof(ushort));
 

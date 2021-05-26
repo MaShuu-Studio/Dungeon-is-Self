@@ -136,7 +136,7 @@ namespace Network
             if (clientSession.Room == null) return;
             GameRoom room = clientSession.Room;
 
-            room.GameEnd(p.roomId, (UserType)p.type);
+            room.GameEnd(p.roomId);
         }
 
         public static void C_ReadyCancelHandler(PacketSession session, IPacket packet)

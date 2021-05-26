@@ -80,187 +80,31 @@ public class CustomButton : MonoBehaviour
             switch (progress)
             {
                 case GameProgress.ReadyGame:
-                    GameReadyEnd();
+                    NetworkManager.Instance.GameReadyEnd(ref isReady);
                     break;
 
                 case GameProgress.ReadyRound:
-                    RoundReadyEnd();
+                    NetworkManager.Instance.RoundReadyEnd();
                     break;
 
                 case GameProgress.PlayRound:
-                    TurnReadyEnd();
+                    NetworkManager.Instance.TurnReadyEnd();
                     break;
             }
         }
         else
         {
-            ReadyCancel();
+            NetworkManager.Instance.ReadyCancel();
         }
         isReady = !isReady;
     }
 
-    void GameReadyEnd()
-    {
-        if (GameController.Instance.userType == UserType.Defender)
-        {
-            if (DefenderController.Instance.CheckCadndidate())
-            {
-                C_ReadyGame packet = new C_ReadyGame();
-                packet.roomId = GameController.Instance.roomId;
-                packet.playerType = (ushort)GameController.Instance.userType;
-                packet.candidates = DefenderController.Instance.selectedMonsterCandidates.ToList();
-
-                NetworkManager.Instance.Send(packet.Write());
-            }
-            else
-            {
-                GamePlayUIController.Instance.Alert(10);
-                isReady = true;
-                return;
-            }
-        }
-        else
-        {
-            if (OffenderController.Instance.CheckCadndidate())
-            {
-                C_ReadyGame packet = new C_ReadyGame();
-                packet.roomId = GameController.Instance.roomId;
-                packet.playerType = (ushort)GameController.Instance.userType;
-                packet.candidates = OffenderController.Instance.selectedCharacterCandidates.ToList();
-
-                NetworkManager.Instance.Send(packet.Write());
-            }
-            else
-            {
-                GamePlayUIController.Instance.Alert(10);
-                isReady = true;
-                return;
-            }
-        }
-    }
-
-    void RoundReadyEnd()
-    {
-        List<int> roster = new List<int>();
-        List<List<int>> skillRoster = new List<List<int>>();
-        int attackSkill = 0;
-        // 로스터 추가
-
-        if (GameController.Instance.userType == UserType.Defender)
-        {
-            DefenderController.Instance.RosterTimeOut();
-            roster.Add(DefenderController.Instance.monsterRoster);
-            for (int i = 0; i < roster.Count; i++)
-            {
-                skillRoster.Add(DefenderController.Instance.GetSkillRosterWithUnit(roster[i]));
-                attackSkill = DefenderController.Instance.GetAttackSkillWithUnit(roster[i]).id;
-            }
-        }
-        else
-        {
-            OffenderController.Instance.RosterTimeOut();
-            for (int i = 0; i < OffenderController.Instance.roster.Length; i++)
-            {
-                roster.Add(OffenderController.Instance.roster[i]);
-            }
-            for (int i = 0; i < roster.Count; i++)
-            {
-                skillRoster.Add(OffenderController.Instance.GetSkillRosterWithUnit(roster[i]));
-            }
-        }
-
-        GamePlayUIController.Instance.ShowCharacterSkillsInPanel();
-
-        C_RoundReady packet = new C_RoundReady();
-        packet.roomId = GameController.Instance.roomId;
-        packet.playerType = (ushort)GameController.Instance.userType;
-        packet.rosters = new List<C_RoundReady.Roster>();
-        for (int i = 0; i < roster.Count; i++)
-        {
-            packet.rosters.Add(
-                new C_RoundReady.Roster()
-                {
-                    unitIndex = roster[i],
-                    attackSkill = attackSkill,
-                    skillRosters = skillRoster[i]
-                });
-        }
-
-        // 로스터 세팅이 끝났다고 패킷 전송
-        NetworkManager.Instance.Send(packet.Write());
-    }
-
-    void TurnReadyEnd()
-    {        
-        List<List<int>> dices = new List<List<int>>();
-        // 로스터 추가
-
-        if (GameController.Instance.userType == UserType.Defender)
-        {
-            DefenderController.Instance.DiceTimeOut();
-            dices.Add(DefenderController.Instance.GetDicesWithUnit(DefenderController.Instance.monsterRoster));
-        }
-        else
-        {
-            OffenderController.Instance.DiceTimeOut();
-            for (int i = 0; i < OffenderController.Instance.roster.Length; i++)
-            {
-                dices.Add(OffenderController.Instance.GetDicesWithUnit(OffenderController.Instance.roster[i]));
-            }
-        }
-        GamePlayUIController.Instance.ShowCharacterSkillsInPanel();
-
-        C_PlayRoundReady packet = new C_PlayRoundReady();
-        packet.roomId = GameController.Instance.roomId;
-        packet.playerType = (ushort)GameController.Instance.userType;
-        packet.rosters = new List<C_PlayRoundReady.Roster>();
-        for (int i = 0; i < dices.Count; i++)
-        {
-            packet.rosters.Add(
-                new C_PlayRoundReady.Roster()
-                {
-                    unitIndex = i,
-                    diceIndexs = dices[i]
-                });
-        }
-
-        NetworkManager.Instance.Send(packet.Write());
-
-        /*
-        isOn = false;
-            
-        if (coroutine != null) StopCoroutine(coroutine);
-
-        if (GameController.Instance.progressRound == false)
-        {
-            isOn = !isOn;
-            GameController.Instance.ReadyTurn(GameController.Instance.userType, isOn);
-            coroutine = TurnProgress();
-            StartCoroutine(coroutine);
-        }*/
-    }
 
     public void ResetCancel()
     {
         isReady = false;
     }
-
-    void ReadyCancel()
-    {
-        C_ReadyCancel packet = new C_ReadyCancel();
-        packet.roomId = GameController.Instance.roomId;
-        packet.userType = (ushort) GameController.Instance.userType;
-        NetworkManager.Instance.Send(packet.Write());
-    }
    
-    /*
-    IEnumerator TurnProgress()
-    {
-        while (GameController.Instance.progressRound == false) yield return null;
-        while (GameController.Instance.progressRound) yield return null;
-
-        isOn = false;
-    }*/
     #endregion
 
     #region Network

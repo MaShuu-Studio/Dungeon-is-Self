@@ -325,14 +325,18 @@ namespace Server
             }
         }
 
-        public void GameEnd(int roomId, UserType type)
+        public void GameEnd(int roomId)
         {
             if (playingRooms.ContainsKey(roomId))
             {
+                playingRooms[roomId].DestroyRoom();
+                playingRooms[roomId] = null;
                 playingRooms.Remove(roomId);
             }
             else if (playingSingleGameRooms.ContainsKey(roomId))
             {
+                playingSingleGameRooms[roomId].DestroyRoom();
+                playingSingleGameRooms[roomId] = null;
                 playingSingleGameRooms.Remove(roomId);
             }
             else
@@ -360,7 +364,7 @@ namespace Server
 
                     Send(id, packet);
                     Send(winnerId, packet);
-                    playingRooms.Remove(keys[i]);
+                    GameEnd(keys[i]);
                     break;
                 }
             }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Timers;
 using Data;
 
 namespace Server
@@ -27,6 +28,9 @@ namespace Server
         int round = 0;
         int turn = 0;
 
+        Timer timer = null;
+        int time = 0;
+
         ushort[] _winCount = new ushort[5] { 0, 0, 0, 0, 0 };
 
         public PlayRoom(int roomId, int[] playerId, GameRoom room)
@@ -42,6 +46,8 @@ namespace Server
             round = 0;
 
             _room = room;
+
+            StartTimer(30);
         }
         public PlayRoom(int roomId, int playerId, UserType type, GameRoom room)
         {
@@ -61,6 +67,42 @@ namespace Server
             round = 0;
 
             _room = room;
+            StartTimer(30);
+        }
+
+        public void DestroyRoom()
+        {
+            StopTimer();
+        }
+        private void StartTimer(int t)
+        {
+            StopTimer();
+            time = t;
+            // 윈폼 타이머 사용
+            timer = new Timer();
+            timer.Interval = 1000; // 1초
+            timer.Elapsed += new ElapsedEventHandler(SendTimer);
+            timer.Start();
+        }
+
+        private void StopTimer()
+        {
+            if (timer != null) timer.Stop();
+        }
+
+        private void SendTimer(object sender, EventArgs e)
+        {
+            S_Timeout packet = new S_Timeout()
+            {
+                time = time,
+                currentProgress = (ushort)currentProgress
+            };
+
+            for (int i = 0; i < _playerId.Length; i++)
+                if (_playerId[i] != -1) _room.Send(_playerId[i], packet);
+
+            time--;
+            if (time < 0) time = 0;
         }
 
         public int PlayerInRoom(int id)
@@ -114,6 +156,8 @@ namespace Server
                     for (int i = 0; i < _playerReady.Length; i++)
                         if (_playerId[i] == -1) _playerReady[i] = true;
                         else _playerReady[i] = false;
+
+                    StartTimer(60);
                 }
             }
             else if (_playerReady[(ushort)UserType.Defender] && _playerReady[(ushort)UserType.Offender])
@@ -212,6 +256,8 @@ namespace Server
                 for (int i = 0; i < _playerReady.Length; i++)
                     if (_playerId[i] == -1) _playerReady[i] = true;
                     else _playerReady[i] = false;
+
+                StartTimer(30);
             }
         }
         public void PlayRoundReadyEnd(UserType type, List<C_PlayRoundReady.Roster> rosters)
@@ -321,6 +367,8 @@ namespace Server
                 for (int i = 0; i < _playerReady.Length; i++)
                     if (_playerId[i] == -1) _playerReady[i] = true;
                     else _playerReady[i] = false;
+
+                StartTimer(40);
             }
         }
 

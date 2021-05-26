@@ -62,6 +62,7 @@ namespace GameControl
 
             foreach (int id in selectedMonsterCandidates)
             {
+                Debug.Log(id);
                 monsters.Add(MonsterDatabase.Instance.GetMonster(id));
                 isDead.Add(false);
             }
