@@ -78,7 +78,6 @@ namespace Server
         {
             StopTimer();
             time = t;
-            // 윈폼 타이머 사용
             timer = new Timer();
             timer.Interval = 1000; // 1초
             timer.Elapsed += new ElapsedEventHandler(SendTimer);

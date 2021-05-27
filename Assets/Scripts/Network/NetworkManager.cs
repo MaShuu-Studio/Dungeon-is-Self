@@ -180,6 +180,9 @@ namespace Network
 
         public void GameReadyEnd(ref bool isReady)
         {
+            if (GameController.Instance.userType == UserType.Defender) DefenderController.Instance.CandidatesTimeOut();
+            else OffenderController.Instance.CandidatesTimeOut();
+
             bool isReadyEnd = (GameController.Instance.userType == UserType.Defender) ? (DefenderController.Instance.CheckCadndidate()) : (OffenderController.Instance.CheckCadndidate());
 
             if (isReadyEnd)

@@ -45,6 +45,8 @@ namespace GameControl
         {
             characterIndex = 0;
 
+            ResetCandidates();
+
             characters.Clear();
             skillPoints.Clear();
             gottenSkills.Clear();
@@ -124,6 +126,19 @@ namespace GameControl
         public void ResetDead()
         {
             for (int i = 0; i < isDead.Count; i++) isDead[i] = false;
+        }
+
+        public void CandidatesTimeOut()
+        {
+            List<int> list = new List<int>();
+            CharacterDatabase.Instance.GetAllCharacterCandidatesList(ref list);
+
+            for (int i = 0; i < selectedCharacterCandidates.Length; i++)
+            {
+                int random = Random.Range(0, list.Count);
+                if (selectedCharacterCandidates[i] == -1)
+                    selectedCharacterCandidates[i] = list[random];
+            }
         }
         #endregion
 

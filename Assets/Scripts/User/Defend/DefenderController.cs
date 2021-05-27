@@ -46,6 +46,8 @@ namespace GameControl
         {
             monsterIndex = 0;
 
+            ResetCandidates();
+
             monsters.Clear();
             isDead.Clear();
             dices.Clear();
@@ -62,7 +64,6 @@ namespace GameControl
 
             foreach (int id in selectedMonsterCandidates)
             {
-                Debug.Log(id);
                 monsters.Add(MonsterDatabase.Instance.GetMonster(id));
                 isDead.Add(false);
             }
@@ -108,6 +109,19 @@ namespace GameControl
         public void ResetDead()
         {
             for (int i = 0; i < isDead.Count; i++) isDead[i] = false;
+        }
+
+        public void CandidatesTimeOut()
+        {
+            List<int> list = new List<int>();
+            MonsterDatabase.Instance.GetAllMonsterCandidatesList(ref list);
+
+            for (int i = 0; i < selectedMonsterCandidates.Length; i++)
+            {
+                int random = Random.Range(0, list.Count);
+                if (selectedMonsterCandidates[i] == -1)
+                    selectedMonsterCandidates[i] = list[random];
+            }
         }
         #endregion
 
