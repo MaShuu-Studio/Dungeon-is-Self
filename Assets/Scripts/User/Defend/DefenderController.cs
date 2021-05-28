@@ -308,9 +308,9 @@ namespace GameControl
         public int GetDiceCost()
         {
             int cost = 0;
-            foreach (int rosterIndex in dices[monsterIndex])
+            foreach (MonsterSkill skill in skillRoster[monsterIndex])
             {
-                cost += skillRoster[monsterIndex][rosterIndex].cost;
+                cost += skill.cost;
             }
 
             return cost;

@@ -134,7 +134,11 @@ namespace GameControl
             if (userType == UserType.Offender)
                 OffenderController.Instance.AddSkillPoint(skillPointPerRound[round - 1]);
             else
+            {
                 DefenderController.Instance.SetMonsterHp();
+                DefenderController.Instance.SetMaxCost(maxCostPerRound[round - 1]);
+                GamePlayUIController.Instance.SetDefenderMaxCost(maxCostPerRound[round - 1]);
+            }
 
             currentProgress = GameProgress.ReadyRound;
         }

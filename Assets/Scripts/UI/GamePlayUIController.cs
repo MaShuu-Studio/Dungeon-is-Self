@@ -80,6 +80,7 @@ public class GamePlayUIController : MonoBehaviour
     [SerializeField] private Text costText;
 
     private int selectedCharacterIndex;
+    private int maxCost;
 
 
     [SerializeField] private Text turnText;
@@ -736,6 +737,20 @@ public class GamePlayUIController : MonoBehaviour
         }
     }
 
+    public void SetDefenderMaxCost(int max)
+    {
+        maxCost = max;
+        costSlider.maxValue = max;
+        costText.text = max.ToString();
+    }
+
+    private void SetDefenderCost(int cost)
+    {
+        if (cost > maxCost) costSlider.value = costSlider.maxValue;
+        else costSlider.value = cost;
+        costText.text = cost.ToString();
+    }
+
     public void AddSkillRoster(Skill skill, bool isOn)
     {
         if (isOn == false)
@@ -780,6 +795,9 @@ public class GamePlayUIController : MonoBehaviour
                     Alert(n);
                     return;
                 }
+
+                int curCost = maxCost - DefenderController.Instance.GetDiceCost();
+                SetDefenderCost(curCost);
             }
 
 
@@ -807,6 +825,8 @@ public class GamePlayUIController : MonoBehaviour
                 else
                 {
                     DefenderController.Instance.RemoveSkillRoster(i);
+                    int curCost = maxCost - DefenderController.Instance.GetDiceCost();
+                    SetDefenderCost(curCost);
                 }
 
                 Destroy(skillRosters[i].gameObject);
