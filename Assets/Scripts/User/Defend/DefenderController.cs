@@ -40,7 +40,7 @@ namespace GameControl
         private int attackSkillTurn;
         private int monsterIndex;
         public int monsterRoster { get; private set; } = 0;
-        public const int MAX_COST = 10;
+        private int maxCost = 10;
 
         public void Reset()
         {
@@ -58,6 +58,7 @@ namespace GameControl
         public void Init()
         {
             monsterIndex = 0;
+            maxCost = 10;
 
             monsters.Clear();
             isDead.Clear();
@@ -85,6 +86,11 @@ namespace GameControl
         }
 
         #region Ready Game
+
+        public void SetMaxCost(int m)
+        {
+            maxCost = m;
+        }
         public void SetMonsterCandidate(int num, int id)
         {
             selectedMonsterCandidates[num] = id;
@@ -193,7 +199,7 @@ namespace GameControl
             }
             if (count > 1) return 21;
 
-            int totalCost = MAX_COST - GetDiceCost();
+            int totalCost = maxCost - GetDiceCost();
             totalCost = totalCost - skill.cost;
 
             if (totalCost < 0) return 22;

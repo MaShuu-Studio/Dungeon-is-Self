@@ -54,6 +54,7 @@ namespace GameControl
         private bool isDiceRolled = false;
 
         private readonly int[] skillPointPerRound = new int[5] { 1, 2, 2, 0, 0 };
+        private readonly int[] maxCostPerRound = new int[5] { 10, 15, 20, 20, 20 };
         private bool isRoundEnd = false;
 
 

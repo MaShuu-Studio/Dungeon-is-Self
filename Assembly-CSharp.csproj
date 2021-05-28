@@ -65,8 +65,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Scripts\Game Control\GameController.cs" />
+    <Compile Include="Assets\Scripts\Game Control\ResolutionManager.cs" />
     <Compile Include="Assets\Scripts\Game Control\SceneController.cs" />
-    <Compile Include="Assets\Scripts\Game Control\TestScript.cs" />
     <Compile Include="Assets\Scripts\Network\Core\Connector.cs" />
     <Compile Include="Assets\Scripts\Network\Core\RecvBuffer.cs" />
     <Compile Include="Assets\Scripts\Network\Core\SendBuffer.cs" />
