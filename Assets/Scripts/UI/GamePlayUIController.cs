@@ -375,6 +375,16 @@ public class GamePlayUIController : MonoBehaviour
         selectedArrow.anchoredPosition = rect.anchoredPosition;
     }
 
+    public void ShowAllSelectedCandidates()
+    {
+        for (int i = 0; i < selectIcons.Length; i++)
+        {
+            int id = (type == UserType.Defender) ? DefenderController.Instance.selectedMonsterCandidates[i] : OffenderController.Instance.selectedCharacterCandidates[i];
+            selectIcons[i].SetImage(type, id);
+            SetSelectedCharacterIndex(i);
+        }
+    }
+
     #endregion
 
     #region Ready Round

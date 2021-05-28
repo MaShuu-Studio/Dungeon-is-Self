@@ -183,6 +183,7 @@ namespace Network
             if (GameController.Instance.userType == UserType.Defender) DefenderController.Instance.CandidatesTimeOut();
             else OffenderController.Instance.CandidatesTimeOut();
 
+            GamePlayUIController.Instance.ShowAllSelectedCandidates();
             bool isReadyEnd = (GameController.Instance.userType == UserType.Defender) ? (DefenderController.Instance.CheckCadndidate()) : (OffenderController.Instance.CheckCadndidate());
 
             if (isReadyEnd)
