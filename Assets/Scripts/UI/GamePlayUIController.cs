@@ -838,7 +838,8 @@ public class GamePlayUIController : MonoBehaviour
 
     public void AddOrRemoveDice(UsingSkillIcon icon, Skill skill)
     {
-        for (int i = 2; i < usingDices.Count; i++)
+        int i = (type == UserType.Defender) ? 0 : 2;
+        for (; i < usingDices.Count; i++)
         {
             if (usingDices[i] == icon)
             {
@@ -859,7 +860,7 @@ public class GamePlayUIController : MonoBehaviour
             }
         }
 
-        for (int i = 0; i < skillRosters.Count; i++)
+        for (i = 0; i < skillRosters.Count; i++)
         {
             if (skillRosters[i] == icon)
             {

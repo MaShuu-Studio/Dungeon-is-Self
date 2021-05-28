@@ -51,6 +51,7 @@ namespace GameControl
             monsters.Clear();
             isDead.Clear();
             dices.Clear();
+            skillRoster.Clear();
             attackSkills.Clear();
         }
 

@@ -29,7 +29,8 @@ namespace Server
 
         public void Send(string id, IPacket packet)
         {
-            _packetList.Add(new Tuple<string, ArraySegment<byte>>(id, packet.Write()));
+            if (_sessions.ContainsKey(id))
+                _sessions[id].Send(packet.Write());
         }
 
         public void CheckSession()
@@ -54,16 +55,11 @@ namespace Server
 
         public void Flush()
         {
-            foreach (Tuple<string, ArraySegment<byte>> packet in _packetList)
+            /*
+            foreach(Tuple<string, ArraySegment<byte>> packet in _packetList)
                 if (_sessions.ContainsKey(packet.Item1))
-                {
                     _sessions[packet.Item1].Send(packet.Item2);
-                    Console.WriteLine($"Send Packet to {packet.Item1}");
-                }
-                else
-                {
-                    Console.WriteLine($"Fail Sending Packet to {packet.Item1}");
-                }
+            */
 
             if (_sessions.Count == 0) _pendingList.Clear();
             foreach (ClientSession s in _sessions.Values)
