@@ -10,32 +10,31 @@ namespace Server
     {
         JobQueue _jobQueue = new JobQueue();
         List<ArraySegment<byte>> _pendingList = new List<ArraySegment<byte>>();
-        List<Tuple<int, ArraySegment<byte>>> _packetList = new List<Tuple<int, ArraySegment<byte>>>();
+        List<Tuple<string, ArraySegment<byte>>> _packetList = new List<Tuple<string, ArraySegment<byte>>>();
 
         int _playerNumber = 1;
-        int _singleRoomId = -2;
         int _roomNumber = 1;
 
-        Dictionary<int, ClientSession> _sessions = new Dictionary<int, ClientSession>();
-        Dictionary<int, int> _sessionCount = new Dictionary<int, int>();
-        List<int> waitDefenderUserList = new List<int>();
-        List<int> waitOffenderUserList = new List<int>();
-        Dictionary<int, PlayRoom> playingRooms = new Dictionary<int, PlayRoom>();
-        Dictionary<int, PlayRoom> playingSingleGameRooms = new Dictionary<int, PlayRoom>();
+        Dictionary<string, ClientSession> _sessions = new Dictionary<string, ClientSession>();
+        Dictionary<string, int> _sessionCount = new Dictionary<string, int>();
+        List<string> waitDefenderUserList = new List<string>();
+        List<string> waitOffenderUserList = new List<string>();
+        Dictionary<string, PlayRoom> playingRooms = new Dictionary<string, PlayRoom>();
+        Dictionary<string, PlayRoom> playingSingleGameRooms = new Dictionary<string, PlayRoom>();
 
         public void Push(Action job)
         {
             _jobQueue.Push(job);
         }
 
-        public void Send(int id, IPacket packet)
+        public void Send(string id, IPacket packet)
         {
-            _packetList.Add(new Tuple<int, ArraySegment<byte>>(id, packet.Write()));
+            _packetList.Add(new Tuple<string, ArraySegment<byte>>(id, packet.Write()));
         }
 
         public void CheckSession()
         {
-            List<int> keys = _sessionCount.Keys.ToList<int>();
+            List<string> keys = _sessionCount.Keys.ToList();
             for (int i = 0; i < keys.Count; i++)
             {
                 _sessionCount[keys[i]]++;
@@ -43,7 +42,7 @@ namespace Server
             }
         }
 
-        public void UpdateSession(int id)
+        public void UpdateSession(string id)
         {
             if (_sessionCount.ContainsKey(id)) _sessionCount[id] = 0;
         }
@@ -55,7 +54,7 @@ namespace Server
 
         public void Flush()
         {
-            foreach (Tuple<int, ArraySegment<byte>> packet in _packetList)
+            foreach (Tuple<string, ArraySegment<byte>> packet in _packetList)
                 if (_sessions.ContainsKey(packet.Item1))
                 {
                     _sessions[packet.Item1].Send(packet.Item2);
@@ -77,7 +76,8 @@ namespace Server
 
         public void Enter(ClientSession session)
         {
-            int id = _playerNumber++;
+
+            string id = (_playerNumber++).ToString();
             Console.WriteLine($"Enter User : {id}");
             session.Send(new S_GivePlayerId() { playerId = id }.Write());
 
@@ -89,7 +89,7 @@ namespace Server
             UpdateUserInfo();
         }
 
-        public void Leave(int id)
+        public void Leave(string id)
         {
             Console.WriteLine($"Leave User {id}");
 
@@ -114,7 +114,7 @@ namespace Server
         {
             // 플레이어 나감
             int findIndex = 0;
-            List<int> keys = _sessions.Keys.ToList();
+            List<string> keys = _sessions.Keys.ToList();
             List<ClientSession> values = _sessions.Values.ToList();
 
             for (; findIndex < keys.Count; findIndex++)
@@ -142,7 +142,7 @@ namespace Server
             Broadcast(broadcast.Write());
         }
 
-        public void MatchRequest(int playerId, UserType type)
+        public void MatchRequest(string playerId, UserType type)
         {
             if (type == UserType.Defender)
                 waitDefenderUserList.Add(playerId);
@@ -151,14 +151,16 @@ namespace Server
 
             if (waitDefenderUserList.Count > 0 && waitOffenderUserList.Count > 0)
             {
-                int[] playerIds = new int[2];
+                string[] playerIds = new string[2];
                 playerIds[(ushort)UserType.Defender] = waitDefenderUserList[0];
                 playerIds[(ushort)UserType.Offender] = waitOffenderUserList[0];
 
                 waitDefenderUserList.RemoveAt(0);
                 waitOffenderUserList.RemoveAt(0);
 
-                int roomId = _roomNumber++;
+                int roomNumber = _roomNumber++;
+                string roomId = string.Format("{0:yy}{0:MM}{0:dd}{1:D8}", DateTime.Now, roomNumber);
+
                 PlayRoom playRoom = new PlayRoom(roomId, playerIds, this);
                 playingRooms.Add(roomId, playRoom);
 
@@ -178,16 +180,18 @@ namespace Server
             UpdateUserInfo();
         }
 
-        public void SingleGameRequest(int playerId, UserType type)
+        public void SingleGameRequest(string playerId, UserType type)
         {
-            int roomId = _singleRoomId--;
+            int roomNumber = _roomNumber++;
+            string roomId = string.Format("{0:yy}{0:MM}{0:dd}{1:D8}", DateTime.Now, roomNumber);
+
             PlayRoom playRoom = new PlayRoom(roomId, playerId, type, this);
             playingSingleGameRooms.Add(roomId, playRoom);
 
             S_StartGame packet = new S_StartGame()
             {
                 roomId = playRoom.RoomId,
-                enemyPlayerId = -1,
+                enemyPlayerId = "",
                 playerType = (ushort)type
             };
 
@@ -196,7 +200,7 @@ namespace Server
             UpdateUserInfo();
         }
 
-        public void MatchRequestCancel(int playerId, UserType type)
+        public void MatchRequestCancel(string playerId, UserType type)
         {
             if (type == UserType.Defender)
             {
@@ -224,7 +228,7 @@ namespace Server
             UpdateUserInfo();
         }
 
-        public void MatchRequestCancel(int playerId)
+        public void MatchRequestCancel(string playerId)
         {
             for (int i = 0; i < waitDefenderUserList.Count; i++)
             {
@@ -246,7 +250,7 @@ namespace Server
             UpdateUserInfo();
         }
 
-        public void ReadyGameEnd(int roomId, UserType type, List<int> candidates)
+        public void ReadyGameEnd(string roomId, UserType type, List<int> candidates)
         {
             if (playingRooms.ContainsKey(roomId))
             {
@@ -262,7 +266,7 @@ namespace Server
             }
         }
 
-        public void RoundEnd(int roomId, UserType type)
+        public void RoundEnd(string roomId, UserType type)
         {
             if (playingRooms.ContainsKey(roomId))
             {
@@ -278,7 +282,7 @@ namespace Server
             }
         }
 
-        public void RoundReadyEnd(int roomId, UserType type, List<C_RoundReady.Roster> rosters)
+        public void RoundReadyEnd(string roomId, UserType type, List<C_RoundReady.Roster> rosters)
         {
             if (playingRooms.ContainsKey(roomId))
             {
@@ -293,7 +297,7 @@ namespace Server
 
             }
         }
-        public void PlayRoundReadyEnd(int roomId, UserType type, List<C_PlayRoundReady.Roster> rosters)
+        public void PlayRoundReadyEnd(string roomId, UserType type, List<C_PlayRoundReady.Roster> rosters)
         {
             if (playingRooms.ContainsKey(roomId))
             {
@@ -309,7 +313,7 @@ namespace Server
             }
         }
 
-        public void ReadyCancel(int roomId, UserType type)
+        public void ReadyCancel(string roomId, UserType type)
         {
             if (playingRooms.ContainsKey(roomId))
             {
@@ -325,7 +329,7 @@ namespace Server
             }
         }
 
-        public void GameEnd(int roomId)
+        public void GameEnd(string roomId)
         {
             if (playingRooms.ContainsKey(roomId))
             {
@@ -347,16 +351,16 @@ namespace Server
             UpdateUserInfo();
         }
 
-        private void PlayingRoomAbnormalExit(int id)
+        private void PlayingRoomAbnormalExit(string id)
         {
-            List<int> keys = playingRooms.Keys.ToList();
+            List<string> keys = playingRooms.Keys.ToList();
             for (int i = 0; i < playingRooms.Count; i++)
             {
                 int findPlayer = playingRooms[keys[i]].PlayerInRoom(id);
                 if (findPlayer != -1)
                 {
                     UserType winner = ((UserType)findPlayer == UserType.Defender) ? UserType.Offender : UserType.Defender;
-                    int winnerId = playingRooms[keys[i]].GetPlayerId(winner);
+                    string winnerId = playingRooms[keys[i]].GetPlayerId(winner);
 
                     S_GameEnd packet = new S_GameEnd();
                     packet.winner = (ushort)winner;

@@ -38,7 +38,7 @@ namespace Network
         }
         #endregion
 
-        private int playerId;
+        private string playerId;
         public int totalUser { get; private set; } = 0;
         public int playingUser { get; private set; } = 0;
         public int waitDefenderUser { get; private set; } = 0;
@@ -99,7 +99,7 @@ namespace Network
             session.Send(segment);
         }
 
-        public void SetPlayerId(int id)
+        public void SetPlayerId(string id)
         {
             Debug.Log("Connect Complete");
             playerId = id;
@@ -300,7 +300,7 @@ namespace Network
             Send(packet.Write());
         }
 
-        public void RoundEnd(int roomId)
+        public void RoundEnd(string roomId)
         {
             C_RoundEnd packet = new C_RoundEnd
             {
@@ -310,7 +310,7 @@ namespace Network
 
             Send(packet.Write());
         }
-        public void GameEnd(int roomId)
+        public void GameEnd(string roomId)
         {
             C_GameEnd packet = new C_GameEnd
             {
@@ -326,6 +326,7 @@ namespace Network
         {
             C_LeaveGame p = new C_LeaveGame();
             p.playerId = playerId;
+            p.roomId = GameController.Instance.roomId;
             session.Send(p.Write());
         }
     }

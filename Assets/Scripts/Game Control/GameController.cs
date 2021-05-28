@@ -33,7 +33,7 @@ namespace GameControl
         }
         #endregion
 
-        public int roomId { get; private set; } = -1;
+        public string roomId { get; private set; } = "";
         public GameProgress currentProgress { get; private set; }
         public UserType userType { get; private set; }
         public int round { get; private set; }
@@ -80,9 +80,10 @@ namespace GameControl
             userType = type;
         }
 
-        public void StartGame(int id, UserType type)
+        public void StartGame(string id, UserType type)
         {
             roomId = id;
+            Debug.Log("Room Number : " + roomId);
             userType = type;
             Debug.Log("You are: " + type.ToString());
             DefenderController.Instance.Reset();
@@ -402,7 +403,10 @@ namespace GameControl
             OffenderController.Instance.ResetDices();
             DefenderController.Instance.ResetDices();
             if (gameEnd)
+            {
                 Network.NetworkManager.Instance.GameEnd(roomId);
+                roomId = "";
+            }
             else
                 Network.NetworkManager.Instance.RoundEnd(roomId);
 
@@ -432,7 +436,7 @@ namespace GameControl
 
         public void ReadyRound(bool isOffenderDefeated = false)
         {
-            if (roomId != -1)
+            if (string.IsNullOrEmpty(roomId) == false)
             {
                 if (isOffenderDefeated == false)
                 {

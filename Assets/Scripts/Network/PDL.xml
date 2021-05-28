@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <PDL>
 	<packet name="C_CheckConnect">
-		<int name="playerId"/>
+		<string name="playerId"/>
 	</packet>
 	<packet name="S_CheckConnect">
 	</packet>
@@ -14,30 +14,31 @@
 	<packet name="C_EnterGame">
 	</packet>
 	<packet name="S_GivePlayerId">
-		<int name="playerId"/>
+		<string name="playerId"/>
 	</packet>
 	<packet name="C_LeaveGame">
-		<int name="playerId"/>
+		<string name="roomId"/>
+		<string name="playerId"/>
 	</packet>
 	<packet name="C_SingleGameRequest">
-		<int name="playerId"/>
+		<string name="playerId"/>
 		<ushort name="playerType"/>
 	</packet>
 	<packet name="C_MatchRequest">
-		<int name="playerId"/>
+		<string name="playerId"/>
 		<ushort name="playerType"/>
 	</packet>
 	<packet name="C_MatchRequestCancel">
-		<int name="playerId"/>
+		<string name="playerId"/>
 		<ushort name="playerType"/>
 	</packet>
 	<packet name="S_StartGame">
-		<int name="roomId"/>
-		<int name="enemyPlayerId"/>
+		<string name="roomId"/>
+		<string name="enemyPlayerId"/>
 		<ushort name="playerType"/>
 	</packet>
 	<packet name="C_ReadyGame">
-		<int name="roomId"/>
+		<string name="roomId"/>
 		<ushort name="playerType"/>
 		<list name="candidate">
 			<int name="int"/>
@@ -51,7 +52,7 @@
 		</list>
 	</packet>
 	<packet name="C_RoundReady">
-		<int name="roomId"/>
+		<string name="roomId"/>
 		<ushort name="playerType"/>
 		<clist name="roster">
 			<int name="unitIndex"/>
@@ -73,7 +74,7 @@
 		</clist>
 	</packet>
 	<packet name="C_PlayRoundReady">
-		<int name="roomId"/>
+		<string name="roomId"/>
 		<ushort name="playerType"/>
 		<clist name="roster">
 			<int name="unitIndex"/>
@@ -112,7 +113,7 @@
 		</clist>
 	</packet>
 	<packet name="C_RoundEnd">
-		<int name="roomId"/>
+		<string name="roomId"/>
 		<ushort name="type"/>
 	</packet>
 	<packet name="S_NewRound">
@@ -129,15 +130,15 @@
 		<ushort name="currentProgress"/>
 	</packet>
 	<packet name="C_ReadyCancel">
-		<int name="roomId"/>
+		<string name="roomId"/>
 		<ushort name="userType"/>
 	</packet>	
 	<packet name="C_GameEnd">
-		<int name="roomId"/>
+		<string name="roomId"/>
 		<ushort name="type"/>
 	</packet>
 	<packet name="S_GameEnd">
 		<ushort name="winner"/>
-		<int name="winnerId"/>
+		<string name="winnerId"/>
 	</packet>
 </PDL>

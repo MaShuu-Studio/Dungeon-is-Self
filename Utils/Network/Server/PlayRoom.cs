@@ -12,11 +12,11 @@ namespace Server
     class PlayRoom
     {
         GameRoom _room;
-        public int RoomId { get { return _roomId; } }
+        public string RoomId { get { return _roomId; } }
 
-        readonly int _roomId;
+        readonly string _roomId;
 
-        readonly int[] _playerId = new int[2];
+        readonly string[] _playerId = new string[2];
 
         Offender offender;
         Defender defender;
@@ -33,7 +33,7 @@ namespace Server
 
         ushort[] _winCount = new ushort[5] { 0, 0, 0, 0, 0 };
 
-        public PlayRoom(int roomId, int[] playerId, GameRoom room)
+        public PlayRoom(string roomId, string[] playerId, GameRoom room)
         {
             _roomId = roomId;
             for (int i = 0; i < _playerId.Length; i++)
@@ -49,7 +49,7 @@ namespace Server
 
             StartTimer(30);
         }
-        public PlayRoom(int roomId, int playerId, UserType type, GameRoom room)
+        public PlayRoom(string roomId, string playerId, UserType type, GameRoom room)
         {
             _roomId = roomId;
 
@@ -57,7 +57,7 @@ namespace Server
                 if ((UserType)i == type) _playerId[i] = playerId;
                 else
                 {
-                    _playerId[i] = -1;
+                    _playerId[i] = "";
                     _playerReady[i] = true;
                 }
 
@@ -98,20 +98,20 @@ namespace Server
             };
 
             for (int i = 0; i < _playerId.Length; i++)
-                if (_playerId[i] != -1) _room.Send(_playerId[i], packet);
+                if (string.IsNullOrEmpty(_playerId[i]) == false) _room.Send(_playerId[i], packet);
 
             time--;
             if (time < 0) time = 0;
         }
 
-        public int PlayerInRoom(int id)
+        public int PlayerInRoom(string id)
         {
             for (int i = 0; i < _playerId.Length; i++)
                 if (_playerId[i] == id) return i;
             return -1;
         }
 
-        public int GetPlayerId(UserType type)
+        public string GetPlayerId(UserType type)
         {
             return _playerId[(ushort)type];
         }
@@ -126,13 +126,13 @@ namespace Server
                 if (type == UserType.Defender)
                 {
                     defender.SetCandidate(candidates);
-                    if (_playerId[(ushort)UserType.Offender] == -1)
+                    if (string.IsNullOrEmpty(_playerId[(ushort)UserType.Offender]))
                         Bot.SetCandidate(ref offender);
                 }
                 else
                 {
                     offender.SetCandidate(candidates);
-                    if (_playerId[(ushort)UserType.Defender] == -1)
+                    if (string.IsNullOrEmpty(_playerId[(ushort)UserType.Defender]))
                         Bot.SetCandidate(ref defender);
                 }
 
@@ -144,16 +144,16 @@ namespace Server
                     packet.round = ++round;
                     packet.enemyCandidates = defender.Candidates;
 
-                    if (_playerId[(ushort)UserType.Offender] != -1)
+                    if (string.IsNullOrEmpty(_playerId[(ushort)UserType.Offender]) == false)
                         _room.Send(_playerId[(ushort)UserType.Offender], packet);
 
                     packet.enemyCandidates = offender.Candidates;
 
-                    if (_playerId[(ushort)UserType.Defender] != -1)
+                    if (string.IsNullOrEmpty(_playerId[(ushort)UserType.Defender]) == false)
                         _room.Send(_playerId[(ushort)UserType.Defender], packet);
 
                     for (int i = 0; i < _playerReady.Length; i++)
-                        if (_playerId[i] == -1) _playerReady[i] = true;
+                        if (string.IsNullOrEmpty(_playerId[i])) _playerReady[i] = true;
                         else _playerReady[i] = false;
 
                     StartTimer(60);
@@ -175,13 +175,13 @@ namespace Server
                     });
                 }
 
-                if (_playerId[(ushort)UserType.Offender] != -1)
+                if (string.IsNullOrEmpty(_playerId[(ushort)UserType.Offender]) == false)
                     _room.Send(_playerId[(ushort)UserType.Offender], packet);
-                if (_playerId[(ushort)UserType.Defender] != -1)
+                if (string.IsNullOrEmpty(_playerId[(ushort)UserType.Defender]) == false)
                     _room.Send(_playerId[(ushort)UserType.Defender], packet);
 
                 for (int i = 0; i < _playerReady.Length; i++)
-                    if (_playerId[i] == -1) _playerReady[i] = true;
+                    if (string.IsNullOrEmpty(_playerId[i])) _playerReady[i] = true;
                     else _playerReady[i] = false;
             }
         }
@@ -204,13 +204,13 @@ namespace Server
             if (type == UserType.Defender)
             {
                 defender.SetRoster(units, skills, attackSkills, round);
-                if (_playerId[(ushort)UserType.Offender] == -1)
+                if (string.IsNullOrEmpty(_playerId[(ushort)UserType.Offender]))
                     Bot.SetRoster(ref offender);
             }
             else
             {
                 offender.SetRoster(units, skills);
-                if (_playerId[(ushort)UserType.Defender] == -1)
+                if (string.IsNullOrEmpty(_playerId[(ushort)UserType.Defender]))
                     Bot.SetRoster(ref defender, round);
             }
 
@@ -224,7 +224,7 @@ namespace Server
 
                 p.enemyRosters = new List<S_RoundReadyEnd.EnemyRoster>();
 
-                if (_playerId[(ushort)UserType.Offender] != -1)
+                if (string.IsNullOrEmpty(_playerId[(ushort)UserType.Offender]) == false)
                 {
                     for (int i = 0; i < defender.Rosters.Count; i++)
                     {
@@ -239,7 +239,7 @@ namespace Server
                 }
 
                 p.enemyRosters.Clear();
-                if (_playerId[(ushort)UserType.Defender] != -1)
+                if (string.IsNullOrEmpty(_playerId[(ushort)UserType.Defender]) == false)
                 {
                     for (int i = 0; i < offender.Rosters.Count; i++)
                     {
@@ -253,7 +253,7 @@ namespace Server
                 }
 
                 for (int i = 0; i < _playerReady.Length; i++)
-                    if (_playerId[i] == -1) _playerReady[i] = true;
+                    if (string.IsNullOrEmpty(_playerId[i])) _playerReady[i] = true;
                     else _playerReady[i] = false;
 
                 StartTimer(30);
@@ -361,10 +361,10 @@ namespace Server
                 }
 
                 for (int i = 0; i < _playerId.Length; i++)
-                    if (_playerId[i] != -1) _room.Send(_playerId[i], p);
+                    if (string.IsNullOrEmpty(_playerId[i]) == false) _room.Send(_playerId[i], p);
 
                 for (int i = 0; i < _playerReady.Length; i++)
-                    if (_playerId[i] == -1) _playerReady[i] = true;
+                    if (string.IsNullOrEmpty(_playerId[i])) _playerReady[i] = true;
                     else _playerReady[i] = false;
 
                 StartTimer(40);
