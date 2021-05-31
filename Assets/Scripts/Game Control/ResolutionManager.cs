@@ -36,7 +36,7 @@ public class ResolutionManager : MonoBehaviour
 
     private void Update()
     {
-        SetResolution();   
+        SetResolution();
     }
 
     private void SetResolution()
@@ -73,5 +73,19 @@ public class ResolutionManager : MonoBehaviour
         camRect = Camera.main.rect;
         width = screenWidth;
         height = screenHeight;
+    }
+
+    public Vector2 AdjustPosWithRect(Vector2 pos)
+    {
+        float widthSpace = width * camRect.x;
+        float heightSpace = height * camRect.y;
+        float widthRect = width * camRect.width;
+        float heightRect = height * camRect.height;
+        Debug.Log(widthSpace);
+
+        Vector2 newPos = new Vector2((pos.x - widthSpace) / widthRect * defaultWidth, (pos.y - heightSpace) / heightRect * defaultHeight);
+
+        return newPos;
+
     }
 }

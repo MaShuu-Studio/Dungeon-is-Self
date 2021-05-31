@@ -37,12 +37,12 @@ public class CharIcon : UIIcon, IPointerDownHandler, IPointerClickHandler, IBegi
     {
         if (isDragging)
         {
-            draggingRect.anchoredPosition = eventData.position;
+            draggingRect.anchoredPosition = ResolutionManager.Instance.AdjustPosWithRect(Input.mousePosition);
         }
     }
 
     public void OnEndDrag(PointerEventData eventData)
-    { 
+    {
         if (dragIcon == null) return;
         if (dragIcon.gameObject.activeSelf == true) dragIcon.gameObject.SetActive(false);
 
