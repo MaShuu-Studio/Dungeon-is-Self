@@ -9,6 +9,7 @@ public class ResolutionManager : MonoBehaviour
     float defaultRatio;
     int width = 1920;
     int height = 1080;
+    Rect camRect = new Rect(0, 0, 1, 1);
 
     #region Instance
     private static ResolutionManager instance;
@@ -45,6 +46,7 @@ public class ResolutionManager : MonoBehaviour
         int screenWidth = Screen.width;
         int screenHeight = Screen.height;
 
+        if (camRect != Camera.main.rect) Camera.main.rect = camRect;
         if (width == screenWidth && height == screenHeight) return;
 
         float ratio = (float)screenWidth / (float)screenHeight;
@@ -68,6 +70,7 @@ public class ResolutionManager : MonoBehaviour
             Camera.main.rect = new Rect(0, 0, 1, 1);
         }
 
+        camRect = Camera.main.rect;
         width = screenWidth;
         height = screenHeight;
     }
