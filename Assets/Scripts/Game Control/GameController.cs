@@ -282,6 +282,7 @@ namespace GameControl
 
                 for (int j = 0; j < keys.Count; j++)
                 {
+                    if (deadUnit.ContainsKey(keys[j]) == false) continue;
                     if (deadUnit[keys[j]].Item1 && deadUnit[keys[j]].Item2 == i)
                         isDead[keys[j]] = true;
                 }
