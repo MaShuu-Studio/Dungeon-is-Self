@@ -66,7 +66,7 @@ namespace Network
             IPEndPoint endPoint;
 
             Connector connector;
-
+            /*
             #region Local Test
             host = Dns.GetHostName();
             ipHost = Dns.GetHostEntry(host);
@@ -79,9 +79,9 @@ namespace Network
             #endregion
 
             
-            /*
+            */
             #region Live
-            host = "ec2-3-36-132-112.ap-northeast-2.compute.amazonaws.com";
+            host = "ec2-13-124-208-197.ap-northeast-2.compute.amazonaws.com";
             ipHost = Dns.GetHostEntry(host);
             ipAddr = ipHost.AddressList[0];
             endPoint = new IPEndPoint(ipAddr, PORT_NUMBER);
@@ -90,7 +90,7 @@ namespace Network
 
             connector.Connect(endPoint, () => { return session; }, 1);
             #endregion
-            */
+            
 
         }
 
