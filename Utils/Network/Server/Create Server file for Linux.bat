@@ -1,1 +1,1 @@
-dotnet publish -r linux-x64
+dotnet publish -r linux-x64 -o ./Dungeon-is-Self-GameServer
