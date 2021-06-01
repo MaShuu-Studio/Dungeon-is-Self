@@ -9,7 +9,7 @@ using System.Linq;
 
 public class CustomButton : MonoBehaviour
 {
-    public enum ButtonMethod { SceneMovement = 0, GameReady, GamePlayReady, GameExit, ConnectServer, MatchRequest, MatchRequestCancel};
+    public enum ButtonMethod { SceneMovement = 0, GameReady, GamePlayReady, GameExit, ConnectServer, MatchRequest, MatchRequestCancel };
 
     [SerializeField] private string moveScene = "";
     [SerializeField] private UserType userType = UserType.Offender;
@@ -55,15 +55,17 @@ public class CustomButton : MonoBehaviour
 
     private void Update()
     {
-        if (isReady) image.color = Color.gray;
-        else image.color = Color.white;
+        if (image != null)
+            if (isReady) image.color = Color.gray;
+            else image.color = Color.white;
     }
 
     public void SetButtonInteract(bool b)
     {
         button.interactable = b;
-        if (b) image.color = Color.white;
-        else image.color = Color.gray;
+        if (image != null)
+            if (b) image.color = Color.white;
+            else image.color = Color.gray;
     }
 
     void ChangeScene()
@@ -104,7 +106,7 @@ public class CustomButton : MonoBehaviour
     {
         isReady = false;
     }
-   
+
     #endregion
 
     #region Network
@@ -119,7 +121,7 @@ public class CustomButton : MonoBehaviour
     {
         float time = 2.0f;
 
-        while(time > 0)
+        while (time > 0)
         {
             time -= Time.deltaTime;
             yield return null;
