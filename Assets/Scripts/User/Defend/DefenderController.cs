@@ -239,11 +239,6 @@ namespace GameControl
         public void DiceTimeOut()
         {
             int selectedUnit = monsterIndex;
-            for (int i = 0; i < 6; i++)
-            {
-                if (isDead[i] == true) continue;
-                else { SelectMonster(i); break; }
-            }
 
             for (int i = GetDiceSize(); i < 6; i++)
             {

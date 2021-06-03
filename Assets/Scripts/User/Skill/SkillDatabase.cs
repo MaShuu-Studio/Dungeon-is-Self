@@ -15,31 +15,31 @@ namespace Data
             // INVINCIBLE = 5, BLIND = 6, STUN = 7, DOTDAMAGE = 8,
             // ATTACKSTAT = 9, MIRRORIMAGE = 10,
 
-            ccDatabase.Add(new CrowdControl(30101, "도발", CCTarget.SELF));
-            ccDatabase.Add(new CrowdControl(30201, "방어", CCTarget.ALL));
-            ccDatabase.Add(new CrowdControl(30202, "방어", CCTarget.SELF));
-            ccDatabase.Add(new CrowdControl(30301, "반사", CCTarget.ALL));
-            ccDatabase.Add(new CrowdControl(30401, "무효화", CCTarget.SELF));
-            ccDatabase.Add(new CrowdControl(30501, "무적", CCTarget.ALL));
-            ccDatabase.Add(new CrowdControl(30502, "무적", CCTarget.SELF));
-            ccDatabase.Add(new CrowdControl(30601, "실명", CCTarget.ENEMY));
-            ccDatabase.Add(new CrowdControl(30602, "마비", CCTarget.ENEMY));
-            ccDatabase.Add(new CrowdControl(30603, "전체마비", CCTarget.ALL));
-            ccDatabase.Add(new CrowdControl(30701, "스턴", CCTarget.ENEMY));
-            ccDatabase.Add(new CrowdControl(30702, "전체스턴", CCTarget.ALL));
-            ccDatabase.Add(new CrowdControl(30801, "출혈", CCTarget.ENEMY));
-            ccDatabase.Add(new CrowdControl(30802, "중독", CCTarget.ENEMY));
-            ccDatabase.Add(new CrowdControl(30803, "화상", CCTarget.ENEMY));
-            ccDatabase.Add(new CrowdControl(30804, "감전", CCTarget.ENEMY));
-            ccDatabase.Add(new CrowdControl(30901, "공격력 증가", CCTarget.SELF));
-            ccDatabase.Add(new CrowdControl(30902, "공격력 감소", CCTarget.ENEMY));
-            ccDatabase.Add(new CrowdControl(30903, "공격력 전체 증가", CCTarget.ALL));
-            ccDatabase.Add(new CrowdControl(30904, "공격력 전체 감소", CCTarget.ALL));
-            ccDatabase.Add(new CrowdControl(31001, "분신", CCTarget.SELF));
-            ccDatabase.Add(new CrowdControl(31101, "흡혈", CCTarget.SELF));
-            ccDatabase.Add(new CrowdControl(31201, "턴감소", CCTarget.SELF));
-            ccDatabase.Add(new CrowdControl(31301, "혼란", CCTarget.ENEMY));
-            ccDatabase.Add(new CrowdControl(31401, "상대무효화", CCTarget.ENEMY));
+            ccDatabase.Add(new CrowdControl(30101, "도발", CCTarget.SELF, "상대의 공격을 대신 피격한다."));
+            ccDatabase.Add(new CrowdControl(30201, "방어", CCTarget.ALL, "상대의 특수효과를 방어한다."));
+            ccDatabase.Add(new CrowdControl(30202, "방어", CCTarget.SELF, "상대의 특수효과를 방어한다."));
+            ccDatabase.Add(new CrowdControl(30301, "반사", CCTarget.ALL, "상대의 특수효과를 방어 및 반사한다."));
+            ccDatabase.Add(new CrowdControl(30401, "무효화", CCTarget.SELF, "자신에게 걸린 해로운 효과를 제거한다."));
+            ccDatabase.Add(new CrowdControl(30501, "무적", CCTarget.ALL, "해로운 효과를 제거하고 한 턴 방어한다."));
+            ccDatabase.Add(new CrowdControl(30502, "무적", CCTarget.SELF, "해로운 효과를 제거하고 한 턴 방어한다."));
+            ccDatabase.Add(new CrowdControl(30602, "마비", CCTarget.ENEMY, "상대의 주사위 눈을 3개 못 쓰게 한다."));
+            ccDatabase.Add(new CrowdControl(30601, "실명", CCTarget.ENEMY, "상대의 주사위 눈을 3개 못 쓰게 한다."));
+            ccDatabase.Add(new CrowdControl(30603, "전체마비", CCTarget.ALL, "상대의 주사위 눈을 3개 못 쓰게 한다."));
+            ccDatabase.Add(new CrowdControl(30701, "스턴", CCTarget.ENEMY, "한 턴 동안 행동이 불가능하게 된다."));
+            ccDatabase.Add(new CrowdControl(30702, "전체스턴", CCTarget.ALL, "한 턴 동안 행동이 불가능하게 된다."));
+            ccDatabase.Add(new CrowdControl(30804, "감전", CCTarget.ENEMY, "매 턴 적에게 데미지를 준다."));
+            ccDatabase.Add(new CrowdControl(30801, "출혈", CCTarget.ENEMY, "매 턴 적에게 데미지를 준다."));
+            ccDatabase.Add(new CrowdControl(30802, "중독", CCTarget.ENEMY, "매 턴 적에게 데미지를 준다."));
+            ccDatabase.Add(new CrowdControl(30803, "화상", CCTarget.ENEMY, "매 턴 적에게 데미지를 준다."));
+            ccDatabase.Add(new CrowdControl(30901, "공격력 증가", CCTarget.SELF, "데미지가 50% 증가한다."));
+            ccDatabase.Add(new CrowdControl(30902, "공격력 감소", CCTarget.ENEMY, "데미지가 30% 감소한다."));
+            ccDatabase.Add(new CrowdControl(30903, "공격력 전체 증가", CCTarget.ALL, "데미지가 50% 증가한다."));
+            ccDatabase.Add(new CrowdControl(30904, "공격력 전체 감소", CCTarget.ALL, "데미지가 30% 감소한다."));
+            ccDatabase.Add(new CrowdControl(31001, "분신", CCTarget.SELF, "데미지가 50% 상승하고 특수효과를 추가부여한다."));
+            ccDatabase.Add(new CrowdControl(31101, "흡혈", CCTarget.SELF, "자신의 HP를 회복한다."));
+            ccDatabase.Add(new CrowdControl(31201, "턴감소", CCTarget.SELF, "공격 발동 턴이 1턴 줄어든다."));
+            ccDatabase.Add(new CrowdControl(31301, "혼란", CCTarget.ENEMY, "공격 타겟이 랜덤이 된다."));
+            ccDatabase.Add(new CrowdControl(31401, "상대무효화", CCTarget.ENEMY, "상대에게 걸린 이로운 효과를 제거한다."));
         }
 
         public CrowdControl GetCrowdControl(int id)

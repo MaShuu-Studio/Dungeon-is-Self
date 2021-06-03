@@ -16,9 +16,10 @@ namespace Data
         public string name { get; private set; }
         public int turn { get; private set; }
         public int dotDamage { get; private set; }
+        public string description { get; private set; }
         // public string name { get; private set; }
 
-        public CrowdControl(int id, string name, CCTarget target)
+        public CrowdControl(int id, string name, CCTarget target, string description)
         {
             this.id = id;
             this.name = name;
@@ -27,6 +28,7 @@ namespace Data
             this.target = target;
             this.turn = GetCCBasicTurn();
             this.dotDamage = 0;
+            this.description = description;
         }
         public CrowdControl(CrowdControl crowdControl)
         {
@@ -37,6 +39,7 @@ namespace Data
             this.target = crowdControl.target;
             this.turn = crowdControl.turn;
             this.dotDamage = crowdControl.dotDamage;
+            this.description = crowdControl.description;
         }
 
         public bool ProgressTurn()

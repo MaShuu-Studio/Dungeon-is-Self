@@ -21,6 +21,7 @@ public class SkillIcon : UIIcon, IPointerClickHandler
     }
 
 
+    /*
     #region for PC
     public override void OnPointerEnter(PointerEventData pointerEventData)
     {
@@ -37,8 +38,8 @@ public class SkillIcon : UIIcon, IPointerClickHandler
         if (isOn) base.OnPointerClick(pointerEventData);
     }
     #endregion
-
-    /*
+    */
+    
     #region for Mobile
     public override void OnPointerClick(PointerEventData pointerEventData)
     {
@@ -52,7 +53,7 @@ public class SkillIcon : UIIcon, IPointerClickHandler
         if (isOn) base.OnPointerClick(pointerEventData);
     }
     #endregion
-    */
+    
 
     public override void OnPointerExit(PointerEventData pointerEventData)
     {
