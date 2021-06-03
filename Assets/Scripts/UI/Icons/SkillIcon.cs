@@ -20,22 +20,39 @@ public class SkillIcon : UIIcon, IPointerClickHandler
         isSkill = true;
     }
 
+
+    #region for PC
     public override void OnPointerEnter(PointerEventData pointerEventData)
     {
         //base.OnPointerEnter(pointerEventData);
         //skillDescription.SetDescription(skill.name, "", "DESCRIPTION");
         GamePlayUIController.Instance.ShowDescription(skill);
     }
-
     public override void OnPointerClick(PointerEventData pointerEventData)
     {
         if (isSkill)
         {
-            //GamePlayUIController.Instance.SetDiceOnce(skill, isOn);
             GamePlayUIController.Instance.AddSkillRoster(skill, isOn);
         }
         if (isOn) base.OnPointerClick(pointerEventData);
     }
+    #endregion
+
+    /*
+    #region for Mobile
+    public override void OnPointerClick(PointerEventData pointerEventData)
+    {
+        if (isSkill)
+        {
+            if (GamePlayUIController.Instance.DescriptionIsSelected(skill.id))
+                GamePlayUIController.Instance.AddSkillRoster(skill, isOn);
+            else GamePlayUIController.Instance.ShowDescription(skill);
+            
+        }
+        if (isOn) base.OnPointerClick(pointerEventData);
+    }
+    #endregion
+    */
 
     public override void OnPointerExit(PointerEventData pointerEventData)
     {

@@ -17,6 +17,8 @@ public class SkillDescription : UIDescription
     [SerializeField] private Text readyTurnText;
 
     private List<CrowdControlIcon> ccIcons = new List<CrowdControlIcon>();
+    private int skillId = -1;
+    public int SkillID { get { return skillId; } }
 
     protected override void Awake()
     {
@@ -30,6 +32,7 @@ public class SkillDescription : UIDescription
     }
     public void SetDescription(int id, string name, string type, string description, string dmg, Dictionary<CrowdControl, int> ccs = null, int readyTurn = -1)
     {
+        skillId = id;
         skillImage.color = Color.white;
         skillImage.sprite = Resources.Load<Sprite>("Sprites/Skills/" + id.ToString());
         nameText.text = name;
@@ -56,5 +59,10 @@ public class SkillDescription : UIDescription
 
         if (readyTurn == -1) readyTurnText.text = "";
         else readyTurnText.text = "WAIT TURN " + readyTurn;
+    }
+
+    public void ResetDescription()
+    {
+
     }
 }

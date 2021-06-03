@@ -636,6 +636,10 @@ public class GamePlayUIController : MonoBehaviour
         diceSkillIcons.Clear();
     }
 
+    public bool DescriptionIsSelected(int id)
+    {
+        return description.SkillID == id;
+    }
     public void ShowDescription(Skill skill)
     {
         if (skill == null) return;
