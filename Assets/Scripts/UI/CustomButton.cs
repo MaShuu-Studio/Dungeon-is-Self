@@ -110,9 +110,19 @@ public class CustomButton : MonoBehaviour
     #region Network
     void ConnectServer()
     {
-        NetworkManager.Instance.ConnectToServer();
-        SetButtonInteract(false);
-        StartCoroutine(Connecting());
+        Join join = FindObjectOfType<Join>();
+        if (join == null) return;
+        if(join.ClickStart())
+        {
+            NetworkManager.Instance.ConnectToServer();
+            SetButtonInteract(false);
+            StartCoroutine(Connecting());
+        }
+        else
+        {
+
+            
+        }
     }
 
     IEnumerator Connecting()
