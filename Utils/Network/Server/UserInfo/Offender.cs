@@ -162,6 +162,7 @@ namespace Server
             }
 
             List<int> targets = new List<int>();
+
             if (isAll)
             {
                 foreach (int key in _rosters)
@@ -246,7 +247,7 @@ namespace Server
         {
             foreach (int key in _ccList.Keys)
             {
-                if (_deadUnits.FindIndex(index => index == key) == -1) _ccList[key].Clear();
+                if (_deadUnits.FindIndex(index => index == key) != -1) _ccList[key].Clear();
 
                 for (int i = 0; i < _ccList[key].Count; i++)
                 {

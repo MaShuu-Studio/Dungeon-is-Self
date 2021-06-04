@@ -74,7 +74,7 @@ namespace Data
             switch(cc)
             {
                 case CCType.TAUNT:
-                    turn = 2;
+                    turn = 1;
                     break;
                 case CCType.BARRIER:
                     turn = 1;

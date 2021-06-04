@@ -52,6 +52,7 @@ namespace Data
             return crowdControl;
         }
         #endregion
+
         private static List<CharacterSkill> charSkillDB;
         private static List<MonsterSkill> monSkillDB;
 

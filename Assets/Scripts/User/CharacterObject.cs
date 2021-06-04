@@ -106,7 +106,7 @@ public class CharacterObject : MonoBehaviour
 
             rolledDices.Add(obj);
         }
-        Debug.Log(result);
+
         if (result != -1)
         {
             diceObject.SetActive(true);
