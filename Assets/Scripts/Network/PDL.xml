@@ -12,6 +12,8 @@
 		<int name="waitOffUser"/>
 	</packet>
 	<packet name="C_EnterGame">
+		<string name="token"/>
+		<string name="playerId"/>
 	</packet>
 	<packet name="S_GivePlayerId">
 		<string name="playerId"/>

@@ -70,10 +70,17 @@ namespace Server
             _packetList.Clear();
         }
 
-        public void Enter(ClientSession session)
+        public void Enter(ClientSession session, string token, string pId)
         {
+            if (true)
+            {
 
-            string id = (_playerNumber++).ToString();
+            }
+            else
+            {
+                session.Disconnect();
+            }
+            string id = pId;
             Console.WriteLine($"Enter User : {id}");
             session.Send(new S_GivePlayerId() { playerId = id }.Write());
 
