@@ -91,6 +91,19 @@ namespace GameControl
             currentProgress = GameProgress.ReadyGame;
             SceneController.Instance.ChangeScene("GamePlay");
         }
+        public void ReadyGame()
+        {
+            GamePlayUIController.Instance.SetUserType();
+
+            currentProgress = GameProgress.ReadyGame;
+
+            round = 0;
+
+            DefenderController.Instance.ResetCandidates();
+            OffenderController.Instance.ResetCandidates();
+
+            GamePlayUIController.Instance.ChangeView();
+        }
 
         public void ReadyGameEnd(int round, List<int> enemyCandidats)
         {
@@ -263,7 +276,7 @@ namespace GameControl
             List<int> monsterHps, Dictionary<int, List<List<CrowdControl>>> ccs, Dictionary<int, System.Tuple<bool, int>> deadUnit, int winner, int endTurn, bool isGameEnd)
         {
             while (isDiceRolled) yield return null;
-            GamePlayUIController.Instance.ShowDices(dices);
+            GamePlayUIController.Instance.ShowDices(dices, diceSkills);
 
             List<int> keys = animationEnd.Keys.ToList<int>();
             int i = 0;
@@ -424,21 +437,8 @@ namespace GameControl
         }
 
         #endregion
-
-        public void ReadyGame()
-        {
-            GamePlayUIController.Instance.SetUserType();
-
-            currentProgress = GameProgress.ReadyGame;
-
-            round = 0;
-
-            DefenderController.Instance.ResetCandidates();
-            OffenderController.Instance.ResetCandidates();
-
-            GamePlayUIController.Instance.ChangeView();
-        }
-
+                
+        /*
         public void ReadyRound(bool isOffenderDefeated = false)
         {
             if (string.IsNullOrEmpty(roomId) == false)
@@ -461,7 +461,7 @@ namespace GameControl
                 else AIBot.Instance.DefenderSetDice();
             }
         }
-
+        */
         public void SelectUnit(UserType type, int[] units) // 서버 입장에서는 type 필요
         {
             if (type == UserType.Defender)
@@ -476,12 +476,23 @@ namespace GameControl
                 }
             }
         }
+        public void DiceRolled()
+        {
+            isDiceRolled = false;
+        }
+        public void AnimationEnd(int index)
+        {
+            animationEnd[index] = true;
+        }
 
+        /*
         public void ReadyTurn(UserType type, bool ready) // 서버 입장에서는 type 필요
         {
             readyState[(short)type] = ready;
         }
+        */
 
+        /*
         private void ProgressTurn()
         {
             if (isRoundEnd) return;
@@ -489,10 +500,10 @@ namespace GameControl
             List<MonsterSkill> monSkills = new List<MonsterSkill>();
             bool monIsParalysis = HasCrowdControl(defenderUnit, CCType.BLIND);
 
-            /*
-            for (int j = 0; j < 2; j++)
-                monSkills.Add(DefenderController.Instance.DiceRoll(defenderUnit % 10, monIsParalysis));
-            */
+            
+            //for (int j = 0; j < 2; j++)
+            //    monSkills.Add(DefenderController.Instance.DiceRoll(defenderUnit % 10, monIsParalysis));
+            
 
             List<bool> isAttack = new List<bool>();
             List<bool> isWait = new List<bool>();
@@ -541,11 +552,6 @@ namespace GameControl
                 i++;
             }
             StartCoroutine(Battle(monSkills, charSkills, isAttack));
-        }
-
-        public void DiceRolled()
-        {
-            isDiceRolled = false;
         }
 
         IEnumerator Battle(List<MonsterSkill> monSkills, Dictionary<int, CharacterSkill> charSkills, List<bool> isAttack)
@@ -718,7 +724,9 @@ namespace GameControl
 
             return true;
         }
+        */
 
+        /*
         #region CrowdControl
         private void AddCrowdControl(int index, CrowdControl cc, int ccStack, int useIndex, int ccMultiplier, bool isAll = false)
         {
@@ -853,7 +861,7 @@ namespace GameControl
                         if (restHp < 0)
                         {
                             DefenderController.Instance.Dead(defenderUnit);
-                            DefenderDefeated();
+                            //DefenderDefeated();
                         }
                     }
                     GamePlayUIController.Instance.UpdateCrowdControl(key, curCC.id, curCC.turn, curCC.stack, b);
@@ -947,12 +955,10 @@ namespace GameControl
         }
 
         #endregion
+        */
 
-        public void AnimationEnd(int index)
-        {
-            animationEnd[index] = true;
-        }
 
+        /*
         public void NextTurn()
         {
             if (isRoundEnd) return;
@@ -1127,6 +1133,6 @@ namespace GameControl
             }
             StartCoroutine(ShowResult(UserType.Defender, roundEnd));
         }
-
+        */
     }
 }

@@ -10,6 +10,8 @@ public class CharacterObject : MonoBehaviour
     [SerializeField] private Canvas canvas;
     [SerializeField] private GameObject skillObject;
     [SerializeField] private Image skillImage;
+    [SerializeField] private GameObject diceObject;
+    [SerializeField] private Image diceImage;
     [SerializeField] private Text turnText;
     [SerializeField] private Text hpText;
     [SerializeField] private Transform CCList;
@@ -31,6 +33,7 @@ public class CharacterObject : MonoBehaviour
         _sprite = GetComponent<SpriteRenderer>();
         canvas.worldCamera = GameObject.FindWithTag("MainCamera").GetComponent<Camera>();
         if (skillObject != null) skillObject.SetActive(false);
+        if (diceObject != null) diceObject.SetActive(false);
     }
 
     private void Update()
@@ -89,7 +92,7 @@ public class CharacterObject : MonoBehaviour
         }
     }
 
-    public void UpdateDiceList(List<int> dices, RolledDiceIcon prefab)
+    public void UpdateDiceList(List<int> dices, int result, RolledDiceIcon prefab)
     {
         for (int i = 0; i < dices.Count; i++)
         {
@@ -101,6 +104,12 @@ public class CharacterObject : MonoBehaviour
 
             rolledDices.Add(obj);
         }
+        Debug.Log(result);
+        if (result != -1)
+        {
+            diceObject.SetActive(true);
+            diceImage.sprite = Resources.Load<Sprite>("Sprites/Skills/" + result);
+        }
     }
 
     public void RemoveDices()
@@ -109,6 +118,7 @@ public class CharacterObject : MonoBehaviour
             Destroy(rolledDices[i]);
 
         rolledDices.Clear();
+        diceObject.SetActive(false);
     }
 
     public void SetCharacterIndex(int n)

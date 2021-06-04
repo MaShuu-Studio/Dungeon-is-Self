@@ -1167,7 +1167,7 @@ public class GamePlayUIController : MonoBehaviour
         dice.Roll();
     }
 
-    public void ShowDices(Dictionary<int, List<int>> dices)
+    public void ShowDices(Dictionary<int, List<int>> dices, Dictionary<int, int> results)
     {
         List<int> dicesChars = dices.Keys.ToList();
         for (int i = 0; i < dicesChars.Count; i++)
@@ -1176,7 +1176,7 @@ public class GamePlayUIController : MonoBehaviour
             {
                 if (charObjects[j] != null && dicesChars[i] == charObjects[j].GetIndex())
                 {
-                    charObjects[j].UpdateDiceList(dices[dicesChars[i]], rolledDiceIconPrefab);
+                    charObjects[j].UpdateDiceList(dices[dicesChars[i]], results[dicesChars[i]], rolledDiceIconPrefab);
                     break;
                 }
             }
@@ -1184,7 +1184,7 @@ public class GamePlayUIController : MonoBehaviour
             {
                 if (enemyObjects[j] != null && dicesChars[i] == enemyObjects[j].GetIndex())
                 {
-                    enemyObjects[j].UpdateDiceList(dices[dicesChars[i]], rolledDiceIconPrefab);
+                    enemyObjects[j].UpdateDiceList(dices[dicesChars[i]], results[dicesChars[i]], rolledDiceIconPrefab);
                     break;
                 }
             }
