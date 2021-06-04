@@ -9,6 +9,7 @@ using Newtonsoft.Json;
 using System.IO;
 using System.Text;
 using System.Net;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using System.Net.Json;
 using Newtonsoft.Json.Linq;
@@ -40,12 +41,12 @@ namespace Network
         */
         public string memberId { get; private set; }
         public string password { get; private set; }
-
         public string nickname { get; private set; }
-
         public string joinInfo { get; private set; }
-
         public string startInfo { get; private set; }
+        public string token { get; private set; }
+
+        public AuthenticationHeaderValue authorization { get; private set; }
         // Start is called before the first frame update
         void Start()
         {
@@ -127,6 +128,7 @@ namespace Network
             HttpWebResponse response = null;
             try
             {
+                Debug.Log("Send");
                 Uri url = new Uri(urlString);
                 request = (HttpWebRequest)WebRequest.Create(url);
                 request.Method = WebRequestMethods.Http.Post;
@@ -136,9 +138,11 @@ namespace Network
                 request.ContentType = "application/json";
                 request.ContentLength = data.Length;
 
+                Debug.Log("Send");
                 Stream dataStream = request.GetRequestStream();
                 dataStream.Write(data, 0, data.Length);
                 dataStream.Close();
+                Debug.Log("Send");
 
                 response = (HttpWebResponse)request.GetResponse();
                 Stream responseStream = response.GetResponseStream();
@@ -148,9 +152,63 @@ namespace Network
                 streamReader.Close();
                 responseStream.Close();
                 response.Close();
+                Debug.Log("Send");
             }
             catch (Exception ex)
             {
+                return result;
+            }
+            return result;
+        }
+
+        private string SendHTTP2(/*string send, */string urlString, string token)
+        {
+            int nStartTime = 0;
+            string result = "";
+            string strMsg = string.Empty;
+            nStartTime = Environment.TickCount;
+
+            HttpWebRequest request = null;
+            HttpWebResponse response = null;
+            
+            try
+            {
+                Debug.Log("Send");
+                Uri url = new Uri(urlString);
+                request = (HttpWebRequest)WebRequest.Create(url);
+                request.Method = WebRequestMethods.Http.Get;
+                
+                request.Headers.Add("Authorization", "Bearer " + token);
+                //request.Headers["Authentication"] = "Bearer " + token;
+                request.Timeout = 5000;
+
+                /*Debug.Log("Send");
+                byte[] data = Encoding.UTF8.GetBytes(send);
+                request.ContentType = "application/json";
+                request.ContentLength = data.Length;
+
+                Debug.Log("Send");
+                Stream dataStream = request.GetRequestStream();
+                Debug.Log("1");
+                dataStream.Write(data, 0, data.Length);
+                Debug.Log("2");
+                dataStream.Close();
+                Debug.Log("3");*/
+
+                Debug.Log("Send");
+                response = (HttpWebResponse)request.GetResponse();
+                Stream responseStream = response.GetResponseStream();
+                StreamReader streamReader = new StreamReader(responseStream, Encoding.UTF8);
+                result = streamReader.ReadToEnd();
+
+                streamReader.Close();
+                responseStream.Close();
+                response.Close();
+                Debug.Log("Send");
+            }
+            catch (Exception ex)
+            {
+                Debug.Log(ex);
                 return result;
             }
             return result;
@@ -160,16 +218,25 @@ namespace Network
         {
             string respath = @"D:\Yujun\study\41\Dudream\Dungeon-is-Self\StartResponse.json";
             string reqpath = @"D:\Yujun\study\41\Dudream\Dungeon-is-Self\Starttest.json";
-            string path = @"D:\Yujun\study\41\Dudream\Dungeon-is-Self\test.json";
             string urlString = "http://ec2-54-180-153-249.ap-northeast-2.compute.amazonaws.com:8080/api/dgiself/member/login";
+            string url = "http://ec2-54-180-153-249.ap-northeast-2.compute.amazonaws.com:8080/api/dgiself/member/authorization";
             string result = "";
+            string result2 = "";
             CreateStartJson(reqpath);
             JsonObjectCollection jsonObj = new JsonObjectCollection();
+
             result = SendHTTP(startInfo, urlString);
             JObject start = JObject.Parse(result);
-            Debug.Log(start["memberId"].ToString());
+            token = start["token"].ToString();
             jsonObj.Add(new JsonStringValue("startInfo", result));
+
+            
+            
+            result2 = SendHTTP2(/*memberId, */url, token);
+            jsonObj.Add(new JsonStringValue("token", result2));
+
             File.WriteAllText(respath, jsonObj.ToString());
+
             //File.WriteAllText(path, token);
             if(result != "") return true;
             else return false;
