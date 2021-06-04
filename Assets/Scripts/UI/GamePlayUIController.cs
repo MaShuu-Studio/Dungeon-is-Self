@@ -1212,13 +1212,13 @@ public class GamePlayUIController : MonoBehaviour
         if (diceObjects[index] != null) diceObjects[index].SetSkill(id);
     }
 
-    public void UpdateCrowdControl(int index, int id, int turn, int stack, bool isRemove = false)
+    public void UpdateCrowdControl(int index, int id, int turn, int stack, int dotdmg, bool isRemove = false)
     {
         for (int i = 0; i < charObjects.Count; i++)
         {
             if (charObjects[i] != null && index == charObjects[i].GetIndex())
             {
-                charObjects[i].UpdateCrowdControl(id, isRemove, turn, stack, crowdControlIconPrefab);
+                charObjects[i].UpdateCrowdControl(id, isRemove, turn, stack, dotdmg, crowdControlIconPrefab);
                 return;
             }
         }
@@ -1227,7 +1227,7 @@ public class GamePlayUIController : MonoBehaviour
         {
             if (enemyObjects[i] != null && index == enemyObjects[i].GetIndex())
             {
-                enemyObjects[i].UpdateCrowdControl(id, isRemove, turn, stack, crowdControlIconPrefab);
+                enemyObjects[i].UpdateCrowdControl(id, isRemove, turn, stack, dotdmg, crowdControlIconPrefab);
                 return;
             }
         }

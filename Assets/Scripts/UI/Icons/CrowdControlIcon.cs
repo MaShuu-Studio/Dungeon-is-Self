@@ -15,7 +15,7 @@ public class CrowdControlIcon : MonoBehaviour, IPointerEnterHandler, IPointerExi
     [SerializeField] private Text descriptionDmgText;
     public int id { get; private set; }
     private CrowdControl cc;
-    private int stack = 0;
+    private int dotdmg = 0;
 
     private void Awake()
     {
@@ -38,7 +38,6 @@ public class CrowdControlIcon : MonoBehaviour, IPointerEnterHandler, IPointerExi
         if (turn == -1)
         {
             turnText.text = stack.ToString();
-            this.stack = stack;
             frameImage.color = Color.gray;
             iconImage.color = Color.gray;
         }
@@ -50,6 +49,11 @@ public class CrowdControlIcon : MonoBehaviour, IPointerEnterHandler, IPointerExi
         }
     }
 
+    public void SetDotDmg(int dmg)
+    {
+        dotdmg = dmg;
+    }
+
     private void SetDescription()
     {
         descriptionObject.SetActive(true);
@@ -58,9 +62,8 @@ public class CrowdControlIcon : MonoBehaviour, IPointerEnterHandler, IPointerExi
             cc.description;
         if (cc.cc == CCType.DOTDAMAGE)
         {
-            int dmg = cc.dotDamage;
             descriptionDmgText.gameObject.SetActive(true);
-            descriptionDmgText.text = "DMG: " + dmg;
+            descriptionDmgText.text = "DMG: " + dotdmg;
         }
         else
         {

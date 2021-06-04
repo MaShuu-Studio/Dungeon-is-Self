@@ -58,7 +58,7 @@ public class CharacterObject : MonoBehaviour
         if (isOff && skillObject != null) skillObject.SetActive(false);
     }
 
-    public void UpdateCrowdControl(int id, bool isRemove, int turn, int stack, CrowdControlIcon prefab = null)
+    public void UpdateCrowdControl(int id, bool isRemove, int turn, int stack, int dotdmg, CrowdControlIcon prefab = null)
     {
         bool isFind = false;
         for (int i = 0; i < ccIcons.Count; i++)
@@ -74,6 +74,7 @@ public class CharacterObject : MonoBehaviour
                 else
                 {
                     ccIcons[i].SetTurn(turn, stack);
+                    ccIcons[i].SetDotDmg(dotdmg);
                 }
                 break;
             }
@@ -87,6 +88,7 @@ public class CharacterObject : MonoBehaviour
             CrowdControlIcon crowdControlIcon = obj.GetComponent<CrowdControlIcon>();
             crowdControlIcon.SetImage(id);
             crowdControlIcon.SetTurn(turn, stack);
+            crowdControlIcon.SetDotDmg(dotdmg);
 
             ccIcons.Add(crowdControlIcon);
         }

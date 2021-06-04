@@ -504,7 +504,8 @@ namespace Server
                 for (int j = 0; j < units.Count; j++)
                 {
                     if (units[j] / 10 == 1) ccResultsWithTurn[i].Add(units[j], offender.GetCCList(units[j]));
-                    else ccResultsWithTurn[i].Add(units[j], defender.GetCCList(units[j]));
+                    else
+                        ccResultsWithTurn[i].Add(units[j], defender.GetCCList(units[j]));
                 }
 
                 for (int j = 0; j < units.Count; j++)

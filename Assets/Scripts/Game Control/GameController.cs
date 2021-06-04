@@ -375,7 +375,7 @@ namespace GameControl
             foreach (CrowdControl cc in ccList[unitIndex])
             {
                 if (ccs.Find(c => c.id == cc.id) == null)
-                    GamePlayUIController.Instance.UpdateCrowdControl(unitIndex, cc.id, -1, cc.stack, true);
+                    GamePlayUIController.Instance.UpdateCrowdControl(unitIndex, cc.id, -1, cc.stack, cc.dotDamage, true);
             }
 
             // 다시 만듦
@@ -387,10 +387,11 @@ namespace GameControl
                 int ccId = ccList[unitIndex][i].id;
                 int ccStack = ccList[unitIndex][i].stack;
                 int ccTurn = ccList[unitIndex][i].turn;
+                int ccDotDmg = ccList[unitIndex][i].dotDamage;
 
                 if (isStackSkill && ccList[unitIndex][i].stack > 0)
-                    GamePlayUIController.Instance.UpdateCrowdControl(unitIndex, ccId, -1, ccStack);
-                else GamePlayUIController.Instance.UpdateCrowdControl(unitIndex, ccId, ccTurn, ccStack);
+                    GamePlayUIController.Instance.UpdateCrowdControl(unitIndex, ccId, -1, ccStack, ccDotDmg);
+                else GamePlayUIController.Instance.UpdateCrowdControl(unitIndex, ccId, ccTurn, ccStack, ccDotDmg);
             }
         }
 
