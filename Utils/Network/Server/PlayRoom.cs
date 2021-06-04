@@ -297,6 +297,7 @@ namespace Server
 
                 List<int> monsterHps = new List<int>();
                 Dictionary<int, int> diceResults = new Dictionary<int, int>();
+                Dictionary<int, int> remainTurns = new Dictionary<int, int>();
                 List<Dictionary<int, List<CrowdControl>>> ccResultWithTurn
                     = new List<Dictionary<int, List<CrowdControl>>>();
                 Dictionary<int, Tuple<bool, int>> deadUnit = new Dictionary<int, Tuple<bool, int>>();
@@ -308,7 +309,7 @@ namespace Server
                 }
 
 
-                int endTurn = Battle(diceLists, ref monsterHps, ref diceResults, ref ccResultWithTurn, ref deadUnit);
+                int endTurn = Battle(diceLists, ref monsterHps, ref diceResults, ref remainTurns, ref ccResultWithTurn, ref deadUnit);
                 int isGameEnd = IsGameEnd();
 
                 S_ProgressTurn p = new S_ProgressTurn();
@@ -354,6 +355,7 @@ namespace Server
                         isDead = deadUnit[key].Item1,
                         deadTurn = deadUnit[key].Item2,
                         diceResult = diceResults[key],
+                        remainTurn = remainTurns[key],
                         diceIndexs = diceLists[key],
                         ccWithTurns = ccsWithTurn
                     };
@@ -378,7 +380,7 @@ namespace Server
         }
 
         private int Battle(Dictionary<int, List<int>> dices,
-            ref List<int> monsterHps, ref Dictionary<int, int> diceResults,
+            ref List<int> monsterHps, ref Dictionary<int, int> diceResults, ref Dictionary<int, int> remainTurns,
             ref List<Dictionary<int, List<CrowdControl>>> ccResultsWithTurn,
             ref Dictionary<int, Tuple<bool, int>> deadUnit)
         {
@@ -397,6 +399,7 @@ namespace Server
                         int selectedDice = SelectDice(dices[units[i]]);
                         int target;
                         int usingUnit = units[i];
+                        int remainTurn = 0;
                         if (units[i] / 10 == 2)
                         {
                             // Defender
@@ -419,35 +422,54 @@ namespace Server
                         else
                         {
                             // Offender
-                            CharacterSkill skill = SkillDatabase.Instance.GetCharacterSkill(selectedDice);
-
-                            int damage = skill.damage;
-                            target = defender.Rosters[0];
-
-                            if (offender.HasCrowdControl(units[i], CCType.ATTACKSTAT, CCTarget.SELF)) damage = (int)(damage * 1.5f);
-                            if (offender.HasCrowdControl(units[i], CCType.MIRRORIMAGE)) damage = (int)(damage * 1.5f);
-                            if (offender.HasCrowdControl(units[i], CCType.ATTACKSTAT, CCTarget.ENEMY)) damage = (int)(damage * 0.7f);
-
-                            if (offender.HasCrowdControl(units[i], CCType.CONFUSION))
+                            CharacterSkill skill = null;
+                            bool isActive = false;
+                            if (selectedDice != -1)
                             {
-                                List<int> alives = offender.GetAlives();
-
-                                Random rand = new Random();
-                                int index = rand.Next(0, alives.Count + 1);
-                                if (index != alives.Count)
-                                {
-                                    foreach (int unit in offender.Rosters)
-                                    {
-                                        if (offender.HasCrowdControl(unit, CCType.TAUNT)) target = unit;
-                                    }
-                                }
+                                skill = SkillDatabase.Instance.GetCharacterSkill(selectedDice);
+                                offender.SetSkill(units[i], skill);
+                            }
+                            else
+                            {
+                                skill = offender.GetSkill(units[i]);
+                                selectedDice = skill.id;
                             }
 
-                            if (target / 10 == 2) defender.Damaged(damage);
+                            if (offender.GetSkillTurn(units[i]) == 0) isActive = true;
+                            remainTurn = offender.GetSkillTurn(units[i]);
 
-                            AddCrowdControl(skill, usingUnit, target);
+                            // 발동
+                            if (isActive)
+                            {
+                                int damage = skill.damage;
+                                target = defender.Rosters[0];
+
+                                if (offender.HasCrowdControl(units[i], CCType.ATTACKSTAT, CCTarget.SELF)) damage = (int)(damage * 1.5f);
+                                if (offender.HasCrowdControl(units[i], CCType.MIRRORIMAGE)) damage = (int)(damage * 1.5f);
+                                if (offender.HasCrowdControl(units[i], CCType.ATTACKSTAT, CCTarget.ENEMY)) damage = (int)(damage * 0.7f);
+
+                                if (offender.HasCrowdControl(units[i], CCType.CONFUSION))
+                                {
+                                    List<int> alives = offender.GetAlives();
+
+                                    Random rand = new Random();
+                                    int index = rand.Next(0, alives.Count + 1);
+                                    if (index != alives.Count)
+                                    {
+                                        foreach (int unit in offender.Rosters)
+                                        {
+                                            if (offender.HasCrowdControl(unit, CCType.TAUNT)) target = unit;
+                                        }
+                                    }
+                                }
+
+                                if (target / 10 == 2) defender.Damaged(damage);
+
+                                AddCrowdControl(skill, usingUnit, target);
+                            }
                         }
                         diceResults.Add(units[i], selectedDice);
+                        remainTurns.Add(units[i], remainTurn);
                     }
                     else diceResults.Add(units[i], -1);
                 }
@@ -532,6 +554,8 @@ namespace Server
         {
             // 행동불능 상태에서는 -1
             int diceId = -1;
+            if (dices.Count == 0) return diceId;
+            
             Dictionary<int, int> diceAmount = new Dictionary<int, int>();
 
             foreach (int dice in dices)

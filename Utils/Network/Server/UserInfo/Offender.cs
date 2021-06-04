@@ -13,6 +13,8 @@ namespace Server
         List<List<int>> _dices = new List<List<int>>();
         List<int> _deadUnits = new List<int>();
         Dictionary<int, List<CrowdControl>> _ccList = new Dictionary<int, List<CrowdControl>>();
+        Dictionary<int, CharacterSkill> _unitSkills = new Dictionary<int, CharacterSkill>();
+        Dictionary<int, int> _unitSkillTurns = new Dictionary<int, int>();
 
         public List<int> Candidates { get { return _candidates; } }
         public List<int> Rosters { get { return _rosters; } }
@@ -35,11 +37,15 @@ namespace Server
             _rosters.Clear();
             _skillRosters.Clear();
             _ccList.Clear();
+            _unitSkills.Clear();
+            _unitSkillTurns.Clear();
             for (int i = 0; i < rosters.Count; i++)
             {
                 _rosters.Add(rosters[i] + 10);
                 _ccList.Add(rosters[i] + 10, new List<CrowdControl>());
                 _skillRosters.Add(skillRosters[i]);
+                _unitSkills.Add(rosters[i] + 10, null);
+                _unitSkillTurns.Add(rosters[i] + 10, 0);
             }
         }
 
@@ -60,7 +66,7 @@ namespace Server
                 List<int> dices = new List<int>();
                 Random rand = new Random();
 
-                if (IsDead(_rosters[i]) == false)
+                if (IsDead(_rosters[i]) == false && _unitSkills[_rosters[i]] == null)
                 {
                     for (int j = 0; j < 5; j++)
                     {
@@ -79,9 +85,40 @@ namespace Server
             return diceResults;
         }
 
+        public void SetSkill(int unit, CharacterSkill skill)
+        {
+            if (_unitSkills.ContainsKey(unit))
+            {
+                _unitSkills[unit] = skill;
+                _unitSkillTurns[unit] = skill.turn;
+            }
+        }
+
+        public CharacterSkill GetSkill(int unit)
+        {
+            return _unitSkills[unit];
+        }
+
+        public int GetSkillTurn(int unit)
+        {
+            return _unitSkillTurns[unit];
+        }
+
         public void ProgressTurn()
         {
             CrowdControlProgressTurn();
+            for (int i = 0; i < _rosters.Count; i++)
+            {
+                if (IsDead(_rosters[i]) || HasCrowdControl(_rosters[i], CCType.STUN)) continue;
+                if (_unitSkills[_rosters[i]] != null)
+                {
+                    _unitSkillTurns[_rosters[i]]--;
+                    if (_unitSkillTurns[_rosters[i]] < 0)
+                    {
+                        _unitSkills[_rosters[i]] = null;
+                    }
+                }
+            }
         }
 
         public void KillUnit(int unit)

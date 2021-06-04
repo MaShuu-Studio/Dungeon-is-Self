@@ -900,6 +900,7 @@ public class S_ProgressTurn : IPacket
 		public int deadTurn;
 		public int unitIndex;
 		public int diceResult;
+		public int remainTurn;
 		public List<int> diceIndexs = new List<int>();
 		public class CcWithTurn
 		{
@@ -981,6 +982,8 @@ public class S_ProgressTurn : IPacket
 			count += sizeof(int);
 			this.diceResult = BitConverter.ToInt32(segment.Array, segment.Offset + count);
 			count += sizeof(int);
+			this.remainTurn = BitConverter.ToInt32(segment.Array, segment.Offset + count);
+			count += sizeof(int);
 			diceIndexs.Clear();
 			ushort diceIndexLen = BitConverter.ToUInt16(segment.Array, segment.Offset + count);
 			count += sizeof(ushort);
@@ -1013,6 +1016,9 @@ public class S_ProgressTurn : IPacket
 			count += sizeof(int);
 			
 			Array.Copy(BitConverter.GetBytes(this.diceResult), 0, segment.Array, segment.Offset + count, sizeof(int));
+			count += sizeof(int);
+			
+			Array.Copy(BitConverter.GetBytes(this.remainTurn), 0, segment.Array, segment.Offset + count, sizeof(int));
 			count += sizeof(int);
 			
 			Array.Copy(BitConverter.GetBytes((ushort)diceIndexs.Count), 0, segment.Array, segment.Offset + count, sizeof(ushort));

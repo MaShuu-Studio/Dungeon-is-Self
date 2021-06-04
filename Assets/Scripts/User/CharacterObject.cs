@@ -50,6 +50,12 @@ public class CharacterObject : MonoBehaviour
         if (skillObject != null) skillObject.SetActive(true);
         skillImage.sprite = Resources.Load<Sprite>("Sprites/Skills/" + skill.id);
     }
+    public void SetSkill(int id, int turn)
+    {
+        if (skillObject != null) skillObject.SetActive(true);
+        skillImage.sprite = Resources.Load<Sprite>("Sprites/Skills/" + id);
+        turnText.text = turn.ToString();
+    }
 
     public void UpdateCharacterInfo(int hp, int turn, bool isOff = false)
     {

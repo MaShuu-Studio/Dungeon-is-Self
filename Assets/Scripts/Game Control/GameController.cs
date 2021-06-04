@@ -215,6 +215,7 @@ namespace GameControl
             GamePlayUIController.Instance.SetButtonInteract(progressRound);
             Dictionary<int, List<int>> dices = new Dictionary<int, List<int>>();
             Dictionary<int, int> selectedSkills = new Dictionary<int, int>();
+            Dictionary<int, int> remainTurns = new Dictionary<int, int>();
             List<bool> isAttack = new List<bool>();
             List<bool> isWait = new List<bool>();
             Dictionary<int, System.Tuple<bool, int>> deadUnit = new Dictionary<int, System.Tuple<bool, int>>();
@@ -227,10 +228,11 @@ namespace GameControl
             foreach (S_ProgressTurn.Result item in packet.results)
             {
                 selectedSkills.Add(item.unitIndex, item.diceResult);
+                remainTurns.Add(item.unitIndex, item.remainTurn);
                 dices.Add(item.unitIndex, item.diceIndexs);
                 deadUnit.Add(item.unitIndex, new System.Tuple<bool, int>(item.isDead, item.deadTurn));
 
-                if (item.diceResult == -1)
+                if (item.diceResult == -1 || item.remainTurn > 0)
                 {
                     animationEnd[item.unitIndex] = true;
                     isAttack.Add(false);
@@ -270,10 +272,10 @@ namespace GameControl
                 }
             }
 
-            StartCoroutine(BattleAnimation(turn, packet.monsterTurn, packet.resetTurn, dices, selectedSkills, packet.monsterHps, ccs, deadUnit, winner, endTurn, isGameEnd));
+            StartCoroutine(BattleAnimation(turn, packet.monsterTurn, packet.resetTurn, dices, selectedSkills, remainTurns, packet.monsterHps, ccs, deadUnit, winner, endTurn, isGameEnd));
         }
 
-        IEnumerator BattleAnimation(int turn, int attackTurn, int resetTurn, Dictionary<int, List<int>> dices, Dictionary<int, int> diceSkills,
+        IEnumerator BattleAnimation(int turn, int attackTurn, int resetTurn, Dictionary<int, List<int>> dices, Dictionary<int, int> diceSkills, Dictionary<int, int> remainTurns,
             List<int> monsterHps, Dictionary<int, List<List<CrowdControl>>> ccs, Dictionary<int, System.Tuple<bool, int>> deadUnit, int winner, int endTurn, bool isGameEnd)
         {
             while (isDiceRolled) yield return null;
@@ -283,7 +285,8 @@ namespace GameControl
             int i = 0;
             for (; i < animationEnd.Count; i++)
             {
-                if (diceSkills[keys[i]] < 0) continue;
+                GamePlayUIController.Instance.UpdateOffenderCharacter(keys[i], diceSkills[keys[i]], remainTurns[keys[i]]);
+                if (diceSkills[keys[i]] < 0 || remainTurns[keys[i]] > 0) continue;
                 if (isDead[keys[i]] == false)
                 {
                     GamePlayUIController.Instance.PlayAnimation(keys[i], "Attack");

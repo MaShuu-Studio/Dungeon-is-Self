@@ -1025,35 +1025,33 @@ public class GamePlayUIController : MonoBehaviour
         }
     }
 
-    public void UpdateOffenderCharacter(int index, System.Tuple<CharacterSkill, int> readyTurn)
+    public void UpdateOffenderCharacter(int index, int id, int turn)
     {
         if (type == UserType.Defender)
         {
             for (int i = 0; i < enemyObjects.Count; i++)
                 if (enemyObjects[i] != null && enemyObjects[i].GetIndex() == index)
                 {
-                    if (readyTurn != null)
-                    {
-                        enemyObjects[i].SetSkill(readyTurn.Item1);
-                        enemyObjects[i].UpdateCharacterInfo(0, readyTurn.Item2);
-                    }
-                    else enemyObjects[i].UpdateCharacterInfo(0, 0, true);
+                    if (turn != 0)
+                        enemyObjects[i].SetSkill(id, turn);
+                    else
+                        enemyObjects[i].UpdateCharacterInfo(0, 0, true);
                     break;
                 }
         }
         else
         {
             for (int i = 0; i < charObjects.Count; i++)
+            {
                 if (charObjects[i] != null && charObjects[i].GetIndex() == index)
                 {
-                    if (readyTurn != null)
-                    {
-                        charObjects[i].SetSkill(readyTurn.Item1);
-                        charObjects[i].UpdateCharacterInfo(0, readyTurn.Item2);
-                    }
-                    else charObjects[i].UpdateCharacterInfo(0, 0, true);
+                    if (turn != 0)
+                        charObjects[i].SetSkill(id, turn);
+                    else
+                        charObjects[i].UpdateCharacterInfo(0, 0, true);
                     break;
                 }
+            }
         }
     }
 

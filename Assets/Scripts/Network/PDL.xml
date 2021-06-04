@@ -101,6 +101,7 @@
 			<int name="deadTurn"/>
 			<int name="unitIndex"/>
 			<int name="diceResult"/>
+			<int name="remainTurn"/>
 			<list name="diceIndex">
 				<int name="int"/>
 			</list>
