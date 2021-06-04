@@ -18,27 +18,6 @@ namespace Network
 {
     public class Join : MonoBehaviour
     {
-        /*
-        private static Join instance;
-        public static Join Instance
-        {
-            get {
-                var obj = FindObjectOfType<Join>();
-                instance = obj;
-                return instance;
-            }
-        }
-
-        void Awake()
-        {
-            if (instance != this)
-            {
-                Destroy(gameObject);
-                return;
-            }
-            DontDestroyOnLoad(gameObject);
-        }
-        */
         public string memberId { get; private set; }
         public string password { get; private set; }
         public string nickname { get; private set; }
@@ -47,18 +26,6 @@ namespace Network
         public string token { get; private set; }
 
         public AuthenticationHeaderValue authorization { get; private set; }
-        // Start is called before the first frame update
-        void Start()
-        {
-
-        }
-
-        // Update is called once per frame
-        void Update()
-        {
-
-        }
-
         public void InputID(string myID)
         {
             memberId = myID;
@@ -78,8 +45,8 @@ namespace Network
         {
             if (CheckForm())
             {
-                string respath = @"D:\Yujun\study\41\Dudream\Dungeon-is-Self\response.json";
-                string reqpath = @"D:\Yujun\study\41\Dudream\Dungeon-is-Self\test.json";
+                string respath = Application.dataPath + "response.json";
+                string reqpath = Application.dataPath + "test.json";
                 string urlString = "http://ec2-54-180-153-249.ap-northeast-2.compute.amazonaws.com:8080/api/dgiself/member/join";
                 CreateJoinJson(reqpath);
                 //Debug.Log(SendHTTP(joinInfo));
@@ -128,7 +95,6 @@ namespace Network
             HttpWebResponse response = null;
             try
             {
-                Debug.Log("Send");
                 Uri url = new Uri(urlString);
                 request = (HttpWebRequest)WebRequest.Create(url);
                 request.Method = WebRequestMethods.Http.Post;
@@ -138,11 +104,9 @@ namespace Network
                 request.ContentType = "application/json";
                 request.ContentLength = data.Length;
 
-                Debug.Log("Send");
                 Stream dataStream = request.GetRequestStream();
                 dataStream.Write(data, 0, data.Length);
                 dataStream.Close();
-                Debug.Log("Send");
 
                 response = (HttpWebResponse)request.GetResponse();
                 Stream responseStream = response.GetResponseStream();
@@ -152,10 +116,10 @@ namespace Network
                 streamReader.Close();
                 responseStream.Close();
                 response.Close();
-                Debug.Log("Send");
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
+                Debug.Log(e);
                 return result;
             }
             return result;
@@ -173,7 +137,6 @@ namespace Network
             
             try
             {
-                Debug.Log("Send");
                 Uri url = new Uri(urlString);
                 request = (HttpWebRequest)WebRequest.Create(url);
                 request.Method = WebRequestMethods.Http.Get;
@@ -182,20 +145,6 @@ namespace Network
                 //request.Headers["Authentication"] = "Bearer " + token;
                 request.Timeout = 5000;
 
-                /*Debug.Log("Send");
-                byte[] data = Encoding.UTF8.GetBytes(send);
-                request.ContentType = "application/json";
-                request.ContentLength = data.Length;
-
-                Debug.Log("Send");
-                Stream dataStream = request.GetRequestStream();
-                Debug.Log("1");
-                dataStream.Write(data, 0, data.Length);
-                Debug.Log("2");
-                dataStream.Close();
-                Debug.Log("3");*/
-
-                Debug.Log("Send");
                 response = (HttpWebResponse)request.GetResponse();
                 Stream responseStream = response.GetResponseStream();
                 StreamReader streamReader = new StreamReader(responseStream, Encoding.UTF8);
@@ -204,11 +153,10 @@ namespace Network
                 streamReader.Close();
                 responseStream.Close();
                 response.Close();
-                Debug.Log("Send");
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                Debug.Log(ex);
+                Debug.Log(e);
                 return result;
             }
             return result;
@@ -216,8 +164,8 @@ namespace Network
 
         public bool ClickStart()
         {
-            string respath = @"D:\Yujun\study\41\Dudream\Dungeon-is-Self\StartResponse.json";
-            string reqpath = @"D:\Yujun\study\41\Dudream\Dungeon-is-Self\Starttest.json";
+            string respath = Application.dataPath + "StartResponse.json";
+            string reqpath = Application.dataPath + "Starttest.json";
             string urlString = "http://ec2-54-180-153-249.ap-northeast-2.compute.amazonaws.com:8080/api/dgiself/member/login";
             string url = "http://ec2-54-180-153-249.ap-northeast-2.compute.amazonaws.com:8080/api/dgiself/member/authorization";
             string result = "";
@@ -230,8 +178,6 @@ namespace Network
             token = start["token"].ToString();
             jsonObj.Add(new JsonStringValue("startInfo", result));
 
-            
-            
             result2 = SendHTTP2(/*memberId, */url, token);
             jsonObj.Add(new JsonStringValue("token", result2));
 

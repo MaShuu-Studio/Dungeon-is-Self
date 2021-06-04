@@ -146,7 +146,7 @@ namespace Network
             }
             catch (Exception e)
             {
-                Debug.Log("Exception " + e);
+                Debug.Log(e);
             }
             finally
             {
@@ -351,7 +351,7 @@ namespace Network
             }
             catch (Exception e)
             {
-
+                Debug.Log(e);
             }
         }
     }
