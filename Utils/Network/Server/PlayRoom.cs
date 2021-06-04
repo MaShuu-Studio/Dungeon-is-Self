@@ -337,7 +337,8 @@ namespace Server
                             {
                                 ccid = ccResultWithTurn[i][key][j].id,
                                 ccstack = ccResultWithTurn[i][key][j].stack,
-                                ccturn = ccResultWithTurn[i][key][j].turn
+                                ccturn = ccResultWithTurn[i][key][j].turn,
+                                ccdotdmg = ccResultWithTurn[i][key][j].dotDamage
                             });
                         }
 

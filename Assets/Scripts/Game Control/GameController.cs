@@ -251,6 +251,7 @@ namespace GameControl
                         CrowdControl cc = SkillDatabase.Instance.GetCrowdControl(ccInfo.ccid);
                         cc.SetTurn(ccInfo.ccturn);
                         cc.SetStack(ccInfo.ccstack);
+                        cc.SetDotDamage(ccInfo.ccdotdmg);
                         tmp.Add(cc);
                     }
                     ccsWithTurn.Add(tmp);

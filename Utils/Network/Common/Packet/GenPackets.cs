@@ -908,6 +908,7 @@ public class S_ProgressTurn : IPacket
 			    public int ccid;
 				public int ccturn;
 				public int ccstack;
+				public int ccdotdmg;
 				public bool ccOn;
 			
 			    public void Read(ArraySegment<byte> segment, ref ushort count)
@@ -917,6 +918,8 @@ public class S_ProgressTurn : IPacket
 					this.ccturn = BitConverter.ToInt32(segment.Array, segment.Offset + count);
 					count += sizeof(int);
 					this.ccstack = BitConverter.ToInt32(segment.Array, segment.Offset + count);
+					count += sizeof(int);
+					this.ccdotdmg = BitConverter.ToInt32(segment.Array, segment.Offset + count);
 					count += sizeof(int);
 					this.ccOn = BitConverter.ToBoolean(segment.Array, segment.Offset + count);
 					count += sizeof(bool);
@@ -931,6 +934,9 @@ public class S_ProgressTurn : IPacket
 					count += sizeof(int);
 					
 					Array.Copy(BitConverter.GetBytes(this.ccstack), 0, segment.Array, segment.Offset + count, sizeof(int));
+					count += sizeof(int);
+					
+					Array.Copy(BitConverter.GetBytes(this.ccdotdmg), 0, segment.Array, segment.Offset + count, sizeof(int));
 					count += sizeof(int);
 					
 					Array.Copy(BitConverter.GetBytes(this.ccOn), 0, segment.Array, segment.Offset + count, sizeof(bool));

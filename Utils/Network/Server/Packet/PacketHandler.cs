@@ -46,10 +46,12 @@ namespace Network
             C_EnterGame p = packet as C_EnterGame;
             ClientSession clientSession = session as ClientSession;
 
+            Program.Room.Push(() => Program.Room.Enter(clientSession, p.token, p.playerId));
+            /*
             if (clientSession.Room == null) return;
             GameRoom room = clientSession.Room;
 
-            room.Push(() => room.Enter(clientSession, p.token, p.playerId));
+            room.Push(() => room.Enter(clientSession, p.token, p.playerId));*/
         }
         public static void C_LeaveGameHandler(PacketSession session, IPacket packet)
         {

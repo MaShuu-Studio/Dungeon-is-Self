@@ -57,7 +57,8 @@ namespace Network
             packets.Clear();
         }
 
-        public void ConnectToServer()
+        IEnumerator connecting = null;
+        public void ConnectToServer(string token, string pid)
         {
             Debug.Log("Try Connect to server");
             string host;
@@ -66,7 +67,7 @@ namespace Network
             IPEndPoint endPoint;
 
             Connector connector;
-            /*
+            
             #region Local Test
             host = Dns.GetHostName();
             ipHost = Dns.GetHostEntry(host);
@@ -78,8 +79,8 @@ namespace Network
             connector.Connect(endPoint, () => { return session; }, 1);
             #endregion
 
-            
-            */
+
+            /*
             #region Live
             host = "ec2-13-124-208-197.ap-northeast-2.compute.amazonaws.com";
             ipHost = Dns.GetHostEntry(host);
@@ -90,8 +91,24 @@ namespace Network
 
             connector.Connect(endPoint, () => { return session; }, 1);
             #endregion
-            
+            */
 
+            if (connecting != null)
+            {
+                StopCoroutine(connecting);
+            }
+            connecting = WaitConnecting(token, pid);
+            StartCoroutine(connecting);
+        }
+
+        IEnumerator WaitConnecting(string token, string pid)
+        {
+            while (session.Connected == false) yield return null;
+
+            C_EnterGame packet = new C_EnterGame();
+            packet.token = token;
+            packet.playerId = pid;
+            Send(packet.Write());
         }
 
         public void Send(ArraySegment<byte> segment)
@@ -119,7 +136,7 @@ namespace Network
             {
                 Send(new C_CheckConnect() { playerId = playerId }.Write());
                 serverCount++;
-                if (serverCount > 5) break;
+                if (serverCount > 6) break;
                 yield return new WaitForSeconds(1f);
             }
 
@@ -325,10 +342,17 @@ namespace Network
         }
         private void OnApplicationQuit()
         {
-            C_LeaveGame p = new C_LeaveGame();
-            p.playerId = playerId;
-            p.roomId = GameController.Instance.roomId;
-            session.Send(p.Write());
+            try
+            {
+                C_LeaveGame p = new C_LeaveGame();
+                p.playerId = playerId;
+                p.roomId = GameController.Instance.roomId;
+                session.Send(p.Write());
+            }
+            catch (Exception e)
+            {
+
+            }
         }
     }
 }

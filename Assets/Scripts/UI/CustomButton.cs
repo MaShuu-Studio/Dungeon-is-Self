@@ -110,7 +110,9 @@ public class CustomButton : MonoBehaviour
     #region Network
     void ConnectServer()
     {
-        NetworkManager.Instance.ConnectToServer();
+        string pid = UnityEngine.Random.Range(0, 999999).ToString();
+        Debug.Log(pid);
+        NetworkManager.Instance.ConnectToServer("", pid);
         SetButtonInteract(false);
         StartCoroutine(Connecting());
     }

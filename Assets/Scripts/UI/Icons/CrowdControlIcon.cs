@@ -58,7 +58,7 @@ public class CrowdControlIcon : MonoBehaviour, IPointerEnterHandler, IPointerExi
             cc.description;
         if (cc.cc == CCType.DOTDAMAGE)
         {
-            int dmg = stack;
+            int dmg = cc.dotDamage;
             descriptionDmgText.gameObject.SetActive(true);
             descriptionDmgText.text = "DMG: " + dmg;
         }

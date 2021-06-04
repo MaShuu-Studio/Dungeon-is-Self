@@ -109,6 +109,7 @@
 					<int name="ccid"/>
 					<int name="ccturn"/>
 					<int name="ccstack"/>
+					<int name="ccdotdmg"/>
 					<bool name="ccOn"/>
 				</clist>
 			</clist>

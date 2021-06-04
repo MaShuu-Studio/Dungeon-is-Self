@@ -12,7 +12,6 @@ namespace Server
         List<ArraySegment<byte>> _pendingList = new List<ArraySegment<byte>>();
         List<Tuple<string, ArraySegment<byte>>> _packetList = new List<Tuple<string, ArraySegment<byte>>>();
 
-        int _playerNumber = 1;
         int _roomNumber = 1;
 
         Dictionary<string, ClientSession> _sessions = new Dictionary<string, ClientSession>();
@@ -39,7 +38,7 @@ namespace Server
             for (int i = 0; i < keys.Count; i++)
             {
                 _sessionCount[keys[i]]++;
-                if (_sessionCount[keys[i]] > 5) Leave(keys[i]);
+                if (_sessionCount[keys[i]] > 6) Leave(keys[i]);
             }
         }
 
@@ -80,14 +79,15 @@ namespace Server
             {
                 session.Disconnect();
             }
+
             string id = pId;
             Console.WriteLine($"Enter User : {id}");
             session.Send(new S_GivePlayerId() { playerId = id }.Write());
+            session.Room = this;
 
             // 플레이어 추가
             _sessionCount.Add(id, 0);
             _sessions.Add(id, session);
-            session.Room = this;
 
             UpdateUserInfo();
         }

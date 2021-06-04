@@ -9,14 +9,18 @@ namespace Network
 {
     class ServerSession : PacketSession
     {
+        private bool isConnected = false;
+        public bool Connected { get { return isConnected; } }
         public override void OnConnected(EndPoint endPoint)
         {
             Debug.Log($"[System] OnConnected : {endPoint}");
+            isConnected = true;
         }
 
         public override void OnDisconnected(EndPoint endPoint)
         {
             Debug.Log($"[System] OnDisconnected : {endPoint}");
+            isConnected = false;
         }
 
         public override void OnRecvPacket(ArraySegment<byte> buffer)
