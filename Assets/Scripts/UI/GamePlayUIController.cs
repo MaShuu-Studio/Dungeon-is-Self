@@ -1249,7 +1249,9 @@ public class GamePlayUIController : MonoBehaviour
         {
             if (c != null && c.CheckIndex(index))
             {
-                c.SetAnimation(anim);
+                float xPos = c.transform.position.x;
+                if (type == UserType.Offender) xPos = enemyObjects[0].transform.position.x;
+                c.SetAnimation(anim, xPos);
                 return;
             }
         }
@@ -1258,7 +1260,9 @@ public class GamePlayUIController : MonoBehaviour
         {
             if (c != null && c.CheckIndex(index))
             {
-                c.SetAnimation(anim);
+                float xPos = c.transform.position.x;
+                if (type == UserType.Defender) xPos = charObjects[0].transform.position.x;
+                c.SetAnimation(anim, xPos);
                 return;
             }
         }

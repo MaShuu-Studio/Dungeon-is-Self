@@ -289,7 +289,7 @@ namespace GameControl
                 if (diceSkills[keys[i]] < 0 || remainTurns[keys[i]] > 0) continue;
                 if (isDead[keys[i]] == false)
                 {
-                    GamePlayUIController.Instance.PlayAnimation(keys[i], "Attack");
+                    GamePlayUIController.Instance.PlayAnimation(keys[i], diceSkills[keys[i]].ToString());
                     while (animationEnd[keys[i]] == false) yield return null;
                 }
                 else

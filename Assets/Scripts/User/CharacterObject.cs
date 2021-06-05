@@ -25,6 +25,8 @@ public class CharacterObject : MonoBehaviour
     private List<GameObject> rolledDices = new List<GameObject>();
 
     private IEnumerator coroutine;
+    private float originXPos;
+
 
     // Start is called before the first frame update
     void Awake()
@@ -134,10 +136,14 @@ public class CharacterObject : MonoBehaviour
         index = n;
     }
 
-    public void SetAnimation(string name)
+    public void SetAnimation(string name, float x)
     {
+        if (name != "10100") name = "Attack";
         _animator.SetTrigger(name);
         coroutine = Animation(name);
+        originXPos = transform.position.x;
+        _sprite.sortingOrder = 1;
+        transform.position = new Vector3(x, transform.position.y, 0);
     }
 
     public void SetFlip(bool isFlip)
@@ -159,7 +165,9 @@ public class CharacterObject : MonoBehaviour
     {
         while (_animator.GetCurrentAnimatorStateInfo(0).IsName(name.ToUpper())) yield return null;
 
-        float time = 0.2f;
+        transform.position = new Vector3(originXPos, transform.position.y, 0);
+        _sprite.sortingOrder = 0;
+        float time = 0.3f;
         while (time > 0)
         {
             time -= Time.deltaTime;
