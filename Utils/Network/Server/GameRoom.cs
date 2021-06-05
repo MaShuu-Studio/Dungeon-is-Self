@@ -77,9 +77,7 @@ namespace Server
         public void Enter(ClientSession session, string token, string pId)
         {
             string id = RequestJoinClient(token);
-            Console.WriteLine(pId);
-            Console.WriteLine(id);
-            if (id == pId)
+            if (_sessions.Keys.Contains(id) == false &&id == pId)
             {
                 Console.WriteLine($"Enter User : {id}");
                 session.Send(new S_GivePlayerId() { playerId = id }.Write());
