@@ -54,6 +54,10 @@ namespace Network
         {
             NetworkManager.Instance.UpdateServer();
         }
+        public static void S_FailConnectHandler(PacketSession session, IPacket packet)
+        {
+            NetworkManager.Instance.Disconnect();
+        }
         public static void S_BroadcastConnectUserHandler(PacketSession session, IPacket packet)
         {
             S_BroadcastConnectUser p = packet as S_BroadcastConnectUser;

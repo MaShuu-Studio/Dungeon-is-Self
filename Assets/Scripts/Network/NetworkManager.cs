@@ -38,7 +38,7 @@ namespace Network
         }
         #endregion
 
-        private string playerId;
+        private string playerId = "";
         public int totalUser { get; private set; } = 0;
         public int playingUser { get; private set; } = 0;
         public int waitDefenderUser { get; private set; } = 0;
@@ -68,6 +68,7 @@ namespace Network
 
             Connector connector;
             
+            /*
             #region Local Test
             host = Dns.GetHostName();
             ipHost = Dns.GetHostEntry(host);
@@ -78,9 +79,8 @@ namespace Network
 
             connector.Connect(endPoint, () => { return session; }, 1);
             #endregion
-
-
-            /*
+            */
+            
             #region Live
             host = "ec2-13-124-208-197.ap-northeast-2.compute.amazonaws.com";
             ipHost = Dns.GetHostEntry(host);
@@ -91,8 +91,7 @@ namespace Network
 
             connector.Connect(endPoint, () => { return session; }, 1);
             #endregion
-            */
-
+            
             if (connecting != null)
             {
                 StopCoroutine(connecting);
@@ -142,7 +141,7 @@ namespace Network
 
             try
             {
-                session.Disconnect();
+                Disconnect();
             }
             catch (Exception e)
             {
@@ -151,7 +150,6 @@ namespace Network
             finally
             {
                 SceneController.Instance.ChangeScene("Title");
-                session = new ServerSession();
             }
         }
 
@@ -340,6 +338,12 @@ namespace Network
 
             SceneController.Instance.ChangeScene("Main");
         }
+        public void Disconnect() 
+        {
+            session.Disconnect();
+            session = new ServerSession();
+        }
+
         private void OnApplicationQuit()
         {
             try

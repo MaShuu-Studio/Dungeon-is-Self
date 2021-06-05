@@ -1,8 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text;
 using ServerCore;
+using System.Net.Http.Headers;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Server
 {
@@ -71,25 +76,66 @@ namespace Server
 
         public void Enter(ClientSession session, string token, string pId)
         {
-            if (true)
+            string id = RequestJoinClient(token);
+            Console.WriteLine(pId);
+            Console.WriteLine(id);
+            if (id == pId)
             {
+                Console.WriteLine($"Enter User : {id}");
+                session.Send(new S_GivePlayerId() { playerId = id }.Write());
+                session.Room = this;
 
+                // 플레이어 추가
+                _sessionCount.Add(id, 0);
+                _sessions.Add(id, session);
+
+                UpdateUserInfo();
             }
             else
             {
+                session.Send(new S_FailConnect().Write());
                 session.Disconnect();
             }
+        }
+        private string RequestJoinClient(string token)
+        {
+            string urlString = "http://ec2-54-180-153-249.ap-northeast-2.compute.amazonaws.com:8080/api/dgiself/member/authorization";
+            int nStartTime = 0;
+            string result = "";
+            string strMsg = string.Empty;
+            nStartTime = Environment.TickCount;
 
-            string id = pId;
-            Console.WriteLine($"Enter User : {id}");
-            session.Send(new S_GivePlayerId() { playerId = id }.Write());
-            session.Room = this;
+            HttpWebRequest request = null;
+            HttpWebResponse response = null;
 
-            // 플레이어 추가
-            _sessionCount.Add(id, 0);
-            _sessions.Add(id, session);
+            try
+            {
+                Uri url = new Uri(urlString);
+                request = (HttpWebRequest)WebRequest.Create(url);
+                request.Method = WebRequestMethods.Http.Get;
 
-            UpdateUserInfo();
+                request.Headers.Add("Authorization", "Bearer " + token);
+                //request.Headers["Authentication"] = "Bearer " + token;
+                request.Timeout = 5000;
+
+                response = (HttpWebResponse)request.GetResponse();
+                Stream responseStream = response.GetResponseStream();
+                StreamReader streamReader = new StreamReader(responseStream, Encoding.UTF8);
+                result = streamReader.ReadToEnd();
+
+                streamReader.Close();
+                responseStream.Close();
+                response.Close();
+
+                JObject start = JObject.Parse(result);
+                result = start["memberCode"].ToString();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                result = "false";
+            }
+            return result;
         }
 
         public void Leave(string id)

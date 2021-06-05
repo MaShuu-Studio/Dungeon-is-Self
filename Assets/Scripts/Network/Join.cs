@@ -23,7 +23,6 @@ namespace Network
         public string nickname { get; private set; }
         public string joinInfo { get; private set; }
         public string startInfo { get; private set; }
-        public string token { get; private set; }
 
         public AuthenticationHeaderValue authorization { get; private set; }
         public void InputID(string myID)
@@ -60,13 +59,13 @@ namespace Network
         {
             if (memberId.Length < 6 && memberId.Length > 16) return false;
             if (password.Length < 7 && password.Length > 20) return false;
-            else
+
             {
                 bool checkC = false, checkN = false;
                 for (int i = 0; i < password.Length; i++)
                 {
-                    if ((password[i] >= 65 && password[i] <= 90) || (password[i] >= 97 && password[i] <= 122)) checkC = true;
-                    if (password[i] >= 48 && password[i] <= 57) checkN = true;
+                    if ((password[i] >= 'a' && password[i] <= 'z') || (password[i] >= 'A' && password[i] <= 'Z')) checkC = true;
+                    if (password[i] >= '0' && password[i] <= '9') checkN = true;
                 }
                 if (checkC && checkN) return true;
                 else return false;
@@ -120,71 +119,34 @@ namespace Network
             catch (Exception e)
             {
                 Debug.Log(e);
-                return result;
             }
             return result;
         }
 
-        private string SendHTTP2(/*string send, */string urlString, string token)
-        {
-            int nStartTime = 0;
-            string result = "";
-            string strMsg = string.Empty;
-            nStartTime = Environment.TickCount;
-
-            HttpWebRequest request = null;
-            HttpWebResponse response = null;
-            
-            try
-            {
-                Uri url = new Uri(urlString);
-                request = (HttpWebRequest)WebRequest.Create(url);
-                request.Method = WebRequestMethods.Http.Get;
-                
-                request.Headers.Add("Authorization", "Bearer " + token);
-                //request.Headers["Authentication"] = "Bearer " + token;
-                request.Timeout = 5000;
-
-                response = (HttpWebResponse)request.GetResponse();
-                Stream responseStream = response.GetResponseStream();
-                StreamReader streamReader = new StreamReader(responseStream, Encoding.UTF8);
-                result = streamReader.ReadToEnd();
-
-                streamReader.Close();
-                responseStream.Close();
-                response.Close();
-            }
-            catch (Exception e)
-            {
-                Debug.Log(e);
-                return result;
-            }
-            return result;
-        }
-
-        public bool ClickStart()
+        public bool ClickStart(out string token, out string pid)
         {
             string respath = Application.dataPath + "StartResponse.json";
             string reqpath = Application.dataPath + "Starttest.json";
             string urlString = "http://ec2-54-180-153-249.ap-northeast-2.compute.amazonaws.com:8080/api/dgiself/member/login";
-            string url = "http://ec2-54-180-153-249.ap-northeast-2.compute.amazonaws.com:8080/api/dgiself/member/authorization";
             string result = "";
-            string result2 = "";
             CreateStartJson(reqpath);
             JsonObjectCollection jsonObj = new JsonObjectCollection();
+            token = "";
+            pid = "";
 
             result = SendHTTP(startInfo, urlString);
-            JObject start = JObject.Parse(result);
-            token = start["token"].ToString();
-            jsonObj.Add(new JsonStringValue("startInfo", result));
+            try
+            {
+                JObject start = JObject.Parse(result);
+                token = start["token"].ToString();
+                pid = start["memberCode"].ToString();
 
-            result2 = SendHTTP2(/*memberId, */url, token);
-            jsonObj.Add(new JsonStringValue("token", result2));
-
-            File.WriteAllText(respath, jsonObj.ToString());
-
-            //File.WriteAllText(path, token);
-            if(result != "") return true;
+            }
+            catch (Exception e)
+            {
+                Debug.Log(e);
+            }
+            if (result != "") return true;
             else return false;
         }
 

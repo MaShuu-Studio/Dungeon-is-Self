@@ -114,10 +114,12 @@ public class CustomButton : MonoBehaviour
     {
         Join join = FindObjectOfType<Join>();
         if (join == null) return;
-        if(join.ClickStart())
+
+        string token;
+        string pid;
+        if(join.ClickStart(out token, out pid))
         {
-            string pid = UnityEngine.Random.Range(0, 999999).ToString();
-            NetworkManager.Instance.ConnectToServer("", pid);
+            NetworkManager.Instance.ConnectToServer(token, pid);
             SetButtonInteract(false);
             StartCoroutine(Connecting());
         }

@@ -18,6 +18,8 @@
 	<packet name="S_GivePlayerId">
 		<string name="playerId"/>
 	</packet>
+	<packet name="S_FailConnect">
+	</packet>
 	<packet name="C_LeaveGame">
 		<string name="roomId"/>
 		<string name="playerId"/>
