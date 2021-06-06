@@ -27,9 +27,27 @@ public class SettingUI : MonoBehaviour
         DontDestroyOnLoad(gameObject);
     }
 
+    [SerializeField] private Canvas canvas;
+    [SerializeField] private GameObject settingObj;
+    [SerializeField] private GameObject soundControlObject;
+    [SerializeField] private GameObject graphicControlObject;
+    [SerializeField] private Dropdown screenMode;
+
     private void Start()
     {
         settingObj.SetActive(false);
+        graphicControlObject.SetActive(false);
+        int mode = 0;
+        switch(Screen.fullScreenMode)
+        {
+            case FullScreenMode.ExclusiveFullScreen:
+                mode = 1;
+                break;
+            case FullScreenMode.FullScreenWindow:
+                mode = 2;
+                break;
+        }
+        screenMode.value = mode;
     }
 
     private void Update()
@@ -40,9 +58,6 @@ public class SettingUI : MonoBehaviour
         }
     }
 
-    [SerializeField] private Canvas canvas;
-    [SerializeField] private GameObject settingObj;
-    [SerializeField] private GameObject soundControlObject;
 
     public void SetCanvasCamera()
     {
@@ -53,11 +68,23 @@ public class SettingUI : MonoBehaviour
     {
         settingObj.SetActive(!settingObj.activeSelf);
         soundControlObject.SetActive(false);
+        graphicControlObject.SetActive(false);
     }
 
     public void SoundObjectOnOff()
     {
         soundControlObject.SetActive(!soundControlObject.activeSelf);
+    }
+
+    public void GraphicObjectOnOff()
+    {
+        graphicControlObject.SetActive(!graphicControlObject.activeSelf);
+    }
+
+    public void SetResolution()
+    {
+        // 1: Windowed, 2: FullScreen, 3: FullScreen Window        
+        ResolutionManager.Instance.SetScreenMode(screenMode.value);
     }
 
     public void LogOut()

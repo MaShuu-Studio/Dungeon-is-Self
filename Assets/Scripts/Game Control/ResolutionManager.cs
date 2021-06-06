@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class ResolutionManager : MonoBehaviour
 {
+    public enum ScreenMode { WINDOWED = 0, FULLSCREEN, FULLSCREENWINDOW }
     readonly int defaultWidth = 1920;
     readonly int defaultHeight = 1080;
     float defaultRatio;
@@ -37,6 +38,27 @@ public class ResolutionManager : MonoBehaviour
     private void Update()
     {
         SetResolution();
+    }
+
+    public void SetScreenMode(int index)
+    {
+        switch((ScreenMode)index)
+        {
+            case ScreenMode.WINDOWED:
+                Screen.fullScreenMode = FullScreenMode.Windowed;
+                break;
+            case ScreenMode.FULLSCREEN:
+                Screen.fullScreenMode = FullScreenMode.ExclusiveFullScreen;
+                break;
+            case ScreenMode.FULLSCREENWINDOW:
+                Screen.fullScreenMode = FullScreenMode.FullScreenWindow;
+                break;
+        }
+    }
+
+    public void SetResolution(int width, int height)
+    {
+
     }
 
     private void SetResolution()
