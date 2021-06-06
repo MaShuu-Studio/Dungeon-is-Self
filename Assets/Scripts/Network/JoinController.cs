@@ -4,15 +4,9 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using System;
-using System.Linq;
-using System.Data;
-using System.Web;
-using Newtonsoft.Json;
 using System.IO;
 using System.Text;
 using System.Net;
-using System.Net.Http.Headers;
-using System.Threading.Tasks;
 using System.Net.Json;
 using Newtonsoft.Json.Linq;
 
@@ -21,7 +15,10 @@ namespace Network
     public class JoinController : MonoBehaviour
     {
         [SerializeField] private List<GameObject> views;
-        [SerializeField] private List<InputField> inputFields;
+        [SerializeField] private List<InputField> signinInputFields;
+        [SerializeField] private List<InputField> signupInputFields;
+        [SerializeField] private Button signInButton;
+        [SerializeField] private Button signUpButton;
         [SerializeField] private Text failedSignIn;
         [SerializeField] private Text failedSignUp;
         private string memberId;
@@ -32,9 +29,31 @@ namespace Network
 
         private void Update()
         {
-            if (Input.GetKeyDown(KeyCode.Tab))
+            if (Input.GetKeyDown(KeyCode.Tab) || Input.GetKeyDown(KeyCode.Return))
             {
+                if (views[0].activeSelf)
+                {
+                    for (int i = 0; i < signinInputFields.Count; i++)
+                        if(signinInputFields[i].isFocused)
+                        {
+                            i++;
+                            if (i == signinInputFields.Count) signInButton.Select();
+                            else signinInputFields[i].Select();
+                            break;
+                        }
+                }
+                else
+                {
+                    for (int i = 0; i < signupInputFields.Count; i++)
+                        if (signupInputFields[i].isFocused)
+                        {
+                            i++;
+                            if (i == signupInputFields.Count) signUpButton.Select();
+                            else signupInputFields[i].Select();
+                            break;
+                        }
 
+                }
             }
         }
 
@@ -46,8 +65,11 @@ namespace Network
             joinInfo = "";
             startInfo = "";
 
-            for (int i = 0; i < inputFields.Count; i++)
-                inputFields[i].text = "";
+            for (int i = 0; i < signinInputFields.Count; i++)
+                signinInputFields[i].text = "";
+
+            for (int i = 0; i < signupInputFields.Count; i++)
+                signupInputFields[i].text = "";
 
             foreach (GameObject view in views)
                 view.SetActive(!view.activeSelf);
@@ -75,10 +97,8 @@ namespace Network
         {
             if (CheckForm())
             {
-                string respath = Application.dataPath + "response.json";
-                string reqpath = Application.dataPath + "test.json";
                 string urlString = "http://ec2-54-180-153-249.ap-northeast-2.compute.amazonaws.com:8080/api/dgiself/member/join";
-                CreateJoinJson(reqpath);
+                CreateJoinJson();
 
                 string result = SendHTTP(joinInfo, urlString);
                 if (result == "true")
@@ -102,6 +122,7 @@ namespace Network
         {
             if (memberId.Length < 6 && memberId.Length > 12) return false;
             if (password.Length < 8 && password.Length > 20) return false;
+            if (nickname.Length < 2 && nickname.Length > 10) return false;
 
             {
                 string specialCharacterList = "!@#$%^&*()_+-=,./";
@@ -122,13 +143,12 @@ namespace Network
             }
         }
 
-        private void CreateJoinJson(string path)
+        private void CreateJoinJson()
         {
             JsonObjectCollection jsonObj = new JsonObjectCollection();
             jsonObj.Add(new JsonStringValue("memberId", memberId));
             jsonObj.Add(new JsonStringValue("password", password));
             jsonObj.Add(new JsonStringValue("nickname", nickname));
-            File.WriteAllText(path, jsonObj.ToString());
             joinInfo = jsonObj.ToString();
         }
 
@@ -176,11 +196,9 @@ namespace Network
 
         public bool ClickStart(out string token, out string pid)
         {
-            string respath = Application.dataPath + "StartResponse.json";
-            string reqpath = Application.dataPath + "Starttest.json";
             string urlString = "http://ec2-54-180-153-249.ap-northeast-2.compute.amazonaws.com:8080/api/dgiself/member/login";
             string result = "";
-            CreateStartJson(reqpath);
+            CreateStartJson();
             JsonObjectCollection jsonObj = new JsonObjectCollection();
             token = "";
             pid = "";
@@ -213,12 +231,11 @@ namespace Network
             return false;
         }
 
-        private void CreateStartJson(string path)
+        private void CreateStartJson()
         {
             JsonObjectCollection jsonObj = new JsonObjectCollection();
             jsonObj.Add(new JsonStringValue("memberId", memberId));
             jsonObj.Add(new JsonStringValue("password", password));
-            File.WriteAllText(path, jsonObj.ToString());
             startInfo = jsonObj.ToString();
         }
     }
