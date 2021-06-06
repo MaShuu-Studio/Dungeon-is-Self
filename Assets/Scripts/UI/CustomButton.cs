@@ -38,9 +38,6 @@ public class CustomButton : MonoBehaviour
             case ButtonMethod.GamePlayReady:
                 button.onClick.AddListener(GamePlayReady);
                 break;
-            case ButtonMethod.GameExit:
-                button.onClick.AddListener(Application.Quit);
-                break;
             case ButtonMethod.ConnectServer:
                 button.onClick.AddListener(ConnectServer);
                 break;

@@ -47,7 +47,7 @@ public class SceneController : MonoBehaviour
             yield return null;
         }
         CurrentScene = name.ToUpper();
-
+        SettingUI.Instance.SetCanvasCamera();
         if (CurrentScene == "GAMEPLAY")
         {
             GameController.Instance.ReadyGame();

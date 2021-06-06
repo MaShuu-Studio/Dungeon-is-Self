@@ -138,18 +138,7 @@ namespace Network
                 yield return new WaitForSeconds(1f);
             }
 
-            try
-            {
-                Disconnect();
-            }
-            catch (Exception e)
-            {
-                Debug.Log(e);
-            }
-            finally
-            {
-                SceneController.Instance.ChangeScene("Title");
-            }
+            Disconnect();
         }
 
         public void UpdateServer()
@@ -337,10 +326,22 @@ namespace Network
 
             SceneController.Instance.ChangeScene("Main");
         }
-        public void Disconnect() 
+        public void Disconnect()
         {
-            session.Disconnect();
-            session = new ServerSession();
+            try
+            {
+                session.Disconnect();
+                session = new ServerSession();
+            }
+            catch (Exception e)
+            {
+                Debug.Log(e);
+            }
+            finally
+            {
+                SceneController.Instance.ChangeScene("Title");
+                StopAllCoroutines();
+            }
         }
 
         private void OnApplicationQuit()

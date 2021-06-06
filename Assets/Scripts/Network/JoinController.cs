@@ -168,6 +168,7 @@ namespace Network
             }
             catch (Exception e)
             {
+                result = "false";
                 Debug.Log(e);
             }
             return result;

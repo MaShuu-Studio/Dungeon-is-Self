@@ -95,6 +95,7 @@
     <Compile Include="Assets\Scripts\UI\Icons\UIIcon.cs" />
     <Compile Include="Assets\Scripts\UI\Icons\UsingSkillIcon.cs" />
     <Compile Include="Assets\Scripts\UI\MainUIController.cs" />
+    <Compile Include="Assets\Scripts\UI\SettingUI.cs" />
     <Compile Include="Assets\Scripts\UI\ToggleIcon.cs" />
     <Compile Include="Assets\Scripts\User\AIBot.cs" />
     <Compile Include="Assets\Scripts\User\CharacterObject.cs" />
