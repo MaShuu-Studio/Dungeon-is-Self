@@ -120,9 +120,9 @@ namespace Network
 
         private bool CheckForm()
         {
-            if (memberId.Length < 6 && memberId.Length > 12) return false;
-            if (password.Length < 8 && password.Length > 20) return false;
-            if (nickname.Length < 2 && nickname.Length > 10) return false;
+            if (memberId.Length < 6 || memberId.Length > 12) return false;
+            if (password.Length < 8 || password.Length > 20) return false;
+            if (nickname.Length < 2 || nickname.Length > 10) return false;
 
             {
                 string specialCharacterList = "!@#$%^&*()_+-=,./";
