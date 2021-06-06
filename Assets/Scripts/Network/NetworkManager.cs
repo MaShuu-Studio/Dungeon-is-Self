@@ -39,6 +39,12 @@ namespace Network
         #endregion
 
         private string playerId = "";
+        private string playerName = "";
+        private bool connectRequest = false;
+
+        public string PlayerId { get { return playerId; } }
+        public string PlayerName { get { return playerName; } }
+        public bool ConnectRequest { get { return connectRequest; } }
         public int totalUser { get; private set; } = 0;
         public int playingUser { get; private set; } = 0;
         public int waitDefenderUser { get; private set; } = 0;
@@ -81,6 +87,7 @@ namespace Network
             */
 
             #region Live
+            connectRequest = true;
             host = "ec2-13-124-208-197.ap-northeast-2.compute.amazonaws.com";
             ipHost = Dns.GetHostEntry(host);
             ipAddr = ipHost.AddressList[0];
@@ -90,7 +97,7 @@ namespace Network
 
             connector.Connect(endPoint, () => { return session; }, 1);
             #endregion
-            
+
             if (connecting != null)
             {
                 StopCoroutine(connecting);
@@ -117,6 +124,7 @@ namespace Network
         public void SetPlayerId(string id)
         {
             Debug.Log("Connect Complete");
+            connectRequest = false;
             playerId = id;
             SceneController.Instance.ChangeScene("Main");
             serverCount = 0;
@@ -146,7 +154,13 @@ namespace Network
             serverCount = 0;
         }
 
-        public void SetUserInfo(int totalUser, int playingUser, int waitDefUser, int waitOffUser)
+        public void SetUserInfo(string userId, string userName)
+        {
+            this.playerId = userId;
+            this.playerName = userName;
+        }
+
+        public void SetConnectingUserInfo(int totalUser, int playingUser, int waitDefUser, int waitOffUser)
         {
             this.totalUser = totalUser;
             this.playingUser = playingUser;
@@ -331,7 +345,6 @@ namespace Network
             try
             {
                 session.Disconnect();
-                session = new ServerSession();
             }
             catch (Exception e)
             {
@@ -339,6 +352,8 @@ namespace Network
             }
             finally
             {
+                connectRequest = false;
+                session = new ServerSession();
                 SceneController.Instance.ChangeScene("Title");
                 StopAllCoroutines();
             }

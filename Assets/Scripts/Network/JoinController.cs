@@ -191,21 +191,26 @@ namespace Network
                 JObject start = JObject.Parse(result);
                 token = start["token"].ToString();
                 pid = start["memberCode"].ToString();
+                string nickname = start["nickname"].ToString();
 
+                NetworkManager.Instance.SetUserInfo(pid, nickname);
+
+                if (result != "")
+                {
+                    return true;
+                }
+                else
+                {
+                    failedSignIn.gameObject.SetActive(true);
+                    return false;
+                }
             }
             catch (Exception e)
             {
                 Debug.Log(e);
             }
-            if (result != "")
-            {
-                return true;
-            }
-            else
-            {
-                failedSignIn.gameObject.SetActive(true);
-                return false;
-            }
+            failedSignIn.gameObject.SetActive(true);
+            return false;
         }
 
         private void CreateStartJson(string path)

@@ -63,7 +63,7 @@ namespace Network
             S_BroadcastConnectUser p = packet as S_BroadcastConnectUser;
             ServerSession serverSession = session as ServerSession;
 
-            NetworkManager.Instance.SetUserInfo(p.totalUser, p.playingUser, p.waitDefUser, p.waitOffUser);
+            NetworkManager.Instance.SetConnectingUserInfo(p.totalUser, p.playingUser, p.waitDefUser, p.waitOffUser);
         }
 
         public static void S_GivePlayerIdHandler(PacketSession session, IPacket packet)

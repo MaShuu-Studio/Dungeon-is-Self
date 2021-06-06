@@ -130,13 +130,7 @@ public class CustomButton : MonoBehaviour
 
     IEnumerator Connecting()
     {
-        float time = 2.0f;
-
-        while (time > 0)
-        {
-            time -= Time.deltaTime;
-            yield return null;
-        }
+        while (NetworkManager.Instance.ConnectRequest) yield return null;
 
         SetButtonInteract(true);
     }
