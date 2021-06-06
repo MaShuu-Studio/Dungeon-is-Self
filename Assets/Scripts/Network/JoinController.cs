@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.EventSystems;
 using System;
 using System.Linq;
 using System.Data;
@@ -16,15 +18,44 @@ using Newtonsoft.Json.Linq;
 
 namespace Network
 {
-    public class Join : MonoBehaviour
+    public class JoinController : MonoBehaviour
     {
-        public string memberId { get; private set; }
-        public string password { get; private set; }
-        public string nickname { get; private set; }
-        public string joinInfo { get; private set; }
-        public string startInfo { get; private set; }
+        [SerializeField] private List<GameObject> views;
+        [SerializeField] private List<InputField> inputFields;
+        [SerializeField] private Text failedSignIn;
+        [SerializeField] private Text failedSignUp;
+        private string memberId;
+        private string password;
+        private string nickname;
+        private string joinInfo;
+        private string startInfo;
 
-        public AuthenticationHeaderValue authorization { get; private set; }
+        private void Update()
+        {
+            if (Input.GetKeyDown(KeyCode.Tab))
+            {
+
+            }
+        }
+
+        public void ChangeView()
+        {
+            memberId = "";
+            password = "";
+            nickname = "";
+            joinInfo = "";
+            startInfo = "";
+
+            for (int i = 0; i < inputFields.Count; i++)
+                inputFields[i].text = "";
+
+            foreach (GameObject view in views)
+                view.SetActive(!view.activeSelf);
+
+            failedSignIn.gameObject.SetActive(false);
+            failedSignUp.gameObject.SetActive(false);
+        }
+
         public void InputID(string myID)
         {
             memberId = myID;
@@ -48,26 +79,45 @@ namespace Network
                 string reqpath = Application.dataPath + "test.json";
                 string urlString = "http://ec2-54-180-153-249.ap-northeast-2.compute.amazonaws.com:8080/api/dgiself/member/join";
                 CreateJoinJson(reqpath);
-                //Debug.Log(SendHTTP(joinInfo));
-                JsonObjectCollection jsonObj = new JsonObjectCollection();
-                jsonObj.Add(new JsonStringValue("joinInfo", SendHTTP(joinInfo, urlString)));
-                File.WriteAllText(respath, jsonObj.ToString());
+
+                string result = SendHTTP(joinInfo, urlString);
+                if (result == "true")
+                {
+                    ChangeView();
+                }
+                else
+                {
+                    failedSignUp.text = "<color=#ff0000>이미 있는 아이디입니다.</color>";
+                    failedSignUp.gameObject.SetActive(true);
+                }
+            }
+            else
+            {
+                failedSignUp.text = "<color=#ff0000>아이디, 비밀번호 조건을 확인해주세요.</color>";
+                failedSignUp.gameObject.SetActive(true);
             }
         }
 
         private bool CheckForm()
         {
-            if (memberId.Length < 6 && memberId.Length > 16) return false;
-            if (password.Length < 7 && password.Length > 20) return false;
+            if (memberId.Length < 6 && memberId.Length > 12) return false;
+            if (password.Length < 8 && password.Length > 20) return false;
 
             {
-                bool checkC = false, checkN = false;
+                string specialCharacterList = "!@#$%^&*()_+-=,./";
+                bool pwCondition = false;
                 for (int i = 0; i < password.Length; i++)
                 {
-                    if ((password[i] >= 'a' && password[i] <= 'z') || (password[i] >= 'A' && password[i] <= 'Z')) checkC = true;
-                    if (password[i] >= '0' && password[i] <= '9') checkN = true;
+                    pwCondition = false;
+                    if ((password[i] >= 'a' && password[i] <= 'z')
+                        || (password[i] >= 'A' && password[i] <= 'Z')
+                        || (password[i] >= '0' && password[i] <= '9')
+                        || (specialCharacterList.IndexOf(password[i]) != -1))
+                        pwCondition = true;
+
+                    if (pwCondition == false) break;
                 }
-                if (checkC && checkN) return true;
+                if (pwCondition) return true;
                 else return false;
             }
         }
@@ -146,8 +196,15 @@ namespace Network
             {
                 Debug.Log(e);
             }
-            if (result != "") return true;
-            else return false;
+            if (result != "")
+            {
+                return true;
+            }
+            else
+            {
+                failedSignIn.gameObject.SetActive(true);
+                return false;
+            }
         }
 
         private void CreateStartJson(string path)

@@ -112,11 +112,12 @@ public class CustomButton : MonoBehaviour
     #region Network
     void ConnectServer()
     {
-        Join join = FindObjectOfType<Join>();
+        JoinController join = FindObjectOfType<JoinController>();
         if (join == null) return;
 
         string token;
         string pid;
+
         if(join.ClickStart(out token, out pid))
         {
             NetworkManager.Instance.ConnectToServer(token, pid);
