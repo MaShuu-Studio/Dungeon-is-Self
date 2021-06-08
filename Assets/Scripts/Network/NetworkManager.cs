@@ -63,6 +63,12 @@ namespace Network
             packets.Clear();
         }
 
+        public void Send(ArraySegment<byte> segment)
+        {
+            session.Send(segment);
+        }
+
+        #region Connect
         IEnumerator connecting = null;
         public void ConnectToServer(string token, string pid)
         {
@@ -73,7 +79,7 @@ namespace Network
             IPEndPoint endPoint;
 
             Connector connector;
-            /*
+            
             #region Local Test
             host = Dns.GetHostName();
             ipHost = Dns.GetHostEntry(host);
@@ -84,7 +90,7 @@ namespace Network
 
             connector.Connect(endPoint, () => { return session; }, 1);
             #endregion
-            */
+            /*
 
             #region Live
             connectRequest = true;
@@ -97,7 +103,7 @@ namespace Network
 
             connector.Connect(endPoint, () => { return session; }, 1);
             #endregion
-
+            */
             if (connecting != null)
             {
                 StopCoroutine(connecting);
@@ -114,11 +120,6 @@ namespace Network
             packet.token = token;
             packet.playerId = pid;
             Send(packet.Write());
-        }
-
-        public void Send(ArraySegment<byte> segment)
-        {
-            session.Send(segment);
         }
 
         public void SetPlayerId(string id)
@@ -153,7 +154,6 @@ namespace Network
         {
             serverCount = 0;
         }
-
         public void SetUserInfo(string userId, string userName)
         {
             this.playerId = userId;
@@ -168,6 +168,9 @@ namespace Network
             this.waitOffenderUser = waitOffUser;
         }
 
+        #endregion
+
+        #region Match
         public void MatchRequest(UserType type)
         {
             C_MatchRequest matchPacket = new C_MatchRequest();
@@ -177,6 +180,7 @@ namespace Network
             Send(matchPacket.Write());
         }
 
+        /*
         public void SingleGameRequest(UserType type)
         {
             C_SingleGameRequest singleGamePacket = new C_SingleGameRequest();
@@ -185,6 +189,7 @@ namespace Network
 
             Send(singleGamePacket.Write());
         }
+        */
 
         public void MatchRequestCancel(UserType type)
         {
@@ -194,7 +199,40 @@ namespace Network
 
             Send(matchCancelPacket.Write());
         }
+        #endregion
 
+        #region Private Room
+        public void MakePrivateRoom()
+        {
+            C_MakePrivateRoom packet = new C_MakePrivateRoom();
+            packet.playerId = playerId;
+            Send(packet.Write());
+        }
+
+        public void JoinPrivateRoom(string roomCode)
+        {
+            C_JoinPrivateRoom packet = new C_JoinPrivateRoom();
+            packet.playerId = playerId;
+            packet.roomCode = roomCode;
+            Send(packet.Write());
+        }
+
+        public void StartPrivateRoom(string roomCode)
+        {
+            C_StartPrivateRoom packet = new C_StartPrivateRoom();
+            packet.roomCode = roomCode;
+            Send(packet.Write());
+        }
+
+        public void DestroyPrivateRoom(string roomCode)
+        {
+            C_DestroyPrivateRoom packet = new C_DestroyPrivateRoom();
+            packet.roomCode = roomCode;
+            packet.playerId = playerId;
+        }
+        #endregion
+
+        #region Play Game
         public void GameReadyEnd(ref bool isReady)
         {
             if (GameController.Instance.userType == UserType.Defender) DefenderController.Instance.CandidatesTimeOut();
@@ -340,6 +378,8 @@ namespace Network
 
             SceneController.Instance.ChangeScene("Main");
         }
+        #endregion
+
         public void Disconnect()
         {
             try

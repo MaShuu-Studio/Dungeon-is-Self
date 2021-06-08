@@ -23,9 +23,11 @@ namespace Server
         Dictionary<string, int> _sessionCount = new Dictionary<string, int>();
         List<string> waitDefenderUserList = new List<string>();
         List<string> waitOffenderUserList = new List<string>();
+        Dictionary<string, Dictionary<string, bool>> privateRooms = new Dictionary<string, Dictionary<string, bool>>();
         Dictionary<string, PlayRoom> playingRooms = new Dictionary<string, PlayRoom>();
         Dictionary<string, PlayRoom> playingSingleGameRooms = new Dictionary<string, PlayRoom>();
 
+        #region Basic
         public void Push(Action job)
         {
             _jobQueue.Push(job);
@@ -43,7 +45,7 @@ namespace Server
             for (int i = 0; i < keys.Count; i++)
             {
                 _sessionCount[keys[i]]++;
-                if (_sessionCount[keys[i]] > 6) Leave(keys[i]);
+                if (_sessionCount[keys[i]] > 6) Push(() => Leave(keys[i]));
             }
         }
 
@@ -73,11 +75,13 @@ namespace Server
             _pendingList.Clear();
             _packetList.Clear();
         }
+        #endregion
 
+        #region Connect
         public void Enter(ClientSession session, string token, string pId)
         {
             string id = RequestJoinClient(token);
-            if (_sessions.Keys.Contains(id) == false &&id == pId)
+            if (_sessions.Keys.Contains(id) == false && id == pId)
             {
                 Console.WriteLine($"Enter User : {id}");
                 session.Send(new S_GivePlayerId() { playerId = id }.Write());
@@ -150,8 +154,8 @@ namespace Server
                 _sessionCount.Remove(id);
             }
 
-            PlayingRoomAbnormalExit(id);
-            MatchRequestCancel(id);
+            Push(() => PlayingRoomAbnormalExit(id));
+            Push(() => MatchRequestCancel(id));
             // 플레이어 나감
             // 모든 플레이어에게 퇴장을 브로드캐스트
             UpdateUserInfo();
@@ -177,7 +181,7 @@ namespace Server
             UpdateUserInfo();
         }
 
-        public void UpdateUserInfo()
+        private void UpdateUserInfo()
         {
             // 모든 플레이어에게 입장을 브로드캐스트
             S_BroadcastConnectUser broadcast = new S_BroadcastConnectUser();
@@ -186,9 +190,12 @@ namespace Server
             broadcast.waitDefUser = waitDefenderUserList.Count;
             broadcast.waitOffUser = waitOffenderUserList.Count;
 
-            Broadcast(broadcast.Write());
+            Push(() => Broadcast(broadcast.Write()));
         }
 
+        #endregion
+
+        #region Match Game
         public void MatchRequest(string playerId, UserType type)
         {
             if (type == UserType.Defender)
@@ -219,8 +226,7 @@ namespace Server
                             roomId = roomId,
                             enemyPlayerId = playerIds[i],
                             playerType = i
-                        }
-                        );
+                        });
                 }
             }
 
@@ -296,6 +302,121 @@ namespace Server
 
             UpdateUserInfo();
         }
+
+        #endregion
+
+        #region Private Room
+
+        public void MakePrivateRoom(string userId)
+        {
+            string roomCode = MakePrivateKey();
+            Dictionary<string, bool> newUser = new Dictionary<string, bool>();
+            newUser.Add(userId, false);
+            privateRooms.Add(roomCode, newUser);
+
+            // 데려오기
+        }
+
+        public void JoinPrivateRoom(string userId, string roomCode)
+        {
+            if (privateRooms.ContainsKey(roomCode))
+            {
+                bool canJoin = privateRooms[roomCode].Count == 1;
+                if (canJoin)
+                {
+                    privateRooms[roomCode].Add(userId, false);
+                }
+            }
+            else roomCode = "";
+            // 유저정보 업데이트
+            // 방이 없으면 방 터트려주기
+        }
+
+        public void ReadyPrivateRoom(string userId, string roomCode, bool ready)
+        {
+            if (privateRooms.ContainsKey(roomCode) && privateRooms[roomCode].ContainsKey(userId))
+            {
+                privateRooms[roomCode][userId] = ready;
+            }
+            // 방이 없으면 방 터트려주기
+        }
+
+        public void DestroyPrivateRoom(string userId, string roomCode)
+        {
+            Dictionary<string, bool> users;
+            if (privateRooms.TryGetValue(roomCode, out users))
+            {
+                List<string> pIds = users.Keys.ToList();
+                if (pIds[0] == userId)
+                {
+                    privateRooms.Remove(roomCode);
+                    // 쫓아내기
+                }
+            }
+        }
+
+        public void StartPrivateRoom(string roomCode)
+        {
+            Dictionary<string, bool> users;
+            if (privateRooms.TryGetValue(roomCode, out users))
+            {
+                bool allReady = true;
+                foreach (bool isReady in users.Values)
+                {
+                    allReady = isReady;
+                    if (isReady == false) break;
+                }
+                if (allReady)
+                {
+                    List<string> pIds = users.Keys.ToList();
+                    string[] playerIds = new string[2] { pIds[0], pIds[1] };
+
+                    int roomNumber = _roomNumber++;
+                    string roomId = string.Format("{0:yy}{0:MM}{0:dd}{1:D8}", DateTime.Now, roomNumber);
+
+                    PlayRoom playRoom = new PlayRoom(roomId, playerIds, this);
+                    playingRooms.Add(roomId, playRoom);
+
+                    for (ushort i = 0; i < 2; i++)
+                    {
+                        Send(playerIds[i],
+                            new S_StartGame()
+                            {
+                                roomId = roomId,
+                                enemyPlayerId = playerIds[i],
+                                playerType = i
+                            });
+                    }
+                }
+
+                UpdateUserInfo();
+                privateRooms.Remove(roomCode);
+            }
+        }
+
+        private string MakePrivateKey()
+        {
+            string keyCand = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            string roomCode;
+
+            Random rand = new Random();
+
+            do
+            {
+                roomCode = "";
+                for (int i = 0; i < 5; i++)
+                {
+                    int index = rand.Next(0, keyCand.Length);
+                    roomCode += keyCand[index];
+                }
+            }
+            while (privateRooms.ContainsKey(roomCode));
+
+            return roomCode;
+        }
+        #endregion
+
+        #region Play Game
 
         public void ReadyGameEnd(string roomId, UserType type, List<int> candidates)
         {
@@ -415,10 +536,11 @@ namespace Server
 
                     Send(id, packet);
                     Send(winnerId, packet);
-                    GameEnd(keys[i]);
+                    Push(() => GameEnd(keys[i]));
                     break;
                 }
             }
         }
+        #endregion
     }
 }

@@ -24,8 +24,14 @@ public class PacketManager
         handler.Add((ushort)PacketID.C_EnterGame, PacketHandler.C_EnterGameHandler);
         makeFunc.Add((ushort)PacketID.C_LeaveGame, MakePacket<C_LeaveGame>);
         handler.Add((ushort)PacketID.C_LeaveGame, PacketHandler.C_LeaveGameHandler);
-        makeFunc.Add((ushort)PacketID.C_SingleGameRequest, MakePacket<C_SingleGameRequest>);
-        handler.Add((ushort)PacketID.C_SingleGameRequest, PacketHandler.C_SingleGameRequestHandler);
+        makeFunc.Add((ushort)PacketID.C_MakePrivateRoom, MakePacket<C_MakePrivateRoom>);
+        handler.Add((ushort)PacketID.C_MakePrivateRoom, PacketHandler.C_MakePrivateRoomHandler);
+        makeFunc.Add((ushort)PacketID.C_JoinPrivateRoom, MakePacket<C_JoinPrivateRoom>);
+        handler.Add((ushort)PacketID.C_JoinPrivateRoom, PacketHandler.C_JoinPrivateRoomHandler);
+        makeFunc.Add((ushort)PacketID.C_StartPrivateRoom, MakePacket<C_StartPrivateRoom>);
+        handler.Add((ushort)PacketID.C_StartPrivateRoom, PacketHandler.C_StartPrivateRoomHandler);
+        makeFunc.Add((ushort)PacketID.C_DestroyPrivateRoom, MakePacket<C_DestroyPrivateRoom>);
+        handler.Add((ushort)PacketID.C_DestroyPrivateRoom, PacketHandler.C_DestroyPrivateRoomHandler);
         makeFunc.Add((ushort)PacketID.C_MatchRequest, MakePacket<C_MatchRequest>);
         handler.Add((ushort)PacketID.C_MatchRequest, PacketHandler.C_MatchRequestHandler);
         makeFunc.Add((ushort)PacketID.C_MatchRequestCancel, MakePacket<C_MatchRequestCancel>);

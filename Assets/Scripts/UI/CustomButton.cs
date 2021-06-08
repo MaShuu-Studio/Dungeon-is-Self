@@ -9,7 +9,7 @@ using System.Linq;
 
 public class CustomButton : MonoBehaviour
 {
-    public enum ButtonMethod { SceneMovement = 0, GameReady, GamePlayReady, GameExit, ConnectServer, MatchRequest, MatchRequestCancel };
+    public enum ButtonMethod { SceneMovement = 0, SingleGameReady, GamePlayReady, GameExit, ConnectServer, MatchRequest, MatchRequestCancel };
 
     [SerializeField] private string moveScene = "";
     [SerializeField] private UserType userType = UserType.Offender;
@@ -32,8 +32,8 @@ public class CustomButton : MonoBehaviour
             case ButtonMethod.SceneMovement:
                 button.onClick.AddListener(ChangeScene);
                 break;
-            case ButtonMethod.GameReady:
-                button.onClick.AddListener(SingleGameRequest);
+            case ButtonMethod.SingleGameReady:
+                //button.onClick.AddListener(SingleGameRequest);
                 break;
             case ButtonMethod.GamePlayReady:
                 button.onClick.AddListener(GamePlayReady);
@@ -140,11 +140,13 @@ public class CustomButton : MonoBehaviour
         NetworkManager.Instance.MatchRequest(userType);
         GameController.Instance.SetUserType(userType);
     }
+    /*
     void SingleGameRequest()
     {
         NetworkManager.Instance.SingleGameRequest(userType);
         GameController.Instance.SetUserType(userType);
     }
+    */
     void MatchRequestCancel()
     {
         NetworkManager.Instance.MatchRequestCancel(GameController.Instance.userType);

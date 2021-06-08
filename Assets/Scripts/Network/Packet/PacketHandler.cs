@@ -11,45 +11,6 @@ namespace Network
 {
     class PacketHandler
     {
-        /*
-        public static void S_BroadcastEnterGameHandler(PacketSession session, IPacket packet)
-        {
-            S_BroadcastEnterGame p = packet as S_BroadcastEnterGame;
-            ServerSession serverSession = session as ServerSession;
-
-            PlayerManager.Instance.EnterGame(p);
-            //if (chatPacket.playerId == 1)
-            //Console.WriteLine(chatPacket.chat);
-        }
-        public static void S_BroadcastLeaveGameHandler(PacketSession session, IPacket packet)
-        {
-            S_BroadcastLeaveGame p = packet as S_BroadcastLeaveGame;
-            ServerSession serverSession = session as ServerSession;
-
-            PlayerManager.Instance.LeaveGame(p);
-            //if (chatPacket.playerId == 1)
-            //Console.WriteLine(chatPacket.chat);
-        }
-        public static void S_PlayerListHandler(PacketSession session, IPacket packet)
-        {
-            S_PlayerList p = packet as S_PlayerList;
-            ServerSession serverSession = session as ServerSession;
-
-            PlayerManager.Instance.Add(p);
-
-            //if (chatPacket.playerId == 1)
-            //Console.WriteLine(chatPacket.chat);
-        }
-        public static void S_BroadcastMoveHandler(PacketSession session, IPacket packet)
-        {
-            S_BroadcastMove p = packet as S_BroadcastMove;
-            ServerSession serverSession = session as ServerSession;
-
-            PlayerManager.Instance.Move(p);
-            //if (chatPacket.playerId == 1)
-            //Console.WriteLine(chatPacket.chat);
-        }
-        */
         public static void S_CheckConnectHandler(PacketSession session, IPacket packet)
         {
             NetworkManager.Instance.UpdateServer();
@@ -65,13 +26,21 @@ namespace Network
 
             NetworkManager.Instance.SetConnectingUserInfo(p.totalUser, p.playingUser, p.waitDefUser, p.waitOffUser);
         }
-
         public static void S_GivePlayerIdHandler(PacketSession session, IPacket packet)
         {
             S_GivePlayerId p = packet as S_GivePlayerId;
             ServerSession serverSession = session as ServerSession;
 
             NetworkManager.Instance.SetPlayerId(p.playerId);
+        }
+
+        public static void S_UpdatePrivateRoomHandler(PacketSession session, IPacket packet)
+        {
+            S_UpdatePrivateRoom p = packet as S_UpdatePrivateRoom;
+        }
+        public static void S_DestroyPrivateRoomHandler(PacketSession session, IPacket packet)
+        {
+            S_DestroyPrivateRoom p = packet as S_DestroyPrivateRoom;
         }
 
         public static void S_StartGameHandler(PacketSession session, IPacket packet)
@@ -81,7 +50,6 @@ namespace Network
 
             GameController.Instance.StartGame(p.roomId, (UserType)p.playerType);
         }
-
         public static void S_ReadyGameEndHandler(PacketSession session, IPacket packet)
         {
             S_ReadyGameEnd p = packet as S_ReadyGameEnd;
@@ -89,7 +57,6 @@ namespace Network
 
             GameController.Instance.ReadyGameEnd(p.round, p.enemyCandidates);
         }
-
         public static void S_RoundReadyEndHandler(PacketSession session, IPacket packet)
         {
             S_RoundReadyEnd p = packet as S_RoundReadyEnd;
@@ -97,7 +64,6 @@ namespace Network
 
             GameController.Instance.StartRound(p.round, p.enemyRosters);
         }
-
         public static void S_ProgressTurnHandler(PacketSession session, IPacket packet)
         {
             S_ProgressTurn p = packet as S_ProgressTurn;
@@ -105,7 +71,6 @@ namespace Network
 
             GameController.Instance.ProgressTurn(p.round, p.turn, p);
         }
-
         public static void S_NewRoundHandler(PacketSession session, IPacket packet)
         {
             S_NewRound p = packet as S_NewRound;

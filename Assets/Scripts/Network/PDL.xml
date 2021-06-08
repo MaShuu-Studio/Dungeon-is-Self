@@ -24,6 +24,30 @@
 		<string name="roomId"/>
 		<string name="playerId"/>
 	</packet>
+
+	<packet name="C_MakePrivateRoom">
+		<string name="playerId"/>
+	</packet>
+	<packet name="C_JoinPrivateRoom">
+		<string name="playerId"/>
+		<string name="roomCode"/>
+	</packet>
+	<packet name="S_UpdatePrivateRoom">
+		<string name="roomCode"/>
+		<clist name="user">
+			<string name="playerId"/>
+			<bool name="ready"/>
+		</clist>
+	</packet>
+	<packet name="C_StartPrivateRoom">
+		<string name ="roomCode"/>
+	</packet>
+	<packet name="C_DestroyPrivateRoom">
+		<string name="playerId"/>
+		<string name="roomCode"/>
+	</packet>
+	<packet name="S_DestroyPrivateRoom"/>
+
 	<packet name="C_SingleGameRequest">
 		<string name="playerId"/>
 		<ushort name="playerType"/>
@@ -36,6 +60,7 @@
 		<string name="playerId"/>
 		<ushort name="playerType"/>
 	</packet>
+
 	<packet name="S_StartGame">
 		<string name="roomId"/>
 		<string name="enemyPlayerId"/>
@@ -138,7 +163,7 @@
 	<packet name="C_ReadyCancel">
 		<string name="roomId"/>
 		<ushort name="userType"/>
-	</packet>	
+	</packet>
 	<packet name="C_GameEnd">
 		<string name="roomId"/>
 		<ushort name="type"/>

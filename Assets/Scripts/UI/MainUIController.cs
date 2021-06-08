@@ -13,6 +13,9 @@ public class MainUIController : MonoBehaviour
     [SerializeField] private GameObject userInfoObject;
     [SerializeField] private Text userName;
     [SerializeField] private RectTransform contents;
+    [Header("Private Room")]
+    [SerializeField] private GameObject MakeRoom;
+    public string roomCode { get; set; }
 
     private void Start()
     {
@@ -20,9 +23,10 @@ public class MainUIController : MonoBehaviour
     }
     private void Update()
     {
-        SetUserInfo();
+        SetConnectingUserInfo();
     }
-    public void SetUserInfo()
+
+    public void SetConnectingUserInfo()
     {
         curUserText.text =
             $"현재 접속자 수: {NetworkManager.Instance.totalUser}명\n" +
@@ -31,6 +35,7 @@ public class MainUIController : MonoBehaviour
             $"현재 방어자 매칭인원 : {NetworkManager.Instance.waitDefenderUser}명\n";
     }
 
+    #region UserInfo
     public void ShowUserInfo()
     {
         userInfoObject.SetActive(!userInfoObject.activeSelf);
@@ -48,4 +53,28 @@ public class MainUIController : MonoBehaviour
     {
         contents.sizeDelta = new Vector2(contents.sizeDelta.x, contents.childCount * 100);
     }
+    #endregion
+
+    #region
+    public void MakePrivateRoom()
+    {
+        NetworkManager.Instance.MakePrivateRoom();
+    }
+    
+    public void JoinPrivateRoom()
+    {
+        NetworkManager.Instance.JoinPrivateRoom(roomCode);
+    }
+
+    public void UpdatePrivateRoom()
+    {
+
+    }
+
+    public void DestroyPrivateRoom()
+    {
+
+    }
+    #endregion
+
 }
