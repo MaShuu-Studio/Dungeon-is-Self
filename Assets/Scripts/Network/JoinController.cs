@@ -29,31 +29,60 @@ namespace Network
 
         private void Update()
         {
-            if (Input.GetKeyDown(KeyCode.Tab) || Input.GetKeyDown(KeyCode.Return))
-            {
-                if (views[0].activeSelf)
-                {
-                    for (int i = 0; i < signinInputFields.Count; i++)
-                        if(signinInputFields[i].isFocused)
-                        {
-                            i++;
-                            if (i == signinInputFields.Count) signInButton.Select();
-                            else signinInputFields[i].Select();
-                            break;
-                        }
-                }
-                else
-                {
-                    for (int i = 0; i < signupInputFields.Count; i++)
-                        if (signupInputFields[i].isFocused)
-                        {
-                            i++;
-                            if (i == signupInputFields.Count) signUpButton.Select();
-                            else signupInputFields[i].Select();
-                            break;
-                        }
+            if (Input.GetKeyDown(KeyCode.Tab))
+                NextSelect();
+        }
 
-                }
+        public void NextSelect()
+        {
+            if (views[0].activeSelf)
+            {
+                for (int i = 0; i < signinInputFields.Count; i++)
+                    if (signinInputFields[i].isFocused)
+                    {
+                        i++;
+                        if (i != signinInputFields.Count) signinInputFields[i].Select();
+                        else signInButton.Select();
+                        break;
+                    }
+            }
+            else
+            {
+                for (int i = 0; i < signupInputFields.Count; i++)
+                    if (signupInputFields[i].isFocused)
+                    {
+                        i++;
+                        if (i != signupInputFields.Count) signupInputFields[i].Select();
+                        else signUpButton.Select();
+                        break;
+                    }
+
+            }
+        }
+        public void NextSelect(GameObject obj)
+        {
+            if (views[0].activeSelf)
+            {
+                for (int i = 0; i < signinInputFields.Count; i++)
+                    if (signinInputFields[i].gameObject == obj)
+                    {
+                        i++;
+                        if (i != signinInputFields.Count) signinInputFields[i].Select();
+                        else signInButton.onClick.Invoke();
+                        break;
+                    }
+            }
+            else
+            {
+                for (int i = 0; i < signupInputFields.Count; i++)
+                    if (signupInputFields[i].gameObject == obj)
+                    {
+                        i++;
+                        if (i != signupInputFields.Count) signupInputFields[i].Select();
+                        else signUpButton.onClick.Invoke();
+                        break;
+                    }
+
             }
         }
 
@@ -93,7 +122,7 @@ namespace Network
             nickname = myNN;
         }
 
-        public void ClickJoin()
+        public void SignUp()
         {
             if (CheckForm())
             {
@@ -194,7 +223,7 @@ namespace Network
             return result;
         }
 
-        public bool ClickStart(out string token, out string pid)
+        public bool SignIn(out string token, out string pid)
         {
             string urlString = "http://ec2-54-180-153-249.ap-northeast-2.compute.amazonaws.com:8080/api/dgiself/member/login";
             string result = "";
