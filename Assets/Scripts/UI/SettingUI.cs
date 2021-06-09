@@ -29,14 +29,17 @@ public class SettingUI : MonoBehaviour
 
     [SerializeField] private Canvas canvas;
     [SerializeField] private GameObject settingObj;
-    [SerializeField] private GameObject soundControlObject;
-    [SerializeField] private GameObject graphicControlObject;
+    [SerializeField] private GameObject settingControlObject;
+    [SerializeField] private Slider bgmSlider;
+    [SerializeField] private Slider sfxSlider;
     [SerializeField] private Dropdown screenMode;
+    [SerializeField] private Button tutorialButton;
+    [SerializeField] private Button surrenderButton;
 
     private void Start()
     {
         settingObj.SetActive(false);
-        graphicControlObject.SetActive(false);
+        settingControlObject.SetActive(false);
         int mode = 0;
         switch(Screen.fullScreenMode)
         {
@@ -58,7 +61,6 @@ public class SettingUI : MonoBehaviour
         }
     }
 
-
     public void SetCanvasCamera()
     {
         canvas.worldCamera = Camera.main;
@@ -67,18 +69,33 @@ public class SettingUI : MonoBehaviour
     public void UIObjectOnOff()
     {
         settingObj.SetActive(!settingObj.activeSelf);
-        soundControlObject.SetActive(false);
-        graphicControlObject.SetActive(false);
+        settingControlObject.SetActive(false);
     }
 
-    public void SoundObjectOnOff()
+    public void BGMControl()
     {
-        soundControlObject.SetActive(!soundControlObject.activeSelf);
+        // bgmSlider.value
     }
 
-    public void GraphicObjectOnOff()
+    public void SFXControl()
     {
-        graphicControlObject.SetActive(!graphicControlObject.activeSelf);
+        // sfxSlider.value
+    }
+
+    public void SettingObjectOnOff()
+    {
+        settingControlObject.SetActive(!settingControlObject.activeSelf);
+
+        if (SceneController.Instance.CurrentScene == "GamePlay")
+        {
+            tutorialButton.gameObject.SetActive(false);
+            surrenderButton.gameObject.SetActive(true);
+        }
+        else
+        {
+            tutorialButton.gameObject.SetActive(true);
+            surrenderButton.gameObject.SetActive(false);
+        }
     }
 
     public void SetResolution()
@@ -91,7 +108,7 @@ public class SettingUI : MonoBehaviour
     {
         NetworkManager.Instance.Disconnect();
         settingObj.SetActive(false);
-        soundControlObject.SetActive(false);
+        settingControlObject.SetActive(false);
     }
 
     public void GameExit()
