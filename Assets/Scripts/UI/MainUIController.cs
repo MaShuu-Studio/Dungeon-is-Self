@@ -44,7 +44,8 @@ public class MainUIController : MonoBehaviour
     [SerializeField] private List<Text> privateRoomUsersNameTexts;
     [SerializeField] private List<Text> privateRoomUsersIdTexts;
     [SerializeField] private List<Toggle> privateRoomReadyStates;
-    [SerializeField] private Button StartButton;
+    [SerializeField] private RectTransform readyButton;
+    [SerializeField] private RectTransform startButton;
 
     public string roomCode { get; set; } = "";
     private int userIndex = 0;
@@ -131,7 +132,26 @@ public class MainUIController : MonoBehaviour
             privateRoomUsersIdTexts[i].text = id;
             privateRoomReadyStates[i].isOn = ready;
             Debug.Log(privateRoomReadyStates[userIndex].isOn);
-            if (i < packet.users.Count && packet.users[i].playerId == NetworkManager.Instance.PlayerId) userIndex = i;
+            if (i < packet.users.Count && packet.users[i].playerId == NetworkManager.Instance.PlayerId)
+            {
+                userIndex = i;
+                if (userIndex != 0)
+                {
+                    readyButton.pivot = new Vector2(0.5f, 1);
+                    readyButton.anchorMin = new Vector2(0.5f, 1);
+                    readyButton.anchorMax = new Vector2(0.5f, 1);
+                    readyButton.anchoredPosition = new Vector2(0, 0);
+                    startButton.gameObject.SetActive(false);
+                }
+                else
+                {
+                    readyButton.pivot = new Vector2(0f, 1);
+                    readyButton.anchorMin = new Vector2(0, 1);
+                    readyButton.anchorMax = new Vector2(0, 1);
+                    readyButton.anchoredPosition = new Vector2(0, 0);
+                    startButton.gameObject.SetActive(true);
+                }
+            }
         }
     }
 

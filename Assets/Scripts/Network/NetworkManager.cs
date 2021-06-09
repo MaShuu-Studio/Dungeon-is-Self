@@ -79,7 +79,7 @@ namespace Network
             IPEndPoint endPoint;
 
             Connector connector;
-            
+            /*
             #region Local Test
             host = Dns.GetHostName();
             ipHost = Dns.GetHostEntry(host);
@@ -90,7 +90,7 @@ namespace Network
 
             connector.Connect(endPoint, () => { return session; }, 1);
             #endregion
-            /*
+            */
 
             #region Live
             connectRequest = true;
@@ -103,7 +103,7 @@ namespace Network
 
             connector.Connect(endPoint, () => { return session; }, 1);
             #endregion
-            */
+            
             if (connecting != null)
             {
                 StopCoroutine(connecting);
@@ -396,6 +396,10 @@ namespace Network
         {
             try
             {
+                C_LeaveGame p = new C_LeaveGame();
+                p.playerId = playerId;
+                p.roomId = GameController.Instance.roomId;
+                session.Send(p.Write());
                 session.Disconnect();
             }
             catch (Exception e)
@@ -413,17 +417,7 @@ namespace Network
 
         private void OnApplicationQuit()
         {
-            try
-            {
-                C_LeaveGame p = new C_LeaveGame();
-                p.playerId = playerId;
-                p.roomId = GameController.Instance.roomId;
-                session.Send(p.Write());
-            }
-            catch (Exception e)
-            {
-                Debug.Log(e);
-            }
+            Disconnect();
         }
     }
 }

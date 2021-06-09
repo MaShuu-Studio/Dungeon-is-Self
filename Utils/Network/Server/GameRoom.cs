@@ -152,10 +152,10 @@ namespace Server
         public void Leave(string id)
         {
             Console.WriteLine($"Leave User {id}");
+            Session session = _sessions[id];
 
             if (_sessions.ContainsKey(id))
             {
-                _sessions[id].Disconnect();
                 _sessions.Remove(id);
             }
             if (_sessionCount.ContainsKey(id))
@@ -166,6 +166,8 @@ namespace Server
             Push(() => ExitPrivateRoom(id));
             Push(() => PlayingRoomAbnormalExit(id));
             Push(() => MatchRequestCancel(id));
+
+            session.Disconnect();
             // 플레이어 나감
             // 모든 플레이어에게 퇴장을 브로드캐스트
             UpdateUserInfo();
@@ -173,6 +175,7 @@ namespace Server
 
         public void Leave(ClientSession session)
         {
+            Console.WriteLine($"Leave User ");
             // 플레이어 나감
             int findIndex = 0;
             List<string> keys = _sessions.Keys.ToList();
@@ -185,8 +188,14 @@ namespace Server
 
             if (findIndex >= keys.Count) return;
 
-            _sessions.Remove(keys[findIndex]);
-            _sessionCount.Remove(keys[findIndex]);
+            string id = keys[findIndex];
+            _sessions.Remove(id);
+            _sessionCount.Remove(id);
+
+            Push(() => ExitPrivateRoom(id));
+            Push(() => PlayingRoomAbnormalExit(id));
+            Push(() => MatchRequestCancel(id));
+            session.Disconnect();
             // 모든 플레이어에게 퇴장을 브로드캐스트
             UpdateUserInfo();
         }
