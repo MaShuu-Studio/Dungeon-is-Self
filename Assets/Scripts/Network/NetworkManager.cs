@@ -206,6 +206,7 @@ namespace Network
         {
             C_MakePrivateRoom packet = new C_MakePrivateRoom();
             packet.playerId = playerId;
+            packet.playerName = playerName;
             Send(packet.Write());
         }
 
@@ -213,7 +214,17 @@ namespace Network
         {
             C_JoinPrivateRoom packet = new C_JoinPrivateRoom();
             packet.playerId = playerId;
+            packet.playerName = playerName;
             packet.roomCode = roomCode;
+            Send(packet.Write());
+        }
+
+        public void ReadyPrivateRoom(string roomCode, bool ready)
+        {
+            C_ReadyPrivateRoom packet = new C_ReadyPrivateRoom();
+            packet.playerId = playerId;
+            packet.roomCode = roomCode;
+            packet.ready = ready;
             Send(packet.Write());
         }
 
@@ -224,11 +235,12 @@ namespace Network
             Send(packet.Write());
         }
 
-        public void DestroyPrivateRoom(string roomCode)
+        public void ExitPrivateRoom(string roomCode)
         {
-            C_DestroyPrivateRoom packet = new C_DestroyPrivateRoom();
+            C_ExitPrivateRoom packet = new C_ExitPrivateRoom();
             packet.roomCode = roomCode;
             packet.playerId = playerId;
+            Send(packet.Write());
         }
         #endregion
 

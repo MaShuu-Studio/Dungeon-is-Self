@@ -71,6 +71,7 @@ namespace Network
             GameRoom room = clientSession.Room;
             room.Push(() => room.MatchRequestCancel(p.playerId, (UserType)p.playerType));
         }
+
         public static void C_MakePrivateRoomHandler(PacketSession session, IPacket packet)
         {
             C_MakePrivateRoom p = packet as C_MakePrivateRoom;
@@ -78,7 +79,7 @@ namespace Network
             if (clientSession.Room == null) return;
 
             GameRoom room = clientSession.Room;
-            room.Push(() => room.MakePrivateRoom(p.playerId));
+            room.Push(() => room.MakePrivateRoom(p.playerId, p.playerName));
         }
         public static void C_JoinPrivateRoomHandler(PacketSession session, IPacket packet)
         {
@@ -87,7 +88,16 @@ namespace Network
             if (clientSession.Room == null) return;
 
             GameRoom room = clientSession.Room;
-            room.Push(() => room.JoinPrivateRoom(p.playerId, p.roomCode));
+            room.Push(() => room.JoinPrivateRoom(p.playerId, p.playerName, p.roomCode));
+        }
+        public static void C_ReadyPrivateRoomHandler(PacketSession session, IPacket packet)
+        {
+            C_ReadyPrivateRoom p = packet as C_ReadyPrivateRoom;
+            ClientSession clientSession = session as ClientSession;
+            if (clientSession.Room == null) return;
+
+            GameRoom room = clientSession.Room;
+            room.Push(() => room.ReadyPrivateRoom(p.playerId, p.roomCode, p.ready));
         }
         public static void C_StartPrivateRoomHandler(PacketSession session, IPacket packet)
         {
@@ -98,14 +108,14 @@ namespace Network
             GameRoom room = clientSession.Room;
             room.Push(() => room.StartPrivateRoom(p.roomCode));
         }
-        public static void C_DestroyPrivateRoomHandler(PacketSession session, IPacket packet)
+        public static void C_ExitPrivateRoomHandler(PacketSession session, IPacket packet)
         {
-            C_DestroyPrivateRoom p = packet as C_DestroyPrivateRoom;
+            C_ExitPrivateRoom p = packet as C_ExitPrivateRoom;
             ClientSession clientSession = session as ClientSession;
             if (clientSession.Room == null) return;
 
             GameRoom room = clientSession.Room;
-            room.Push(() => room.DestroyPrivateRoom(p.playerId, p.roomCode));
+            room.Push(() => room.ExitPrivateRoom(p.playerId, p.roomCode));
         }
         #endregion
 

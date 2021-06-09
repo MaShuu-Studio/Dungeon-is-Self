@@ -11,6 +11,11 @@ using Newtonsoft.Json.Linq;
 
 namespace Server
 {
+    public struct PrivateRoomUserInfo
+    {
+        public string userName;
+        public bool readyState;
+    }
     class GameRoom : IJobQueue
     {
         JobQueue _jobQueue = new JobQueue();
@@ -23,7 +28,7 @@ namespace Server
         Dictionary<string, int> _sessionCount = new Dictionary<string, int>();
         List<string> waitDefenderUserList = new List<string>();
         List<string> waitOffenderUserList = new List<string>();
-        Dictionary<string, Dictionary<string, bool>> privateRooms = new Dictionary<string, Dictionary<string, bool>>();
+        Dictionary<string, Dictionary<string, PrivateRoomUserInfo>> privateRooms = new Dictionary<string, Dictionary<string, PrivateRoomUserInfo>>();
         Dictionary<string, PlayRoom> playingRooms = new Dictionary<string, PlayRoom>();
         Dictionary<string, PlayRoom> playingSingleGameRooms = new Dictionary<string, PlayRoom>();
 
@@ -42,10 +47,14 @@ namespace Server
         public void CheckSession()
         {
             List<string> keys = _sessionCount.Keys.ToList();
-            for (int i = 0; i < keys.Count; i++)
+            for (int i = 0; i < _sessionCount.Count; i++)
             {
                 _sessionCount[keys[i]]++;
-                if (_sessionCount[keys[i]] > 6) Push(() => Leave(keys[i]));
+                if (_sessionCount[keys[i]] > 6)
+                {
+                    Push(() => Leave(keys[i]));
+                }
+                
             }
         }
 
@@ -154,6 +163,7 @@ namespace Server
                 _sessionCount.Remove(id);
             }
 
+            Push(() => ExitPrivateRoom(id));
             Push(() => PlayingRoomAbnormalExit(id));
             Push(() => MatchRequestCancel(id));
             // 플레이어 나감
@@ -307,64 +317,146 @@ namespace Server
 
         #region Private Room
 
-        public void MakePrivateRoom(string userId)
+        public void MakePrivateRoom(string userId, string userName)
         {
             string roomCode = MakePrivateKey();
-            Dictionary<string, bool> newUser = new Dictionary<string, bool>();
-            newUser.Add(userId, false);
+            Dictionary<string, PrivateRoomUserInfo> newUser = new Dictionary<string, PrivateRoomUserInfo>();
+            PrivateRoomUserInfo userInfo = new PrivateRoomUserInfo()
+            {
+                userName = userName,
+                readyState = false
+            };
+            newUser.Add(userId, userInfo);
             privateRooms.Add(roomCode, newUser);
 
-            // 데려오기
+            UpdatePrivateRoom(userId, roomCode);
         }
 
-        public void JoinPrivateRoom(string userId, string roomCode)
+        public void JoinPrivateRoom(string userId, string userName, string roomCode)
         {
             if (privateRooms.ContainsKey(roomCode))
             {
                 bool canJoin = privateRooms[roomCode].Count == 1;
                 if (canJoin)
                 {
-                    privateRooms[roomCode].Add(userId, false);
+                    Dictionary<string, PrivateRoomUserInfo> newUser = new Dictionary<string, PrivateRoomUserInfo>();
+                    PrivateRoomUserInfo userInfo = new PrivateRoomUserInfo()
+                    {
+                        userName = userName,
+                        readyState = false
+                    };
+                    privateRooms[roomCode].Add(userId, userInfo);
                 }
             }
-            else roomCode = "";
-            // 유저정보 업데이트
+
+            UpdatePrivateRoom(userId, roomCode);
+        }
+
+        private void UpdatePrivateRoom(string userId, string roomCode)
+        {
+            S_UpdatePrivateRoom packet = new S_UpdatePrivateRoom();
+            packet.roomCode = roomCode;
+
+            List<string> users = new List<string>();
+            if (privateRooms.ContainsKey(roomCode))
+            {
+                foreach (string id in privateRooms[roomCode].Keys)
+                {
+                    packet.users.Add(new S_UpdatePrivateRoom.User()
+                    {
+                        playerId = id,
+                        playerName = privateRooms[roomCode][id].userName,
+                        ready = privateRooms[roomCode][id].readyState
+                    });
+                    users.Add(id);
+                }
+
+                foreach (string id in users)
+                    Send(id, packet);
+            }
             // 방이 없으면 방 터트려주기
+            else
+            {
+                Send(userId, new S_DestroyPrivateRoom());
+            }
         }
 
         public void ReadyPrivateRoom(string userId, string roomCode, bool ready)
         {
             if (privateRooms.ContainsKey(roomCode) && privateRooms[roomCode].ContainsKey(userId))
             {
-                privateRooms[roomCode][userId] = ready;
+                PrivateRoomUserInfo info = privateRooms[roomCode][userId];
+                info.readyState = ready;
+                privateRooms[roomCode][userId] = info;
             }
-            // 방이 없으면 방 터트려주기
+
+            UpdatePrivateRoom(userId, roomCode);
         }
 
-        public void DestroyPrivateRoom(string userId, string roomCode)
+        public void ExitPrivateRoom(string userId)
         {
-            Dictionary<string, bool> users;
+            foreach (string roomCode in privateRooms.Keys)
+            {
+                if (privateRooms[roomCode].ContainsKey(userId))
+                {
+                    List<string> pIds = privateRooms[roomCode].Keys.ToList();
+                    if (pIds[0] == userId)
+                    {
+                        DestroyPrivateRoom(roomCode);
+                    }
+                    else
+                    {
+                        privateRooms[roomCode].Remove(userId);
+                        UpdatePrivateRoom(userId, roomCode);
+                    }
+                }
+            }
+        }
+
+        public void ExitPrivateRoom(string userId, string roomCode)
+        {
+            Dictionary<string, PrivateRoomUserInfo> users;
             if (privateRooms.TryGetValue(roomCode, out users))
             {
                 List<string> pIds = users.Keys.ToList();
                 if (pIds[0] == userId)
                 {
-                    privateRooms.Remove(roomCode);
-                    // 쫓아내기
+                    DestroyPrivateRoom(roomCode);
                 }
+                else
+                {
+                    if (privateRooms[roomCode].ContainsKey(userId))
+                        privateRooms[roomCode].Remove(userId);
+                    UpdatePrivateRoom(userId, roomCode);
+                }
+            }
+        }
+
+        private void DestroyPrivateRoom(string roomCode)
+        {
+            S_DestroyPrivateRoom packet = new S_DestroyPrivateRoom();
+            if (privateRooms.ContainsKey(roomCode))
+            {
+                foreach (string id in privateRooms[roomCode].Keys)
+                {
+                    Send(id, packet);
+                }
+                privateRooms.Remove(roomCode);
             }
         }
 
         public void StartPrivateRoom(string roomCode)
         {
-            Dictionary<string, bool> users;
+            Dictionary<string, PrivateRoomUserInfo> users;
             if (privateRooms.TryGetValue(roomCode, out users))
             {
+                if (users.Count != 2) return;
+                
                 bool allReady = true;
-                foreach (bool isReady in users.Values)
+                foreach (PrivateRoomUserInfo user in users.Values)
                 {
-                    allReady = isReady;
-                    if (isReady == false) break;
+                    allReady = user.readyState;
+                    if (allReady == false) break;
                 }
                 if (allReady)
                 {
@@ -387,10 +479,8 @@ namespace Server
                                 playerType = i
                             });
                     }
+                    DestroyPrivateRoom(roomCode);
                 }
-
-                UpdateUserInfo();
-                privateRooms.Remove(roomCode);
             }
         }
 

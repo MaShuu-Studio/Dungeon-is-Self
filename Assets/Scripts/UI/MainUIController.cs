@@ -3,9 +3,32 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using Network;
+using System.Text.RegularExpressions;
 
 public class MainUIController : MonoBehaviour
 {
+    #region Instance
+    private static MainUIController instance;
+    public static MainUIController Instance
+    {
+        get
+        {
+            var obj = FindObjectOfType<MainUIController>();
+            instance = obj;
+            return instance;
+        }
+    }
+    private void Awake()
+    {
+        if (Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+    }
+    #endregion
+
+
     [SerializeField] private Text curUserText;
     [SerializeField] private Text chattingText;
 
@@ -13,17 +36,33 @@ public class MainUIController : MonoBehaviour
     [SerializeField] private GameObject userInfoObject;
     [SerializeField] private Text userName;
     [SerializeField] private RectTransform contents;
+
     [Header("Private Room")]
-    [SerializeField] private GameObject MakeRoom;
-    public string roomCode { get; set; }
+    [SerializeField] private InputField privateRoomInputCode;
+    [SerializeField] private GameObject privateRoomGameObject;
+    [SerializeField] private Text privateRoomCodeText;
+    [SerializeField] private List<Text> privateRoomUsersNameTexts;
+    [SerializeField] private List<Text> privateRoomUsersIdTexts;
+    [SerializeField] private List<Toggle> privateRoomReadyStates;
+    [SerializeField] private Button StartButton;
+
+    public string roomCode { get; set; } = "";
+    private int userIndex = 0;
 
     private void Start()
     {
+        privateRoomGameObject.SetActive(false);
         userInfoObject.SetActive(false);
     }
     private void Update()
     {
         SetConnectingUserInfo();
+    }
+
+    public void AdjustInputField(string str)
+    {
+        str = Regex.Replace(str, "0123456789", "");
+        privateRoomInputCode.text = str.ToUpper();
     }
 
     public void SetConnectingUserInfo()
@@ -60,20 +99,59 @@ public class MainUIController : MonoBehaviour
     {
         NetworkManager.Instance.MakePrivateRoom();
     }
-    
+
     public void JoinPrivateRoom()
     {
         NetworkManager.Instance.JoinPrivateRoom(roomCode);
     }
 
-    public void UpdatePrivateRoom()
+    public void ExitPrivateRoom()
     {
+        NetworkManager.Instance.ExitPrivateRoom(roomCode);
+    }
 
+    public void UpdatePrivateRoom(S_UpdatePrivateRoom packet)
+    {
+        privateRoomGameObject.SetActive(true);
+        roomCode = packet.roomCode;
+        privateRoomCodeText.text = roomCode;
+        for (int i = 0; i < privateRoomUsersIdTexts.Count; i++)
+        {
+            if (i >= 2) break;
+            string name = "";
+            string id = "";
+            bool ready = false;
+            if (i < packet.users.Count)
+            {
+                name = packet.users[i].playerName;
+                id = packet.users[i].playerId;
+                ready = packet.users[i].ready;
+            }
+            privateRoomUsersNameTexts[i].text = name;
+            privateRoomUsersIdTexts[i].text = id;
+            privateRoomReadyStates[i].isOn = ready;
+            Debug.Log(privateRoomReadyStates[userIndex].isOn);
+            if (i < packet.users.Count && packet.users[i].playerId == NetworkManager.Instance.PlayerId) userIndex = i;
+        }
+    }
+
+    public void StartPrivateRoom()
+    {
+        NetworkManager.Instance.StartPrivateRoom(roomCode);
+    }
+
+    public void ReadyPrivateRoom()
+    {
+        privateRoomReadyStates[userIndex].isOn = !privateRoomReadyStates[userIndex].isOn;
+        Debug.Log(privateRoomReadyStates[userIndex].isOn);
+        NetworkManager.Instance.ReadyPrivateRoom(roomCode, privateRoomReadyStates[userIndex].isOn);
     }
 
     public void DestroyPrivateRoom()
     {
-
+        roomCode = "";
+        privateRoomInputCode.text = "";
+        privateRoomGameObject.SetActive(false);
     }
     #endregion
 

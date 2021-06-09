@@ -16,24 +16,25 @@ public enum PacketID
 	C_MakePrivateRoom = 7,
 	C_JoinPrivateRoom = 8,
 	S_UpdatePrivateRoom = 9,
-	C_StartPrivateRoom = 10,
-	C_DestroyPrivateRoom = 11,
-	S_DestroyPrivateRoom = 12,
-	C_MatchRequest = 13,
-	C_MatchRequestCancel = 14,
-	S_StartGame = 15,
-	C_ReadyGame = 16,
-	S_ReadyGameEnd = 17,
-	C_RoundReady = 18,
-	S_RoundReadyEnd = 19,
-	C_PlayRoundReady = 20,
-	S_ProgressTurn = 21,
-	C_RoundEnd = 22,
-	S_NewRound = 23,
-	S_Timeout = 24,
-	C_ReadyCancel = 25,
-	C_GameEnd = 26,
-	S_GameEnd = 27,
+	C_ReadyPrivateRoom = 10,
+	C_StartPrivateRoom = 11,
+	C_ExitPrivateRoom = 12,
+	S_DestroyPrivateRoom = 13,
+	C_MatchRequest = 14,
+	C_MatchRequestCancel = 15,
+	S_StartGame = 16,
+	C_ReadyGame = 17,
+	S_ReadyGameEnd = 18,
+	C_RoundReady = 19,
+	S_RoundReadyEnd = 20,
+	C_PlayRoundReady = 21,
+	S_ProgressTurn = 22,
+	C_RoundEnd = 23,
+	S_NewRound = 24,
+	S_Timeout = 25,
+	C_ReadyCancel = 26,
+	C_GameEnd = 27,
+	S_GameEnd = 28,
 	
 }
 
@@ -333,6 +334,7 @@ public class C_LeaveGame : IPacket
 public class C_MakePrivateRoom : IPacket
 {
     public string playerId;
+	public string playerName;
     public ushort Protocol { get { return (ushort)PacketID.C_MakePrivateRoom; } }
 
     public void Read(ArraySegment<byte> segment)
@@ -346,6 +348,10 @@ public class C_MakePrivateRoom : IPacket
 		count += sizeof(ushort);
 		this.playerId = Encoding.Unicode.GetString(segment.Array, segment.Offset + count, playerIdLen);
 		count += playerIdLen;
+		ushort playerNameLen = BitConverter.ToUInt16(segment.Array, segment.Offset + count);
+		count += sizeof(ushort);
+		this.playerName = Encoding.Unicode.GetString(segment.Array, segment.Offset + count, playerNameLen);
+		count += playerNameLen;
     }
 
     public ArraySegment<byte> Write()
@@ -362,6 +368,11 @@ public class C_MakePrivateRoom : IPacket
 		count += sizeof(ushort);
 		count += playerIdLen;
 		
+		ushort playerNameLen = (ushort)Encoding.Unicode.GetBytes(this.playerName, 0, this.playerName.Length, segment.Array, segment.Offset + count + sizeof(ushort));
+		Array.Copy(BitConverter.GetBytes(playerNameLen), 0, segment.Array, segment.Offset + count, sizeof(ushort));
+		count += sizeof(ushort);
+		count += playerNameLen;
+		
 
         Array.Copy(BitConverter.GetBytes(count), 0, segment.Array, segment.Offset, sizeof(ushort));
 
@@ -371,6 +382,7 @@ public class C_MakePrivateRoom : IPacket
 public class C_JoinPrivateRoom : IPacket
 {
     public string playerId;
+	public string playerName;
 	public string roomCode;
     public ushort Protocol { get { return (ushort)PacketID.C_JoinPrivateRoom; } }
 
@@ -385,6 +397,10 @@ public class C_JoinPrivateRoom : IPacket
 		count += sizeof(ushort);
 		this.playerId = Encoding.Unicode.GetString(segment.Array, segment.Offset + count, playerIdLen);
 		count += playerIdLen;
+		ushort playerNameLen = BitConverter.ToUInt16(segment.Array, segment.Offset + count);
+		count += sizeof(ushort);
+		this.playerName = Encoding.Unicode.GetString(segment.Array, segment.Offset + count, playerNameLen);
+		count += playerNameLen;
 		ushort roomCodeLen = BitConverter.ToUInt16(segment.Array, segment.Offset + count);
 		count += sizeof(ushort);
 		this.roomCode = Encoding.Unicode.GetString(segment.Array, segment.Offset + count, roomCodeLen);
@@ -405,6 +421,11 @@ public class C_JoinPrivateRoom : IPacket
 		count += sizeof(ushort);
 		count += playerIdLen;
 		
+		ushort playerNameLen = (ushort)Encoding.Unicode.GetBytes(this.playerName, 0, this.playerName.Length, segment.Array, segment.Offset + count + sizeof(ushort));
+		Array.Copy(BitConverter.GetBytes(playerNameLen), 0, segment.Array, segment.Offset + count, sizeof(ushort));
+		count += sizeof(ushort);
+		count += playerNameLen;
+		
 		ushort roomCodeLen = (ushort)Encoding.Unicode.GetBytes(this.roomCode, 0, this.roomCode.Length, segment.Array, segment.Offset + count + sizeof(ushort));
 		Array.Copy(BitConverter.GetBytes(roomCodeLen), 0, segment.Array, segment.Offset + count, sizeof(ushort));
 		count += sizeof(ushort);
@@ -422,6 +443,7 @@ public class S_UpdatePrivateRoom : IPacket
 	public class User
 	{
 	    public string playerId;
+		public string playerName;
 		public bool ready;
 	
 	    public void Read(ArraySegment<byte> segment, ref ushort count)
@@ -430,6 +452,10 @@ public class S_UpdatePrivateRoom : IPacket
 			count += sizeof(ushort);
 			this.playerId = Encoding.Unicode.GetString(segment.Array, segment.Offset + count, playerIdLen);
 			count += playerIdLen;
+			ushort playerNameLen = BitConverter.ToUInt16(segment.Array, segment.Offset + count);
+			count += sizeof(ushort);
+			this.playerName = Encoding.Unicode.GetString(segment.Array, segment.Offset + count, playerNameLen);
+			count += playerNameLen;
 			this.ready = BitConverter.ToBoolean(segment.Array, segment.Offset + count);
 			count += sizeof(bool);
 	    }
@@ -440,6 +466,11 @@ public class S_UpdatePrivateRoom : IPacket
 			Array.Copy(BitConverter.GetBytes(playerIdLen), 0, segment.Array, segment.Offset + count, sizeof(ushort));
 			count += sizeof(ushort);
 			count += playerIdLen;
+			
+			ushort playerNameLen = (ushort)Encoding.Unicode.GetBytes(this.playerName, 0, this.playerName.Length, segment.Array, segment.Offset + count + sizeof(ushort));
+			Array.Copy(BitConverter.GetBytes(playerNameLen), 0, segment.Array, segment.Offset + count, sizeof(ushort));
+			count += sizeof(ushort);
+			count += playerNameLen;
 			
 			Array.Copy(BitConverter.GetBytes(this.ready), 0, segment.Array, segment.Offset + count, sizeof(bool));
 			count += sizeof(bool);
@@ -496,6 +527,60 @@ public class S_UpdatePrivateRoom : IPacket
         return SendBufferHelper.Close(count);
     }
 }
+public class C_ReadyPrivateRoom : IPacket
+{
+    public string roomCode;
+	public string playerId;
+	public bool ready;
+    public ushort Protocol { get { return (ushort)PacketID.C_ReadyPrivateRoom; } }
+
+    public void Read(ArraySegment<byte> segment)
+    {
+        ushort count = 0;
+
+        count += sizeof(ushort);
+        count += sizeof(ushort);
+        
+        ushort roomCodeLen = BitConverter.ToUInt16(segment.Array, segment.Offset + count);
+		count += sizeof(ushort);
+		this.roomCode = Encoding.Unicode.GetString(segment.Array, segment.Offset + count, roomCodeLen);
+		count += roomCodeLen;
+		ushort playerIdLen = BitConverter.ToUInt16(segment.Array, segment.Offset + count);
+		count += sizeof(ushort);
+		this.playerId = Encoding.Unicode.GetString(segment.Array, segment.Offset + count, playerIdLen);
+		count += playerIdLen;
+		this.ready = BitConverter.ToBoolean(segment.Array, segment.Offset + count);
+		count += sizeof(bool);
+    }
+
+    public ArraySegment<byte> Write()
+    { 
+        ArraySegment<byte> segment = SendBufferHelper.Open(4096);
+        ushort count = 0;
+
+        count += sizeof(ushort);
+        Array.Copy(BitConverter.GetBytes((ushort)PacketID.C_ReadyPrivateRoom), 0, segment.Array, segment.Offset + count, sizeof(ushort));
+        count += sizeof(ushort);
+        
+        ushort roomCodeLen = (ushort)Encoding.Unicode.GetBytes(this.roomCode, 0, this.roomCode.Length, segment.Array, segment.Offset + count + sizeof(ushort));
+		Array.Copy(BitConverter.GetBytes(roomCodeLen), 0, segment.Array, segment.Offset + count, sizeof(ushort));
+		count += sizeof(ushort);
+		count += roomCodeLen;
+		
+		ushort playerIdLen = (ushort)Encoding.Unicode.GetBytes(this.playerId, 0, this.playerId.Length, segment.Array, segment.Offset + count + sizeof(ushort));
+		Array.Copy(BitConverter.GetBytes(playerIdLen), 0, segment.Array, segment.Offset + count, sizeof(ushort));
+		count += sizeof(ushort);
+		count += playerIdLen;
+		
+		Array.Copy(BitConverter.GetBytes(this.ready), 0, segment.Array, segment.Offset + count, sizeof(bool));
+		count += sizeof(bool);
+		
+
+        Array.Copy(BitConverter.GetBytes(count), 0, segment.Array, segment.Offset, sizeof(ushort));
+
+        return SendBufferHelper.Close(count);
+    }
+}
 public class C_StartPrivateRoom : IPacket
 {
     public string roomCode;
@@ -534,11 +619,11 @@ public class C_StartPrivateRoom : IPacket
         return SendBufferHelper.Close(count);
     }
 }
-public class C_DestroyPrivateRoom : IPacket
+public class C_ExitPrivateRoom : IPacket
 {
     public string playerId;
 	public string roomCode;
-    public ushort Protocol { get { return (ushort)PacketID.C_DestroyPrivateRoom; } }
+    public ushort Protocol { get { return (ushort)PacketID.C_ExitPrivateRoom; } }
 
     public void Read(ArraySegment<byte> segment)
     {
@@ -563,7 +648,7 @@ public class C_DestroyPrivateRoom : IPacket
         ushort count = 0;
 
         count += sizeof(ushort);
-        Array.Copy(BitConverter.GetBytes((ushort)PacketID.C_DestroyPrivateRoom), 0, segment.Array, segment.Offset + count, sizeof(ushort));
+        Array.Copy(BitConverter.GetBytes((ushort)PacketID.C_ExitPrivateRoom), 0, segment.Array, segment.Offset + count, sizeof(ushort));
         count += sizeof(ushort);
         
         ushort playerIdLen = (ushort)Encoding.Unicode.GetBytes(this.playerId, 0, this.playerId.Length, segment.Array, segment.Offset + count + sizeof(ushort));

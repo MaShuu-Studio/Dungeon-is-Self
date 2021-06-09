@@ -37,10 +37,16 @@ namespace Network
         public static void S_UpdatePrivateRoomHandler(PacketSession session, IPacket packet)
         {
             S_UpdatePrivateRoom p = packet as S_UpdatePrivateRoom;
+
+            if (MainUIController.Instance == null) return;
+            MainUIController.Instance.UpdatePrivateRoom(p);
         }
         public static void S_DestroyPrivateRoomHandler(PacketSession session, IPacket packet)
         {
             S_DestroyPrivateRoom p = packet as S_DestroyPrivateRoom;
+
+            if (MainUIController.Instance == null) return;
+            MainUIController.Instance.DestroyPrivateRoom();
         }
 
         public static void S_StartGameHandler(PacketSession session, IPacket packet)
@@ -90,6 +96,8 @@ namespace Network
         {
             S_Timeout p = packet as S_Timeout;
             ServerSession serverSession = session as ServerSession;
+
+            if (GamePlayUIController.Instance == null) return;
 
             GamePlayUIController.Instance.SetTimer(p.time);
 
