@@ -128,7 +128,7 @@ public class GamePlayUIController : MonoBehaviour
         if (progress != GameController.Instance.currentProgress)
         {
             ChangeView();
-            readyButton.ResetCancel();
+            readyButton.ReadyCancel();
         }
     }
 
@@ -1300,7 +1300,7 @@ public class GamePlayUIController : MonoBehaviour
         else
         {
             readyButton.SetButtonInteract(true);
-            readyButton.ResetCancel();
+            readyButton.ReadyCancel();
         }
     }
     #endregion

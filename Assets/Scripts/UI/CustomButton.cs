@@ -14,6 +14,7 @@ public class CustomButton : MonoBehaviour
     [SerializeField] private string moveScene = "";
     [SerializeField] private UserType userType = UserType.Offender;
     [SerializeField] private ButtonMethod method;
+    [SerializeField] private GameObject blindObject;
     private Button button;
     private Image image;
     //private IEnumerator coroutine = null;
@@ -96,10 +97,12 @@ public class CustomButton : MonoBehaviour
             NetworkManager.Instance.ReadyCancel();
         }
         isReady = !isReady;
+        if (blindObject != null)
+            blindObject.SetActive(isReady);
     }
 
 
-    public void ResetCancel()
+    public void ReadyCancel()
     {
         isReady = false;
     }
