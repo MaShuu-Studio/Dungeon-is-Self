@@ -70,6 +70,16 @@ public class SettingUI : MonoBehaviour
     {
         settingObj.SetActive(!settingObj.activeSelf);
         settingControlObject.SetActive(false);
+        if (SceneController.Instance.CurrentScene == "GAMEPLAY")
+        {
+            tutorialButton.gameObject.SetActive(false);
+            surrenderButton.gameObject.SetActive(true);
+        }
+        else
+        {
+            tutorialButton.gameObject.SetActive(true);
+            surrenderButton.gameObject.SetActive(false);
+        }
     }
 
     public void BGMControl()
@@ -85,17 +95,6 @@ public class SettingUI : MonoBehaviour
     public void SettingObjectOnOff()
     {
         settingControlObject.SetActive(!settingControlObject.activeSelf);
-
-        if (SceneController.Instance.CurrentScene == "GamePlay")
-        {
-            tutorialButton.gameObject.SetActive(false);
-            surrenderButton.gameObject.SetActive(true);
-        }
-        else
-        {
-            tutorialButton.gameObject.SetActive(true);
-            surrenderButton.gameObject.SetActive(false);
-        }
     }
 
     public void SetResolution()
@@ -104,11 +103,21 @@ public class SettingUI : MonoBehaviour
         ResolutionManager.Instance.SetScreenMode(screenMode.value);
     }
 
+    public void Tutorial()
+    {
+        settingObj.SetActive(false);
+    }
+
+    public void Surrender()
+    {
+        NetworkManager.Instance.Surrender(GameControl.GameController.Instance.roomId);
+        settingObj.SetActive(false);
+    }
+
     public void LogOut()
     {
         NetworkManager.Instance.Disconnect();
         settingObj.SetActive(false);
-        settingControlObject.SetActive(false);
     }
 
     public void GameExit()

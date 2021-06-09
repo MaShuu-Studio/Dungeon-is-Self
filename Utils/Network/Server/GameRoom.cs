@@ -516,7 +516,6 @@ namespace Server
         #endregion
 
         #region Play Game
-
         public void ReadyGameEnd(string roomId, UserType type, List<int> candidates)
         {
             if (playingRooms.ContainsKey(roomId))
@@ -618,26 +617,32 @@ namespace Server
             UpdateUserInfo();
         }
 
-        private void PlayingRoomAbnormalExit(string id)
+        public void PlayingRoomAbnormalExit(string userId, string roomId = "")
         {
             List<string> keys = playingRooms.Keys.ToList();
-            for (int i = 0; i < playingRooms.Count; i++)
-            {
-                int findPlayer = playingRooms[keys[i]].PlayerInRoom(id);
-                if (findPlayer != -1)
+            int findPlayer = -1;
+            if (roomId == "")
+                for (int i = 0; i < playingRooms.Count; i++)
                 {
-                    UserType winner = ((UserType)findPlayer == UserType.Defender) ? UserType.Offender : UserType.Defender;
-                    string winnerId = playingRooms[keys[i]].GetPlayerId(winner);
-
-                    S_GameEnd packet = new S_GameEnd();
-                    packet.winner = (ushort)winner;
-                    packet.winnerId = winnerId;
-
-                    Send(id, packet);
-                    Send(winnerId, packet);
-                    Push(() => GameEnd(keys[i]));
-                    break;
+                    roomId = keys[i];
+                    findPlayer = playingRooms[roomId].PlayerInRoom(userId);
+                    if (findPlayer != -1) break;
                 }
+            else if (playingRooms.ContainsKey(roomId))
+                findPlayer = playingRooms[roomId].PlayerInRoom(userId);
+
+            if (findPlayer != -1)
+            {
+                UserType winner = ((UserType)findPlayer == UserType.Defender) ? UserType.Offender : UserType.Defender;
+                string winnerId = playingRooms[roomId].GetPlayerId(winner);
+
+                S_GameEnd packet = new S_GameEnd();
+                packet.winner = (ushort)winner;
+                packet.winnerId = winnerId;
+
+                Send(userId, packet);
+                Send(winnerId, packet);
+                Push(() => GameEnd(roomId));
             }
         }
         #endregion

@@ -7,7 +7,7 @@ using GameControl;
 
 public class SceneController : MonoBehaviour
 {
-    public string CurrentScene { get; private set; } = "Loading Scene";
+    public string CurrentScene { get; private set; } = "LOADING SCENE";
     private static SceneController instance;
     public static SceneController Instance
     {

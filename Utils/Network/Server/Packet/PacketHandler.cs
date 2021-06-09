@@ -171,7 +171,18 @@ namespace Network
             room.Push(() => room.GameEnd(p.roomId));
         }
 
-        public static void C_ReadyCancelHandler(PacketSession session, IPacket packet)
+        public static void C_SurrenderHandler(PacketSession session, IPacket packet)
+        {
+            C_Surrender p = packet as C_Surrender;
+            ClientSession clientSession = session as ClientSession;
+
+            if (clientSession.Room == null) return;
+            GameRoom room = clientSession.Room;
+
+            room.Push(() => room.PlayingRoomAbnormalExit(p.playerId, p.roomId));
+        }
+
+            public static void C_ReadyCancelHandler(PacketSession session, IPacket packet)
         {
             C_ReadyCancel p = packet as C_ReadyCancel;
             ClientSession clientSession = session as ClientSession;

@@ -79,7 +79,7 @@ namespace Network
             IPEndPoint endPoint;
 
             Connector connector;
-            /*
+            
             #region Local Test
             host = Dns.GetHostName();
             ipHost = Dns.GetHostEntry(host);
@@ -90,8 +90,8 @@ namespace Network
 
             connector.Connect(endPoint, () => { return session; }, 1);
             #endregion
-            */
-
+            
+            /*
             #region Live
             connectRequest = true;
             host = "ec2-13-124-208-197.ap-northeast-2.compute.amazonaws.com";
@@ -103,7 +103,7 @@ namespace Network
 
             connector.Connect(endPoint, () => { return session; }, 1);
             #endregion
-            
+            */
             if (connecting != null)
             {
                 StopCoroutine(connecting);
@@ -378,6 +378,7 @@ namespace Network
 
             Send(packet.Write());
         }
+
         public void GameEnd(string roomId)
         {
             C_GameEnd packet = new C_GameEnd
@@ -389,6 +390,17 @@ namespace Network
             Send(packet.Write());
 
             SceneController.Instance.ChangeScene("Main");
+        }
+
+        public void Surrender(string roomId)
+        {
+            C_Surrender packet = new C_Surrender()
+            {
+                roomId = roomId,
+                playerId = playerId
+            };
+
+            Send(packet.Write());
         }
         #endregion
 

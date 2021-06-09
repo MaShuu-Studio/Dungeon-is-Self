@@ -172,6 +172,10 @@
 		<string name="roomId"/>
 		<ushort name="userType"/>
 	</packet>
+	<packet name="C_Surrender">
+		<string name="roomId"/>
+		<string name="playerId"/>
+	</packet>
 	<packet name="C_GameEnd">
 		<string name="roomId"/>
 		<ushort name="type"/>
