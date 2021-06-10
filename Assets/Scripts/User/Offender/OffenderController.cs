@@ -54,6 +54,15 @@ namespace GameControl
             dices.Clear();
             skillRoster.Clear();
         }
+        public void ResetRound()
+        {
+            for (int i = 0; i < skillRoster.Count; i++)
+            {
+                dices[i].Clear();
+                skillRoster[i].Clear();
+            }
+        }
+
         public void Init()
         {
             characterIndex = 0;

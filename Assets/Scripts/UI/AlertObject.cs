@@ -27,7 +27,7 @@ public class AlertObject : MonoBehaviour, IPointerDownHandler
         }
         gameObject.SetActive(false);
     }
-    public void ShowAlert(string str)
+    public void ShowAlert(string str, float time)
     {
         if (coroutine != null)
         {
@@ -41,14 +41,14 @@ public class AlertObject : MonoBehaviour, IPointerDownHandler
         contentsText.color = Color.white;
         background.color = new Color(0, 0, 0, alpha);
 
-        coroutine = Alert();
+        coroutine = Alert(time);
         StartCoroutine(coroutine);
     }
 
-    IEnumerator Alert()
+    IEnumerator Alert(float maxTime)
     {
-        float max = 1.5f;
-        float colorTime = 0.2f;
+        float max = maxTime;
+        float colorTime = maxTime / 7;
         float time = 0;
         while (time < max)
         {

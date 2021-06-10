@@ -44,6 +44,8 @@ namespace GameControl
         public int defenderUnit { get; private set; }
         public int[] offenderUnits { get; private set; } = new int[3];
 
+        private ushort[] winners = new ushort[5] { 9, 9, 9, 9, 9 };
+
         private Dictionary<int, List<CrowdControl>> ccList = new Dictionary<int, List<CrowdControl>>();
         private Dictionary<int, bool> isDead = new Dictionary<int, bool>();
 
@@ -90,6 +92,9 @@ namespace GameControl
             OffenderController.Instance.Reset();
             currentProgress = GameProgress.ReadyGame;
             SceneController.Instance.ChangeScene("GamePlay");
+            ushort state = 1;
+            if (Mathf.Abs(MatchState()) > 1) state = 2;
+            SoundController.Instance.PlayBGM("READY" + state.ToString());
         }
         public void ReadyGame()
         {
@@ -195,6 +200,7 @@ namespace GameControl
                 ccList.Add(key, new List<CrowdControl>());
                 isDead.Add(key, false);
             }
+            SoundController.Instance.PlayBGM(DefenderController.Instance.GetMonsterRoster().id.ToString());
 
             if (userType == UserType.Defender)
             {
@@ -415,9 +421,19 @@ namespace GameControl
             int alertIndex = 40;
             if (winner == UserType.Defender) alertIndex = 41;
 
-            GamePlayUIController.Instance.Alert(alertIndex);
+            GamePlayUIController.Instance.Alert(alertIndex, 5.0f);
 
-            float time = 1.5f;
+            ushort state = 1;
+            if (Mathf.Abs(MatchState()) > 1) state = 2;
+
+            string winState = "WIN" + state.ToString();
+            if (winner != userType) winState = "DEFEAT";
+
+            string type = "DEFENDER";
+            if (userType == UserType.Offender) type = "OFFENDER";
+            SoundController.Instance.PlayBGM(type + winState);
+
+            float time = 5f;
             while (time > 0)
             {
                 time -= Time.deltaTime;
@@ -425,6 +441,7 @@ namespace GameControl
             }
             OffenderController.Instance.ResetDices();
             DefenderController.Instance.ResetDices();
+
             if (gameEnd)
             {
                 Network.NetworkManager.Instance.GameEnd(roomId);
@@ -435,10 +452,26 @@ namespace GameControl
 
             progressRound = false;
             GamePlayUIController.Instance.SetButtonInteract(progressRound);
+
             /*
             else if (winner == UserType.Defender) ReadyRound(true);
             else ReadyRound(false);
             */
+        }
+
+        public int MatchState()
+        {
+            ushort win = 0;
+            ushort lose = 0;
+
+            foreach(ushort winner in winners)
+            {
+                if (winner == (ushort)userType)
+                    win++;
+                else lose++;
+            }
+
+            return win - lose;
         }
 
         #endregion

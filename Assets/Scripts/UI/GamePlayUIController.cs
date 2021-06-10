@@ -217,6 +217,8 @@ public class GamePlayUIController : MonoBehaviour
                 break;
 
             case GameProgress.ReadyRound:
+                OffenderController.Instance.ResetRound();
+                DefenderController.Instance.ResetRound();
                 benchSelected.gameObject.SetActive(false);
                 rosterSelected.gameObject.SetActive(false);
                 roundText.gameObject.SetActive(true);
@@ -273,7 +275,7 @@ public class GamePlayUIController : MonoBehaviour
         }
     }
 
-    public void Alert(int errorIndex)
+    public void Alert(int errorIndex, float time = 1.5f)
     {
         string str = "";
         switch (errorIndex)
@@ -308,10 +310,9 @@ public class GamePlayUIController : MonoBehaviour
             case 41:
                 str = "승자는 방어자입니다.";
                 break;
-
         }
 
-        if (!string.IsNullOrEmpty(str)) alert.ShowAlert(str);
+        if (!string.IsNullOrEmpty(str)) alert.ShowAlert(str, time);
     }
     #endregion
 
