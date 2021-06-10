@@ -46,13 +46,20 @@ namespace ServerCore
         {
             if (args.SocketError == SocketError.Success) // 성공
             {
-                // Listener에서 connect가 들어가기 때문에 Seesion 의 위치 이동.
+                try
+                {
+                    // Listener에서 connect가 들어가기 때문에 Seesion 의 위치 이동.
 
-                // 함수의 통일 및 리스너별 컨텐츠 세션 분리를 위해 Func<> 사용.
-                // 이후 return 된 Session Factory에 넣어 통일된 함수 사용. 실질적 작동은 Override 된 함수를 활용
-                Session session = _sessionFactory.Invoke();
-                session.Init(args.AcceptSocket);
-                session.OnConnected(args.AcceptSocket.RemoteEndPoint);
+                    // 함수의 통일 및 리스너별 컨텐츠 세션 분리를 위해 Func<> 사용.
+                    // 이후 return 된 Session Factory에 넣어 통일된 함수 사용. 실질적 작동은 Override 된 함수를 활용
+                    Session session = _sessionFactory.Invoke();
+                    session.Init(args.AcceptSocket);
+                    session.OnConnected(args.AcceptSocket.RemoteEndPoint);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
             }
             else
                 Console.WriteLine(args.SocketError.ToString());

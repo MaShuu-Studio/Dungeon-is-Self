@@ -47,14 +47,16 @@ namespace Server
         public void CheckSession()
         {
             List<string> keys = _sessionCount.Keys.ToList();
-            for (int i = 0; i < _sessionCount.Count; i++)
+            for (int i = 0; i < keys.Count; i++)
             {
-                _sessionCount[keys[i]]++;
-                if (_sessionCount[keys[i]] > 6)
+                if (_sessionCount.ContainsKey(keys[i]))
                 {
-                    Push(() => Leave(keys[i]));
+                    _sessionCount[keys[i]]++;
+                    if (_sessionCount[keys[i]] > 6)
+                    {
+                        Push(() => Leave(keys[i]));
+                    }
                 }
-                
             }
         }
 
