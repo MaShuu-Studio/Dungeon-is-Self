@@ -26,6 +26,8 @@ public class PacketManager
         handler.Add((ushort)PacketID.S_GivePlayerId, PacketHandler.S_GivePlayerIdHandler);
         makeFunc.Add((ushort)PacketID.S_FailConnect, MakePacket<S_FailConnect>);
         handler.Add((ushort)PacketID.S_FailConnect, PacketHandler.S_FailConnectHandler);
+        makeFunc.Add((ushort)PacketID.S_Chat, MakePacket<S_Chat>);
+        handler.Add((ushort)PacketID.S_Chat, PacketHandler.S_ChatHandler);
         makeFunc.Add((ushort)PacketID.S_UpdatePrivateRoom, MakePacket<S_UpdatePrivateRoom>);
         handler.Add((ushort)PacketID.S_UpdatePrivateRoom, PacketHandler.S_UpdatePrivateRoomHandler);
         makeFunc.Add((ushort)PacketID.S_DestroyPrivateRoom, MakePacket<S_DestroyPrivateRoom>);

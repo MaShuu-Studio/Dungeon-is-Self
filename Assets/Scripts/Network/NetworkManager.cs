@@ -172,6 +172,15 @@ namespace Network
 
         #endregion
 
+        public void SendChat(string chat)
+        {
+            C_Chat packet = new C_Chat();
+            packet.playerId = playerId;
+            packet.playerName = playerName;
+            packet.chat = chat;
+            Send(packet.Write());
+        }
+
         #region Match
         public void MatchRequest(UserType type)
         {

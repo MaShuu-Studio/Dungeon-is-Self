@@ -29,6 +29,7 @@ public class SettingUI : MonoBehaviour
 
     [SerializeField] private Canvas canvas;
     [SerializeField] private GameObject settingObj;
+    [SerializeField] private GameObject blindObject;
     [SerializeField] private GameObject settingControlObject;
     [SerializeField] private Slider bgmSlider;
     [SerializeField] private Slider sfxSlider;
@@ -40,7 +41,7 @@ public class SettingUI : MonoBehaviour
 
     private void Start()
     {
-        settingObj.SetActive(false);
+        SetActive(false);
         settingControlObject.SetActive(false);
         int mode = 0;
         switch(Screen.fullScreenMode)
@@ -68,9 +69,16 @@ public class SettingUI : MonoBehaviour
         canvas.worldCamera = Camera.main;
     }
 
+    private void SetActive(bool b)
+    {
+        settingObj.SetActive(b);
+        blindObject.SetActive(b);
+    }
+
     public void UIObjectOnOff()
     {
-        settingObj.SetActive(!settingObj.activeSelf);
+        SetActive(!settingObj.activeSelf);
+
         settingControlObject.SetActive(false);
         if (SceneController.Instance.CurrentScene == "GAMEPLAY")
         {
@@ -109,19 +117,19 @@ public class SettingUI : MonoBehaviour
 
     public void Tutorial()
     {
-        settingObj.SetActive(false);
+        SetActive(false);
     }
 
     public void Surrender()
     {
         NetworkManager.Instance.Surrender(GameControl.GameController.Instance.roomId);
-        settingObj.SetActive(false);
+        SetActive(false);
     }
 
     public void LogOut()
     {
         NetworkManager.Instance.Disconnect();
-        settingObj.SetActive(false);
+        SetActive(false);
     }
 
     public void GameExit()

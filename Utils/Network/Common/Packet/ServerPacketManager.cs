@@ -24,6 +24,8 @@ public class PacketManager
         handler.Add((ushort)PacketID.C_EnterGame, PacketHandler.C_EnterGameHandler);
         makeFunc.Add((ushort)PacketID.C_LeaveGame, MakePacket<C_LeaveGame>);
         handler.Add((ushort)PacketID.C_LeaveGame, PacketHandler.C_LeaveGameHandler);
+        makeFunc.Add((ushort)PacketID.C_Chat, MakePacket<C_Chat>);
+        handler.Add((ushort)PacketID.C_Chat, PacketHandler.C_ChatHandler);
         makeFunc.Add((ushort)PacketID.C_MakePrivateRoom, MakePacket<C_MakePrivateRoom>);
         handler.Add((ushort)PacketID.C_MakePrivateRoom, PacketHandler.C_MakePrivateRoomHandler);
         makeFunc.Add((ushort)PacketID.C_JoinPrivateRoom, MakePacket<C_JoinPrivateRoom>);

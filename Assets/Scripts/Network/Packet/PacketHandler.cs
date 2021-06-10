@@ -33,6 +33,16 @@ namespace Network
 
             NetworkManager.Instance.SetPlayerId(p.playerId);
         }
+        public static void S_ChatHandler(PacketSession session, IPacket packet)
+        {
+            S_Chat p = packet as S_Chat;
+            ServerSession serverSession = session as ServerSession;
+
+            if (SceneController.Instance.CurrentScene == "MAIN")
+            {
+                MainUIController.Instance.ShowChat(p.playerName, p.chat);
+            }
+        }
 
         public static void S_UpdatePrivateRoomHandler(PacketSession session, IPacket packet)
         {
@@ -54,6 +64,7 @@ namespace Network
             S_StartGame p = packet as S_StartGame;
             ServerSession serverSession = session as ServerSession;
 
+            MainUIController.Instance.DestroyPrivateRoom();
             GameController.Instance.StartGame(p.roomId, (UserType)p.playerType);
         }
         public static void S_ReadyGameEndHandler(PacketSession session, IPacket packet)

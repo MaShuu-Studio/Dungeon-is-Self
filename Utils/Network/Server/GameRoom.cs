@@ -174,6 +174,17 @@ namespace Server
 
         #endregion
 
+        public void SendChat(string id, string name, string chat)
+        {
+            if (_sessions.ContainsKey(id))
+            {
+                S_Chat packet = new S_Chat();
+                packet.playerName = name;
+                packet.chat = chat;
+                Push(() => Broadcast(packet.Write()));
+            }
+        }
+
         #region Match Game
         public void MatchRequest(string playerId, UserType type)
         {

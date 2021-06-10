@@ -53,6 +53,7 @@ public class SceneController : MonoBehaviour
             GameController.Instance.ReadyGame();
         }else if (CurrentScene == "TITLE" || CurrentScene == "MAIN")
         {
+            if (CurrentScene == "MAIN") MainUIController.Instance.ResetScene();
             SoundController.Instance.PlayBGM("TITLE");
         }
     }

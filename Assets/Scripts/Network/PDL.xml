@@ -25,6 +25,16 @@
 		<string name="playerId"/>
 	</packet>
 
+	<packet name="C_Chat">
+		<string name="playerId"/>
+		<string name="playerName"/>
+		<string name="chat"/>
+	</packet>
+	<packet name="S_Chat">
+		<string name="playerName"/>
+		<string name="chat"/>
+	</packet>
+
 	<packet name="C_MakePrivateRoom">
 		<string name="playerId"/>
 		<string name="playerName"/>

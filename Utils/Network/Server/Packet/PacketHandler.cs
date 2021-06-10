@@ -45,6 +45,20 @@ namespace Network
             room.Push(() => room.Leave(playerId));
             clientSession.Disconnect();
         }
+        public static void C_ChatHandler(PacketSession session, IPacket packet)
+        {
+            C_Chat p = packet as C_Chat;
+            ClientSession clientSession = session as ClientSession;
+
+            if (clientSession.Room == null) return;
+            GameRoom room = clientSession.Room;
+
+            string playerId = p.playerId;
+            string playerName = p.playerName;
+            string chat = p.chat;
+
+            room.Push(() => room.SendChat(playerId, playerName, chat));
+        }
         #endregion
 
         #region Match

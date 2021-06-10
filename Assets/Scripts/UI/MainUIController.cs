@@ -30,12 +30,16 @@ public class MainUIController : MonoBehaviour
 
 
     [SerializeField] private Text curUserText;
-    [SerializeField] private Text chattingText;
 
     [Header("User Info")]
     [SerializeField] private GameObject userInfoObject;
     [SerializeField] private Text userName;
     [SerializeField] private RectTransform contents;
+
+    [Header("Chat")]
+    [SerializeField] private Text chatContents;
+    [SerializeField] private InputField chatInput;
+    private List<string> chatList = new List<string>();
 
     [Header("Private Room")]
     [SerializeField] private InputField privateRoomInputCode;
@@ -60,9 +64,21 @@ public class MainUIController : MonoBehaviour
         SetConnectingUserInfo();
     }
 
+    public void ResetScene()
+    {
+        privateRoomGameObject.SetActive(false);
+        userInfoObject.SetActive(false);
+        chatList.Clear();
+        chatContents.text = "";
+        chatInput.text = "";
+        privateRoomInputCode.text = "";
+    }
+
     public void AdjustInputField(string str)
     {
+        Debug.Log(str);
         str = Regex.Replace(str, "0123456789", "");
+        Debug.Log(str);
         privateRoomInputCode.text = str.ToUpper();
     }
 
@@ -95,7 +111,38 @@ public class MainUIController : MonoBehaviour
     }
     #endregion
 
-    #region
+    #region Chat
+    public void SendChat(bool isButton)
+    {
+        if (chatInput.text == "") return;
+
+        if (Input.GetButtonDown("Submit") || isButton)
+        {
+            NetworkManager.Instance.SendChat(chatInput.text);
+            chatInput.text = "";
+            chatInput.Select();
+        }
+    }
+
+    public void ShowChat(string name, string chat)
+    {
+        string str = name + ": " + chat;
+        this.chatList.Add(str);
+
+        if (chatList.Count > 15) chatList.RemoveAt(0);
+
+        chatContents.text = "";
+
+        for(int i = 0; i < chatList.Count; i++)
+        {
+            chatContents.text += chatList[i];
+            if (i != chatList.Count - 1) chatContents.text += "\n";
+        }
+    }
+
+    #endregion
+
+    #region Private Room
     public void MakePrivateRoom()
     {
         NetworkManager.Instance.MakePrivateRoom();
