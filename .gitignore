@@ -11,3 +11,4 @@ Assets/VSCode.meta
 Build/
 Packages/
 Utils/Network/Server/Dungeon-is-Self-GameServer/
+Utils/Network/Server/bin/Debug/netcoreapp3.1/linux-x64/
