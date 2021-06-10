@@ -78,7 +78,7 @@ namespace Network
             IPAddress ipAddr;
             IPEndPoint endPoint;
 
-            Connector connector;
+            Connector connector = new Connector();
             /*
             #region Local Test
             host = Dns.GetHostName();
@@ -86,12 +86,10 @@ namespace Network
             ipAddr = ipHost.AddressList[0];
             endPoint = new IPEndPoint(ipAddr, PORT_NUMBER);
 
-            connector = new Connector();
-
             connector.Connect(endPoint, () => { return session; }, 1);
             #endregion
             */
-            
+
             #region Live
             connectRequest = true;
             host = "ec2-13-124-208-197.ap-northeast-2.compute.amazonaws.com";
@@ -99,11 +97,15 @@ namespace Network
             ipAddr = ipHost.AddressList[0];
             endPoint = new IPEndPoint(ipAddr, PORT_NUMBER);
 
-            connector = new Connector();
-
             connector.Connect(endPoint, () => { return session; }, 1);
             #endregion
             
+            if (connector.connectionFailed)
+            {
+                connectRequest = false;
+                return;
+            }
+
             if (connecting != null)
             {
                 StopCoroutine(connecting);
