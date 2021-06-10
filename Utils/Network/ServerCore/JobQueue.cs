@@ -40,7 +40,7 @@ namespace ServerCore
         {
             lock (_lock)
             {
-                if (_jobQueue.Count == 0)
+                if (_jobQueue.Count <= 0)
                 {
                     _flush = false;
                     return null;

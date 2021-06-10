@@ -34,7 +34,8 @@ namespace Server
             {
                 // 실행 순서가 Queue에 쌓임에 따라 Room을 직접 찾아가는 행위는 문제가 될 수 있음.
                 GameRoom room = Room;
-                room.Push(() => room.Leave(this));
+                ClientSession session = this;
+                room.Push(() => room.Leave(session));
                 Room = null;
             }
         }

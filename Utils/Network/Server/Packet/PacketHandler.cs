@@ -19,14 +19,18 @@ namespace Network
             if (clientSession.Room == null) return;
             GameRoom room = clientSession.Room;
 
-            room.Push(() => room.UpdateSession(p.playerId));
+            string playerId = p.playerId;
+            room.Push(() => room.UpdateSession(playerId));
         }
         public static void C_EnterGameHandler(PacketSession session, IPacket packet)
         {
             C_EnterGame p = packet as C_EnterGame;
             ClientSession clientSession = session as ClientSession;
 
-            Program.Room.Push(() => Program.Room.Enter(clientSession, p.token, p.playerId));
+            string token = p.token;
+            string playerId = p.playerId;
+
+            Program.Room.Push(() => Program.Room.Enter(clientSession, token, playerId));
         }
         public static void C_LeaveGameHandler(PacketSession session, IPacket packet)
         {
@@ -36,7 +40,9 @@ namespace Network
             if (clientSession.Room == null) return;
             GameRoom room = clientSession.Room;
 
-            room.Push(() => room.Leave(p.playerId));
+            string playerId = p.playerId;
+
+            room.Push(() => room.Leave(playerId));
             clientSession.Disconnect();
         }
         #endregion
@@ -60,7 +66,11 @@ namespace Network
 
             if (clientSession.Room == null) return;
             GameRoom room = clientSession.Room;
-            room.Push(() => room.MatchRequest(p.playerId, (UserType)p.playerType));
+
+            string playerId = p.playerId;
+            UserType type = (UserType)p.playerType;
+
+            room.Push(() => room.MatchRequest(playerId, type));
         }
         public static void C_MatchRequestCancelHandler(PacketSession session, IPacket packet)
         {
@@ -69,7 +79,11 @@ namespace Network
 
             if (clientSession.Room == null) return;
             GameRoom room = clientSession.Room;
-            room.Push(() => room.MatchRequestCancel(p.playerId, (UserType)p.playerType));
+
+            string playerId = p.playerId;
+            UserType type = (UserType)p.playerType;
+
+            room.Push(() => room.MatchRequestCancel(playerId, type));
         }
 
         public static void C_MakePrivateRoomHandler(PacketSession session, IPacket packet)
@@ -79,7 +93,11 @@ namespace Network
             if (clientSession.Room == null) return;
 
             GameRoom room = clientSession.Room;
-            room.Push(() => room.MakePrivateRoom(p.playerId, p.playerName));
+
+            string playerId = p.playerId;
+            string playerName = p.playerName;
+
+            room.Push(() => room.MakePrivateRoom(playerId, playerName));
         }
         public static void C_JoinPrivateRoomHandler(PacketSession session, IPacket packet)
         {
@@ -88,7 +106,12 @@ namespace Network
             if (clientSession.Room == null) return;
 
             GameRoom room = clientSession.Room;
-            room.Push(() => room.JoinPrivateRoom(p.playerId, p.playerName, p.roomCode));
+
+            string playerId = p.playerId;
+            string playerName = p.playerName;
+            string roomCode = p.roomCode;
+
+            room.Push(() => room.JoinPrivateRoom(playerId, playerName, roomCode));
         }
         public static void C_ReadyPrivateRoomHandler(PacketSession session, IPacket packet)
         {
@@ -97,7 +120,12 @@ namespace Network
             if (clientSession.Room == null) return;
 
             GameRoom room = clientSession.Room;
-            room.Push(() => room.ReadyPrivateRoom(p.playerId, p.roomCode, p.ready));
+
+            string playerId = p.playerId;
+            string roomCode = p.roomCode;
+            bool ready = p.ready;
+
+            room.Push(() => room.ReadyPrivateRoom(playerId, roomCode, ready));
         }
         public static void C_StartPrivateRoomHandler(PacketSession session, IPacket packet)
         {
@@ -106,7 +134,10 @@ namespace Network
             if (clientSession.Room == null) return;
 
             GameRoom room = clientSession.Room;
-            room.Push(() => room.StartPrivateRoom(p.roomCode));
+
+            string roomCode = p.roomCode;
+
+            room.Push(() => room.StartPrivateRoom(roomCode));
         }
         public static void C_ExitPrivateRoomHandler(PacketSession session, IPacket packet)
         {
@@ -114,8 +145,11 @@ namespace Network
             ClientSession clientSession = session as ClientSession;
             if (clientSession.Room == null) return;
 
+            string roomCode = p.roomCode;
+            string playerId = p.playerId;
+
             GameRoom room = clientSession.Room;
-            room.Push(() => room.ExitPrivateRoom(p.playerId, p.roomCode));
+            room.Push(() => room.ExitPrivateRoom(playerId, roomCode));
         }
         #endregion
 
@@ -128,7 +162,11 @@ namespace Network
             if (clientSession.Room == null) return;
             GameRoom room = clientSession.Room;
 
-            room.Push(() => room.ReadyGameEnd(p.roomId, (UserType)p.playerType, p.candidates));
+            string roomId = p.roomId;
+            UserType type = (UserType)p.playerType;
+            List<int> candidates = p.candidates;
+
+            room.Push(() => room.ReadyGameEnd(roomId, type, candidates));
         }
         public static void C_RoundReadyHandler(PacketSession session, IPacket packet)
         {
@@ -138,7 +176,11 @@ namespace Network
             if (clientSession.Room == null) return;
             GameRoom room = clientSession.Room;
 
-            room.Push(() => room.RoundReadyEnd(p.roomId, (UserType)p.playerType, p.rosters));
+            string roomId = p.roomId;
+            UserType type = (UserType)p.playerType;
+            List<C_RoundReady.Roster> rosters = p.rosters;
+
+            room.Push(() => room.RoundReadyEnd(roomId, type, rosters));
         }
         public static void C_PlayRoundReadyHandler(PacketSession session, IPacket packet)
         {
@@ -148,7 +190,11 @@ namespace Network
             if (clientSession.Room == null) return;
             GameRoom room = clientSession.Room;
 
-            room.Push(() => room.PlayRoundReadyEnd(p.roomId, (UserType)p.playerType, p.rosters));
+            string roomId = p.roomId;
+            UserType type = (UserType)p.playerType;
+            List<C_PlayRoundReady.Roster> rosters = p.rosters;
+
+            room.Push(() => room.PlayRoundReadyEnd(roomId, type, rosters));
         }
         public static void C_RoundEndHandler(PacketSession session, IPacket packet)
         {
@@ -158,7 +204,10 @@ namespace Network
             if (clientSession.Room == null) return;
             GameRoom room = clientSession.Room;
 
-            room.Push(() => room.RoundEnd(p.roomId, (UserType)p.type));
+            string roomId = p.roomId;
+            UserType type = (UserType)p.type;
+
+            room.Push(() => room.RoundEnd(roomId, type));
         }
         public static void C_GameEndHandler(PacketSession session, IPacket packet)
         {
@@ -168,7 +217,9 @@ namespace Network
             if (clientSession.Room == null) return;
             GameRoom room = clientSession.Room;
 
-            room.Push(() => room.GameEnd(p.roomId));
+            string roomId = p.roomId;
+
+            room.Push(() => room.GameEnd(roomId));
         }
 
         public static void C_SurrenderHandler(PacketSession session, IPacket packet)
@@ -179,10 +230,13 @@ namespace Network
             if (clientSession.Room == null) return;
             GameRoom room = clientSession.Room;
 
-            room.Push(() => room.PlayingRoomAbnormalExit(p.playerId, p.roomId));
+            string playerId = p.playerId;
+            string roomId = p.roomId;
+
+            room.Push(() => room.PlayingRoomAbnormalExit(playerId, roomId));
         }
 
-            public static void C_ReadyCancelHandler(PacketSession session, IPacket packet)
+        public static void C_ReadyCancelHandler(PacketSession session, IPacket packet)
         {
             C_ReadyCancel p = packet as C_ReadyCancel;
             ClientSession clientSession = session as ClientSession;
@@ -190,7 +244,9 @@ namespace Network
             if (clientSession.Room == null) return;
             GameRoom room = clientSession.Room;
 
-            room.Push(() => room.ReadyCancel(p.roomId, (UserType)p.userType));
+            string roomId = p.roomId;
+            UserType type = (UserType)p.userType;
+            room.Push(() => room.ReadyCancel(roomId, type));
         }
         #endregion
     }

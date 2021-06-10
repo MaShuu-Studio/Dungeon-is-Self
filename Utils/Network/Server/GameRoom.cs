@@ -51,13 +51,8 @@ namespace Server
                     _sessionCount[keys[i]]++;
                     if (_sessionCount[keys[i]] > 6)
                     {
-                        try
-                        {
-                            Push(() => Leave(keys[i]));
-                        }catch(Exception e)
-                        {
-                            Console.WriteLine(e);
-                        }
+                        string key = keys[i];
+                        Push(() => Leave(key));
                     }
                 }
             }
@@ -425,7 +420,7 @@ namespace Server
             if (privateRooms.TryGetValue(roomCode, out users))
             {
                 if (users.Count != 2) return;
-                
+
                 bool allReady = true;
                 foreach (PrivateRoomUserInfo user in users.Values)
                 {
