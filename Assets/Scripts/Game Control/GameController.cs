@@ -88,6 +88,7 @@ namespace GameControl
             Debug.Log("Room Number : " + roomId);
             userType = type;
             Debug.Log("You are: " + type.ToString());
+            winners = new ushort[5] { 9, 9, 9, 9, 9 };
             DefenderController.Instance.Reset();
             OffenderController.Instance.Reset();
             currentProgress = GameProgress.ReadyGame;
@@ -466,6 +467,7 @@ namespace GameControl
 
             foreach(ushort winner in winners)
             {
+                if (winner == 9) continue;
                 if (winner == (ushort)userType)
                     win++;
                 else lose++;
