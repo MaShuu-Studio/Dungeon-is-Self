@@ -199,6 +199,7 @@ public class GamePlayUIController : MonoBehaviour
     public void ChangeView()
     {
         readyButton.SetButtonInteract(true);
+        readyButton.ReadyCancel();
         roundText.gameObject.SetActive(false);
         turnText.gameObject.SetActive(false);
         SetProgress();

@@ -105,6 +105,7 @@ public class CustomButton : MonoBehaviour
     public void ReadyCancel()
     {
         isReady = false;
+        blindObject.SetActive(isReady);
     }
 
     #endregion
