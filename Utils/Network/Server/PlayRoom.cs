@@ -7,6 +7,16 @@ using Data;
 
 namespace Server
 {
+    public class BattleResult
+    {
+        public DateTime date;
+        public string gameNumber;
+        public string[] players;
+        public Dictionary<string, int[]> roster;
+        public Dictionary<int, string> roundWinner;
+        public Dictionary<int, Dictionary<string, int[]>> roundUnit;
+    }
+
     public enum GameProgress { ReadyGame = 0, ReadyRound, PlayRound };
     public enum UserType { Offender = 0, Defender };
     class PlayRoom
@@ -31,7 +41,8 @@ namespace Server
         Timer timer = null;
         int time = 0;
 
-        ushort[] _winCount = new ushort[5] { 0, 0, 0, 0, 0 };
+        ushort[] _winCount = new ushort[5] { 9, 9, 9, 9, 9 };
+        Dictionary<int, Dictionary<string, int[]>> roundUnits;
 
         public PlayRoom(string roomId, string[] playerId, GameRoom room)
         {
@@ -46,6 +57,15 @@ namespace Server
             round = 0;
 
             _room = room;
+            roundUnits = new Dictionary<int, Dictionary<string, int[]>>();
+            for (int i = 1; i <= 5; i++)
+            {
+                roundUnits.Add(i, new Dictionary<string, int[]>()
+                {
+                    { _playerId[0], new int[3] },
+                    { _playerId[1], new int[1] },
+                });
+            }
 
             StartTimer(30);
         }
@@ -73,6 +93,7 @@ namespace Server
         public void DestroyRoom()
         {
             StopTimer();
+            GameResult();
         }
 
         private void StartTimer(int t)
@@ -166,7 +187,7 @@ namespace Server
                 S_NewRound packet = new S_NewRound();
                 packet.round = ++round;
                 packet.userInfos = new List<S_NewRound.UserInfo>();
-                
+
                 for (int i = 0; i < _playerId.Count(); i++)
                 {
                     packet.userInfos.Add(new S_NewRound.UserInfo()
@@ -222,6 +243,9 @@ namespace Server
                 p.currentProgress = (ushort)currentProgress;
                 p.round = round;
                 turn = 1;
+
+                roundUnits[round][_playerId[0]] = offender.Rosters.ToArray();
+                roundUnits[round][_playerId[1]] = defender.Rosters.ToArray();
 
                 p.enemyRosters = new List<S_RoundReadyEnd.EnemyRoster>();
 
@@ -308,7 +332,6 @@ namespace Server
                     if (unit / 10 == 1) deadUnit.Add(unit, new Tuple<bool, int>(offender.IsDead(unit), 0));
                     else deadUnit.Add(unit, new Tuple<bool, int>(false, 0));
                 }
-
 
                 int endTurn = Battle(diceLists, ref monsterHps, ref diceResults, ref remainTurns, ref ccResultWithTurn, ref deadUnit);
                 int isGameEnd = IsGameEnd();
@@ -556,7 +579,7 @@ namespace Server
             // 행동불능 상태에서는 -1
             int diceId = -1;
             if (dices.Count == 0) return diceId;
-            
+
             Dictionary<int, int> diceAmount = new Dictionary<int, int>();
 
             foreach (int dice in dices)
@@ -686,6 +709,36 @@ namespace Server
             return 0;
         }
 
+        public void GameResult()
+        {
+            Dictionary<string, int[]> roster = new Dictionary<string, int[]>();
+            roster.Add(_playerId[0], offender.Candidates.ToArray());
+            roster.Add(_playerId[1], defender.Candidates.ToArray());
+
+            Dictionary<int, string> winner = new Dictionary<int, string>();
+            for (int i = 0; i < _winCount.Length; i++)
+            {
+                if (_winCount[i] != 9)
+                    winner.Add(i + 1, _playerId[_winCount[i]]);
+                else
+                    winner.Add(i + 1, "");
+            }
+
+            BattleResult result = new BattleResult()
+            {
+                date = DateTime.Now,
+                gameNumber = _roomId,
+                players = _playerId,
+                roster = roster,
+                roundWinner = winner,
+                roundUnit = roundUnits
+            };
+
+            string jsonString = HttpSend.SerializeObject(result);
+            Console.WriteLine(jsonString);
+            HttpSend.SendPost(jsonString,
+                "http://ec2-54-180-153-249.ap-northeast-2.compute.amazonaws.com:8080/api/dgiself/battlereport/save");
+        }
     }
 }
 

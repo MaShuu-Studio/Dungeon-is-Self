@@ -5,9 +5,6 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using ServerCore;
-using System.Net.Http.Headers;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Server
 {
@@ -54,7 +51,13 @@ namespace Server
                     _sessionCount[keys[i]]++;
                     if (_sessionCount[keys[i]] > 6)
                     {
-                        Push(() => Leave(keys[i]));
+                        try
+                        {
+                            Push(() => Leave(keys[i]));
+                        }catch(Exception e)
+                        {
+                            Console.WriteLine(e);
+                        }
                     }
                 }
             }
@@ -91,7 +94,7 @@ namespace Server
         #region Connect
         public void Enter(ClientSession session, string token, string pId)
         {
-            string id = RequestJoinClient(token);
+            string id = pId;//HttpSend.RequestJoinClient(token);
             if (_sessions.Keys.Contains(id) == false && id == pId)
             {
                 Console.WriteLine($"Enter User : {id}");
@@ -109,46 +112,6 @@ namespace Server
                 session.Send(new S_FailConnect().Write());
                 session.Disconnect();
             }
-        }
-        private string RequestJoinClient(string token)
-        {
-            string urlString = "http://ec2-54-180-153-249.ap-northeast-2.compute.amazonaws.com:8080/api/dgiself/member/authorization";
-            int nStartTime = 0;
-            string result = "";
-            string strMsg = string.Empty;
-            nStartTime = Environment.TickCount;
-
-            HttpWebRequest request = null;
-            HttpWebResponse response = null;
-
-            try
-            {
-                Uri url = new Uri(urlString);
-                request = (HttpWebRequest)WebRequest.Create(url);
-                request.Method = WebRequestMethods.Http.Get;
-
-                request.Headers.Add("Authorization", "Bearer " + token);
-                //request.Headers["Authentication"] = "Bearer " + token;
-                request.Timeout = 5000;
-
-                response = (HttpWebResponse)request.GetResponse();
-                Stream responseStream = response.GetResponseStream();
-                StreamReader streamReader = new StreamReader(responseStream, Encoding.UTF8);
-                result = streamReader.ReadToEnd();
-
-                streamReader.Close();
-                responseStream.Close();
-                response.Close();
-
-                JObject start = JObject.Parse(result);
-                result = start["memberCode"].ToString();
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                result = "false";
-            }
-            return result;
         }
 
         public void Leave(string id)
