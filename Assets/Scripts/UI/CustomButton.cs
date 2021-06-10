@@ -121,8 +121,8 @@ public class CustomButton : MonoBehaviour
 
         if(join.SignIn(out token, out pid))
         {
-            NetworkManager.Instance.ConnectToServer(token, pid);
             SetButtonInteract(false);
+            NetworkManager.Instance.ConnectToServer(token, pid);
             StartCoroutine(Connecting());
         }
         else

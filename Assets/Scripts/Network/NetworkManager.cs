@@ -99,29 +99,30 @@ namespace Network
 
             connector.Connect(endPoint, () => { return session; }, 1);
             #endregion
-            
-            if (connector.connectionFailed)
-            {
-                connectRequest = false;
-                return;
-            }
 
             if (connecting != null)
             {
                 StopCoroutine(connecting);
             }
-            connecting = WaitConnecting(token, pid);
+            connecting = WaitConnecting(token, pid, connector);
             StartCoroutine(connecting);
         }
 
-        IEnumerator WaitConnecting(string token, string pid)
+        IEnumerator WaitConnecting(string token, string pid, Connector connector)
         {
-            while (session.Connected == false) yield return null;
+            while (session.Connected == false && connector.connectionFailed == false) yield return null;
 
-            C_EnterGame packet = new C_EnterGame();
-            packet.token = token;
-            packet.playerId = pid;
-            Send(packet.Write());
+            if (connector.connectionFailed)
+            {
+                connectRequest = false;
+            }
+            else
+            {
+                C_EnterGame packet = new C_EnterGame();
+                packet.token = token;
+                packet.playerId = pid;
+                Send(packet.Write());
+            }
         }
 
         public void SetPlayerId(string id)

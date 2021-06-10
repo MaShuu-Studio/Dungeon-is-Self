@@ -32,6 +32,8 @@ public class SettingUI : MonoBehaviour
     [SerializeField] private GameObject settingControlObject;
     [SerializeField] private Slider bgmSlider;
     [SerializeField] private Slider sfxSlider;
+    [SerializeField] private Text bgmText;
+    [SerializeField] private Text sfxText;
     [SerializeField] private Dropdown screenMode;
     [SerializeField] private Button tutorialButton;
     [SerializeField] private Button surrenderButton;
@@ -84,12 +86,14 @@ public class SettingUI : MonoBehaviour
 
     public void BGMControl()
     {
-        // bgmSlider.value
+        SoundController.Instance.SetBGMVolume(bgmSlider.value);
+        bgmText.text = ((int)bgmSlider.value).ToString();
     }
 
     public void SFXControl()
     {
-        // sfxSlider.value
+        SoundController.Instance.SetBGMVolume(sfxSlider.value);
+        sfxText.text = ((int)sfxSlider.value).ToString();
     }
 
     public void SettingObjectOnOff()

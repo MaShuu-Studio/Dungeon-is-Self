@@ -94,7 +94,7 @@ namespace Server
         #region Connect
         public void Enter(ClientSession session, string token, string pId)
         {
-            string id = pId;//HttpSend.RequestJoinClient(token);
+            string id = HttpSend.RequestJoinClient(token);
             if (_sessions.Keys.Contains(id) == false && id == pId)
             {
                 Console.WriteLine($"Enter User : {id}");

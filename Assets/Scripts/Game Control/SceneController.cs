@@ -51,6 +51,9 @@ public class SceneController : MonoBehaviour
         if (CurrentScene == "GAMEPLAY")
         {
             GameController.Instance.ReadyGame();
+        }else if (CurrentScene == "TITLE" || CurrentScene == "MAIN")
+        {
+            SoundController.Instance.PlayBGM("TITLE");
         }
     }
 }
