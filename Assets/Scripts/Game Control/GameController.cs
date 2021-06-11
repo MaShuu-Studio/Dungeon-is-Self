@@ -323,6 +323,7 @@ namespace GameControl
                 if (winner != 0 && i == endTurn)
                 {
                     StartCoroutine(ShowResult((UserType)winner, isGameEnd));
+                    i = 0;
                     break;
                 }
             }

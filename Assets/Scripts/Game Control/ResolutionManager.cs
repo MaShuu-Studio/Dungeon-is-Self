@@ -103,7 +103,6 @@ public class ResolutionManager : MonoBehaviour
         float heightSpace = height * camRect.y;
         float widthRect = width * camRect.width;
         float heightRect = height * camRect.height;
-        Debug.Log(widthSpace);
 
         Vector2 newPos = new Vector2((pos.x - widthSpace) / widthRect * defaultWidth, (pos.y - heightSpace) / heightRect * defaultHeight);
 

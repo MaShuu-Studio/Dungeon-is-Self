@@ -7,9 +7,21 @@ using System.Text;
 using System.Net;
 using System.Net.Json;
 using Newtonsoft.Json.Linq;
+using Newtonsoft.Json;
+
+public class BattleResult
+{
+    public DateTime date;
+    public string gameNumber;
+    public string[] players;
+    public Dictionary<string, int[]> roster;
+    public Dictionary<int, string> roundWinner;
+    public Dictionary<int, Dictionary<string, int[]>> roundUnit;
+}
 
 public class HTTPRequestController : MonoBehaviour
 {
+    #region instance
     private static HTTPRequestController instance;
     public static HTTPRequestController Instance
     {
@@ -29,6 +41,17 @@ public class HTTPRequestController : MonoBehaviour
             return;
         }
         DontDestroyOnLoad(gameObject);
+    }
+    #endregion
+
+    public static string SerializeObject(object obj)
+    {
+        return JsonConvert.SerializeObject(obj);
+    }
+
+    public static T DesrializeObject<T>(string str) 
+    {
+        return JsonConvert.DeserializeObject<T>(str);
     }
 
     public string SendHTTPPost(string send, string urlString)
@@ -97,12 +120,10 @@ public class HTTPRequestController : MonoBehaviour
             streamReader.Close();
             responseStream.Close();
             response.Close();
-
-            JObject start = JObject.Parse(result);
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
+            Debug.Log(e);
             result = "false";
         }
         return result;

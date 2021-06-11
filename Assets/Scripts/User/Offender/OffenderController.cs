@@ -60,6 +60,9 @@ namespace GameControl
             {
                 dices[i].Clear();
                 skillRoster[i].Clear();
+
+                dices[i].Add(-1);
+                dices[i].Add(-1);
             }
         }
 
@@ -103,8 +106,6 @@ namespace GameControl
                 skillRoster.Add(skillCand);
                 dices.Add(diceCand);
                 
-                dices[i].Add(-1);
-                dices[i].Add(-1);
             }
         }
 

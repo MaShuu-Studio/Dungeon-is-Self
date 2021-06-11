@@ -495,7 +495,11 @@ namespace Server
                         diceResults.Add(units[i], selectedDice);
                         remainTurns.Add(units[i], remainTurn);
                     }
-                    else diceResults.Add(units[i], -1);
+                    else
+                    {
+                        diceResults.Add(units[i], -1);
+                        remainTurns.Add(units[i], 0);
+                    }
                 }
                 else
                 {

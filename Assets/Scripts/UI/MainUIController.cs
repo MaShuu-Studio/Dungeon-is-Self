@@ -107,14 +107,18 @@ public class MainUIController : MonoBehaviour
 
             // 배틀로그
             string log = NetworkManager.Instance.GetUserBattleInfo();
-            Debug.Log(log);
-            if (log == "false")
-            {
 
+            if (log != "false")
+            {
+                BattleResult[] results = HTTPRequestController.DesrializeObject<BattleResult[]>(log);
+
+                for (int i = 0; i < results.Length; i++)
+                {
+
+                }
             }
             else
             {
-
             }
         }
     }
