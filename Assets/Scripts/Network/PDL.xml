@@ -44,11 +44,18 @@
 		<string name="playerName"/>
 		<string name="roomCode"/>
 	</packet>
+	<packet name="C_ChangeTypePrivateRoom">
+		<string name="playerId"/>
+		<string name="roomCode"/>
+		<ushort name="index"/>
+		<ushort name="type"/>
+	</packet>	
 	<packet name="S_UpdatePrivateRoom">
 		<string name="roomCode"/>
 		<clist name="user">
 			<string name="playerId"/>
 			<string name="playerName"/>
+			<ushort name="type"/>
 			<bool name="ready"/>
 		</clist>
 	</packet>

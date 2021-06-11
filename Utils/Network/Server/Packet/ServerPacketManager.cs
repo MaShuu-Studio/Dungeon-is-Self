@@ -30,6 +30,8 @@ public class PacketManager
         handler.Add((ushort)PacketID.C_MakePrivateRoom, PacketHandler.C_MakePrivateRoomHandler);
         makeFunc.Add((ushort)PacketID.C_JoinPrivateRoom, MakePacket<C_JoinPrivateRoom>);
         handler.Add((ushort)PacketID.C_JoinPrivateRoom, PacketHandler.C_JoinPrivateRoomHandler);
+        makeFunc.Add((ushort)PacketID.C_ChangeTypePrivateRoom, MakePacket<C_ChangeTypePrivateRoom>);
+        handler.Add((ushort)PacketID.C_ChangeTypePrivateRoom, PacketHandler.C_ChangeTypePrivateRoomHandler);
         makeFunc.Add((ushort)PacketID.C_ReadyPrivateRoom, MakePacket<C_ReadyPrivateRoom>);
         handler.Add((ushort)PacketID.C_ReadyPrivateRoom, PacketHandler.C_ReadyPrivateRoomHandler);
         makeFunc.Add((ushort)PacketID.C_StartPrivateRoom, MakePacket<C_StartPrivateRoom>);

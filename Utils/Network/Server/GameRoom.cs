@@ -12,6 +12,7 @@ namespace Server
     {
         public string userName;
         public bool readyState;
+        public UserType type;
     }
     class GameRoom : IJobQueue
     {
@@ -304,7 +305,8 @@ namespace Server
             PrivateRoomUserInfo userInfo = new PrivateRoomUserInfo()
             {
                 userName = userName,
-                readyState = false
+                readyState = false,
+                type = UserType.Offender,
             };
             newUser.Add(userId, userInfo);
             privateRooms.Add(roomCode, newUser);
@@ -319,11 +321,13 @@ namespace Server
                 bool canJoin = privateRooms[roomCode].Count == 1;
                 if (canJoin)
                 {
-                    Dictionary<string, PrivateRoomUserInfo> newUser = new Dictionary<string, PrivateRoomUserInfo>();
+                    List<string> ids = privateRooms[roomCode].Keys.ToList();
+                    UserType remainType = (privateRooms[roomCode][ids[0]].type == UserType.Offender) ? UserType.Defender : UserType.Offender;
                     PrivateRoomUserInfo userInfo = new PrivateRoomUserInfo()
                     {
                         userName = userName,
-                        readyState = false
+                        readyState = false,
+                        type = remainType
                     };
                     privateRooms[roomCode].Add(userId, userInfo);
                 }
@@ -346,7 +350,8 @@ namespace Server
                     {
                         playerId = id,
                         playerName = privateRooms[roomCode][id].userName,
-                        ready = privateRooms[roomCode][id].readyState
+                        ready = privateRooms[roomCode][id].readyState,
+                        type = (ushort)privateRooms[roomCode][id].type
                     });
                     users.Add(id);
                 }
@@ -368,6 +373,32 @@ namespace Server
                 PrivateRoomUserInfo info = privateRooms[roomCode][userId];
                 info.readyState = ready;
                 privateRooms[roomCode][userId] = info;
+            }
+
+            UpdatePrivateRoom(userId, roomCode);
+        }
+
+        public void ChangeTypePrivateRoom(string userId, string roomCode, ushort index, UserType type)
+        {
+            if (privateRooms.ContainsKey(roomCode))
+            {
+                List<string> ids = privateRooms[roomCode].Keys.ToList();
+                if (index < ids.Count)
+                {
+                    PrivateRoomUserInfo info = privateRooms[roomCode][ids[index]];
+                    info.type = type;
+                    privateRooms[roomCode][ids[index]] = info;
+                    
+                    if (ids.Count == 2)
+                    {
+                        UserType remainType = (type == UserType.Offender) ? UserType.Defender : UserType.Offender;
+                        int remainIndex = (ids.Count - index + 1) % 2;
+
+                        PrivateRoomUserInfo remainInfo = privateRooms[roomCode][ids[remainIndex]];
+                        remainInfo.type = remainType;
+                        privateRooms[roomCode][ids[remainIndex]] = remainInfo;
+                    }
+                }
             }
 
             UpdatePrivateRoom(userId, roomCode);
@@ -433,15 +464,23 @@ namespace Server
                 if (users.Count != 2) return;
 
                 bool allReady = true;
-                foreach (PrivateRoomUserInfo user in users.Values)
+                List<string> pIds = users.Keys.ToList();
+                string offenderUser = pIds[0];
+                string defenderUser = pIds[1];
+                for(int i = 0; i < pIds.Count; i++)
                 {
-                    allReady = user.readyState;
+                    allReady = users[pIds[i]].readyState;
                     if (allReady == false) break;
+                    if (users[pIds[i]].type == UserType.Offender)
+                    {
+                        int remainIndex = (pIds.Count - i + 1) % 2;
+                        offenderUser = pIds[i];
+                        defenderUser = pIds[remainIndex];
+                    }
                 }
                 if (allReady)
                 {
-                    List<string> pIds = users.Keys.ToList();
-                    string[] playerIds = new string[2] { pIds[0], pIds[1] };
+                    string[] playerIds = new string[2] { offenderUser, defenderUser };
 
                     int roomNumber = _roomNumber++;
                     string roomId = string.Format("{0:yy}{0:MM}{0:dd}{1:D8}", DateTime.Now, roomNumber);

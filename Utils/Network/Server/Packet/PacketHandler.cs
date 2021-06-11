@@ -141,6 +141,21 @@ namespace Network
 
             room.Push(() => room.ReadyPrivateRoom(playerId, roomCode, ready));
         }
+        public static void C_ChangeTypePrivateRoomHandler(PacketSession session, IPacket packet)
+        {
+            C_ChangeTypePrivateRoom p = packet as C_ChangeTypePrivateRoom;
+            ClientSession clientSession = session as ClientSession;
+            if (clientSession.Room == null) return;
+
+            GameRoom room = clientSession.Room;
+
+            string playerId = p.playerId;
+            string roomCode = p.roomCode;
+            ushort index = p.index;
+            ushort type = p.type;
+
+            room.Push(() => room.ChangeTypePrivateRoom(playerId, roomCode, index, (UserType)type));
+        }
         public static void C_StartPrivateRoomHandler(PacketSession session, IPacket packet)
         {
             C_StartPrivateRoom p = packet as C_StartPrivateRoom;

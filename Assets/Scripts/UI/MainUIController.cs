@@ -52,6 +52,7 @@ public class MainUIController : MonoBehaviour
     [SerializeField] private Text privateRoomCodeText;
     [SerializeField] private List<Text> privateRoomUsersNameTexts;
     [SerializeField] private List<Text> privateRoomUsersIdTexts;
+    [SerializeField] private List<Dropdown> privateRoomUsersType;
     [SerializeField] private List<Toggle> privateRoomReadyStates;
     [SerializeField] private RectTransform readyButton;
     [SerializeField] private RectTransform startButton;
@@ -99,11 +100,11 @@ public class MainUIController : MonoBehaviour
     {
         userInfoObject.SetActive(!userInfoObject.activeSelf);
 
-        for (int i = 0; i< contents.transform.childCount; i++)
+        for (int i = 0; i < contents.transform.childCount; i++)
         {
             Destroy(contents.GetChild(i).gameObject);
         }
-        
+
 
         if (userInfoObject.activeSelf)
         {
@@ -162,7 +163,7 @@ public class MainUIController : MonoBehaviour
 
         chatContents.text = "";
 
-        for(int i = 0; i < chatList.Count; i++)
+        for (int i = 0; i < chatList.Count; i++)
         {
             chatContents.text += chatList[i];
             if (i != chatList.Count - 1) chatContents.text += "\n";
@@ -193,6 +194,15 @@ public class MainUIController : MonoBehaviour
         NetworkManager.Instance.ExitPrivateRoom(roomCode);
     }
 
+    public void ChangeTypeInPrivateRoom(Dropdown obj)
+    {
+        for (int i = 0; i < privateRoomUsersType.Count; i++)
+        {
+            if (obj == privateRoomUsersType[i])
+                NetworkManager.Instance.ChangeTypePrivateRoom(roomCode, (ushort)i, (ushort)privateRoomUsersType[i].value);
+        }
+    }
+
     public void UpdatePrivateRoom(S_UpdatePrivateRoom packet)
     {
         privateRoomGameObject.SetActive(true);
@@ -204,15 +214,18 @@ public class MainUIController : MonoBehaviour
             string name = "";
             string id = "";
             bool ready = false;
+            ushort type = 0;
             if (i < packet.users.Count)
             {
                 name = packet.users[i].playerName;
                 id = packet.users[i].playerId;
                 ready = packet.users[i].ready;
+                type = packet.users[i].type;
             }
             privateRoomUsersNameTexts[i].text = name;
             privateRoomUsersIdTexts[i].text = id;
             privateRoomReadyStates[i].isOn = ready;
+            privateRoomUsersType[i].value = type;
 
             if (i < packet.users.Count && packet.users[i].playerId == NetworkManager.Instance.PlayerId)
             {
@@ -224,6 +237,10 @@ public class MainUIController : MonoBehaviour
                     readyButton.anchorMax = new Vector2(0.5f, 1);
                     readyButton.anchoredPosition = new Vector2(0, 0);
                     startButton.gameObject.SetActive(false);
+                    foreach (Dropdown drop in privateRoomUsersType)
+                    {
+                        drop.interactable = false;
+                    }
                 }
                 else
                 {
@@ -232,6 +249,10 @@ public class MainUIController : MonoBehaviour
                     readyButton.anchorMax = new Vector2(0, 1);
                     readyButton.anchoredPosition = new Vector2(0, 0);
                     startButton.gameObject.SetActive(true);
+                    foreach (Dropdown drop in privateRoomUsersType)
+                    {
+                        drop.interactable = true;
+                    }
                 }
             }
         }

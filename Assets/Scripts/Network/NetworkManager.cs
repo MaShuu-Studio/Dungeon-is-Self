@@ -79,7 +79,7 @@ namespace Network
             IPEndPoint endPoint;
 
             Connector connector = new Connector();
-            
+            /*
             #region Local Test
             host = Dns.GetHostName();
             ipHost = Dns.GetHostEntry(host);
@@ -88,7 +88,7 @@ namespace Network
 
             connector.Connect(endPoint, () => { return session; }, 1);
             #endregion
-            /*
+            */
             #region Live
             connectRequest = true;
             host = "ec2-13-124-208-197.ap-northeast-2.compute.amazonaws.com";
@@ -98,7 +98,7 @@ namespace Network
 
             connector.Connect(endPoint, () => { return session; }, 1);
             #endregion
-            */
+            
             if (connecting != null)
             {
                 StopCoroutine(connecting);
@@ -233,6 +233,16 @@ namespace Network
             packet.playerId = playerId;
             packet.playerName = playerName;
             packet.roomCode = roomCode;
+            Send(packet.Write());
+        }
+
+        public void ChangeTypePrivateRoom(string roomCode, ushort index, ushort type)
+        {
+            C_ChangeTypePrivateRoom packet = new C_ChangeTypePrivateRoom();
+            packet.playerId = playerId;
+            packet.roomCode = roomCode;
+            packet.index = index;
+            packet.type = (ushort)type;
             Send(packet.Write());
         }
 
