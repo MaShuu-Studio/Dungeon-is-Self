@@ -81,9 +81,7 @@ public class MainUIController : MonoBehaviour
 
     public void AdjustInputField(string str)
     {
-        Debug.Log(str);
         str = Regex.Replace(str, "0123456789", "");
-        Debug.Log(str);
         privateRoomInputCode.text = str.ToUpper();
     }
 

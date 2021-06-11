@@ -566,16 +566,21 @@ namespace Server
             }
         }
 
-        public void GameEnd(string roomId)
+        public void GameEnd(string roomId, ushort abnormalWinner = 9)
         {
             if (playingRooms.ContainsKey(roomId))
             {
+                if(abnormalWinner != 9)
+                    playingRooms[roomId].SetAbnormalWinner(abnormalWinner);
                 playingRooms[roomId].DestroyRoom();
+                playingRooms[roomId] = null;
                 playingRooms[roomId] = null;
                 playingRooms.Remove(roomId);
             }
             else if (playingSingleGameRooms.ContainsKey(roomId))
             {
+                if (abnormalWinner != 9)
+                    playingSingleGameRooms[roomId].SetAbnormalWinner(abnormalWinner);
                 playingSingleGameRooms[roomId].DestroyRoom();
                 playingSingleGameRooms[roomId] = null;
                 playingSingleGameRooms.Remove(roomId);
@@ -613,7 +618,7 @@ namespace Server
 
                 Send(userId, packet);
                 Send(winnerId, packet);
-                Push(() => GameEnd(roomId));
+                Push(() => GameEnd(roomId, (ushort)winner));
             }
         }
         #endregion

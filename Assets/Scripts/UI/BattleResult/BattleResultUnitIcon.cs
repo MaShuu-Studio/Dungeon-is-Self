@@ -10,6 +10,7 @@ public class BattleResultUnitIcon : MonoBehaviour
     [SerializeField] private Image image;
     public void SetImage(UserType type, int id)
     {
+        if (id == 0) Destroy(gameObject);
         string path = (type == UserType.Defender) ? MonsterDatabase.facePath : CharacterDatabase.facePath;
         image.sprite = Resources.Load<Sprite>(path + id.ToString());
     }

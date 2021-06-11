@@ -10,6 +10,7 @@ namespace Server
     public class BattleResult
     {
         public DateTime date;
+        public int winner;
         public string gameNumber;
         public string[] players;
         public Dictionary<string, int[]> roster;
@@ -42,6 +43,7 @@ namespace Server
         int time = 0;
 
         ushort[] _winCount = new ushort[5] { 9, 9, 9, 9, 9 };
+        int winner = 9;
         Dictionary<int, Dictionary<string, int[]>> roundUnits;
 
         public PlayRoom(string roomId, string[] playerId, GameRoom room)
@@ -88,6 +90,10 @@ namespace Server
 
             _room = room;
             StartTimer(30);
+        }
+        public void SetAbnormalWinner(ushort winner)
+        {
+            this.winner = winner;
         }
 
         public void DestroyRoom()
@@ -334,7 +340,8 @@ namespace Server
                 }
 
                 int endTurn = Battle(diceLists, ref monsterHps, ref diceResults, ref remainTurns, ref ccResultWithTurn, ref deadUnit);
-                int isGameEnd = IsGameEnd();
+                ushort isGameEnd = IsGameEnd();
+                if (isGameEnd != 0) winner = (ushort)isGameEnd;
 
                 S_ProgressTurn p = new S_ProgressTurn();
                 p.isGameEnd = (isGameEnd != 0);
@@ -696,10 +703,10 @@ namespace Server
             return false;
         }
 
-        private int IsGameEnd()
+        private ushort IsGameEnd()
         {
-            int defWinCount = 0;
-            int offWinCount = 0;
+            ushort defWinCount = 0;
+            ushort offWinCount = 0;
 
             foreach (int winner in _winCount)
             {
@@ -716,16 +723,23 @@ namespace Server
         public void GameResult()
         {
             Dictionary<string, int[]> roster = new Dictionary<string, int[]>();
-            roster.Add(_playerId[0], offender.Candidates.ToArray());
-            roster.Add(_playerId[1], defender.Candidates.ToArray());
+            if (offender.Candidates.Count != 0)
+                roster.Add(_playerId[0], offender.Candidates.ToArray());
+            else 
+                roster.Add(_playerId[0], new int[6]);
 
-            Dictionary<int, string> winner = new Dictionary<int, string>();
+            if (defender.Candidates.Count != 0)
+                roster.Add(_playerId[1], defender.Candidates.ToArray());
+            else
+                roster.Add(_playerId[1], new int[6]);
+
+            Dictionary<int, string> roundWinner = new Dictionary<int, string>();
             for (int i = 0; i < _winCount.Length; i++)
             {
                 if (_winCount[i] != 9)
-                    winner.Add(i + 1, _playerId[_winCount[i]]);
+                    roundWinner.Add(i + 1, _playerId[_winCount[i]]);
                 else
-                    winner.Add(i + 1, "");
+                    roundWinner.Add(i + 1, "");
             }
 
             BattleResult result = new BattleResult()
@@ -733,8 +747,9 @@ namespace Server
                 date = DateTime.Now,
                 gameNumber = _roomId,
                 players = _playerId,
+                winner = winner,
                 roster = roster,
-                roundWinner = winner,
+                roundWinner = roundWinner,
                 roundUnit = roundUnits
             };
 

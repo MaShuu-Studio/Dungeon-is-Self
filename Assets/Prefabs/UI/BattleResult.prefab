@@ -968,11 +968,11 @@ MonoBehaviour:
       m_Calls: []
   m_FontData:
     m_Font: {fileID: 12800000, guid: 1d39d0dbb3cb08b41a5d48185570de9d, type: 2}
-    m_FontSize: 24
+    m_FontSize: 48
     m_FontStyle: 0
     m_BestFit: 0
     m_MinSize: 0
-    m_MaxSize: 40
+    m_MaxSize: 48
     m_Alignment: 4
     m_AlignByGeometry: 0
     m_RichText: 1
@@ -1231,6 +1231,9 @@ MonoBehaviour:
   roundResultPrefab: {fileID: 7543352383088043450}
   resultPerRoundPrefab: {fileID: 8347448458240273332, guid: 3e71bce6ea79ee646be0504181c8f358,
     type: 3}
+  winCountPrefab: {fileID: 5183241184305583829, guid: 5a6909f17b7f3944fbfad1ad78694e06,
+    type: 3}
+  versusTextTransform: {fileID: 4240366993746604004}
 --- !u!114 &7806609861608307591
 MonoBehaviour:
   m_ObjectHideFlags: 0

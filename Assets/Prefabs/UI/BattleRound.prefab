@@ -174,3 +174,5 @@ MonoBehaviour:
   defenderTransform: {fileID: 3379774569102069803}
   unitIconPrefab: {fileID: 6957026238962538094, guid: d0881782181ff85458129d7f954a776c,
     type: 3}
+  winCountPrefab: {fileID: 5183241184305583829, guid: 5a6909f17b7f3944fbfad1ad78694e06,
+    type: 3}
