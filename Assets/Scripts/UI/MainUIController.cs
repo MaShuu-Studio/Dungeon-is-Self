@@ -35,6 +35,7 @@ public class MainUIController : MonoBehaviour
     [SerializeField] private GameObject userInfoObject;
     [SerializeField] private Text userName;
     [SerializeField] private RectTransform contents;
+    [SerializeField] private GameObject battleResultPrefab;
 
     [Header("Chat")]
     [SerializeField] private Text chatContents;
@@ -100,6 +101,12 @@ public class MainUIController : MonoBehaviour
     {
         userInfoObject.SetActive(!userInfoObject.activeSelf);
 
+        for (int i = 0; i< contents.transform.childCount; i++)
+        {
+            Destroy(contents.GetChild(i).gameObject);
+        }
+        
+
         if (userInfoObject.activeSelf)
         {
             userName.text = "USER NAME: " + NetworkManager.Instance.PlayerName + "\n" +
@@ -114,8 +121,14 @@ public class MainUIController : MonoBehaviour
 
                 for (int i = 0; i < results.Length; i++)
                 {
-
+                    GameObject resultObj = Instantiate(battleResultPrefab);
+                    resultObj.transform.SetParent(contents);
+                    resultObj.transform.localScale = new Vector3(1, 1, 1);
+                    BattleResultUI resultUI = resultObj.GetComponent<BattleResultUI>();
+                    resultUI.SetResult(results[i]);
                 }
+
+                SetContentsSize();
             }
             else
             {
@@ -125,7 +138,7 @@ public class MainUIController : MonoBehaviour
 
     private void SetContentsSize()
     {
-        contents.sizeDelta = new Vector2(contents.sizeDelta.x, contents.childCount * 100);
+        contents.sizeDelta = new Vector2(contents.sizeDelta.x, contents.childCount * 250);
     }
     #endregion
 

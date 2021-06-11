@@ -9,15 +9,6 @@ using System.Net.Json;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
 
-public class BattleResult
-{
-    public DateTime date;
-    public string gameNumber;
-    public string[] players;
-    public Dictionary<string, int[]> roster;
-    public Dictionary<int, string> roundWinner;
-    public Dictionary<int, Dictionary<string, int[]>> roundUnit;
-}
 
 public class HTTPRequestController : MonoBehaviour
 {

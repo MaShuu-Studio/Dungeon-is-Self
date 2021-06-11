@@ -81,6 +81,9 @@
     <Compile Include="Assets\Scripts\Network\PacketQueue.cs" />
     <Compile Include="Assets\Scripts\Network\ServerSession.cs" />
     <Compile Include="Assets\Scripts\UI\AlertObject.cs" />
+    <Compile Include="Assets\Scripts\UI\BattleResult\BattleResultPerRoundUI.cs" />
+    <Compile Include="Assets\Scripts\UI\BattleResult\BattleResultUI.cs" />
+    <Compile Include="Assets\Scripts\UI\BattleResult\BattleResultUnitIcon.cs" />
     <Compile Include="Assets\Scripts\UI\CustomButton.cs" />
     <Compile Include="Assets\Scripts\UI\Descriptions\SkillDescription.cs" />
     <Compile Include="Assets\Scripts\UI\Descriptions\UIDescription.cs" />
