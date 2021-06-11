@@ -296,7 +296,8 @@ namespace GameControl
                 if (diceSkills[keys[i]] < 0 || remainTurns[keys[i]] > 0) continue;
                 if (isDead[keys[i]] == false)
                 {
-                    GamePlayUIController.Instance.PlayAnimation(keys[i], diceSkills[keys[i]].ToString());
+                    bool move = SkillDatabase.Instance.IsMovementSkill(diceSkills[keys[i]]);
+                    GamePlayUIController.Instance.PlayAnimation(keys[i], diceSkills[keys[i]].ToString(), move);
                     while (animationEnd[keys[i]] == false) yield return null;
                 }
                 else

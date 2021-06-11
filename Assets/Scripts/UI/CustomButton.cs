@@ -113,6 +113,7 @@ public class CustomButton : MonoBehaviour
     #region Network
     void ConnectServer()
     {
+        SetButtonInteract(false);
         JoinController join = FindObjectOfType<JoinController>();
         if (join == null) return;
 
@@ -121,15 +122,11 @@ public class CustomButton : MonoBehaviour
 
         if(join.SignIn(out token, out pid))
         {
-            SetButtonInteract(false);
             NetworkManager.Instance.ConnectToServer(token, pid);
             StartCoroutine(Connecting());
         }
         else
-        {
-
-            
-        }
+            SetButtonInteract(true);
     }
 
     IEnumerator Connecting()

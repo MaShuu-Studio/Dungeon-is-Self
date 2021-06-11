@@ -1245,7 +1245,7 @@ public class GamePlayUIController : MonoBehaviour
         Destroy(mapObject);
     }
 
-    public void PlayAnimation(int index, string anim)
+    public void PlayAnimation(int index, string anim, bool move)
     {
         foreach (CharacterObject c in charObjects)
         {
@@ -1253,7 +1253,7 @@ public class GamePlayUIController : MonoBehaviour
             {
                 float xPos = c.transform.position.x;
                 if (type == UserType.Offender) xPos = enemyObjects[0].transform.position.x;
-                c.SetAnimation(anim, xPos);
+                c.SetAnimation(anim, move, xPos);
                 return;
             }
         }
@@ -1264,7 +1264,7 @@ public class GamePlayUIController : MonoBehaviour
             {
                 float xPos = c.transform.position.x;
                 if (type == UserType.Defender) xPos = charObjects[0].transform.position.x;
-                c.SetAnimation(anim, xPos);
+                c.SetAnimation(anim, move, xPos);
                 return;
             }
         }

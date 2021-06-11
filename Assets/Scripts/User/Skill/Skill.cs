@@ -12,6 +12,7 @@ namespace Data
         public int tier { get; protected set; }
         public string description { get; protected set; }
         public Dictionary<CrowdControl, int> ccList { get; protected set; } = new Dictionary<CrowdControl, int>();
+        public bool move { get; protected set; }
 
     }
 }

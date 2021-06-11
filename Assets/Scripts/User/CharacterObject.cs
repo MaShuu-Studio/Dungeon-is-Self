@@ -136,14 +136,15 @@ public class CharacterObject : MonoBehaviour
         index = n;
     }
 
-    public void SetAnimation(string name, float x)
+    public void SetAnimation(string name, bool move, float x)
     {
         if (name != "10100") name = "Attack";
         _animator.SetTrigger(name);
         coroutine = Animation(name);
         originXPos = transform.position.x;
         _sprite.sortingOrder = 1;
-        transform.position = new Vector3(x, transform.position.y, 0);
+        if (move)
+            transform.position = new Vector3(x, transform.position.y, 0);
     }
 
     public void SetFlip(bool isFlip)

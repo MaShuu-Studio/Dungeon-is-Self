@@ -11,7 +11,7 @@ namespace Data
         public SkillType type { get; private set; }
         public int cost { get; private set; }
 
-        public MonsterSkill(int id, string name, int turn, int cost, string description, List<System.Tuple<CrowdControl, int>> ccs = null)
+        public MonsterSkill(int id, string name, bool move, int turn, int cost, string description, List<System.Tuple<CrowdControl, int>> ccs = null)
         {
             // ID 구조 2aabcd
             // 2는 몬스터스킬임을 표기
@@ -28,6 +28,9 @@ namespace Data
 
             this.type = (SkillType)(tmp % 10);
             this.name = name;
+
+            this.move = move;
+
             this.turn = turn;
             this.cost = cost;
 
