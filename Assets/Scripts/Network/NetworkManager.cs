@@ -181,6 +181,12 @@ namespace Network
             Send(packet.Write());
         }
 
+        public string GetUserBattleInfo()
+        {
+            string url = "http://ec2-54-180-153-249.ap-northeast-2.compute.amazonaws.com:8080/api/dgiself/battlereport/find/" + playerId;
+            return HTTPRequestController.Instance.SendHTTPGet(url);
+        }
+
         #region Match
         public void MatchRequest(UserType type)
         {

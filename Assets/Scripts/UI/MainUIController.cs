@@ -106,6 +106,16 @@ public class MainUIController : MonoBehaviour
                 "USER ID  : " + NetworkManager.Instance.PlayerId + "\n";
 
             // 배틀로그
+            string log = NetworkManager.Instance.GetUserBattleInfo();
+            Debug.Log(log);
+            if (log == "false")
+            {
+
+            }
+            else
+            {
+
+            }
         }
     }
 
@@ -188,7 +198,7 @@ public class MainUIController : MonoBehaviour
             privateRoomUsersNameTexts[i].text = name;
             privateRoomUsersIdTexts[i].text = id;
             privateRoomReadyStates[i].isOn = ready;
-            Debug.Log(privateRoomReadyStates[userIndex].isOn);
+
             if (i < packet.users.Count && packet.users[i].playerId == NetworkManager.Instance.PlayerId)
             {
                 userIndex = i;
