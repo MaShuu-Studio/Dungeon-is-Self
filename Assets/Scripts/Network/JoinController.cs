@@ -1,14 +1,10 @@
+using Newtonsoft.Json.Linq;
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Net.Json;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.EventSystems;
-using System;
-using System.IO;
-using System.Text;
-using System.Net;
-using System.Net.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Network
 {
@@ -24,8 +20,6 @@ namespace Network
         private string memberId;
         private string password;
         private string nickname;
-        private string joinInfo;
-        private string startInfo;
 
         private void Update()
         {
@@ -84,7 +78,6 @@ namespace Network
                         else if (inputReturn) signUpButton.onClick.Invoke();
                         break;
                     }
-
             }
         }
 
@@ -93,8 +86,6 @@ namespace Network
             memberId = "";
             password = "";
             nickname = "";
-            joinInfo = "";
-            startInfo = "";
 
             for (int i = 0; i < signinInputFields.Count; i++)
                 signinInputFields[i].text = "";
@@ -129,9 +120,14 @@ namespace Network
             if (CheckForm())
             {
                 string urlString = "http://ec2-54-180-153-249.ap-northeast-2.compute.amazonaws.com:8080/api/dgiself/member/join";
-                CreateJoinJson();
 
-                string result = SendHTTP(joinInfo, urlString);
+                JsonObjectCollection jsonObj = new JsonObjectCollection();
+                jsonObj.Add(new JsonStringValue("memberId", memberId));
+                jsonObj.Add(new JsonStringValue("password", password));
+                jsonObj.Add(new JsonStringValue("nickname", nickname));
+                string joinInfo = jsonObj.ToString();
+
+                string result = HTTPRequestController.Instance.SendHTTPPost(joinInfo, urlString);
                 if (result == "true")
                 {
                     ChangeView();
@@ -174,67 +170,21 @@ namespace Network
             }
         }
 
-        private void CreateJoinJson()
-        {
-            JsonObjectCollection jsonObj = new JsonObjectCollection();
-            jsonObj.Add(new JsonStringValue("memberId", memberId));
-            jsonObj.Add(new JsonStringValue("password", password));
-            jsonObj.Add(new JsonStringValue("nickname", nickname));
-            joinInfo = jsonObj.ToString();
-        }
-
-        private string SendHTTP(string send, string urlString)
-        {
-            int nStartTime = 0;
-            string result = "";
-            string strMsg = string.Empty;
-            nStartTime = Environment.TickCount;
-            //string urlString = "http://ec2-54-180-153-249.ap-northeast-2.compute.amazonaws.com:8080/api/dgiself/member/join";
-
-            HttpWebRequest request = null;
-            HttpWebResponse response = null;
-            try
-            {
-                Uri url = new Uri(urlString);
-                request = (HttpWebRequest)WebRequest.Create(url);
-                request.Method = WebRequestMethods.Http.Post;
-                request.Timeout = 5000;
-
-                byte[] data = Encoding.UTF8.GetBytes(send);
-                request.ContentType = "application/json";
-                request.ContentLength = data.Length;
-
-                Stream dataStream = request.GetRequestStream();
-                dataStream.Write(data, 0, data.Length);
-                dataStream.Close();
-
-                response = (HttpWebResponse)request.GetResponse();
-                Stream responseStream = response.GetResponseStream();
-                StreamReader streamReader = new StreamReader(responseStream, Encoding.UTF8);
-                result = streamReader.ReadToEnd();
-
-                streamReader.Close();
-                responseStream.Close();
-                response.Close();
-            }
-            catch (Exception e)
-            {
-                result = "false";
-                Debug.Log(e);
-            }
-            return result;
-        }
 
         public bool SignIn(out string token, out string pid)
         {
             string urlString = "http://ec2-54-180-153-249.ap-northeast-2.compute.amazonaws.com:8080/api/dgiself/member/login";
             string result = "";
-            CreateStartJson();
+
             JsonObjectCollection jsonObj = new JsonObjectCollection();
+            jsonObj.Add(new JsonStringValue("memberId", memberId));
+            jsonObj.Add(new JsonStringValue("password", password));
+            string startInfo = jsonObj.ToString();
+
             token = "";
             pid = "";
 
-            result = SendHTTP(startInfo, urlString);
+            result = HTTPRequestController.Instance.SendHTTPPost(startInfo, urlString);
             try
             {
                 JObject start = JObject.Parse(result);
@@ -260,14 +210,6 @@ namespace Network
             }
             failedSignIn.gameObject.SetActive(true);
             return false;
-        }
-
-        private void CreateStartJson()
-        {
-            JsonObjectCollection jsonObj = new JsonObjectCollection();
-            jsonObj.Add(new JsonStringValue("memberId", memberId));
-            jsonObj.Add(new JsonStringValue("password", password));
-            startInfo = jsonObj.ToString();
         }
     }
 }
