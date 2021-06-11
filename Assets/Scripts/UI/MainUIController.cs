@@ -39,7 +39,11 @@ public class MainUIController : MonoBehaviour
     [Header("Chat")]
     [SerializeField] private Text chatContents;
     [SerializeField] private InputField chatInput;
+    [SerializeField] private Animator chatAnimator;
+    [SerializeField] private Image chatButtonImage;
+    [SerializeField] private List<Sprite> chatButtonSprites;
     private List<string> chatList = new List<string>();
+    int chatSpriteIndex = 0;
 
     [Header("Private Room")]
     [SerializeField] private InputField privateRoomInputCode;
@@ -138,6 +142,12 @@ public class MainUIController : MonoBehaviour
             chatContents.text += chatList[i];
             if (i != chatList.Count - 1) chatContents.text += "\n";
         }
+    }
+
+    public void ChatAnimate()
+    {
+        chatAnimator.SetTrigger("Animation");
+        chatButtonImage.sprite = chatButtonSprites[(++chatSpriteIndex) % 2];
     }
 
     #endregion

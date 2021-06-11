@@ -61,6 +61,8 @@ namespace Network
         }
         public void NextSelect(GameObject obj)
         {
+            bool inputReturn = Input.GetButtonDown("Submit");
+
             if (views[0].activeSelf)
             {
                 for (int i = 0; i < signinInputFields.Count; i++)
@@ -68,7 +70,7 @@ namespace Network
                     {
                         i++;
                         if (i != signinInputFields.Count) signinInputFields[i].Select();
-                        else signInButton.onClick.Invoke();
+                        else if(inputReturn) signInButton.onClick.Invoke();
                         break;
                     }
             }
@@ -79,7 +81,7 @@ namespace Network
                     {
                         i++;
                         if (i != signupInputFields.Count) signupInputFields[i].Select();
-                        else signUpButton.onClick.Invoke();
+                        else if (inputReturn) signUpButton.onClick.Invoke();
                         break;
                     }
 
