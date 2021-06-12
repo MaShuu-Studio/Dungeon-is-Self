@@ -358,6 +358,13 @@ public class GamePlayUIController : MonoBehaviour
             tutorialSteps[tutorialType].GetChild(tutorialIndex).gameObject.SetActive(true);
             RectTransform rect = tutorialSteps[tutorialType].GetChild(tutorialIndex).GetComponent<RectTransform>();
 
+            string str = "";
+            if (tutorialSteps[tutorialType].GetChild(tutorialIndex).childCount != 0)
+            {
+                str = tutorialSteps[tutorialType].GetChild(tutorialIndex).GetChild(0).GetComponent<Text>().text;
+            }
+            tutorialScript.text = str;
+
             float left = rect.offsetMin.x;
             float right = rect.offsetMax.x;
             float top = rect.offsetMax.y;
