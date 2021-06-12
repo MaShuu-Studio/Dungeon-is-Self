@@ -328,7 +328,7 @@ namespace GameControl
                 }
                 GamePlayUIController.Instance.UpdateCharacters();
 
-                if (winner != 0 && i == endTurn)
+                if ((winner == 0 || winner == 1) && i == endTurn)
                 {
                     StartCoroutine(ShowResult((UserType)winner, isGameEnd));
                     i = 0;
@@ -375,7 +375,7 @@ namespace GameControl
                     GamePlayUIController.Instance.UpdateCharacters();
                 }
 
-                if (winner != 0 && i >= endTurn)
+                if ((winner == 0 || winner == 1) && i >= endTurn)
                 {
                     StartCoroutine(ShowResult((UserType)winner, isGameEnd));
                 }
@@ -475,7 +475,7 @@ namespace GameControl
             ushort win = 0;
             ushort lose = 0;
 
-            foreach(ushort winner in winners)
+            foreach (ushort winner in winners)
             {
                 if (winner == 9) continue;
                 if (winner == (ushort)userType)
