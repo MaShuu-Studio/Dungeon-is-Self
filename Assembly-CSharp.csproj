@@ -80,6 +80,8 @@
     <Compile Include="Assets\Scripts\Network\Packet\PacketHandler.cs" />
     <Compile Include="Assets\Scripts\Network\PacketQueue.cs" />
     <Compile Include="Assets\Scripts\Network\ServerSession.cs" />
+    <Compile Include="Assets\Scripts\Tutorial\AIBot.cs" />
+    <Compile Include="Assets\Scripts\Tutorial\TutorialController.cs" />
     <Compile Include="Assets\Scripts\UI\AlertObject.cs" />
     <Compile Include="Assets\Scripts\UI\BattleResult\BattleResultPerRoundUI.cs" />
     <Compile Include="Assets\Scripts\UI\BattleResult\BattleResultUI.cs" />
@@ -102,7 +104,6 @@
     <Compile Include="Assets\Scripts\UI\MainUIController.cs" />
     <Compile Include="Assets\Scripts\UI\SettingUI.cs" />
     <Compile Include="Assets\Scripts\UI\ToggleIcon.cs" />
-    <Compile Include="Assets\Scripts\User\AIBot.cs" />
     <Compile Include="Assets\Scripts\User\CharacterObject.cs" />
     <Compile Include="Assets\Scripts\User\Defend\DefenderController.cs" />
     <Compile Include="Assets\Scripts\User\Defend\Monster.cs" />

@@ -117,6 +117,7 @@ public class SettingUI : MonoBehaviour
 
     public void Tutorial()
     {
+        TutorialController.Instance.StartTutorial();
         SetActive(false);
     }
 

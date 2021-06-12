@@ -98,6 +98,32 @@ namespace GameControl
             }
         }
 
+        public void SetSkillRoster()
+        {
+            if (GameController.Instance.userType == UserType.Defender)
+            {
+                OffenderController.Instance.RosterTimeOut();
+            }
+            else
+            {
+                DefenderController.Instance.RosterTimeOut();
+            }
+        }
+
+        public void SetDice()
+        {
+            if (GameController.Instance.userType == UserType.Defender)
+            {
+                OffenderController.Instance.ResetDices();
+                OffenderController.Instance.DiceTimeOut();
+            }
+            else
+            {
+                DefenderController.Instance.ResetDices();
+                DefenderController.Instance.DiceTimeOut();
+            }
+        }
+
         public void DefenderSetDice()
         {
             for (int i = 0; i < 6; i++)

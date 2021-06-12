@@ -66,6 +66,16 @@ namespace GameControl
             }
         }
 
+        public void ResetTurn()
+        {
+            for (int i = 0; i < skillRoster.Count; i++)
+            {
+                dices[i].Clear();
+
+                dices[i].Add(-1);
+                dices[i].Add(-1);
+            }
+        }
         public void Init()
         {
             characterIndex = 0;

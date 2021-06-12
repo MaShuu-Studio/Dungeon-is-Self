@@ -64,6 +64,14 @@ namespace GameControl
             }
         }
 
+        public void ResetTurn()
+        {
+            for (int i = 0; i < skillRoster.Count; i++)
+            {
+                dices[i].Clear();
+            }
+        }
+
         // 게임이 시작될 때 Defender에 대한 초기화 진행
         public void Init()
         {

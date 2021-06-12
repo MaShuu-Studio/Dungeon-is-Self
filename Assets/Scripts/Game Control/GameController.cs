@@ -49,8 +49,6 @@ namespace GameControl
         private Dictionary<int, List<CrowdControl>> ccList = new Dictionary<int, List<CrowdControl>>();
         private Dictionary<int, bool> isDead = new Dictionary<int, bool>();
 
-        private Dictionary<int, System.Tuple<CharacterSkill, int>> offednerReadyTurn = new Dictionary<int, System.Tuple<CharacterSkill, int>>();
-        private Dictionary<int, bool> offenderUnitIsDead = new Dictionary<int, bool>();
         private Dictionary<int, bool> animationEnd = new Dictionary<int, bool>();
 
         private bool isDiceRolled = false;
@@ -59,22 +57,13 @@ namespace GameControl
         private readonly int[] maxCostPerRound = new int[5] { 10, 15, 20, 20, 20 };
         private bool isRoundEnd = false;
 
+        private bool isTutorial = false;
 
-        /*
-        // Update is called once per frame
-        void Update()
+        public void SetTutorial(bool b)
         {
-            if (currentProgress == GameProgress.PlayRound && progressRound == false)
-            {
-                if (readyState[0] && readyState[1])
-                {
-                    progressRound = true;
-                    ProgressTurn();
-                }
-            }
+            isTutorial = b;
         }
-        */
-
+        
         #region Network
 
         public void SetUserType(UserType type)
@@ -93,13 +82,14 @@ namespace GameControl
             OffenderController.Instance.Reset();
             currentProgress = GameProgress.ReadyGame;
             SceneController.Instance.ChangeScene("GamePlay");
-            ushort state = 1;
-            if (Mathf.Abs(MatchState()) > 1) state = 2;
-            SoundController.Instance.PlayBGM("READY" + state.ToString());
         }
         public void ReadyGame()
         {
-            GamePlayUIController.Instance.SetUserType();
+            ushort state = 1;
+            if (Mathf.Abs(MatchState()) > 1) state = 2;
+            SoundController.Instance.PlayBGM("READY" + state.ToString());
+
+            GamePlayUIController.Instance.SetUserType(isTutorial);
 
             currentProgress = GameProgress.ReadyGame;
 
@@ -184,8 +174,6 @@ namespace GameControl
             isRoundEnd = false;
             progressRound = false;
             animationEnd.Clear();
-            offenderUnitIsDead.Clear();
-            offednerReadyTurn.Clear();
             ccList.Clear();
             isDead.Clear();
 
@@ -196,8 +184,6 @@ namespace GameControl
             foreach (int key in offenderUnits)
             {
                 animationEnd.Add(key, true);
-                offenderUnitIsDead.Add(key, false);
-                offednerReadyTurn.Add(key, null);
                 ccList.Add(key, new List<CrowdControl>());
                 isDead.Add(key, false);
             }

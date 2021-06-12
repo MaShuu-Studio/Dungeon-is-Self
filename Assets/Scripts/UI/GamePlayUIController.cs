@@ -40,6 +40,13 @@ public class GamePlayUIController : MonoBehaviour
     private List<UsingSkillIcon> skillRosters = new List<UsingSkillIcon>();
     private List<UsingSkillIcon> usingDices = new List<UsingSkillIcon>();
 
+    [Header("TUTORIAL")]
+    [SerializeField] private List<Transform> tutorialSteps;
+    [SerializeField] private List<RectTransform> tutorialBlinds;
+    [SerializeField] private Text tutorialScript;
+    private int tutorialType;
+    private int tutorialIndex;
+
     [Header("READY GAME")]
     // 후보 선택
     [SerializeField] private Transform candidatesTransform;
@@ -133,12 +140,34 @@ public class GamePlayUIController : MonoBehaviour
     }
 
     #region Basic
-    public void SetUserType()
+    public void SetUserType(bool isTutorial)
     {
         type = GameController.Instance.userType;
 
         if (type == UserType.Defender) enemyType = UserType.Offender;
         else enemyType = UserType.Defender;
+
+        if (isTutorial)
+        {
+            tutorialSteps[(ushort)type].gameObject.SetActive(true);
+            tutorialSteps[(ushort)enemyType].gameObject.SetActive(false);
+            tutorialType = (ushort)type;
+            tutorialIndex = -1;
+
+            for(int i = 0; i < tutorialSteps[tutorialType].childCount;i++)
+            {
+                tutorialSteps[tutorialType].GetChild(i).gameObject.SetActive(false);
+            }
+
+            TutorialNextStep();
+        }
+        else
+        {
+            foreach (Transform tt in tutorialSteps)
+            {
+                tt.gameObject.SetActive(false);
+            }
+        }
     }
 
     public void SetProgress()
@@ -315,6 +344,40 @@ public class GamePlayUIController : MonoBehaviour
         if (!string.IsNullOrEmpty(str)) alert.ShowAlert(str, time);
     }
     #endregion
+
+    #region Tutorial
+
+    public void TutorialNextStep()
+    {
+        if (tutorialIndex != -1)
+            tutorialSteps[tutorialType].GetChild(tutorialIndex).gameObject.SetActive(false);
+        tutorialIndex++;
+
+        if (tutorialIndex < tutorialSteps[tutorialType].childCount)
+        {
+            tutorialSteps[tutorialType].GetChild(tutorialIndex).gameObject.SetActive(true);
+            RectTransform rect = tutorialSteps[tutorialType].GetChild(tutorialIndex).GetComponent<RectTransform>();
+
+            float left = rect.offsetMin.x;
+            float right = rect.offsetMax.x;
+            float top = rect.offsetMax.y;
+            float bottom = rect.offsetMin.y;
+
+            tutorialBlinds[0].offsetMin = new Vector2(left, 0);
+            tutorialBlinds[0].offsetMax = new Vector2(right, 0);
+            tutorialBlinds[0].sizeDelta = new Vector2(tutorialBlinds[0].sizeDelta.x, top * -1);
+            tutorialBlinds[1].offsetMin = new Vector2(left, 0);
+            tutorialBlinds[1].offsetMax = new Vector2(right, 0);
+            tutorialBlinds[1].sizeDelta = new Vector2(tutorialBlinds[1].sizeDelta.x, bottom);
+            tutorialBlinds[2].sizeDelta = new Vector2(left, 0);
+            tutorialBlinds[3].sizeDelta = new Vector2(right * -1, 0);
+        }
+        else
+        {
+        }
+    }
+    #endregion
+
 
     #region Ready Game
     private void ShowAllCandidates()

@@ -448,6 +448,7 @@ namespace Network
             finally
             {
                 connectRequest = false;
+                playerId = "";
                 session = new ServerSession();
                 SceneController.Instance.ChangeScene("Title");
                 StopAllCoroutines();
