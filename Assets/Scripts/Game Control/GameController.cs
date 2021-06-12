@@ -104,13 +104,13 @@ namespace GameControl
             OffenderController.Instance.Reset();
             currentProgress = GameProgress.ReadyGame;
             SceneController.Instance.ChangeScene("GamePlay");
-        }
-        public void ReadyGame()
-        {
+
             ushort state = 1;
             if (Mathf.Abs(MatchState()) > 1) state = 2;
             SoundController.Instance.PlayBGM("READY" + state.ToString());
-
+        }
+        public void ReadyGame()
+        {
             GamePlayUIController.Instance.SetUserType(isTutorial);
 
             currentProgress = GameProgress.ReadyGame;
@@ -152,6 +152,10 @@ namespace GameControl
                 else
                     OffenderController.Instance.KillUnits(userInfos[i].deadUnits);
             }
+
+            ushort state = 1;
+            if (Mathf.Abs(MatchState()) > 1) state = 2;
+            SoundController.Instance.PlayBGM("READY" + state.ToString());
 
             ReadyRound(round);
         }
@@ -444,7 +448,7 @@ namespace GameControl
             if (userType == UserType.Offender) type = "OFFENDER";
             SoundController.Instance.PlayBGM(type + winState);
 
-            float time = 5f;
+            float time = 2.5f;
             while (time > 0)
             {
                 time -= Time.deltaTime;
