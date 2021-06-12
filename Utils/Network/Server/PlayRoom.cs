@@ -433,22 +433,25 @@ namespace Server
                         int remainTurn = 0;
                         if (units[i] / 10 == 2)
                         {
-                            // Defender
-                            MonsterSkill skill = SkillDatabase.Instance.GetMonsterSkill(selectedDice);
-
-                            List<int> alives = offender.GetAlives();
-
-                            Random rand = new Random();
-                            int index = rand.Next(0, alives.Count);
-
-                            target = alives[index];
-
-                            foreach (int unit in offender.Rosters)
+                            if (selectedDice != -1)
                             {
-                                if (offender.HasCrowdControl(unit, CCType.TAUNT)) target = unit;
-                            }
+                                // Defender
+                                MonsterSkill skill = SkillDatabase.Instance.GetMonsterSkill(selectedDice);
 
-                            AddCrowdControl(skill, usingUnit, target);
+                                List<int> alives = offender.GetAlives();
+
+                                Random rand = new Random();
+                                int index = rand.Next(0, alives.Count);
+
+                                target = alives[index];
+
+                                foreach (int unit in offender.Rosters)
+                                {
+                                    if (offender.HasCrowdControl(unit, CCType.TAUNT)) target = unit;
+                                }
+
+                                AddCrowdControl(skill, usingUnit, target);
+                            }
                         }
                         else
                         {
@@ -756,7 +759,7 @@ namespace Server
             string jsonString = HttpSend.SerializeObject(result);
             Console.WriteLine(jsonString);
             HttpSend.SendPost(jsonString,
-                "http://ec2-54-180-153-249.ap-northeast-2.compute.amazonaws.com:8080/api/dgiself/battlereport/save");
+                "http://ec2-13-209-42-66.ap-northeast-2.compute.amazonaws.com:8080/api/dgiself/battlereport/save");
         }
     }
 }

@@ -41,6 +41,7 @@ public class GamePlayUIController : MonoBehaviour
     private List<UsingSkillIcon> usingDices = new List<UsingSkillIcon>();
 
     [Header("TUTORIAL")]
+    [SerializeField] private GameObject tutorialView;
     [SerializeField] private List<Transform> tutorialSteps;
     [SerializeField] private List<RectTransform> tutorialBlinds;
     [SerializeField] private Text tutorialScript;
@@ -149,6 +150,7 @@ public class GamePlayUIController : MonoBehaviour
 
         if (isTutorial)
         {
+            tutorialView.SetActive(true);
             tutorialSteps[(ushort)type].gameObject.SetActive(true);
             tutorialSteps[(ushort)enemyType].gameObject.SetActive(false);
             tutorialType = (ushort)type;
@@ -163,6 +165,7 @@ public class GamePlayUIController : MonoBehaviour
         }
         else
         {
+            tutorialView.SetActive(false);
             foreach (Transform tt in tutorialSteps)
             {
                 tt.gameObject.SetActive(false);
