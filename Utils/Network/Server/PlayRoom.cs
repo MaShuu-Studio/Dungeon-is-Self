@@ -756,7 +756,7 @@ namespace Server
             string jsonString = HttpSend.SerializeObject(result);
             Console.WriteLine(jsonString);
             HttpSend.SendPost(jsonString,
-                "http://ec2-54-180-153-249.ap-northeast-2.compute.amazonaws.com:8080/api/dgiself/battlereport/save");
+                "http://ec2-13-209-42-66.ap-northeast-2.compute.amazonaws.com:8080/api/dgiself/battlereport/save");
         }
     }
 }

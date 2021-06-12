@@ -79,7 +79,7 @@ namespace Network
             IPEndPoint endPoint;
 
             Connector connector = new Connector();
-            /*
+            
             #region Local Test
             host = Dns.GetHostName();
             ipHost = Dns.GetHostEntry(host);
@@ -88,7 +88,7 @@ namespace Network
 
             connector.Connect(endPoint, () => { return session; }, 1);
             #endregion
-            */
+            /*
             #region Live
             connectRequest = true;
             host = "ec2-13-124-208-197.ap-northeast-2.compute.amazonaws.com";
@@ -98,7 +98,7 @@ namespace Network
 
             connector.Connect(endPoint, () => { return session; }, 1);
             #endregion
-            
+            */
             if (connecting != null)
             {
                 StopCoroutine(connecting);
@@ -183,7 +183,7 @@ namespace Network
 
         public string GetUserBattleInfo()
         {
-            string url = "http://ec2-54-180-153-249.ap-northeast-2.compute.amazonaws.com:8080/api/dgiself/battlereport/find/" + playerId;
+            string url = "http://ec2-13-209-42-66.ap-northeast-2.compute.amazonaws.com:8080/api/dgiself/battlereport/find/" + playerId;
             return HTTPRequestController.Instance.SendHTTPGet(url);
         }
 

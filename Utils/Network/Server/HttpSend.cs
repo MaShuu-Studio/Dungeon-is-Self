@@ -51,7 +51,7 @@ namespace Server
 
         public static string RequestJoinClient(string token)
         {
-            string urlString = "http://ec2-54-180-153-249.ap-northeast-2.compute.amazonaws.com:8080/api/dgiself/member/authorization";
+            string urlString = "http://ec2-13-209-42-66.ap-northeast-2.compute.amazonaws.com:8080/api/dgiself/member/authorization";
             int nStartTime = 0;
             string result = "";
             string strMsg = string.Empty;

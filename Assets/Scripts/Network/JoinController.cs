@@ -119,7 +119,7 @@ namespace Network
         {
             if (CheckForm())
             {
-                string urlString = "http://ec2-54-180-153-249.ap-northeast-2.compute.amazonaws.com:8080/api/dgiself/member/join";
+                string urlString = "http://ec2-13-209-42-66.ap-northeast-2.compute.amazonaws.com:8080/api/dgiself/member/join";
 
                 JsonObjectCollection jsonObj = new JsonObjectCollection();
                 jsonObj.Add(new JsonStringValue("memberId", memberId));
@@ -173,7 +173,7 @@ namespace Network
 
         public bool SignIn(out string token, out string pid)
         {
-            string urlString = "http://ec2-54-180-153-249.ap-northeast-2.compute.amazonaws.com:8080/api/dgiself/member/login";
+            string urlString = "http://ec2-13-209-42-66.ap-northeast-2.compute.amazonaws.com:8080/api/dgiself/member/login";
             string result = "";
 
             JsonObjectCollection jsonObj = new JsonObjectCollection();
