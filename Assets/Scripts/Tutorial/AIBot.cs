@@ -28,32 +28,8 @@ namespace GameControl
             DontDestroyOnLoad(gameObject);
         }
         #endregion
-        public void StartGame()
-        {
-            if (GameController.Instance.userType == UserType.Defender)
-            {
-                List<int> offenderBot = new List<int>();
-                CharacterDatabase.Instance.GetAllCharacterCandidatesList(ref offenderBot);
-
-                for (int i = 0; i < 6; i++)
-                {
-                    int a = UnityEngine.Random.Range(0, offenderBot.Count);
-                    OffenderController.Instance.SetCharacterCandidate(i, offenderBot[a]);
-                }
-            }
-            else
-            {
-                List<int> defenderBot = new List<int>();
-                MonsterDatabase.Instance.GetAllMonsterCandidatesList(ref defenderBot);
-                for (int i = 0; i < 6; i++)
-                {
-                    int a = UnityEngine.Random.Range(0, defenderBot.Count);
-                    DefenderController.Instance.SetMonsterCandidate(i, defenderBot[a]);
-                }
-            }
-        }
-
-        public void SetRoster()
+        
+        public void SetUnitRoster()
         {
             if (GameController.Instance.userType == UserType.Defender)
             {

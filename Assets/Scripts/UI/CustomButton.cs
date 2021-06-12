@@ -71,46 +71,6 @@ public class CustomButton : MonoBehaviour
         SceneController.Instance.ChangeScene(moveScene);
     }
 
-    #region Play Single
-    void GamePlayReady()
-    {
-        if (isReady == false)
-        {
-            GameProgress progress = GameController.Instance.currentProgress;
-            switch (progress)
-            {
-                case GameProgress.ReadyGame:
-                    NetworkManager.Instance.GameReadyEnd(ref isReady);
-                    break;
-
-                case GameProgress.ReadyRound:
-                    NetworkManager.Instance.RoundReadyEnd();
-                    break;
-
-                case GameProgress.PlayRound:
-                    NetworkManager.Instance.TurnReadyEnd();
-                    break;
-            }
-        }
-        else
-        {
-            NetworkManager.Instance.ReadyCancel();
-        }
-        isReady = !isReady;
-        if (blindObject != null)
-            blindObject.SetActive(isReady);
-    }
-
-
-    public void ReadyCancel()
-    {
-        isReady = false;
-        blindObject.SetActive(isReady);
-    }
-
-    #endregion
-
-    #region Network
     void ConnectServer()
     {
         SetButtonInteract(false);
@@ -120,7 +80,7 @@ public class CustomButton : MonoBehaviour
         string token;
         string pid;
 
-        if(join.SignIn(out token, out pid))
+        if (join.SignIn(out token, out pid))
         {
             NetworkManager.Instance.ConnectToServer(token, pid);
             StartCoroutine(Connecting());
@@ -152,5 +112,59 @@ public class CustomButton : MonoBehaviour
     {
         NetworkManager.Instance.MatchRequestCancel(GameController.Instance.userType);
     }
-    #endregion
+
+    void GamePlayReady()
+    {
+        if (GameController.Instance.isTutorial)
+        {
+            GameProgress progress = GameController.Instance.currentProgress;
+            switch (progress)
+            {
+                case GameProgress.ReadyGame:
+                    GameController.Instance.TutorialReadyGameEnd();
+                    break;
+
+                case GameProgress.ReadyRound:
+                    GameController.Instance.TutorialStartRound(1);
+                    break;
+
+                case GameProgress.PlayRound:
+                    break;
+            }
+        }
+        else
+        {
+            if (isReady == false)
+            {
+                GameProgress progress = GameController.Instance.currentProgress;
+                switch (progress)
+                {
+                    case GameProgress.ReadyGame:
+                        NetworkManager.Instance.GameReadyEnd(ref isReady);
+                        break;
+
+                    case GameProgress.ReadyRound:
+                        NetworkManager.Instance.RoundReadyEnd();
+                        break;
+
+                    case GameProgress.PlayRound:
+                        NetworkManager.Instance.TurnReadyEnd();
+                        break;
+                }
+            }
+            else
+            {
+                NetworkManager.Instance.ReadyCancel();
+            }
+            isReady = !isReady;
+            if (blindObject != null)
+                blindObject.SetActive(isReady);
+        }
+    }
+
+    public void ReadyCancel()
+    {
+        isReady = false;
+        blindObject.SetActive(isReady);
+    }
 }

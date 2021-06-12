@@ -2936,7 +2936,7 @@ GameObject:
   - component: {fileID: 1217492789}
   - component: {fileID: 1217492788}
   m_Layer: 0
-  m_Name: AIBot
+  m_Name: 'AIBot '
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

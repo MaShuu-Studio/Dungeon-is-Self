@@ -113,10 +113,10 @@ namespace Server
         public void Leave(string id)
         {
             Console.WriteLine($"Leave User {id}");
-            Session session = _sessions[id];
 
             if (_sessions.ContainsKey(id))
             {
+                _sessions[id].Disconnect();
                 _sessions.Remove(id);
             }
             if (_sessionCount.ContainsKey(id))
@@ -128,7 +128,6 @@ namespace Server
             Push(() => PlayingRoomAbnormalExit(id));
             Push(() => MatchRequestCancel(id));
 
-            session.Disconnect();
             // 플레이어 나감
             // 모든 플레이어에게 퇴장을 브로드캐스트
             UpdateUserInfo();

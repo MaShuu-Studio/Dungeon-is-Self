@@ -57,13 +57,35 @@ namespace GameControl
         private readonly int[] maxCostPerRound = new int[5] { 10, 15, 20, 20, 20 };
         private bool isRoundEnd = false;
 
-        private bool isTutorial = false;
+        public bool isTutorial { get; private set; } = false;
 
         public void SetTutorial(bool b)
         {
             isTutorial = b;
         }
-        
+        public void SelectUnit(UserType type, int[] units) // 서버 입장에서는 type 필요
+        {
+            if (type == UserType.Defender)
+            {
+                defenderUnit = units[0] + 20;
+            }
+            else
+            {
+                for (int i = 0; i < 3; i++)
+                {
+                    offenderUnits[i] = units[i] + 10;
+                }
+            }
+        }
+        public void DiceRolled()
+        {
+            isDiceRolled = false;
+        }
+        public void AnimationEnd(int index)
+        {
+            animationEnd[index] = true;
+        }
+
         #region Network
 
         public void SetUserType(UserType type)
@@ -465,7 +487,65 @@ namespace GameControl
         }
 
         #endregion
-                
+
+        #region Tutorial
+
+        public void TutorialReadyGameEnd()
+        {
+            DefenderController.Instance.CandidatesTimeOut();
+            OffenderController.Instance.CandidatesTimeOut();
+
+            DefenderController.Instance.Init();
+            OffenderController.Instance.Init();
+
+            ReadyRound(round);
+        }
+
+        public void TutorialStartRound(int round)
+        {
+            AIBot.Instance.SetUnitRoster();
+
+            OffenderController.Instance.SetRoster();
+            DefenderController.Instance.SetRoster();
+            DefenderController.Instance.HealBattleMonster(defenderUnit);
+
+            DefenderController.Instance.RosterTimeOut();
+            OffenderController.Instance.RosterTimeOut();
+
+            this.round = round;
+
+            currentProgress = GameProgress.PlayRound;
+            turn = 1;
+            isRoundEnd = false;
+            progressRound = false;
+            animationEnd.Clear();
+            ccList.Clear();
+            isDead.Clear();
+
+            // 선공 확인해서 순서 조정
+            animationEnd.Add(defenderUnit, true);
+            ccList.Add(defenderUnit, new List<CrowdControl>());
+            isDead.Add(defenderUnit, false);
+            foreach (int key in offenderUnits)
+            {
+                animationEnd.Add(key, true);
+                ccList.Add(key, new List<CrowdControl>());
+                isDead.Add(key, false);
+            }
+            SoundController.Instance.PlayBGM(DefenderController.Instance.GetMonsterRoster().id.ToString());
+
+            if (userType == UserType.Defender)
+            {
+                GamePlayUIController.Instance.ShowSelectedEnemy(offenderUnits);
+            }
+            else if (userType == UserType.Offender)
+            {
+                GamePlayUIController.Instance.ShowSelectedEnemy(new int[] { defenderUnit });
+            }
+
+            GamePlayUIController.Instance.UpdateCharacters();
+            GamePlayUIController.Instance.SetTurn(turn);
+        }
         /*
         public void ReadyRound(bool isOffenderDefeated = false)
         {
@@ -490,28 +570,6 @@ namespace GameControl
             }
         }
         */
-        public void SelectUnit(UserType type, int[] units) // 서버 입장에서는 type 필요
-        {
-            if (type == UserType.Defender)
-            {
-                defenderUnit = units[0] + 20;
-            }
-            else
-            {
-                for (int i = 0; i < 3; i++)
-                {
-                    offenderUnits[i] = units[i] + 10;
-                }
-            }
-        }
-        public void DiceRolled()
-        {
-            isDiceRolled = false;
-        }
-        public void AnimationEnd(int index)
-        {
-            animationEnd[index] = true;
-        }
 
         /*
         public void ReadyTurn(UserType type, bool ready) // 서버 입장에서는 type 필요
@@ -1162,5 +1220,6 @@ namespace GameControl
             StartCoroutine(ShowResult(UserType.Defender, roundEnd));
         }
         */
+        #endregion
     }
 }

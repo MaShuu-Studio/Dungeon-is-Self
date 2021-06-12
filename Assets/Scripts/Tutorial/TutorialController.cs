@@ -37,29 +37,6 @@ public class TutorialController : MonoBehaviour
         GameController.Instance.StartGame("tutorial", UserType.Offender);
     }
 
-    public void StartGame(UserType type)
-    {
-    }
-    
-    public void ReadyGame()
-    {
-    }
-
-    public void ReadyGameEnd(List<int> enemyCandidats)
-    {
-
-    }
-
-    public void ReadyRound(int round)
-    {
-    }
-    public void StartRound(int round, List<S_RoundReadyEnd.EnemyRoster> enemys)
-    {
-    }
-    public void ProgressTurn(int round, int turn, S_ProgressTurn packet)
-    {
-    }
-
     public void EndTutorial(bool allStop)
     {
         DefenderController.Instance.Reset();
