@@ -44,6 +44,10 @@ namespace GameControl
         public void Reset()
         {
             characterIndex = 0;
+            for (int i = 0; i < 3; i++)
+            {
+                roster[i] = i;
+            }
 
             ResetCandidates();
 

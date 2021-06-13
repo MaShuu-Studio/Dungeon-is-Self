@@ -116,6 +116,12 @@
 			</list>
 		</clist>
 	</packet>
+	<packet name="C_LearnSkill">
+		<string name="roomId"/>
+		<ushort name="playerType"/>
+		<int name="unitId"/>
+		<int name="skillId"/>
+		</packet>
 	<packet name="S_RoundReadyEnd">
 		<ushort name="currentProgress"/>
 		<int name="round"/>

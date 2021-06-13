@@ -335,12 +335,12 @@ namespace GameControl
                 if ((winner == 0 || winner == 1) && i == endTurn)
                 {
                     StartCoroutine(ShowResult((UserType)winner, isGameEnd));
-                    i = 0;
+                    i = 100;
                     break;
                 }
             }
 
-            if (i >= animationEnd.Count)
+            if (i != 100)
             {
                 // 턴 하나 진행
                 float time = 0.5f;

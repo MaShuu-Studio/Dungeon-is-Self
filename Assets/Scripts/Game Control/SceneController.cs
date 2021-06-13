@@ -27,6 +27,7 @@ public class SceneController : MonoBehaviour
         }
         DontDestroyOnLoad(gameObject);
 
+        Resources.LoadAll("");
         StartCoroutine(ChangeScene("Title", LoadSceneMode.Single));
     }
 

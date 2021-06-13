@@ -267,7 +267,8 @@ public class GamePlayUIController : MonoBehaviour
                     int alive = DefenderController.Instance.GetFirstAliveMonster();
                     SelectCharacter(alive, userBenchs[alive].characterId);
                     userRosters[0].SetRosterNumber(alive);
-                    DefenderController.Instance.AddRoster(0, alive);
+                    DefenderController.Instance.SelectMonster(alive);
+                    DefenderController.Instance.SelectRoster(alive);
                 }
                 else
                 {
