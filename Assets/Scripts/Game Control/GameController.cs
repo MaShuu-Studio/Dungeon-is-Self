@@ -501,8 +501,7 @@ namespace GameControl
 
             DefenderController.Instance.Init();
             OffenderController.Instance.Init();
-
-            ReadyRound(round);
+            ReadyRound(1);
         }
 
         public void TutorialStartRound(int round)

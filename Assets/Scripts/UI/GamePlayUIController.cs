@@ -369,7 +369,12 @@ public class GamePlayUIController : MonoBehaviour
             string str = "";
             if (tutorialSteps[tutorialType].GetChild(tutorialIndex).childCount != 0)
             {
+                tutorialDescriptionObject.gameObject.SetActive(true);
                 str = tutorialSteps[tutorialType].GetChild(tutorialIndex).GetChild(0).GetComponent<Text>().text;
+            }
+            else
+            {
+                tutorialDescriptionObject.gameObject.SetActive(false);
             }
             tutorialScript.text = str;
 

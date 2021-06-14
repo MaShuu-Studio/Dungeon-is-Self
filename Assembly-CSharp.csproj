@@ -82,6 +82,7 @@
     <Compile Include="Assets\Scripts\Network\ServerSession.cs" />
     <Compile Include="Assets\Scripts\Tutorial\AIBot.cs" />
     <Compile Include="Assets\Scripts\Tutorial\TutorialController.cs" />
+    <Compile Include="Assets\Scripts\Tutorial\TutorialUIController.cs" />
     <Compile Include="Assets\Scripts\UI\AlertObject.cs" />
     <Compile Include="Assets\Scripts\UI\BattleResult\BattleResultPerRoundUI.cs" />
     <Compile Include="Assets\Scripts\UI\BattleResult\BattleResultUI.cs" />

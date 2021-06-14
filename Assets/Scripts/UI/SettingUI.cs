@@ -81,7 +81,7 @@ public class SettingUI : MonoBehaviour
         SetActive(!settingObj.activeSelf);
 
         settingControlObject.SetActive(false);
-        if (SceneController.Instance.CurrentScene == "GAMEPLAY")
+        if (SceneController.Instance.CurrentScene == "GAMEPLAY" && GameControl.GameController.Instance.isTutorial == false)
         {
             tutorialButton.gameObject.SetActive(false);
             surrenderButton.gameObject.SetActive(true);
