@@ -3598,6 +3598,7 @@ MonoBehaviour:
   screenMode: {fileID: 583179508}
   tutorialButton: {fileID: 983040418}
   surrenderButton: {fileID: 1978418875}
+  logOutButtonText: {fileID: 1582446692}
 --- !u!224 &1521650256
 RectTransform:
   m_ObjectHideFlags: 0

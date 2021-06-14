@@ -141,6 +141,7 @@ public class GamePlayUIController : MonoBehaviour
     }
 
     #region Basic
+
     public void SetUserType(bool isTutorial)
     {
         type = GameController.Instance.userType;
@@ -151,6 +152,7 @@ public class GamePlayUIController : MonoBehaviour
         if (isTutorial)
         {
             tutorialObject.SetActive(true);
+
             tutorialSteps[(ushort)type].gameObject.SetActive(true);
             tutorialSteps[(ushort)enemyType].gameObject.SetActive(false);
             tutorialType = (ushort)type;
@@ -166,6 +168,7 @@ public class GamePlayUIController : MonoBehaviour
         else
         {
             tutorialObject.SetActive(false);
+
             foreach (Transform tt in tutorialSteps)
             {
                 tt.gameObject.SetActive(false);

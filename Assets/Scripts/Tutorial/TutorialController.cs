@@ -33,8 +33,7 @@ public class TutorialController : MonoBehaviour
 
     public void StartTutorial()
     {
-        GameController.Instance.SetTutorial(true);
-        GameController.Instance.StartGame("tutorial", UserType.Offender);
+        SceneController.Instance.ChangeScene("Tutorial");
     }
 
     public void EndTutorial(bool allStop)
