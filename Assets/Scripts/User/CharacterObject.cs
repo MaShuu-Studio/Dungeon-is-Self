@@ -143,6 +143,9 @@ public class CharacterObject : MonoBehaviour
         coroutine = Animation(name);
         originXPos = transform.position.x;
         _sprite.sortingOrder = 1;
+        if (x < 0) x += 1.5f;
+        else x -= 1.5f;
+
         if (move)
             transform.position = new Vector3(x, transform.position.y, 0);
     }

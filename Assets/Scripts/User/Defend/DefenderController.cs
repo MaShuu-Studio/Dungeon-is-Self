@@ -45,6 +45,7 @@ namespace GameControl
         public void Reset()
         {
             monsterIndex = 0;
+            monsterRoster = 0;
 
             ResetCandidates();
 
@@ -349,11 +350,6 @@ namespace GameControl
             unit[0] = monsterRoster;
             ResetAttackSkill();
             GameController.Instance.SelectUnit(UserType.Defender, unit);
-        }
-
-        public void AddRoster(int index, int selected)
-        {
-            if (index == 0) monsterIndex = selected;
         }
 
         public void SetMonsterHp()

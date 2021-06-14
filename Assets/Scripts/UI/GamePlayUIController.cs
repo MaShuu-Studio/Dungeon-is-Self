@@ -41,9 +41,10 @@ public class GamePlayUIController : MonoBehaviour
     private List<UsingSkillIcon> usingDices = new List<UsingSkillIcon>();
 
     [Header("TUTORIAL")]
-    [SerializeField] private GameObject tutorialView;
+    [SerializeField] private GameObject tutorialObject;
     [SerializeField] private List<Transform> tutorialSteps;
     [SerializeField] private List<RectTransform> tutorialBlinds;
+    [SerializeField] private RectTransform tutorialDescriptionObject;
     [SerializeField] private Text tutorialScript;
     private int tutorialType;
     private int tutorialIndex;
@@ -141,6 +142,7 @@ public class GamePlayUIController : MonoBehaviour
     }
 
     #region Basic
+
     public void SetUserType(bool isTutorial)
     {
         type = GameController.Instance.userType;
@@ -150,7 +152,8 @@ public class GamePlayUIController : MonoBehaviour
 
         if (isTutorial)
         {
-            tutorialView.SetActive(true);
+            tutorialObject.SetActive(true);
+
             tutorialSteps[(ushort)type].gameObject.SetActive(true);
             tutorialSteps[(ushort)enemyType].gameObject.SetActive(false);
             tutorialType = (ushort)type;
@@ -165,7 +168,8 @@ public class GamePlayUIController : MonoBehaviour
         }
         else
         {
-            tutorialView.SetActive(false);
+            tutorialObject.SetActive(false);
+
             foreach (Transform tt in tutorialSteps)
             {
                 tt.gameObject.SetActive(false);
@@ -267,7 +271,8 @@ public class GamePlayUIController : MonoBehaviour
                     int alive = DefenderController.Instance.GetFirstAliveMonster();
                     SelectCharacter(alive, userBenchs[alive].characterId);
                     userRosters[0].SetRosterNumber(alive);
-                    DefenderController.Instance.AddRoster(0, alive);
+                    DefenderController.Instance.SelectMonster(alive);
+                    DefenderController.Instance.SelectRoster(alive);
                 }
                 else
                 {
@@ -364,7 +369,12 @@ public class GamePlayUIController : MonoBehaviour
             string str = "";
             if (tutorialSteps[tutorialType].GetChild(tutorialIndex).childCount != 0)
             {
+                tutorialDescriptionObject.gameObject.SetActive(true);
                 str = tutorialSteps[tutorialType].GetChild(tutorialIndex).GetChild(0).GetComponent<Text>().text;
+            }
+            else
+            {
+                tutorialDescriptionObject.gameObject.SetActive(false);
             }
             tutorialScript.text = str;
 
@@ -372,6 +382,24 @@ public class GamePlayUIController : MonoBehaviour
             float right = rect.offsetMax.x;
             float top = rect.offsetMax.y;
             float bottom = rect.offsetMin.y;
+
+            if (Mathf.Abs(bottom) < 400 || Mathf.Abs(top) > 680)
+            {
+                if (Mathf.Abs(right) > 960)
+                {
+                    tutorialDescriptionObject.pivot = new Vector2(1, 0);
+                    tutorialDescriptionObject.anchorMin = new Vector2(1, 0);
+                    tutorialDescriptionObject.anchorMax = new Vector2(1, 0);
+                    tutorialDescriptionObject.anchoredPosition = new Vector2(0, 100);
+                }
+                else
+                {
+                    tutorialDescriptionObject.pivot = new Vector2(0, 0);
+                    tutorialDescriptionObject.anchorMin = new Vector2(0, 0);
+                    tutorialDescriptionObject.anchorMax = new Vector2(0, 0);
+                    tutorialDescriptionObject.anchoredPosition = new Vector2(0, 100);
+                }
+            }
 
             tutorialBlinds[0].offsetMin = new Vector2(left, 0);
             tutorialBlinds[0].offsetMax = new Vector2(right, 0);
@@ -384,6 +412,7 @@ public class GamePlayUIController : MonoBehaviour
         }
         else
         {
+            TutorialController.Instance.EndTutorial(true);
         }
     }
     #endregion

@@ -173,6 +173,7 @@ namespace Network
 
         public bool SignIn(out string token, out string pid)
         {
+            failedSignIn.gameObject.SetActive(false);
             string urlString = "http://ec2-13-209-42-66.ap-northeast-2.compute.amazonaws.com:8080/api/dgiself/member/login";
             string result = "";
 
@@ -193,23 +194,14 @@ namespace Network
                 string nickname = start["nickname"].ToString();
 
                 NetworkManager.Instance.SetUserInfo(pid, nickname);
-
-                if (result != "")
-                {
-                    return true;
-                }
-                else
-                {
-                    failedSignIn.gameObject.SetActive(true);
-                    return false;
-                }
             }
             catch (Exception e)
             {
                 Debug.Log(e);
+                failedSignIn.gameObject.SetActive(true);
+                return false;
             }
-            failedSignIn.gameObject.SetActive(true);
-            return false;
+            return true;
         }
     }
 }

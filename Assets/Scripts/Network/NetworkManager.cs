@@ -72,6 +72,8 @@ namespace Network
         IEnumerator connecting = null;
         public void ConnectToServer(string token, string pid)
         {
+            connectRequest = true;
+
             Debug.Log("Try Connect to server");
             string host;
             IPHostEntry ipHost;
@@ -88,19 +90,15 @@ namespace Network
 
             connector.Connect(endPoint, () => { return session; }, 1);
             #endregion
-            
             /*
             #region Live
-            connectRequest = true;
             host = "ec2-13-124-208-197.ap-northeast-2.compute.amazonaws.com";
             ipHost = Dns.GetHostEntry(host);
             ipAddr = ipHost.AddressList[0];
             endPoint = new IPEndPoint(ipAddr, PORT_NUMBER);
-
             connector.Connect(endPoint, () => { return session; }, 1);
             #endregion
             */
-
             if (connecting != null)
             {
                 StopCoroutine(connecting);
@@ -451,6 +449,7 @@ namespace Network
             {
                 connectRequest = false;
                 playerId = "";
+                playerName = "";
                 session = new ServerSession();
                 SceneController.Instance.ChangeScene("Title");
                 StopAllCoroutines();

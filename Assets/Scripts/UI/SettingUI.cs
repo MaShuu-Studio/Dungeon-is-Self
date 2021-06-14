@@ -38,6 +38,7 @@ public class SettingUI : MonoBehaviour
     [SerializeField] private Dropdown screenMode;
     [SerializeField] private Button tutorialButton;
     [SerializeField] private Button surrenderButton;
+    [SerializeField] private Text logOutButtonText;
 
     private void Start()
     {
@@ -80,13 +81,17 @@ public class SettingUI : MonoBehaviour
         SetActive(!settingObj.activeSelf);
 
         settingControlObject.SetActive(false);
-        if (SceneController.Instance.CurrentScene == "GAMEPLAY")
+        if (SceneController.Instance.CurrentScene == "GAMEPLAY" && GameControl.GameController.Instance.isTutorial == false)
         {
             tutorialButton.gameObject.SetActive(false);
             surrenderButton.gameObject.SetActive(true);
         }
         else
         {
+            if (NetworkManager.Instance.PlayerId != "")
+                logOutButtonText.text = "LOGOUT";
+            else logOutButtonText.text = "TITLE";
+
             tutorialButton.gameObject.SetActive(true);
             surrenderButton.gameObject.SetActive(false);
         }

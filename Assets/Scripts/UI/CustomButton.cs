@@ -117,6 +117,7 @@ public class CustomButton : MonoBehaviour
     {
         if (GameController.Instance.isTutorial)
         {
+            GamePlayUIController.Instance.TutorialNextStep();
             GameProgress progress = GameController.Instance.currentProgress;
             switch (progress)
             {

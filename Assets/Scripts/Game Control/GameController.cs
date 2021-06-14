@@ -104,13 +104,13 @@ namespace GameControl
             OffenderController.Instance.Reset();
             currentProgress = GameProgress.ReadyGame;
             SceneController.Instance.ChangeScene("GamePlay");
-        }
-        public void ReadyGame()
-        {
+
             ushort state = 1;
             if (Mathf.Abs(MatchState()) > 1) state = 2;
             SoundController.Instance.PlayBGM("READY" + state.ToString());
-
+        }
+        public void ReadyGame()
+        {
             GamePlayUIController.Instance.SetUserType(isTutorial);
 
             currentProgress = GameProgress.ReadyGame;
@@ -152,6 +152,10 @@ namespace GameControl
                 else
                     OffenderController.Instance.KillUnits(userInfos[i].deadUnits);
             }
+
+            ushort state = 1;
+            if (Mathf.Abs(MatchState()) > 1) state = 2;
+            SoundController.Instance.PlayBGM("READY" + state.ToString());
 
             ReadyRound(round);
         }
@@ -328,15 +332,15 @@ namespace GameControl
                 }
                 GamePlayUIController.Instance.UpdateCharacters();
 
-                if (winner != 0 && i == endTurn)
+                if ((winner == 0 || winner == 1) && i == endTurn)
                 {
                     StartCoroutine(ShowResult((UserType)winner, isGameEnd));
-                    i = 0;
+                    i = 100;
                     break;
                 }
             }
 
-            if (i >= animationEnd.Count)
+            if (i != 100)
             {
                 // 턴 하나 진행
                 float time = 0.5f;
@@ -375,7 +379,7 @@ namespace GameControl
                     GamePlayUIController.Instance.UpdateCharacters();
                 }
 
-                if (winner != 0 && i >= endTurn)
+                if ((winner == 0 || winner == 1) && i >= endTurn)
                 {
                     StartCoroutine(ShowResult((UserType)winner, isGameEnd));
                 }
@@ -444,7 +448,7 @@ namespace GameControl
             if (userType == UserType.Offender) type = "OFFENDER";
             SoundController.Instance.PlayBGM(type + winState);
 
-            float time = 5f;
+            float time = 2.5f;
             while (time > 0)
             {
                 time -= Time.deltaTime;
@@ -475,7 +479,7 @@ namespace GameControl
             ushort win = 0;
             ushort lose = 0;
 
-            foreach(ushort winner in winners)
+            foreach (ushort winner in winners)
             {
                 if (winner == 9) continue;
                 if (winner == (ushort)userType)
@@ -497,8 +501,7 @@ namespace GameControl
 
             DefenderController.Instance.Init();
             OffenderController.Instance.Init();
-
-            ReadyRound(round);
+            ReadyRound(1);
         }
 
         public void TutorialStartRound(int round)

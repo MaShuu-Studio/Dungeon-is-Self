@@ -54,6 +54,7 @@ public class SkillIcon : UIIcon, IPointerClickHandler
     }
     #endregion
     
+    // Drag and Drop
 
     public override void OnPointerExit(PointerEventData pointerEventData)
     {
