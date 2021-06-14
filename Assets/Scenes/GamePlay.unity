@@ -8829,7 +8829,6 @@ MonoBehaviour:
   timeText: {fileID: 1300862437}
   readyButton: {fileID: 485943369}
   alert: {fileID: 1869610352}
-  panel: {fileID: 1831723197}
   userRosterTransform: {fileID: 606194144}
   userBenchTransform: {fileID: 318962286}
   userRosters:
@@ -8871,6 +8870,7 @@ MonoBehaviour:
   - {fileID: 1928550131}
   - {fileID: 351004108}
   - {fileID: 133497747}
+  tutorialDescriptionObject: {fileID: 356489004}
   tutorialScript: {fileID: 1671572557}
   candidatesTransform: {fileID: 1176318674}
   selectedListTransform: {fileID: 1262195728}

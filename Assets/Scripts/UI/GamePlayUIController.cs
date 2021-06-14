@@ -44,6 +44,7 @@ public class GamePlayUIController : MonoBehaviour
     [SerializeField] private GameObject tutorialObject;
     [SerializeField] private List<Transform> tutorialSteps;
     [SerializeField] private List<RectTransform> tutorialBlinds;
+    [SerializeField] private RectTransform tutorialDescriptionObject;
     [SerializeField] private Text tutorialScript;
     private int tutorialType;
     private int tutorialIndex;
@@ -377,6 +378,24 @@ public class GamePlayUIController : MonoBehaviour
             float top = rect.offsetMax.y;
             float bottom = rect.offsetMin.y;
 
+            if (Mathf.Abs(bottom) < 400 || Mathf.Abs(top) > 680)
+            {
+                if (Mathf.Abs(right) > 960)
+                {
+                    tutorialDescriptionObject.pivot = new Vector2(1, 0);
+                    tutorialDescriptionObject.anchorMin = new Vector2(1, 0);
+                    tutorialDescriptionObject.anchorMax = new Vector2(1, 0);
+                    tutorialDescriptionObject.anchoredPosition = new Vector2(0, 100);
+                }
+                else
+                {
+                    tutorialDescriptionObject.pivot = new Vector2(0, 0);
+                    tutorialDescriptionObject.anchorMin = new Vector2(0, 0);
+                    tutorialDescriptionObject.anchorMax = new Vector2(0, 0);
+                    tutorialDescriptionObject.anchoredPosition = new Vector2(0, 100);
+                }
+            }
+
             tutorialBlinds[0].offsetMin = new Vector2(left, 0);
             tutorialBlinds[0].offsetMax = new Vector2(right, 0);
             tutorialBlinds[0].sizeDelta = new Vector2(tutorialBlinds[0].sizeDelta.x, top * -1);
@@ -388,6 +407,7 @@ public class GamePlayUIController : MonoBehaviour
         }
         else
         {
+            TutorialController.Instance.EndTutorial(true);
         }
     }
     #endregion
