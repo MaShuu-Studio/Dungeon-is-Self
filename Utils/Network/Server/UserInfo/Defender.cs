@@ -302,5 +302,40 @@ namespace Server
             }
         }
         #endregion
+
+
+        #region For Bot
+
+        List<Monster> _monsters = new List<Monster>();
+        public List<Monster> Monsters { get { return _monsters; } }
+
+        public void SetMonsters()
+        {
+            _monsters.Clear();
+            for (int i = 0; i < _candidates.Count; i++)
+            {
+                Monster c = MonsterDatabase.Instance.GetMonster(_candidates[i]);
+                _monsters.Add(c);
+            }
+        }
+
+        public List<MonsterSkill> GetUsableSkill(int monsterIndex, int round)
+        {
+            List<MonsterSkill> usableSkill = new List<MonsterSkill>();
+            usableSkill = SkillDatabase.Instance.GetMonsterDices(_monsters[monsterIndex].id);
+
+            for (int i = 0; i < usableSkill.Count; i++)
+            {
+                if (usableSkill[i].tier > round)
+                {
+                    usableSkill.RemoveAt(i);
+                    i--;
+                }
+            }
+
+            return usableSkill;
+        }
+        #endregion
+
     }
 }

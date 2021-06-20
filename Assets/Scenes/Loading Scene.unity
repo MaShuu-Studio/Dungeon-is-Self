@@ -3593,8 +3593,8 @@ MonoBehaviour:
   settingControlObject: {fileID: 122293064}
   bgmSlider: {fileID: 76140392}
   sfxSlider: {fileID: 421522073}
-  bgmText: {fileID: 2110039145}
-  sfxText: {fileID: 704689443}
+  bgmText: {fileID: 359911470}
+  sfxText: {fileID: 1123973130}
   screenMode: {fileID: 583179508}
   tutorialButton: {fileID: 983040418}
   surrenderButton: {fileID: 1978418875}

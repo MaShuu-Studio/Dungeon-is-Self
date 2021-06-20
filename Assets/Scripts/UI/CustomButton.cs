@@ -34,7 +34,7 @@ public class CustomButton : MonoBehaviour
                 button.onClick.AddListener(ChangeScene);
                 break;
             case ButtonMethod.SingleGameReady:
-                //button.onClick.AddListener(SingleGameRequest);
+                button.onClick.AddListener(SingleGameRequest);
                 break;
             case ButtonMethod.GamePlayReady:
                 button.onClick.AddListener(GamePlayReady);
@@ -101,13 +101,13 @@ public class CustomButton : MonoBehaviour
         NetworkManager.Instance.MatchRequest(userType);
         GameController.Instance.SetUserType(userType);
     }
-    /*
+    
     void SingleGameRequest()
     {
         NetworkManager.Instance.SingleGameRequest(userType);
         GameController.Instance.SetUserType(userType);
     }
-    */
+    
     void MatchRequestCancel()
     {
         NetworkManager.Instance.MatchRequestCancel(GameController.Instance.userType);

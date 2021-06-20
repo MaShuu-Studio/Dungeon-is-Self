@@ -99,6 +99,7 @@ namespace Network
             connector.Connect(endPoint, () => { return session; }, 1);
             #endregion
             */
+
             if (connecting != null)
             {
                 StopCoroutine(connecting);
@@ -154,6 +155,7 @@ namespace Network
 
         public void UpdateServer()
         {
+            Debug.Log("Update Server State");
             serverCount = 0;
         }
         public void SetUserInfo(string userId, string userName)
@@ -197,7 +199,7 @@ namespace Network
             Send(matchPacket.Write());
         }
 
-        /*
+        
         public void SingleGameRequest(UserType type)
         {
             C_SingleGameRequest singleGamePacket = new C_SingleGameRequest();
@@ -206,7 +208,7 @@ namespace Network
 
             Send(singleGamePacket.Write());
         }
-        */
+        
 
         public void MatchRequestCancel(UserType type)
         {

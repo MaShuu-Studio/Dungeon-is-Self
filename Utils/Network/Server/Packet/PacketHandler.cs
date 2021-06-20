@@ -62,7 +62,7 @@ namespace Network
         #endregion
 
         #region Match
-        /*
+        
         public static void C_SingleGameRequestHandler(PacketSession session, IPacket packet)
         {
             C_SingleGameRequest p = packet as C_SingleGameRequest;
@@ -72,7 +72,7 @@ namespace Network
             GameRoom room = clientSession.Room;
             room.Push(() => room.SingleGameRequest(p.playerId, (UserType)p.playerType));
         }
-        */
+        
         public static void C_MatchRequestHandler(PacketSession session, IPacket packet)
         {
             C_MatchRequest p = packet as C_MatchRequest;

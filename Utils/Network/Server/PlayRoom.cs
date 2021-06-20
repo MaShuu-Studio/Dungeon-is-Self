@@ -79,7 +79,7 @@ namespace Server
                 if ((UserType)i == type) _playerId[i] = playerId;
                 else
                 {
-                    _playerId[i] = "";
+                    _playerId[i] = "BOT";
                     _playerReady[i] = true;
                 }
 
@@ -89,7 +89,23 @@ namespace Server
             round = 0;
 
             _room = room;
+
+            roundUnits = new Dictionary<int, Dictionary<string, int[]>>();
+            for (int i = 1; i <= 5; i++)
+            {
+                roundUnits.Add(i, new Dictionary<string, int[]>()
+                {
+                    { _playerId[0], new int[3] },
+                    { _playerId[1], new int[1] },
+                });
+            }
+
             StartTimer(30);
+        }
+
+        private bool IsBot(string playerId)
+        {
+            return playerId == "BOT";
         }
         public void SetAbnormalWinner(ushort winner)
         {
@@ -105,6 +121,7 @@ namespace Server
         private void StartTimer(int t)
         {
             StopTimer();
+            SendTimer(new object(), new EventArgs());
             time = t;
             timer = new Timer();
             timer.Interval = 1000; // 1초
@@ -126,7 +143,7 @@ namespace Server
             };
 
             for (int i = 0; i < _playerId.Length; i++)
-                if (string.IsNullOrEmpty(_playerId[i]) == false) _room.Send(_playerId[i], packet);
+                if (IsBot(_playerId[i]) == false) _room.Send(_playerId[i], packet);
 
             time--;
             if (time < 0) time = 0;
@@ -154,13 +171,13 @@ namespace Server
                 if (type == UserType.Defender)
                 {
                     defender.SetCandidate(candidates);
-                    if (string.IsNullOrEmpty(_playerId[(ushort)UserType.Offender]))
+                    if (IsBot(_playerId[(ushort)UserType.Offender]))
                         Bot.SetCandidate(ref offender);
                 }
                 else
                 {
                     offender.SetCandidate(candidates);
-                    if (string.IsNullOrEmpty(_playerId[(ushort)UserType.Defender]))
+                    if (IsBot(_playerId[(ushort)UserType.Defender]))
                         Bot.SetCandidate(ref defender);
                 }
 
@@ -172,16 +189,16 @@ namespace Server
                     packet.round = ++round;
                     packet.enemyCandidates = defender.Candidates;
 
-                    if (string.IsNullOrEmpty(_playerId[(ushort)UserType.Offender]) == false)
+                    if (IsBot(_playerId[(ushort)UserType.Offender]) == false)
                         _room.Send(_playerId[(ushort)UserType.Offender], packet);
 
                     packet.enemyCandidates = offender.Candidates;
 
-                    if (string.IsNullOrEmpty(_playerId[(ushort)UserType.Defender]) == false)
+                    if (IsBot(_playerId[(ushort)UserType.Defender]) == false)
                         _room.Send(_playerId[(ushort)UserType.Defender], packet);
 
                     for (int i = 0; i < _playerReady.Length; i++)
-                        if (string.IsNullOrEmpty(_playerId[i])) _playerReady[i] = true;
+                        if (IsBot(_playerId[i])) _playerReady[i] = true;
                         else _playerReady[i] = false;
 
                     StartTimer(60);
@@ -203,13 +220,13 @@ namespace Server
                     });
                 }
 
-                if (string.IsNullOrEmpty(_playerId[(ushort)UserType.Offender]) == false)
+                if (IsBot(_playerId[(ushort)UserType.Offender]) == false)
                     _room.Send(_playerId[(ushort)UserType.Offender], packet);
-                if (string.IsNullOrEmpty(_playerId[(ushort)UserType.Defender]) == false)
+                if (IsBot(_playerId[(ushort)UserType.Defender]) == false)
                     _room.Send(_playerId[(ushort)UserType.Defender], packet);
 
                 for (int i = 0; i < _playerReady.Length; i++)
-                    if (string.IsNullOrEmpty(_playerId[i])) _playerReady[i] = true;
+                    if (IsBot(_playerId[i])) _playerReady[i] = true;
                     else _playerReady[i] = false;
             }
         }
@@ -232,13 +249,13 @@ namespace Server
             if (type == UserType.Defender)
             {
                 defender.SetRoster(units, skills, attackSkills, round);
-                if (string.IsNullOrEmpty(_playerId[(ushort)UserType.Offender]))
-                    Bot.SetRoster(ref offender);
+                if (IsBot(_playerId[(ushort)UserType.Offender]))
+                    Bot.SetRoster(ref offender, round);
             }
             else
             {
                 offender.SetRoster(units, skills);
-                if (string.IsNullOrEmpty(_playerId[(ushort)UserType.Defender]))
+                if (IsBot(_playerId[(ushort)UserType.Defender]))
                     Bot.SetRoster(ref defender, round);
             }
 
@@ -255,7 +272,7 @@ namespace Server
 
                 p.enemyRosters = new List<S_RoundReadyEnd.EnemyRoster>();
 
-                if (string.IsNullOrEmpty(_playerId[(ushort)UserType.Offender]) == false)
+                if (IsBot(_playerId[(ushort)UserType.Offender]) == false)
                 {
                     for (int i = 0; i < defender.Rosters.Count; i++)
                     {
@@ -270,7 +287,7 @@ namespace Server
                 }
 
                 p.enemyRosters.Clear();
-                if (string.IsNullOrEmpty(_playerId[(ushort)UserType.Defender]) == false)
+                if (IsBot(_playerId[(ushort)UserType.Defender]) == false)
                 {
                     for (int i = 0; i < offender.Rosters.Count; i++)
                     {
@@ -284,7 +301,7 @@ namespace Server
                 }
 
                 for (int i = 0; i < _playerReady.Length; i++)
-                    if (string.IsNullOrEmpty(_playerId[i])) _playerReady[i] = true;
+                    if (IsBot(_playerId[i])) _playerReady[i] = true;
                     else _playerReady[i] = false;
 
                 StartTimer(30);
@@ -304,10 +321,14 @@ namespace Server
             if (type == UserType.Defender)
             {
                 defender.SetDice(dices);
+                if (IsBot(_playerId[(ushort)UserType.Offender]))
+                    Bot.SetDice(ref offender);
             }
             else
             {
                 offender.SetDice(dices);
+                if (IsBot(_playerId[(ushort)UserType.Defender]))
+                    Bot.SetDice(ref defender);
             }
 
             if (_playerReady[(ushort)UserType.Defender] && _playerReady[(ushort)UserType.Offender])
@@ -395,10 +416,10 @@ namespace Server
                 }
 
                 for (int i = 0; i < _playerId.Length; i++)
-                    if (string.IsNullOrEmpty(_playerId[i]) == false) _room.Send(_playerId[i], p);
+                    if (IsBot(_playerId[i]) == false) _room.Send(_playerId[i], p);
 
                 for (int i = 0; i < _playerReady.Length; i++)
-                    if (string.IsNullOrEmpty(_playerId[i])) _playerReady[i] = true;
+                    if (IsBot(_playerId[i])) _playerReady[i] = true;
                     else _playerReady[i] = false;
 
                 StartTimer(40);

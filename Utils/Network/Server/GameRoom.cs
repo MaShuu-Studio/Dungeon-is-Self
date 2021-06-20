@@ -81,7 +81,7 @@ namespace Server
             foreach (ClientSession s in _sessions.Values)
                 s.Send(_pendingList);
 
-            //if (_pendingList.Count + _packetList.Count != 0) Console.WriteLine($"Flushed {_pendingList.Count + _packetList.Count} items");
+            // if (_pendingList.Count + _packetList.Count != 0) Console.WriteLine($"Flushed {_pendingList.Count + _packetList.Count} items");
             _pendingList.Clear();
             _packetList.Clear();
         }
@@ -105,6 +105,7 @@ namespace Server
             }
             else
             {
+                Console.WriteLine("Fail Connect");
                 session.Send(new S_FailConnect().Write());
                 session.Disconnect();
             }
@@ -234,7 +235,7 @@ namespace Server
             S_StartGame packet = new S_StartGame()
             {
                 roomId = playRoom.RoomId,
-                enemyPlayerId = "",
+                enemyPlayerId = "BOT",
                 playerType = (ushort)type
             };
 
@@ -533,23 +534,8 @@ namespace Server
             }
             else if (playingSingleGameRooms.ContainsKey(roomId))
             {
+                Console.WriteLine("Ready Game End");
                 playingSingleGameRooms[roomId].ReadyRoundState(type, candidates);
-            }
-            else
-            {
-
-            }
-        }
-
-        public void RoundEnd(string roomId, UserType type)
-        {
-            if (playingRooms.ContainsKey(roomId))
-            {
-                playingRooms[roomId].ReadyRoundState(type);
-            }
-            else if (playingSingleGameRooms.ContainsKey(roomId))
-            {
-                playingSingleGameRooms[roomId].ReadyRoundState(type);
             }
             else
             {
@@ -565,6 +551,7 @@ namespace Server
             }
             else if (playingSingleGameRooms.ContainsKey(roomId))
             {
+                Console.WriteLine("Round Ready End");
                 playingSingleGameRooms[roomId].RoundReadyEnd(type, rosters);
             }
             else
@@ -581,6 +568,23 @@ namespace Server
             else if (playingSingleGameRooms.ContainsKey(roomId))
             {
                 playingSingleGameRooms[roomId].PlayRoundReadyEnd(type, rosters);
+            }
+            else
+            {
+
+            }
+        }
+
+        public void RoundEnd(string roomId, UserType type)
+        {
+            if (playingRooms.ContainsKey(roomId))
+            {
+                playingRooms[roomId].ReadyRoundState(type);
+            }
+            else if (playingSingleGameRooms.ContainsKey(roomId))
+            {
+                Console.WriteLine("Round Ready End");
+                playingSingleGameRooms[roomId].ReadyRoundState(type);
             }
             else
             {

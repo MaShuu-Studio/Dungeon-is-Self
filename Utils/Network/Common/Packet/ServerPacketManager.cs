@@ -38,6 +38,8 @@ public class PacketManager
         handler.Add((ushort)PacketID.C_StartPrivateRoom, PacketHandler.C_StartPrivateRoomHandler);
         makeFunc.Add((ushort)PacketID.C_ExitPrivateRoom, MakePacket<C_ExitPrivateRoom>);
         handler.Add((ushort)PacketID.C_ExitPrivateRoom, PacketHandler.C_ExitPrivateRoomHandler);
+        makeFunc.Add((ushort)PacketID.C_SingleGameRequest, MakePacket<C_SingleGameRequest>);
+        handler.Add((ushort)PacketID.C_SingleGameRequest, PacketHandler.C_SingleGameRequestHandler);
         makeFunc.Add((ushort)PacketID.C_MatchRequest, MakePacket<C_MatchRequest>);
         handler.Add((ushort)PacketID.C_MatchRequest, PacketHandler.C_MatchRequestHandler);
         makeFunc.Add((ushort)PacketID.C_MatchRequestCancel, MakePacket<C_MatchRequestCancel>);

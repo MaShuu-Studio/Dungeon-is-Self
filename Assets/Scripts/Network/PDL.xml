@@ -24,7 +24,6 @@
 		<string name="roomId"/>
 		<string name="playerId"/>
 	</packet>
-
 	<packet name="C_Chat">
 		<string name="playerId"/>
 		<string name="playerName"/>
@@ -34,7 +33,6 @@
 		<string name="playerName"/>
 		<string name="chat"/>
 	</packet>
-
 	<packet name="C_MakePrivateRoom">
 		<string name="playerId"/>
 		<string name="playerName"/>
@@ -71,8 +69,8 @@
 		<string name="playerId"/>
 		<string name="roomCode"/>
 	</packet>
-	<packet name="S_DestroyPrivateRoom"/>
-
+	<packet name="S_DestroyPrivateRoom">
+	</packet>
 	<packet name="C_SingleGameRequest">
 		<string name="playerId"/>
 		<ushort name="playerType"/>
@@ -85,7 +83,6 @@
 		<string name="playerId"/>
 		<ushort name="playerType"/>
 	</packet>
-
 	<packet name="S_StartGame">
 		<string name="roomId"/>
 		<string name="enemyPlayerId"/>
@@ -116,12 +113,6 @@
 			</list>
 		</clist>
 	</packet>
-	<packet name="C_LearnSkill">
-		<string name="roomId"/>
-		<ushort name="playerType"/>
-		<int name="unitId"/>
-		<int name="skillId"/>
-		</packet>
 	<packet name="S_RoundReadyEnd">
 		<ushort name="currentProgress"/>
 		<int name="round"/>

@@ -232,7 +232,7 @@ namespace Server
                     {
 
                         if (defender.HasCrowdControl(usingUnit, CCType.REFLECT) == false)
-                            defender.AddCrowdControl(cc, ccStack, targets[i], 1, this); 
+                            defender.AddCrowdControl(cc, ccStack, targets[i], 1, this);
                         continue;
                     }
                 }
@@ -294,7 +294,7 @@ namespace Server
                     if (isStackSkill && curCC.stack > 0 && curCC.turn == curCC.GetCCBasicTurn()) continue;
 
                     bool b = curCC.ProgressTurn();
-                    
+
                     if (b)
                     {
                         _ccList[key].RemoveAt(i);
@@ -351,6 +351,89 @@ namespace Server
             }
         }
 
+        #endregion
+
+        #region For Bot
+
+        List<Character> _characters = new List<Character>();
+        List<List<int>> _gottenSkills = new List<List<int>>();
+        List<int> _skillPoints = new List<int>();
+
+        public List<List<int>> UsableSkills { get { return _gottenSkills; } }
+        public List<Character> Characters { get { return _characters; } }
+        public List<int> SkillPoints { get { return _skillPoints; } }
+
+        public void SetCharacters()
+        {
+            _characters.Clear();
+            _gottenSkills.Clear();
+            _skillPoints.Clear();
+            for (int i = 0; i < _candidates.Count; i++)
+            {
+                Character c = CharacterDatabase.Instance.GetCharacter(_candidates[i]);
+                _characters.Add(c);
+
+                List<int> list = new List<int>();
+                for (int j = 0; j < c.mySkills.Count; j++)
+                {
+                    if (c.mySkills[j].tier <= 1) list.Add(c.mySkills[i].id);
+                }
+                _gottenSkills.Add(list);
+                _skillPoints.Add(0);
+            }
+        }
+
+        public void AddSkillPoint(int point)
+        {
+            for (int i = 0; i < _skillPoints.Count; i++)
+            {
+                _skillPoints[i] += point;
+            }
+        }
+
+        public bool IsSkillGotten(int characterIndex, int id)
+        {
+            return _gottenSkills[characterIndex].Contains(id);
+        }
+
+        public int LearnSkill(int characterIndex, CharacterSkill skill)
+        {
+            Character character = _characters[characterIndex];
+            int index = character.mySkills.FindIndex(s => s.id == skill.id);
+
+            if (index != -1)
+            {
+                if (_skillPoints[characterIndex] <= 0) return -1;
+                foreach (int id in skill.prior)
+                {
+                    if (!IsSkillGotten(characterIndex, id)) return -2;
+                }
+                _skillPoints[characterIndex] -= 1;
+                _gottenSkills[characterIndex].Add(skill.id);
+            }
+
+            return index;
+        }
+
+        public List<int> GetUpgradableSkill(int characterIndex)
+        {
+            List<int> upgradableSkills = new List<int>();
+            bool check;
+            for (int i = 0; i < _characters[characterIndex].mySkills.Count; i++)
+            {
+                int id = _characters[characterIndex].mySkills[i].id;
+                if (!IsSkillGotten(characterIndex, id))
+                {
+                    check = true;
+                    foreach (int priorId in _characters[characterIndex].mySkills[i].prior)
+                        if (IsSkillGotten(characterIndex, priorId) == false) check = false;
+
+                    if (check == true) upgradableSkills.Add(id);
+                }
+            }
+
+            return upgradableSkills;
+        }
         #endregion
 
     }
