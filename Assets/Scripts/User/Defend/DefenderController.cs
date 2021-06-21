@@ -335,9 +335,13 @@ namespace GameControl
             attackSkills[monsterIndex] = skill;
         }
 
-        public MonsterSkill GetAttackSkill()
+        public MonsterSkill GetSelectedAttackSkill()
         {
             return attackSkills[monsterIndex];
+        }
+        public MonsterSkill GetAttackSkill()
+        {
+            return attackSkills[monsterRoster];
         }
         public MonsterSkill GetAttackSkillWithUnit(int unitIndex)
         {

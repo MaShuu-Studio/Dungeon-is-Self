@@ -195,7 +195,6 @@ namespace GameControl
 
             this.round = round;
 
-            currentProgress = GameProgress.PlayRound;
             turn = 1;
             isRoundEnd = false;
             progressRound = false;
@@ -213,6 +212,8 @@ namespace GameControl
                 ccList.Add(key, new List<CrowdControl>());
                 isDead.Add(key, false);
             }
+
+            currentProgress = GameProgress.PlayRound;
             SoundController.Instance.PlayBGM(DefenderController.Instance.GetMonsterRoster().id.ToString());
 
             if (userType == UserType.Defender)

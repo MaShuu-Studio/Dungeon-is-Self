@@ -663,7 +663,7 @@ public class GamePlayUIController : MonoBehaviour
                 }
 
             List<MonsterSkill> attackSkills = SkillDatabase.Instance.GetMonsterAttackSkills(id, GameController.Instance.round);
-            MonsterSkill charAttackSkill = DefenderController.Instance.GetAttackSkill();
+            MonsterSkill charAttackSkill = DefenderController.Instance.GetSelectedAttackSkill();
             for (int i = 0; i < defenderAttackSkills.Count; i++)
             {
                 defenderAttackSkills[i].SetSkill(type, attackSkills[i]);
