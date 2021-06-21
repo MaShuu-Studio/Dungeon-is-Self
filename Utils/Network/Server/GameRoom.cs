@@ -534,7 +534,6 @@ namespace Server
             }
             else if (playingSingleGameRooms.ContainsKey(roomId))
             {
-                Console.WriteLine("Ready Game End");
                 playingSingleGameRooms[roomId].ReadyRoundState(type, candidates);
             }
             else
@@ -551,7 +550,6 @@ namespace Server
             }
             else if (playingSingleGameRooms.ContainsKey(roomId))
             {
-                Console.WriteLine("Round Ready End");
                 playingSingleGameRooms[roomId].RoundReadyEnd(type, rosters);
             }
             else

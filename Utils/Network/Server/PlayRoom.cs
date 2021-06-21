@@ -121,8 +121,8 @@ namespace Server
         private void StartTimer(int t)
         {
             StopTimer();
-            SendTimer(new object(), new EventArgs());
             time = t;
+            SendTimer(new object(), new EventArgs());
             timer = new Timer();
             timer.Interval = 1000; // 1초
             timer.Elapsed += new ElapsedEventHandler(SendTimer);
@@ -228,6 +228,8 @@ namespace Server
                 for (int i = 0; i < _playerReady.Length; i++)
                     if (IsBot(_playerId[i])) _playerReady[i] = true;
                     else _playerReady[i] = false;
+
+                StartTimer(60);
             }
         }
 
@@ -721,6 +723,7 @@ namespace Server
                 // 방어자 패배
                 _winCount[round - 1] = (ushort)UserType.Offender;
                 offender.NextRound(true);
+                StopTimer();
                 return true;
             }
             else if (offender.GetAlives().Count == 0)
@@ -728,6 +731,7 @@ namespace Server
                 // 공격자 패배
                 _winCount[round - 1] = (ushort)UserType.Defender;
                 offender.NextRound(false);
+                StopTimer();
                 return true;
             }
 
