@@ -155,7 +155,6 @@ namespace Network
 
         public void UpdateServer()
         {
-            Debug.Log("Update Server State");
             serverCount = 0;
         }
         public void SetUserInfo(string userId, string userName)

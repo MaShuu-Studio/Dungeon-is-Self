@@ -637,22 +637,42 @@ namespace Server
 
         public void PlayingRoomAbnormalExit(string userId, string roomId = "")
         {
-            List<string> keys = playingRooms.Keys.ToList();
             int findPlayer = -1;
             if (roomId == "")
-                for (int i = 0; i < playingRooms.Count; i++)
+            {
+                List<string> keys = playingRooms.Keys.ToList();
+                for (int i = 0; i < keys.Count; i++)
                 {
                     roomId = keys[i];
                     findPlayer = playingRooms[roomId].PlayerInRoom(userId);
                     if (findPlayer != -1) break;
                 }
-            else if (playingRooms.ContainsKey(roomId))
-                findPlayer = playingRooms[roomId].PlayerInRoom(userId);
+
+                if (findPlayer == -1)
+                {
+                    keys = playingSingleGameRooms.Keys.ToList();
+                    for (int i = 0; i < keys.Count; i++)
+                    {
+                        roomId = keys[i];
+                        findPlayer = playingSingleGameRooms[roomId].PlayerInRoom(userId);
+                        if (findPlayer != -1) break;
+                    }
+                }
+            }
+            else
+            {
+                if (playingRooms.ContainsKey(roomId))
+                    findPlayer = playingRooms[roomId].PlayerInRoom(userId);
+                else if (playingSingleGameRooms.ContainsKey(roomId))
+                    findPlayer = playingSingleGameRooms[roomId].PlayerInRoom(userId);
+            }
 
             if (findPlayer != -1)
             {
                 UserType winner = ((UserType)findPlayer == UserType.Defender) ? UserType.Offender : UserType.Defender;
-                string winnerId = playingRooms[roomId].GetPlayerId(winner);
+                string winnerId = "";
+                if (playingRooms.ContainsKey(roomId)) winnerId = playingRooms[roomId].GetPlayerId(winner);
+                else if (playingSingleGameRooms.ContainsKey(roomId)) winnerId = playingSingleGameRooms[roomId].GetPlayerId(winner);
 
                 S_GameEnd packet = new S_GameEnd();
                 packet.winner = (ushort)winner;
