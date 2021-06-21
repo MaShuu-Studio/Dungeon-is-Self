@@ -36,8 +36,8 @@ public class ResolutionManager : MonoBehaviour
         }
         DontDestroyOnLoad(gameObject);
         defaultRatio = (float)defaultWidth / (float)defaultHeight;
-        SetSupportedResolutions();
         screenMode = Screen.fullScreenMode;
+        SetSupportedResolutions();
     }
     #endregion
 
