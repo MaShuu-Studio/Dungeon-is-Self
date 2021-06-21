@@ -36,6 +36,7 @@ public class SettingUI : MonoBehaviour
     [SerializeField] private Text bgmText;
     [SerializeField] private Text sfxText;
     [SerializeField] private Dropdown screenMode;
+    [SerializeField] private Dropdown screenResolutions;
     [SerializeField] private Button tutorialButton;
     [SerializeField] private Button surrenderButton;
     [SerializeField] private Text logOutButtonText;
@@ -55,6 +56,18 @@ public class SettingUI : MonoBehaviour
                 break;
         }
         screenMode.value = mode;
+
+        screenResolutions.options.Clear();
+
+        for (int i = 0; i < ResolutionManager.Instance.SupportedResolutions.Length; i++) 
+        {
+            Resolution resolution = ResolutionManager.Instance.SupportedResolutions[i];
+            screenResolutions.options.Add(new Dropdown.OptionData($"{resolution.width}X{resolution.height}"));
+            if (Screen.currentResolution.width == resolution.width)
+            {
+                screenResolutions.value = i;
+            }
+        }
     }
 
     private void Update()
@@ -116,8 +129,10 @@ public class SettingUI : MonoBehaviour
 
     public void SetResolution()
     {
-        // 1: Windowed, 2: FullScreen, 3: FullScreen Window        
+        // 1: Windowed, 2: FullScreen, 3: FullScreen Window
         ResolutionManager.Instance.SetScreenMode(screenMode.value);
+        ResolutionManager.Instance.SetResolution(screenResolutions.value);
+
     }
 
     public void Tutorial()

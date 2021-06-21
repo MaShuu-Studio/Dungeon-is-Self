@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class ResolutionManager : MonoBehaviour
@@ -11,6 +12,9 @@ public class ResolutionManager : MonoBehaviour
     int width = 1920;
     int height = 1080;
     Rect camRect = new Rect(0, 0, 1, 1);
+    public Resolution[] SupportedResolutions { get; private set; }
+    private FullScreenMode screenMode;
+
 
     #region Instance
     private static ResolutionManager instance;
@@ -32,6 +36,8 @@ public class ResolutionManager : MonoBehaviour
         }
         DontDestroyOnLoad(gameObject);
         defaultRatio = (float)defaultWidth / (float)defaultHeight;
+        SetSupportedResolutions();
+        screenMode = Screen.fullScreenMode;
     }
     #endregion
 
@@ -40,25 +46,47 @@ public class ResolutionManager : MonoBehaviour
         SetResolution();
     }
 
+    private void SetSupportedResolutions()
+    {
+        List<Resolution> resols = Screen.resolutions.ToList();
+        Resolution res = resols[0];
+
+        for(int i = 1; i< resols.Count; i++)
+        {
+            if (resols[i].width == res.width &&
+               resols[i].height == res.height)
+            {
+                resols.RemoveAt(i);
+                i--;
+            }
+            else
+            {
+                res = resols[i];
+            }
+        }
+
+        SupportedResolutions = resols.ToArray();
+    }
+
     public void SetScreenMode(int index)
     {
         switch((ScreenMode)index)
         {
             case ScreenMode.WINDOWED:
-                Screen.fullScreenMode = FullScreenMode.Windowed;
+                screenMode = FullScreenMode.Windowed;
                 break;
             case ScreenMode.FULLSCREEN:
-                Screen.fullScreenMode = FullScreenMode.ExclusiveFullScreen;
+                screenMode = FullScreenMode.ExclusiveFullScreen;
                 break;
             case ScreenMode.FULLSCREENWINDOW:
-                Screen.fullScreenMode = FullScreenMode.FullScreenWindow;
+                screenMode = FullScreenMode.FullScreenWindow;
                 break;
         }
     }
 
-    public void SetResolution(int width, int height)
+    public void SetResolution(int index)
     {
-
+        Screen.SetResolution(SupportedResolutions[index].width, SupportedResolutions[index].height, screenMode);
     }
 
     private void SetResolution()
