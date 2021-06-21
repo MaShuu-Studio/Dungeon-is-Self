@@ -1167,7 +1167,6 @@ public class GamePlayUIController : MonoBehaviour
                 if (enemyObjects[i].GetIndex() == index)
                 {
                     enemyObjects[i].Dead();
-                    enemyObjects[i] = null;
                     break;
                 }
         }
@@ -1177,7 +1176,6 @@ public class GamePlayUIController : MonoBehaviour
                 if (charObjects[i].GetIndex() == index)
                 {
                     charObjects[i].Dead();
-                    charObjects[i] = null;
                     break;
                 }
         }

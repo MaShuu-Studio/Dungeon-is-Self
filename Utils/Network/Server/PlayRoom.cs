@@ -448,7 +448,7 @@ namespace Server
                 {
                     if (deadUnit[units[i]].Item1 == false)
                     {
-                        int selectedDice = SelectDice(dices[units[i]]);
+                        int selectedDice = SelectDice(dices[units[i]], units[i]);
                         int target;
                         int usingUnit = units[i];
                         int remainTurn = 0;
@@ -609,7 +609,7 @@ namespace Server
             return i;
         }
 
-        private int SelectDice(List<int> dices)
+        private int SelectDice(List<int> dices, int unit)
         {
             // 행동불능 상태에서는 -1
             int diceId = -1;
@@ -651,9 +651,16 @@ namespace Server
             }
             else
             {
-                //나중에 특수효과같은거
-                Random rand = new Random();
-                diceId = maxKeys[rand.Next(0, maxKeys.Count)];
+                if (unit / 10 == 2)
+                {
+                    diceId = 200110;
+                }
+                else
+                {
+                    //나중에 특수효과같은거
+                    Random rand = new Random();
+                    diceId = maxKeys[rand.Next(0, maxKeys.Count)];
+                }
             }
 
             return diceId;

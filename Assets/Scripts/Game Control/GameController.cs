@@ -316,6 +316,7 @@ namespace GameControl
                 else
                 {
                     animationEnd[keys[i]] = true;
+                    GamePlayUIController.Instance.DeadCharacter(keys[i]);
                 }
 
                 for (int j = 0; j < keys.Count; j++)
@@ -362,7 +363,10 @@ namespace GameControl
                 for (int j = 0; j < keys.Count; j++)
                 {
                     if (deadUnit[keys[j]].Item1 && deadUnit[keys[j]].Item2 == i)
+                    {
                         isDead[keys[j]] = true;
+                        GamePlayUIController.Instance.DeadCharacter(keys[j]);
+                    }
                 }
 
                 GamePlayUIController.Instance.UpdateCharacters();
@@ -422,6 +426,13 @@ namespace GameControl
 
         public void NextTurnInNetwork(int turn)
         {
+            List<int> keys = isDead.Keys.ToList();
+            for (int i = 0; i < keys.Count; i++)
+            {
+                if (isDead[keys[i]])
+                    GamePlayUIController.Instance.DeadCharacter(keys[i]);
+            }
+
             if (isRoundEnd) return;
             progressRound = false;
             GamePlayUIController.Instance.SetTurn(turn);

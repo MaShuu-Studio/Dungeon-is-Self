@@ -34,6 +34,7 @@ public class CharacterObject : MonoBehaviour
         _animator = GetComponent<Animator>();
         _sprite = GetComponent<SpriteRenderer>();
         canvas.worldCamera = GameObject.FindWithTag("MainCamera").GetComponent<Camera>();
+        isDead = false;
         if (skillObject != null) skillObject.SetActive(false);
         if (diceObject != null) diceObject.SetActive(false);
     }
@@ -181,8 +182,11 @@ public class CharacterObject : MonoBehaviour
         GameController.Instance.AnimationEnd(index);
     }
 
+    bool isDead = false;
     public void Dead()
     {
-        Destroy(gameObject);
+        if (isDead) return;
+        _animator.SetTrigger("Dead");
+        isDead = true;
     }
 }

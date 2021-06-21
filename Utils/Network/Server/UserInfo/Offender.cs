@@ -376,7 +376,8 @@ namespace Server
                 List<int> list = new List<int>();
                 for (int j = 0; j < c.mySkills.Count; j++)
                 {
-                    if (c.mySkills[j].tier <= 1) list.Add(c.mySkills[i].id);
+                    if (c.mySkills[j].tier <= 1)
+                        list.Add(c.mySkills[j].id);
                 }
                 _gottenSkills.Add(list);
                 _skillPoints.Add(0);
