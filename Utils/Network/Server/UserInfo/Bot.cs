@@ -48,6 +48,12 @@ namespace Server
             List<List<int>> skillRoster;
 
             Random rand = new Random();
+
+            for (int i = 0; i < user.DeadUnits.Count; i++)
+            {
+                roster.Remove(user.DeadUnits[i] % 10);
+            }
+
             while (roster.Count > 3)
             {
                 int index = rand.Next(0, roster.Count);
@@ -63,6 +69,11 @@ namespace Server
             List<int> roster = new List<int> { 0, 1, 2, 3, 4, 5 };
             List<List<int>> skillRoster;
             List<int> attackSkill;
+
+            for (int i = 0; i < user.DeadUnits.Count; i++)
+            {
+                roster.Remove(user.DeadUnits[i] % 10);
+            }
 
             Random rand = new Random();
             while (roster.Count > 1)
