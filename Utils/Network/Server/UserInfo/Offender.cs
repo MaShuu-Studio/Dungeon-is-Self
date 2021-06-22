@@ -106,6 +106,7 @@ namespace Server
 
         public void ProgressTurn()
         {
+            CrowdControlProgressTurn();
             for (int i = 0; i < _rosters.Count; i++)
             {
                 if (IsDead(_rosters[i]) || HasCrowdControl(_rosters[i], CCType.STUN)) continue;
@@ -118,8 +119,6 @@ namespace Server
                     }
                 }
             }
-
-            CrowdControlProgressTurn();
         }
 
         public void KillUnit(int unit)

@@ -367,7 +367,7 @@ namespace Server
                 if (isGameEnd != 0) winner = (ushort)isGameEnd;
 
                 S_ProgressTurn p = new S_ProgressTurn();
-                p.isGameEnd = (isGameEnd != 0);
+                p.isGameEnd = (isGameEnd != 9);
                 p.winner = _winCount[round - 1];
                 p.endTurn = endTurn;
                 p.round = round;
@@ -757,7 +757,7 @@ namespace Server
             if (defWinCount >= 3) return (ushort)UserType.Defender;
             if (offWinCount >= 3) return (ushort)UserType.Offender;
 
-            return 0;
+            return 9;
         }
 
         public void GameResult()
