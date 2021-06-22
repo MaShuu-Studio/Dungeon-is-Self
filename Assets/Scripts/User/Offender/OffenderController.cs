@@ -55,6 +55,8 @@ namespace GameControl
             skillPoints.Clear();
             gottenSkills.Clear();
 
+            isDead.Clear();
+
             dices.Clear();
             skillRoster.Clear();
         }
@@ -88,6 +90,7 @@ namespace GameControl
             skillPoints.Clear();
             gottenSkills.Clear();
 
+            isDead.Clear();
             foreach (int id in selectedCharacterCandidates)
             {
                 Character c = CharacterDatabase.Instance.GetCharacter(id);
