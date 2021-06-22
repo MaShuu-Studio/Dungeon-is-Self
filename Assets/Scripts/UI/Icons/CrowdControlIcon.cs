@@ -71,6 +71,7 @@ public class CrowdControlIcon : MonoBehaviour, IPointerEnterHandler, IPointerExi
         }
     }
 
+    
     #region For PC
     public void OnPointerEnter(PointerEventData pointerEventData)
     {
@@ -82,7 +83,7 @@ public class CrowdControlIcon : MonoBehaviour, IPointerEnterHandler, IPointerExi
         descriptionObject.SetActive(false);
     }
     #endregion
-
+    
     #region For Mobile
 
     #endregion

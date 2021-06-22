@@ -448,13 +448,16 @@ namespace Server
             {
                 if (i < units.Count)
                 {
-                    if (deadUnit[units[i]].Item1 == false)
+                    bool isMonster = units[i] / 10 == 2;
+                    if (deadUnit[units[i]].Item1 == false && (
+                        (isMonster && defender.HasCrowdControl(units[i], CCType.STUN) == false) ||
+                        (isMonster == false && offender.HasCrowdControl(units[i], CCType.STUN) == false)))
                     {
                         int selectedDice = SelectDice(dices[units[i]], units[i]);
                         int target;
                         int usingUnit = units[i];
                         int remainTurn = 0;
-                        if (units[i] / 10 == 2)
+                        if (isMonster)
                         {
                             if (selectedDice != -1)
                             {
@@ -567,17 +570,19 @@ namespace Server
                             offender.KillUnit(alives[target]);
                             alives = offender.GetAlives();
 
-                            target = rand.Next(0, alives.Count);
-
-                            for (int j = 0; j < alives.Count; j++)
+                            if (alives.Count > 0)
                             {
-                                if (offender.HasCrowdControl(alives[j], CCType.TAUNT))
-                                    target = j;
+                                target = rand.Next(0, alives.Count);
+
+                                for (int j = 0; j < alives.Count; j++)
+                                {
+                                    if (offender.HasCrowdControl(alives[j], CCType.TAUNT))
+                                        target = j;
+                                }
+
+                                List<CrowdControl> ccs = defender.AttackSkill.ccList.Keys.ToList();
+                                offender.AddCrowdControl(alives[target], ccs[0], defender.AttackSkill.ccList[ccs[0]], defender.Rosters[0], 1, defender);
                             }
-
-                            List<CrowdControl> ccs = defender.AttackSkill.ccList.Keys.ToList();
-                            offender.AddCrowdControl(alives[target], ccs[0], defender.AttackSkill.ccList[ccs[0]], defender.Rosters[0], 1, defender);
-
                             break;
                     }
                 }

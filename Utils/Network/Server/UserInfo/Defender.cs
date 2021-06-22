@@ -109,7 +109,8 @@ namespace Server
 
         public void ProgressTurn()
         {
-            _attackSkillTurn--;
+            if ((HasCrowdControl(_rosters[0], CCType.STUN) && CrowdControlTurn(_rosters[0], CCType.STUN) > 1) == false)
+                _attackSkillTurn--;
             CrowdControlProgressTurn();
         }
 
@@ -277,6 +278,20 @@ namespace Server
             }
 
             return b;
+        }
+
+        private int CrowdControlTurn(int index, CCType ccType, CCTarget target = CCTarget.ENEMY)
+        {
+            CrowdControl tmp = _ccList[index].Find(cc => cc.cc == ccType);
+
+            bool b = tmp != null;
+            int turn = 0;
+            if (b)
+            {
+                turn = tmp.turn;
+            }
+
+            return turn;
         }
 
         private void PurifyCrowdControl(int index, bool isGood)

@@ -19,9 +19,7 @@ public class SkillIcon : UIIcon, IPointerClickHandler
         pos.y = rect.anchoredPosition.y + 15;
         isSkill = true;
     }
-
-
-    /*
+    
     #region for PC
     public override void OnPointerEnter(PointerEventData pointerEventData)
     {
@@ -38,8 +36,7 @@ public class SkillIcon : UIIcon, IPointerClickHandler
         if (isOn) base.OnPointerClick(pointerEventData);
     }
     #endregion
-    */
-    
+    /*
     #region for Mobile
     public override void OnPointerClick(PointerEventData pointerEventData)
     {
@@ -53,7 +50,7 @@ public class SkillIcon : UIIcon, IPointerClickHandler
         if (isOn) base.OnPointerClick(pointerEventData);
     }
     #endregion
-    
+    */
     // Drag and Drop
 
     public override void OnPointerExit(PointerEventData pointerEventData)

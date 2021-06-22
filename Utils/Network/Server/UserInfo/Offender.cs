@@ -106,7 +106,6 @@ namespace Server
 
         public void ProgressTurn()
         {
-            CrowdControlProgressTurn();
             for (int i = 0; i < _rosters.Count; i++)
             {
                 if (IsDead(_rosters[i]) || HasCrowdControl(_rosters[i], CCType.STUN)) continue;
@@ -119,6 +118,8 @@ namespace Server
                     }
                 }
             }
+
+            CrowdControlProgressTurn();
         }
 
         public void KillUnit(int unit)
@@ -204,7 +205,7 @@ namespace Server
             {
                 foreach (int key in _rosters)
                 {
-                    if (_deadUnits.FindIndex(index => index == key) != -1) targets.Add(key);
+                    if (_deadUnits.FindIndex(index => index == key) == -1) targets.Add(key);
                 }
             }
             else targets.Add(target);
@@ -326,6 +327,20 @@ namespace Server
             }
 
             return b;
+        }
+
+        private int CrowdControlTurn(int index, CCType ccType, CCTarget target = CCTarget.ENEMY)
+        {
+            CrowdControl tmp = _ccList[index].Find(cc => cc.cc == ccType);
+
+            bool b = tmp != null;
+            int turn = 0;
+            if (b)
+            {
+                turn = tmp.turn;
+            }
+
+            return turn;
         }
 
         private void PurifyCrowdControl(int index, bool isGood)

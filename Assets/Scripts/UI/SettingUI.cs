@@ -56,7 +56,8 @@ public class SettingUI : MonoBehaviour
                 break;
         }
         screenMode.value = mode;
-
+        
+        #region for PC
         screenResolutions.options.Clear();
 
         for (int i = 0; i < ResolutionManager.Instance.SupportedResolutions.Length; i++) 
@@ -68,6 +69,8 @@ public class SettingUI : MonoBehaviour
                 screenResolutions.value = i;
             }
         }
+        #endregion
+        
     }
 
     private void Update()
