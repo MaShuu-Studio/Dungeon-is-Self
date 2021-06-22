@@ -110,7 +110,7 @@ namespace Server
         public void ProgressTurn()
         {
             CrowdControlProgressTurn();
-            if (HasCrowdControl(_rosters[0], CCType.STUN))
+            if (HasCrowdControl(_rosters[0], CCType.STUN) == false)
                 _attackSkillTurn--;
         }
 
