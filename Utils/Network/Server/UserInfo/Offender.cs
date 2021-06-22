@@ -164,8 +164,8 @@ namespace Server
                 else if (_deadUnits.Count == 4)
                 {
                     // 1명 살려줌
-                    int index = rand.Next(0, _deadUnits.Count);
-                    _deadUnits.RemoveAt(index);
+                    int index = rand.Next(0, _rosters.Count);
+                    _deadUnits.Remove(_rosters[index]);
                 }
             }
         }

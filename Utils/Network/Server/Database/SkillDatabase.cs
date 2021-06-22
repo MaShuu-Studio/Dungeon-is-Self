@@ -369,7 +369,7 @@ namespace Data
                 description: "꼬리로 상대 1명을 행동 불능으로 만든다.",
                 new List<System.Tuple<CrowdControl, int>>()
                 {
-                    new System.Tuple<CrowdControl, int>(GetCrowdControl(30701), 0),
+                    new System.Tuple<CrowdControl, int>(GetCrowdControl(30701), 1),
                 }));            
             monSkillDB.Add(new MonsterSkill(203122, "또아리말기", 0, cost: 3,
                 description: "몸을 말아 상대 공격을 방어한다.",
